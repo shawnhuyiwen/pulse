@@ -590,7 +590,7 @@ A severity of 0 removes the action completely.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "PatientAction": {
-    "Arrhythmia": { "Type":"Asystole" }
+    "Arrhythmia": { "Rhythm":"Asystole" }
   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
