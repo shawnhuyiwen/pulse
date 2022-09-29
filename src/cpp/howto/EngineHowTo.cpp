@@ -19,7 +19,7 @@ int main()
   //HowToSerialize();
   //HowToPulseEnginePool();
 
-  //HowToACLS();
+  HowToACLS();
   //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToArrythmia();

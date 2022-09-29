@@ -5,7 +5,7 @@ from pulse.cdm.patient import SENutrition
 from pulse.cdm.physiology import SERespiratoryMechanics
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarFrequency, \
-                              SEScalarForce, SEScalarMassPerVolume, \
+                              SEScalarForce, SEScalarLength, SEScalarMassPerVolume, \
                               SEScalarPressure, SEScalarTime, \
                               SEScalarVolumePerTime, SEScalarVolume
 

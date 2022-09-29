@@ -40,6 +40,7 @@
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarLength.h"
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarMassPerVolume.h"
 #include "cdm/properties/SEScalar0To1.h"
@@ -1582,7 +1583,7 @@ namespace pulse
   /// \details
   /// The user may apply a chest compression to continue blood circulation if the heart no longer has an effective rhythm.
   /// The compression can either be defined by an explicit force or by a fraction of the maximum allowable force. 
-  /// If the compression input is a force scale then the method controls the shape of the force pulse and converts the force
+  /// If the compression input is a depth then the method controls the shape of the force pulse and converts the force
   /// pressure for application to the heart. 
   /// If the compression input is force, then the raw force is converted to pressure and applied to
   /// the heart. The pressure is applied at the pressure source on the LeftHeart3ToGround and 
@@ -1595,7 +1596,7 @@ namespace pulse
       return;// Nothing to do
 
     double compressionForce_N = 0;
-#define compressionForceMax_N 500.0 // The maximum allowed compression force (corresponds to 1.0 when force scale is used)
+#define compressionForceMax_N 550.0 // The maximum allowed compression force (corresponds to 6 cm when depth is used)
 
     if (actions.HasChestCompressionInstantaneous())
     {
@@ -1607,9 +1608,8 @@ namespace pulse
       compressionForce_N = 0;
       if (actions.GetChestCompressionInstantaneous().HasForce())
         compressionForce_N = actions.GetChestCompressionInstantaneous().GetForce(ForceUnit::N);
-      // TODO: Use depth
-      //else if (actions.GetChestCompressionInstantaneous().HasForceScale())
-      //  compressionForce_N = actions.GetChestCompressionInstantaneous().GetForceScale().GetValue() * compressionForceMax_N;
+      else if (actions.GetChestCompressionInstantaneous().HasDepth())
+        compressionForce_N = CalculateDepthForce(actions.GetChestCompressionInstantaneous().GetDepth(LengthUnit::cm));
       if (compressionForce_N == 0)
       {
         actions.RemoveChestCompressionInstantaneous();
@@ -1638,9 +1638,8 @@ namespace pulse
       compressionForce_N = 0;
       if (actions.GetChestCompression().HasForce())
         compressionForce_N = actions.GetChestCompression().GetForce(ForceUnit::N);
-      // TODO: Use depth
-      //else if (actions.GetChestCompression().HasForceScale())
-      //  compressionForce_N = actions.GetChestCompression().GetForceScale().GetValue() * compressionForceMax_N;
+      else if (actions.GetChestCompression().HasDepth())
+        compressionForce_N = CalculateDepthForce(actions.GetChestCompression().GetDepth(LengthUnit::cm));
       if (compressionForce_N == 0)
       {
         m_CompressionPeriodCurrentTime_s = 0;
@@ -1683,9 +1682,8 @@ namespace pulse
       compressionForce_N = 0.0;
       if (actions.GetChestCompressionAutomated().HasForce())
         compressionForce_N = actions.GetChestCompressionAutomated().GetForce(ForceUnit::N);
-      // TODO: Use depth
-      //else if (actions.GetChestCompressionAutomated().HasForceScale())
-      //  compressionForce_N = actions.GetChestCompressionAutomated().GetForceScale().GetValue() * compressionForceMax_N;
+      else if (actions.GetChestCompressionAutomated().HasDepth())
+        compressionForce_N = CalculateDepthForce(actions.GetChestCompressionAutomated().GetDepth(LengthUnit::cm));
       else
       {
         m_CompressionFrequencyCurrentTime_s = 0;
@@ -1720,6 +1718,18 @@ namespace pulse
     }
 
   }
+  
+  double CardiovascularModel::CalculateDepthForce(double compressionDepth_cm)
+  {
+#define compressionDepthTransition_cm 5.0
+#define compressionForceTransition_N 450
+#define compressionDepthMax_cm 6.0
+    if (compressionDepth_cm >= 5)
+      return GeneralMath::LinearInterpolator(compressionDepthTransition_cm, compressionDepthMax_cm, compressionForceTransition_N, compressionForceMax_N, compressionDepth_cm);
+    else
+      return GeneralMath::LinearInterpolator(0, compressionDepthTransition_cm, 0, compressionForceTransition_N, compressionDepth_cm);
+  }
+  
   double CardiovascularModel::ShapeCPRForce(double compressionForce_N)
   {
     // Bell curve shaping parameters

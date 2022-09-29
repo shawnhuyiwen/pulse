@@ -82,6 +82,7 @@ namespace pulse
     void ProcessActions();
     //Action methods
     /**/void CPR();
+    /****/double CalculateDepthForce(double compressionDepth_cm);
     /****/double ShapeCPRForce(double compressionForce_N);
     /****/void   ApplyCPRForce(double compressionForce_N);
     /**/void Arrhythmia();

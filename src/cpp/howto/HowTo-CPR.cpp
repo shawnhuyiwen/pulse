@@ -23,6 +23,7 @@
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarForce.h"
 #include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarLength.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"
@@ -86,9 +87,9 @@ void HowToCPR()
   sce.SetEngineStateFile(stateFile);
 
   // 3 possible modes of performing CPR
-  //std::string mode = "single";
+  std::string mode = "single";
   //std::string mode = "instantaneous";
-  std::string mode = "automated";
+  //std::string mode = "automated";
 
   // Create data requests for each value that should be written to the output log as the engine is executing
   SEDataRequestManager& dMgr = pe->GetEngineTracker()->GetDataRequestManager();
@@ -109,11 +110,11 @@ void HowToCPR()
   // This is the frequency at which CPR is administered
   double compressionRate_bpm = 80;
 
-  // This is where you specify how much force to apply to the chest. We have capped the applicable force at 500 N.
-  double compressionForce_N = 311;
+  // This is where you specify how much force to apply to the chest. We have capped the applicable force at 550 N.
+  double compressionForce_N = 450;
 
-  // Force can also be specified as a scale factor.
-  double compressionForceScale = 0.63;
+  // Force can also be specified as a depth.
+  double compressionDepth_cm = 5;
 
   // This is the percent of time per period that the chest will be compressed e.g. if I have a 1 second period
   // (60 beats per minute) the chest will be compressed for 0.3 seconds
@@ -182,12 +183,12 @@ void HowToCPR()
       if (useExplicitForce)
       {
         cpr.GetForce().SetValue(compressionForce_N, ForceUnit::N);
-        cpr.GetForceScale().Invalidate();
+        cpr.GetDepth().Invalidate();
       }
       else
       {
         cpr.GetForce().Invalidate();
-        cpr.GetForceScale().SetValue(compressionForceScale);
+        cpr.GetDepth().SetValue(compressionDepth_cm, LengthUnit::cm);
       }
       useExplicitForce = !useExplicitForce;
       cpr.GetCompressionPeriod().SetValue(timeOn, TimeUnit::s);
@@ -239,7 +240,7 @@ void HowToCPR()
         if(useExplicitForce)
           cprI.GetForce().SetValue(compressionForce_N, ForceUnit::N);
         else
-          cprI.GetForceScale().SetValue(compressionForceScale);
+          cprI.GetDepth().SetValue(compressionDepth_cm, LengthUnit::cm);
         pe->ProcessAction(cprI);
         sce.AddAction(cprI);
   
@@ -265,20 +266,20 @@ void HowToCPR()
         if(useExplicitForce)
           cprI.GetForce().SetValue(0, ForceUnit::N);
         else
-          cprI.GetForceScale().SetValue(0);
+          cprI.GetDepth().SetValue(0, LengthUnit::cm);
         pe->ProcessAction(cprI);
         sce.AddAction(cprI);
       }  
     }    
   
     // Make sure that the chest is no longer being compressed
-    if((cprI.HasForceScale() && cprI.GetForceScale().GetValue() != 0) || (cprI.HasForce() && cprI.GetForce().GetValue(ForceUnit::N) != 0))
+    if((cprI.HasDepth() && cprI.GetDepth().GetValue(LengthUnit::cm) != 0) || (cprI.HasForce() && cprI.GetForce().GetValue(ForceUnit::N) != 0))
     {
       // If it is compressed, set force to 0 to turn off
       if (cprI.HasForce())
         cprI.GetForce().SetValue(0, ForceUnit::N);
       else
-        cprI.GetForceScale().SetValue(0);
+        cprI.GetDepth().SetValue(0, LengthUnit::cm);
       pe->ProcessAction(cprI);
       sce.AddAction(cprI);
     }
@@ -301,7 +302,7 @@ void HowToCPR()
 
     // Can also do automated CPR using a scaled force value
     cprA.GetForce().Invalidate();
-    cprA.GetForceScale().SetValue(compressionForceScale);
+    cprA.GetDepth().SetValue(compressionDepth_cm, LengthUnit::cm);
     pe->ProcessAction(cprA);
     sce.AddAction(cprA);
 
