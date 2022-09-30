@@ -153,6 +153,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
                 strField = strField.replace("MeanArterialPressureBaseline", "MAP")
                 strField = strField.replace("PulsePressureBaseline", "PP")
                 strField = strField.replace("RespirationRateBaseline", "RR")
+                strField = strField + "(" + str(len(maleValues + femaleValues)) + ")"
                 plotData.update({strField: maleValues + femaleValues})
                 print("Patients evaluated: " + str(len(maleValues + femaleValues)))
 
