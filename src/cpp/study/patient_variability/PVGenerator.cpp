@@ -81,6 +81,7 @@ namespace pulse::study::patient_variability
   void PVGenerator::GenerateData(eSetType t, PatientStateListData& pList)
   {
     m_TotalRuns = 0;
+    m_Duplicates = 0;
     m_TotalPatients = 0;
     m_NumPatientsFailedToSetup = 0;
     m_SetType = t;
@@ -118,6 +119,10 @@ namespace pulse::study::patient_variability
       standardFemale.GetRespirationRateBaseline().SetValue(12, FrequencyUnit::Per_min);
       GenerateSlicedPatientList(pList, standardFemale);
     }
+
+    Info("Removed " + std::to_string(m_Duplicates) + " duplicates");
+    Info("Created " + std::to_string(m_TotalPatients) + " patients");
+    Info("Created " + std::to_string(m_TotalRuns) + " total runs");
   }
 
   void PVGenerator::GenerateSlicedPatientList(PatientStateListData& pList, const SEPatient& basePatient)
@@ -129,7 +134,6 @@ namespace pulse::study::patient_variability
       patient.Copy(basePatient);
       patient.GetAge().SetValue(age_yr, TimeUnit::yr);
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-      m_TotalPatients++;
     }
 
     Info("Generating Height slice data set for " + basePatient.GetName());
@@ -141,7 +145,6 @@ namespace pulse::study::patient_variability
       patient.Copy(basePatient);
       patient.GetHeight().SetValue(height_cm, LengthUnit::cm);
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-      m_TotalPatients++;
     }
 
     Info("Generating BMI slice data set for " + basePatient.GetName());
@@ -151,7 +154,6 @@ namespace pulse::study::patient_variability
       patient.Copy(basePatient);
       patient.GetBodyMassIndex().SetValue(bmi);
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-      m_TotalPatients++;
     }
 
     Info("Generating BFF slice data set for " + basePatient.GetName());
@@ -163,7 +165,6 @@ namespace pulse::study::patient_variability
       patient.Copy(basePatient);
       patient.GetBodyFatFraction().SetValue(bff);
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-      m_TotalPatients++;
     }
 
     Info("Generating HR slice data set for " + basePatient.GetName());
@@ -173,7 +174,6 @@ namespace pulse::study::patient_variability
       patient.Copy(basePatient);
       patient.GetHeartRateBaseline().SetValue(hr_bpm, FrequencyUnit::Per_min);
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-      m_TotalPatients++;
     }
 
     Info("Generating MAP/PP combo slice data set for " + basePatient.GetName());
@@ -196,7 +196,6 @@ namespace pulse::study::patient_variability
         if (pulse::human_adult_whole_body::SetupPatient(patient))
         {
           CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-          m_TotalPatients++;
           //  std::cout << "MAP: " << map << " PP: " << pp_mmHg << " -> " << patient.GetSystolicArterialPressureBaseline() << "/" << patient.GetDiastolicArterialPressureBaseline() << std::endl;
         }
       }
@@ -216,7 +215,6 @@ namespace pulse::study::patient_variability
       //else
       //  std::cout << "INVALID" << std::endl;
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-      m_TotalPatients++;
     }
 
     for (size_t pp_mmHg = minPulsePressure_mmHg; pp_mmHg <= maxPulsePressure_mmHg; pp_mmHg++)
@@ -234,7 +232,6 @@ namespace pulse::study::patient_variability
       //else
       //  std::cout << "INVALID" << std::endl;
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-      m_TotalPatients++;
     }
     */
 
@@ -245,7 +242,6 @@ namespace pulse::study::patient_variability
       patient.Copy(basePatient);
       patient.GetRespirationRateBaseline().SetValue(rr, FrequencyUnit::Per_min);
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-      m_TotalPatients++;
     }
   }
 
@@ -277,16 +273,22 @@ namespace pulse::study::patient_variability
         patient.GetRespirationRateBaseline().SetValue(RR_bpm.Values()[idxs[7]], FrequencyUnit::Per_min);
 
         CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-        m_TotalPatients++;
       }
     }
-
-    Info("Created " + std::to_string(m_TotalPatients) + " patients");
-    Info("Created " + std::to_string(m_TotalRuns) + " total runs");
   }
 
   void PVGenerator::CreatePatient(PatientStateListData& pList, SEPatient& patient, const std::string& full_dir_path)
   {
+    std::string pstr = ToString(patient);
+    if (m_PatientSet.find(pstr) != m_PatientSet.end())
+    {
+      Info("Ignoring duplicate: " + pstr);
+      m_Duplicates++;
+      return;
+    }
+    m_PatientSet.insert(pstr);
+
+    m_TotalPatients++;
     switch (GenerateMode)
     {
     case eMode::Validation:

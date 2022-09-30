@@ -190,6 +190,8 @@ namespace pulse::study::patient_variability
     unsigned int m_TotalPatients=0; // The actual number of patients for this data set, (NOT the number of runs, i.e. hemorrhage options can create more runs for each patient)
     unsigned int m_NumPatientsFailedToSetup = 0;
     unsigned int m_TotalRuns=0; // This is the actual number of runs to perform
+    unsigned int m_Duplicates = 0;
+    std::set<std::string> m_PatientSet;
 
 
     void GenerateSlicedPatientList(PatientStateListData& pList, const SEPatient& basePatient);
