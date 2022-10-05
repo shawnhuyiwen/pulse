@@ -336,7 +336,7 @@ const std::vector<PathType*>* SECircuit<CIRCUIT_TYPES>::GetTargetPaths(const Nod
   auto itr = m_TargetPathMap.find(&node);
   if (itr == m_TargetPathMap.end())
   {
-    Error("Circuit does not have path information for node",node.GetName());
+    Error("Circuit does not have path information for node : " + node.GetName());
     return nullptr;
   }
   return itr->second;
@@ -360,7 +360,7 @@ const std::vector<PathType*>* SECircuit<CIRCUIT_TYPES>::GetSourcePaths(const Nod
   auto itr = m_SourcePathMap.find(&node);
   if (itr == m_SourcePathMap.end())
   {
-    Error("Circuit does not have path information for node", node.GetName());
+    Error("Circuit does not have path information for node : " + node.GetName());
     return nullptr;
   }
   return itr->second;
@@ -384,7 +384,7 @@ const std::vector<PathType*>* SECircuit<CIRCUIT_TYPES>::GetConnectedPaths(const 
   auto itr = m_ConnectedPathMap.find(&node);
   if (itr == m_ConnectedPathMap.end())
   {
-    Error("Circuit does not have path information for node", node.GetName());
+    Error("Circuit does not have path information for node : " + node.GetName());
     return nullptr;
   }
   return itr->second;

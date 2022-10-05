@@ -189,7 +189,7 @@ namespace pulse { namespace human_adult_whole_body
     fAerosolGraph.close();
     std::stringstream ss;
     ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
-    pc.GetLogger()->Info(ss.str(), "RespiratoryCircuitAndTransportTest");
+    pc.GetLogger()->Info(ss.str());
   }
 
   void EngineTest::RespiratoryCircuitAndTransportTest(const std::string & sTestDirectory)
@@ -374,7 +374,7 @@ namespace pulse { namespace human_adult_whole_body
     }
     trk1.WriteTrackToFile(std::string(sTestDirectory + "/RespiratoryDriverOutput.csv").c_str());
     std::stringstream ss;
-    ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
-    pc.GetLogger()->Info(ss.str(), "RespiratoryDriverTest");
+    ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run RespiratoryDriverTest";
+    pc.GetLogger()->Info(ss.str());
   }
 END_NAMESPACE_EX

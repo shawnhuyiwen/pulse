@@ -5309,6 +5309,6 @@ void CommonDataModelTest::TestCircuitSerialization(const std::string& fileName)
   if (!PBCircuit::LoadCircuitManagerFile(*m_Circuits,fileName))
   {
     m_Circuits->Clear();
-    m_Circuits->Error("Unable to load file " + fileName,"TestCircuitSerialization");
+    m_Circuits->Error("Unable to load file " + fileName);
   }
 }

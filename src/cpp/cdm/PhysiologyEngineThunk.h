@@ -54,11 +54,11 @@ public:
   double* PullDataPtr();
   void PullData(std::vector<double>& data);
 
-  virtual void ForwardDebug(const std::string& msg, const std::string& origin);
-  virtual void ForwardInfo(const std::string& msg, const std::string& origin);
-  virtual void ForwardWarning(const std::string& msg, const std::string& origin);
-  virtual void ForwardError(const std::string& msg, const std::string& origin);
-  virtual void ForwardFatal(const std::string& msg, const std::string& origin);
+  virtual void ForwardDebug(const std::string& msg);
+  virtual void ForwardInfo(const std::string& msg);
+  virtual void ForwardWarning(const std::string& msg);
+  virtual void ForwardError(const std::string& msg);
+  virtual void ForwardFatal(const std::string& msg);
 
   virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
 

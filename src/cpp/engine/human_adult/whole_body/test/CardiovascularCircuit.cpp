@@ -630,8 +630,8 @@ namespace pulse { namespace human_adult_whole_body
     circuitFile.close();
     cvGraphFile.close();
 
-    ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
-    pc.GetLogger()->Info(ss, "CardiovascularCircuitAndTransportTest");
+    ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run CardiovascularCircuitAndTransportTest";
+    pc.GetLogger()->Info(ss);
   }
 
   void EngineTest::SinusoidHeartDriver(double time_s, double heartFreq_Per_s, double& lHeartElastance, double& rHeartElastance)

@@ -26,9 +26,9 @@ namespace pulse
   void PBPhysiology::Serialize(const PULSE_BIND::BloodChemistryData& src, BloodChemistryModel& dst)
   {
     ::PBPhysiology::Serialize(src.common(), dst);
-    if (!src.has_arterialoxygenaverage_mmhg()) { dst.Fatal("Missing ArterialOxygen_mmHg", "BloodChemistry::Serialize"); }
+    if (!src.has_arterialoxygenaverage_mmhg()) { dst.Fatal("Missing ArterialOxygen_mmHg"); }
     PBProperty::Load(src.arterialoxygenaverage_mmhg(), *dst.m_ArterialOxygen_mmHg);
-    if (!src.has_arterialcarbondioxideaverage_mmhg()) { dst.Fatal("Missing ArterialCarbonDioxide_mmHg", "BloodChemistry::Serialize"); }
+    if (!src.has_arterialcarbondioxideaverage_mmhg()) { dst.Fatal("Missing ArterialCarbonDioxide_mmHg"); }
     PBProperty::Load(src.arterialcarbondioxideaverage_mmhg(), *dst.m_ArterialCarbonDioxide_mmHg);
   }
   PULSE_BIND::BloodChemistryData* PBPhysiology::Unload(const BloodChemistryModel& src)

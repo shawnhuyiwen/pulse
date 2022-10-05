@@ -397,44 +397,44 @@ void PhysiologyEngineThunk::SetupDefaultDataRequests()
   m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
 }
 
-void PhysiologyEngineThunk::ForwardDebug(const std::string& msg, const std::string& origin)
+void PhysiologyEngineThunk::ForwardDebug(const std::string& msg)
 {
   if (m_ForwardLogs)
-    m_ForwardLogs->ForwardDebug(msg, origin);
+    m_ForwardLogs->ForwardDebug(msg);
   if (m_keepLogMsgs)
-    m_logMsgs.debug_msgs.push_back(msg + origin);
+    m_logMsgs.debug_msgs.push_back(msg);
 }
 
-void PhysiologyEngineThunk::ForwardInfo(const std::string& msg, const std::string& origin)
+void PhysiologyEngineThunk::ForwardInfo(const std::string& msg)
 {
   if (m_ForwardLogs)
-    m_ForwardLogs->ForwardInfo(msg, origin);
+    m_ForwardLogs->ForwardInfo(msg);
   if (m_keepLogMsgs)
-    m_logMsgs.info_msgs.push_back(msg + origin);
+    m_logMsgs.info_msgs.push_back(msg);
 }
 
-void PhysiologyEngineThunk::ForwardWarning(const std::string& msg, const std::string& origin)
+void PhysiologyEngineThunk::ForwardWarning(const std::string& msg)
 {
   if (m_ForwardLogs)
-    m_ForwardLogs->ForwardWarning(msg, origin);
+    m_ForwardLogs->ForwardWarning(msg);
   if (m_keepLogMsgs)
-    m_logMsgs.warning_msgs.push_back(msg + origin);
+    m_logMsgs.warning_msgs.push_back(msg);
 }
 
-void PhysiologyEngineThunk::ForwardError(const std::string& msg, const std::string& origin)
+void PhysiologyEngineThunk::ForwardError(const std::string& msg)
 {
   if (m_ForwardLogs)
-    m_ForwardLogs->ForwardError(msg, origin);
+    m_ForwardLogs->ForwardError(msg);
   if (m_keepLogMsgs)
-    m_logMsgs.error_msgs.push_back(msg + origin);
+    m_logMsgs.error_msgs.push_back(msg);
 }
 
-void PhysiologyEngineThunk::ForwardFatal(const std::string& msg, const std::string& origin)
+void PhysiologyEngineThunk::ForwardFatal(const std::string& msg)
 {
   if (m_ForwardLogs)
-    m_ForwardLogs->ForwardFatal(msg, origin);
+    m_ForwardLogs->ForwardFatal(msg);
   if (m_keepLogMsgs)
-    m_logMsgs.fatal_msgs.push_back(msg + origin);
+    m_logMsgs.fatal_msgs.push_back(msg);
 }
 
 void PhysiologyEngineThunk::HandleEvent(eEvent type, bool active, const SEScalarTime* time)

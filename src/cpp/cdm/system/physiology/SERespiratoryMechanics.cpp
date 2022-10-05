@@ -110,7 +110,7 @@ void SERespiratoryMechanics::ProcessConfiguration(SERespiratoryMechanicsConfigur
     // Update the action with the file contents
     std::string cfg_file = config.GetSettingsFile();
     if (!config.GetSettings().SerializeFromFile(cfg_file))
-      Error("Unable to load configuration file", "SERespiratoryMechanics::ProcessConfiguration");
+      Error("Unable to load configuration file");
     Merge(config.GetSettings());
   }
 }

@@ -1619,7 +1619,7 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     const SESubstance* sub = subMgr.GetSubstance(any.substancebolus().substance());
     if (sub == nullptr)
     {
-      subMgr.Error("Unknown substance " + any.substancebolus().substance(), "PBPatientAction::Load");
+      subMgr.Error("Unknown substance " + any.substancebolus().substance());
       return nullptr;
     }
     SESubstanceBolus* a = new SESubstanceBolus(*sub);
@@ -1631,7 +1631,7 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     const SESubstance* sub = subMgr.GetSubstance(any.substanceinfusion().substance());
     if (sub == nullptr)
     {
-      subMgr.Error("Unknown substance " + any.substanceinfusion().substance(), "PBPatientAction::Load");
+      subMgr.Error("Unknown substance " + any.substanceinfusion().substance());
       return nullptr;
     }
     SESubstanceInfusion* a = new SESubstanceInfusion(*sub);
@@ -1643,7 +1643,7 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     const SESubstanceCompound* subC = subMgr.GetCompound(any.substancecompoundinfusion().substancecompound());
     if (subC == nullptr)
     {
-      subMgr.Error("Unknown substance compound " + any.substancecompoundinfusion().substancecompound(), "PBPatientAction::Load");
+      subMgr.Error("Unknown substance compound " + any.substancecompoundinfusion().substancecompound());
       return nullptr;
     }
     SESubstanceCompoundInfusion* a = new SESubstanceCompoundInfusion(*subC);

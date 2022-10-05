@@ -259,6 +259,6 @@ void CommonDataModelTest::TestCompartmentSerialization(SECompartmentManager& mgr
   if(!PBCompartment::LoadCompartmentManagerFile(mgr,filename, m_Circuits))
   {
     m_Circuits->Clear();
-    m_Circuits->Error("Unable to load file " + filename, "TestCompartmentSerialization");
+    m_Circuits->Error("Unable to load file " + filename);
   }
 }

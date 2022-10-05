@@ -330,11 +330,11 @@ namespace pulse
     FatalListner(SEEventManager& mgr, SEScalarTime& ct) : m_Events(mgr), m_CurrentTime(ct) {};
     ~FatalListner() = default;
 
-    virtual void ForwardDebug(const std::string& /*msg*/, const std::string& /*origin*/) override { }
-    virtual void ForwardInfo(const std::string& /*msg*/, const std::string& /*origin*/) override  { }
-    virtual void ForwardWarning(const std::string& /*msg*/, const std::string& /*origin*/) override  { }
-    virtual void ForwardError(const std::string& /*msg*/, const std::string& /*origin*/) override  { }
-    virtual void ForwardFatal(const std::string& /*msg*/, const std::string& /*origin*/) override
+    virtual void ForwardDebug(const std::string& /*msg*/) override { }
+    virtual void ForwardInfo(const std::string& /*msg*/) override  { }
+    virtual void ForwardWarning(const std::string& /*msg*/) override  { }
+    virtual void ForwardError(const std::string& /*msg*/) override  { }
+    virtual void ForwardFatal(const std::string& /*msg*/) override
     {
       m_Events.SetEvent(eEvent::IrreversibleState, true, m_CurrentTime);
       throw IrreversibleStateException(); // Caught in Common::AdvanceModelTime, so we do not do anything more in the engine

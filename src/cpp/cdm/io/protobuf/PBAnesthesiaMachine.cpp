@@ -109,7 +109,7 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineChamberData
     dst.m_Substance = subMgr.GetSubstance(src.substance());
     if (dst.m_Substance == nullptr)
     {
-      dst.Error("Do not have substance : " + src.substance(), "SEAnesthesiaMachineChamber::Serialize");
+      dst.Error("Do not have substance : " + src.substance());
     }
   }
 }

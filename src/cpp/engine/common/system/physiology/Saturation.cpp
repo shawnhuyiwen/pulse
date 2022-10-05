@@ -356,7 +356,7 @@ namespace pulse
     // Check to make sure hemoglobin was conserved
     newTotalHb_mM = HbUnbound_mM + HbO2_mM + HbO2CO2_mM + HbCO2_mM + targetBoundCO_mM;
     if (std::abs(newTotalHb_mM - totalHb_mM) > tolerance)
-      Warning("Hemoglobin not conserved during carbon monoxide species distribution calculation for " + cmpt.GetName(), "SaturationCalculator::CalculateCarbonMonoxideSpeciesDistribution");
+      Warning("Hemoglobin not conserved during carbon monoxide species distribution calculation for " + cmpt.GetName());
 
     // We can now set and balance for CO.
     m_subCOQ->GetPartialPressure().SetValue(CO_pp_mmHg, PressureUnit::mmHg);
@@ -473,7 +473,7 @@ namespace pulse
         ss << "CalculateCarbonMonoxideSpeciesDistribution failed to conserve hemoglobin for " + cmpt.GetName() + "\n";
         ss << "Difference = " << diffTotal;
         if (std::abs(diffTotal) > 1.0e-8)
-          Warning(ss.str(), "SaturationCalculator::CalculateBloodGasDistribution");
+          Warning(ss.str());
       }
     }
 
@@ -574,7 +574,7 @@ namespace pulse
       ss << ". f2 = " << solver.fvec(2);
       ss << ". f3 = " << solver.fvec(3);
       ss << ". compartment = " << m_cmpt->GetName();
-      Fatal(ss, "SaturationCalculator::CalculateBloodGasDistribution");
+      Fatal(ss);
       break;
     }
 
@@ -711,7 +711,7 @@ namespace pulse
 
       // This should absolutely never happen, but the error is here just in case
       if (Hb_mM < 0. || HbCO2_mM < 0. || HbO2_mM < 0. || HbO2CO2_mM < 0.)
-        Fatal("Negative hemoglobin species detected. Math doesn't work. The world is broken. Stockpile rations.", "SaturationCalculator::CalculateBloodGasDistribution");
+        Fatal("Negative hemoglobin species detected. Math doesn't work. The world is broken. Stockpile rations.");
 
       // Compute the saturation
       double resultantO2Sat = 0.0;
@@ -742,7 +742,7 @@ namespace pulse
 
       // This should absolutely never happen, but the error is here just in case
       if (resultantO2Sat > 1.0 || resultantO2Sat < 0.0 || resultantCO2Sat > 1.0 || resultantCO2Sat < 0.0)
-        Fatal("Resultant saturation out of range. High probability of cows raining from the sky.", "SaturationCalculator::CalculateBloodGasDistribution");
+        Fatal("Resultant saturation out of range. High probability of cows raining from the sky.");
 
       m_subO2Q->GetSaturation().SetValue(resultantO2Sat);
       m_subCO2Q->GetSaturation().SetValue(resultantCO2Sat);
@@ -760,7 +760,7 @@ namespace pulse
     if (!DistributeHemoglobinBySaturation())
     {
       ss << " Failed to update hemoglobin saturation.";
-      Fatal(ss, "SaturationCalculator::CalculateBloodGasDistribution");
+      Fatal(ss);
     }
 
     resultantHb_mM = m_subHbQ->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
@@ -814,7 +814,7 @@ namespace pulse
       {
         resultantHb_mM = 0;
         ss << "Diffused Hemoglobin more than total available for "+cmpt.GetName();
-        Warning(ss, "SaturationCalculator::CalculateBloodGasDistribution");
+        Warning(ss);
       }
     }
 
@@ -873,7 +873,7 @@ namespace pulse
 
         ss << "Attempt to correct blood gas substance error resulted in negative hemoglobin molarity for " + cmpt.GetName();
         ss << " Setting it to zero.";
-        Warning(ss, "SaturationCalculator::CalculateBloodGasDistribution");
+        Warning(ss);
       }
     }
 
@@ -894,7 +894,7 @@ namespace pulse
       {
         ss << "Failure to conserve CO2 amount (Saturation:CalculateBloodGasDistribution);" << " for: " << m_cmpt->GetName() << "; error: " << totalCO2RelativeError;
         ss << ". Rectifying it by incrementing that amount dissolved.";
-        Warning(ss, "SaturationCalculator::CalculateBloodGasDistribution");
+        Warning(ss);
       }
     }
     if (std::abs(totalO2RelativeError) > tolerance && InputAmountTotalO2_mM > approxZero)
@@ -904,7 +904,7 @@ namespace pulse
       {
         ss << "Failure to conserve O2 amount (Saturation:CalculateBloodGasDistribution);" << " for: " << m_cmpt->GetName() << "; error: " << totalO2RelativeError;
         ss << ". Rectifying it by incrementing that amount dissolved.";
-        Warning(ss, "SaturationCalculator::CalculateBloodGasDistribution");
+        Warning(ss);
       }
     }
     if (std::abs(totalHbRelativeError) > tolerance && InputAmountTotalHb_mM > approxZero)
@@ -914,7 +914,7 @@ namespace pulse
       {
         ss << "Failure to conserve Hb amount (Saturation:CalculateBloodGasDistribution);" << " for: " << m_cmpt->GetName() << "; error: " << totalHbRelativeError;
         ss << ". Rectifying it by incrementing that amount unbound.";
-        Warning(ss, "SaturationCalculator::CalculateBloodGasDistribution");
+        Warning(ss);
       }
     }
 
@@ -1102,22 +1102,22 @@ namespace pulse
 
     if (O2_sat > 1.0)
     {
-      Warning("O2 Saturation greater than 1.0. Bounded to 1.0", "SaturationCalculator::DistributeHemoglobinBySaturation");
+      Warning("O2 Saturation greater than 1.0. Bounded to 1.0");
       O2_sat = 1.0;
     }
     if (O2_sat < 0.0)
     {
-      Warning("O2 Saturation less than 0.0. Bounded to 0.0", "SaturationCalculator::DistributeHemoglobinBySaturation");
+      Warning("O2 Saturation less than 0.0. Bounded to 0.0");
       O2_sat = 0.0;
     }
     if (CO2_sat > 1.0)
     {
-      Warning("CO2 Saturation greater than 1.0. Bounded to 1.0", "SaturationCalculator::DistributeHemoglobinBySaturation");
+      Warning("CO2 Saturation greater than 1.0. Bounded to 1.0");
       CO2_sat = 1.0;
     }
     if (O2_sat < 0.0)
     {
-      Warning("CO2 Saturation greater than 0.0. Bounded to 0.0", "SaturationCalculator::DistributeHemoglobinBySaturation");
+      Warning("CO2 Saturation greater than 0.0. Bounded to 0.0");
       CO2_sat = 0.0;
     }
 
@@ -1159,7 +1159,7 @@ namespace pulse
     if (std::abs(HbCO2_mM) <= ZERO_APPROX) HbCO2_mM = 0;
     if (std::abs(Hb_mM) <= ZERO_APPROX) Hb_mM = 0;
     if (std::abs(Hb_total_mM - Hb_mM - HbO2_mM - HbCO2_mM - HbO2CO2_mM) > ZERO_APPROX)
-      Fatal("Hemoglobin not conserved. Should never hit this error.", "SaturationCalculator::DistributeHemoglobinBySaturation");
+      Fatal("Hemoglobin not conserved. Should never hit this error.");
 
     if (HbO2CO2_mM < 0.0 ||
       HbO2_mM < 0.0 ||
