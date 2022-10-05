@@ -28,11 +28,11 @@ public class PulseScenarioExec extends SEScenarioExec
       super();
       listen(false);
     }    
-    @Override public void handleDebug(String msg) { Log.debug(msg, origin); }
-    @Override public void handleInfo(String msg)  { Log.info(msg, origin); }
-    @Override public void handleWarn(String msg)  { Log.warn(msg, origin); }
-    @Override public void handleError(String msg) { Log.error(msg, origin); }
-    @Override public void handleFatal(String msg) { Log.fatal(msg, origin); }
+    @Override public void handleDebug(String msg) { Log.debug(origin+msg); }
+    @Override public void handleInfo(String msg)  { Log.info(origin+msg); }
+    @Override public void handleWarn(String msg)  { Log.warn(origin+msg); }
+    @Override public void handleError(String msg) { Log.error(origin+msg); }
+    @Override public void handleFatal(String msg) { Log.fatal(origin+msg); }
   }
   
   protected MyListener logListener = new MyListener();
@@ -89,7 +89,7 @@ public class PulseScenarioExec extends SEScenarioExec
   public eModelType getModelType() { return modelType; }
   public void setModelType(eModelType mt) { modelType=mt; }
   
-  public void setLogPrepend(String lp) { logListener.origin = lp; }
+  public void setLogPrepend(String lp) { logListener.origin = lp.isEmpty() ? "" : lp+" "; }
   
   public boolean execute()
   {
@@ -101,29 +101,29 @@ public class PulseScenarioExec extends SEScenarioExec
   // LISTENER/HANDLERS //
   ///////////////////////
   
-  protected void handleDebug(String msg, String origin)
+  protected void handleDebug(String msg)
   {
     if(this.logListener!=null)
-    this.logListener.debug(msg, origin);
+    this.logListener.debug(msg);
   }
-  protected void handleInfo(String msg, String origin)
+  protected void handleInfo(String msg)
   {
     if(this.logListener!=null)
-    this.logListener.info(msg, origin);
+    this.logListener.info(msg);
   }
-  protected void handleWarning(String msg, String origin)
+  protected void handleWarning(String msg)
   {
     if(this.logListener!=null)
-    this.logListener.warn(msg, origin);
+    this.logListener.warn(msg);
   }
-  protected void handleError(String msg, String origin)
+  protected void handleError(String msg)
   {
     if(this.logListener!=null)
-    this.logListener.error(msg, origin);
+    this.logListener.error(msg);
   }
-  protected void handleFatal(String msg, String origin)
+  protected void handleFatal(String msg)
   {
     if(this.logListener!=null)
-    this.logListener.fatal(msg, origin);
+    this.logListener.fatal(msg);
   }
 }

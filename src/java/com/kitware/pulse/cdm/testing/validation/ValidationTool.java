@@ -562,7 +562,8 @@ public abstract class ValidationTool
           }
           catch(Exception ex)
           {
-            Log.error("Error reading row",ex);
+            Log.error("Error reading row");
+            Log.error(ex.getMessage());
             ValidationRow vRow = new ValidationRow();
             vRow.header = sheetName;
             vRow.error=danger+"Sheet has errors"+endSpan;
@@ -645,12 +646,14 @@ public abstract class ValidationTool
       }
       catch(Exception ex)
       {
-        Log.error("Unable to write "+TABLE_TYPE+" HTML validation report",ex);
+        Log.error("Unable to write "+TABLE_TYPE+" HTML validation report");
+        Log.error(ex.getMessage());
       }
     }
     catch(Exception ex)
     {
-      Log.error("Error processing spreadsheet "+fileName,ex);
+      Log.error("Error processing spreadsheet "+fileName);
+      Log.error(ex.getMessage());
     }
     // Just for fun, I am going to create a single md file with ALL the tables in it
     if(RUN_TYPE == RunType.DOC)
@@ -684,7 +687,8 @@ public abstract class ValidationTool
       }
       catch (Exception ex)
       {
-        Log.error("Unable to create single validation table file.",ex);
+        Log.error("Unable to create single validation table file.");
+        Log.error(ex.getMessage());
       }
     }
   }
@@ -1390,7 +1394,8 @@ public abstract class ValidationTool
     }
     catch(Exception ex)
     {
-      Log.error("Error writing validation table for "+tableName,ex);
+      Log.error("Error writing validation table for "+tableName);
+      Log.error(ex.getMessage());
       writer.close();
     }
   }
@@ -1451,7 +1456,8 @@ public abstract class ValidationTool
     }
     catch(Exception ex)
     {
-      Log.error("Error writing validation table for "+sheetName,ex);
+      Log.error("Error writing validation table for "+sheetName);
+      Log.error(ex.getMessage());
       writer.close();
     }
   }
@@ -1468,7 +1474,8 @@ public abstract class ValidationTool
     }
     catch(Exception ex)
     {
-      Log.error("Could not pad "+s+" with a max of "+max,ex);
+      Log.error("Could not pad "+s+" with a max of "+max);
+      Log.error(ex.getMessage());
       return "";
     }
   }
@@ -1497,7 +1504,8 @@ public abstract class ValidationTool
     }
     catch(Exception ex)
     {
-      Log.error("Cannot map sheet "+sheetName+" to a CDM class.",ex);
+      Log.error("Cannot map sheet "+sheetName+" to a CDM class.");
+      Log.error(ex.getMessage());
       return;
     }
     Set<String> cdm = new HashSet<>();

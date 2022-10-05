@@ -74,7 +74,8 @@ public class Rebase
     }
     catch(Exception ex)
     {
-      Log.error("Could not create to Directory : "+toDir,ex);
+      Log.error("Could not create to Directory : "+toDir);
+      Log.error(ex.getMessage());
       return;
     }
 
@@ -150,7 +151,8 @@ public class Rebase
         } 
         catch (IOException ex)
         {
-          Log.error("Could not create directory : "+rPath, ex);
+          Log.error("Could not create directory : "+rPath);
+          Log.error(ex.getMessage());
         }
         File oldZip = new File(newFile);
         if(oldZip.exists())

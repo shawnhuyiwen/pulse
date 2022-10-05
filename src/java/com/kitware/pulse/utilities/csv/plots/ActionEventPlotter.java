@@ -180,7 +180,8 @@ public class ActionEventPlotter implements Plotter
     }
     catch (Exception e)
     {
-      Log.error("Something went wrong parsing the log",e);
+      Log.error("Something went wrong parsing the log");
+      Log.error(e.getMessage());
       return null;
     }
     

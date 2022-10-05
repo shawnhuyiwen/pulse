@@ -314,7 +314,7 @@ public class MutliResultTool
     }
     catch(Exception ex)
     {
-      Log.error(ex);
+      Log.error(ex.getMessage());
     }
   }
   
@@ -451,7 +451,8 @@ public class MutliResultTool
       }
       catch(Exception ex)
       {
-        Log.error("Problem writing summary txt file",ex);
+        Log.error("Problem writing summary txt file");
+        Log.error(ex.getMessage());
       }
         plotter.createGraph(toDir+"plots", Color.white, key+"Mean", xAxisLabel, key, mean);
         plotter.createGraph(toDir+"plots", Color.white, key+"MeanError", xAxisLabel, key, meanError);
@@ -571,7 +572,8 @@ public class MutliResultTool
     }
     catch(Exception ex)
     {
-      Log.error("Error writing validation table for "+resultsName,ex);
+      Log.error("Error writing validation table for "+resultsName);
+      Log.error(ex.getMessage());
       writer.close();
     }
   }
@@ -607,7 +609,8 @@ public class MutliResultTool
     }
     catch(Exception ex)
     {
-      Log.error("Could not pad "+s+" with a max of "+max,ex);
+      Log.error("Could not pad "+s+" with a max of "+max);
+      Log.error(ex.getMessage());
       return "";
     }
   }

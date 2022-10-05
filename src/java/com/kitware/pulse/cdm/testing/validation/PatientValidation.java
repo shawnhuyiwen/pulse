@@ -83,7 +83,8 @@ public class PatientValidation extends ValidationTool
     }
     catch(Exception ex)
     {
-      Log.error("Error writing validation table for "+sheetName,ex);
+      Log.error("Error writing validation table for "+sheetName);
+      Log.error(ex.getMessage());
       writer.close();
     }
   }

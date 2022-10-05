@@ -124,7 +124,8 @@ public class CSVComparison extends SETestReport
     }
     catch(Exception ex)
     {
-      Log.warn("Having a hard time deleting the old report directory",ex);
+      Log.warn("Having a hard time deleting the old report directory");
+      Log.warn(ex.getMessage());
     }
     
     CSVContents expectedResults;
@@ -136,7 +137,8 @@ public class CSVComparison extends SETestReport
     }
     catch(Exception ex)
     {
-      Log.error("Unable to read input files",ex);
+      Log.error("Unable to read input files");
+      Log.error(ex.getMessage());
       return null;
     }
     
@@ -240,9 +242,9 @@ public class CSVComparison extends SETestReport
           if(reportDifferences)
           {
             if(!firstColumnIsTime)
-              Log.error(header+" does not match expected "+expected+" != computed "+computed+" ["+optsErr+"%]","");
+              Log.error(header+" does not match expected "+expected+" != computed "+computed+" ["+optsErr+"%]");
             else
-              Log.error(header+" @Time "+expectedData.get(0)+": expected "+expected+" != computed "+computed+" ["+optsErr+"%]","");
+              Log.error(header+" @Time "+expectedData.get(0)+": expected "+expected+" != computed "+computed+" ["+optsErr+"%]");
           }
           failures.add(header);
         }

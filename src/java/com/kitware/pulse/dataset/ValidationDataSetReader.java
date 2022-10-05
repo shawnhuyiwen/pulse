@@ -71,7 +71,8 @@ public class ValidationDataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XSSF : "+xlsFile,ex);
+      Log.error("Error reading XSSF : "+xlsFile);
+      Log.error(ex.getMessage());
       return;
     }
     Log.info("Data Generation Complete");
@@ -141,7 +142,8 @@ public class ValidationDataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XLS",ex);
+      Log.error("Error reading XLS");
+      Log.error(ex.getMessage());
       return false;
     }   
     return true;

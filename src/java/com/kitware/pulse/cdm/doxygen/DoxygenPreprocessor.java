@@ -53,7 +53,8 @@ public class DoxygenPreprocessor
     }
     catch (Exception ex)
     {
-      Log.error("Unable to create single validation table file.",ex);
+      Log.error("Unable to create single validation table file.");
+      Log.error(ex.getMessage());
     }
   }
 
@@ -95,7 +96,8 @@ public class DoxygenPreprocessor
         }
         catch(Exception ex)
         {
-          Log.error("Could not find "+f.getAbsolutePath()+" to insert into this page",ex);
+          Log.error("Could not find "+f.getAbsolutePath()+" to insert into this page");
+          Log.error(ex.getMessage());
           writer.println("<img src=\"./images/MissingTable.jpg\"><center><i>Could not find "+f.getName()+"</i></center><br>");
         }
       }

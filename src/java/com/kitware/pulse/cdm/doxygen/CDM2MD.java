@@ -251,7 +251,8 @@ public class CDM2MD
     } 
     catch (Exception e)
     {
-      Log.error("Could not create directory .markdown",e);
+      Log.error("Could not create directory .markdown");
+      Log.error(e.getMessage());
     }
   }
 
@@ -295,7 +296,8 @@ public class CDM2MD
         } 
         catch (Exception ex)
         {
-          Log.info("Enum is not happy",ex);
+          Log.info("Enum is not happy");
+          Log.info(ex.getMessage());
         }
       }
     }
@@ -439,7 +441,8 @@ public class CDM2MD
     }
     catch(Exception ex)
     {
-      Log.error("Error writing cdm table for "+tableName,ex);
+      Log.error("Error writing cdm table for "+tableName);
+      Log.error(ex.getMessage());
     }
     writer.print("\n<hr>\n");
   }
@@ -455,7 +458,8 @@ public class CDM2MD
     }
     catch(Exception ex)
     {
-      Log.error("Could not pad "+s+" with a max of "+max,ex);
+      Log.error("Could not pad "+s+" with a max of "+max);
+      Log.error(ex.getMessage());
       return "";
     }
   }

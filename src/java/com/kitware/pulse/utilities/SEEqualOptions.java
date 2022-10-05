@@ -584,7 +584,7 @@ public class SEEqualOptions extends DoubleUtils
       }
       catch (Exception ex)
       {
-        Log.error(ex);
+        Log.error(ex.getMessage());
         return false;
       }
       
@@ -607,7 +607,7 @@ public class SEEqualOptions extends DoubleUtils
         }
         catch (Exception ex)
         {
-          Log.error(ex);
+          Log.error(ex.getMessage());
           return false;
         }
       }
@@ -642,7 +642,7 @@ public class SEEqualOptions extends DoubleUtils
       }
       catch (Exception ex)
       {
-        Log.error(ex);
+        Log.error(ex.getMessage());
         return false;
       }
       
@@ -659,7 +659,7 @@ public class SEEqualOptions extends DoubleUtils
         }
         catch (Exception ex)
         {
-          Log.error(ex);
+          Log.error(ex.getMessage());
           return false;
         }
         
@@ -673,7 +673,7 @@ public class SEEqualOptions extends DoubleUtils
           }
           catch (Exception ex)
           {
-            Log.error(ex);
+            Log.error(ex.getMessage());
             return false;
           }
           
@@ -692,7 +692,7 @@ public class SEEqualOptions extends DoubleUtils
             }
             catch (Exception ex)
             {
-              Log.error(ex);
+              Log.error(ex.getMessage());
               return false;
             }
           }

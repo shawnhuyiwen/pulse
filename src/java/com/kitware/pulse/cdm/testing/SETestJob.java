@@ -63,13 +63,13 @@ public class SETestJob extends LogListener
   }
 
   @Override
-  public void handleDebug(String msg) { Log.debug("["+name+"] "+msg,""); }
+  public void handleDebug(String msg) { Log.debug("["+name+"] "+msg); }
   @Override
-  public void handleInfo(String msg)  { Log.info("["+name+"] "+msg,""); }
+  public void handleInfo(String msg)  { Log.info("["+name+"] "+msg); }
   @Override
-  public void handleWarn(String msg)  { Log.warn("["+name+"] "+msg,""); }
+  public void handleWarn(String msg)  { Log.warn("["+name+"] "+msg); }
   @Override
-  public void handleError(String msg) { Log.error("["+name+"] "+msg,""); }
+  public void handleError(String msg) { Log.error("["+name+"] "+msg); }
   @Override
-  public void handleFatal(String msg) { Log.fatal("["+name+"] "+msg,""); }
+  public void handleFatal(String msg) { Log.fatal("["+name+"] "+msg); }
 }

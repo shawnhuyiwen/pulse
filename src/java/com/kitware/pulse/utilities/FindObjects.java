@@ -95,7 +95,7 @@ public class FindObjects
       }
       catch(Exception ex)
       {
-        Log.error(ex);
+        Log.error(ex.getMessage());
       }
     }
     zip.close();

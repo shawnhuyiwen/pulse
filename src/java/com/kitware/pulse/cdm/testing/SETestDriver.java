@@ -136,7 +136,10 @@ public class SETestDriver
       try
       {Thread.sleep(100);}
       catch (InterruptedException ex)
-      { Log.error("I have insomnia...",ex); }
+      {
+        Log.error("I have insomnia...");
+        Log.error(ex.getMessage());
+      }
     }while(true);
 
     this.createReport();
@@ -186,12 +189,14 @@ public class SETestDriver
           }
           catch(Exception ex)
           {
-            Log.error("Could not exeucute job : "+job.name, ex);
+            Log.error("Could not exeucute job : "+job.name);
+            Log.error(ex.getMessage());
             job.skipPlot = true;
           }
           catch(Throwable t)
           {
-            Log.error("Could not exeucute job : "+job.name, t);
+            Log.error("Could not exeucute job : "+job.name);
+            Log.error(t.getMessage());
             job.skipPlot = true;
           }
         }
@@ -236,7 +241,8 @@ public class SETestDriver
             try {
               compare.write();
             } catch (InvalidProtocolBufferException e) {
-              Log.error("Unable to write comparison report", e);
+              Log.error("Unable to write comparison report");
+              Log.error(e.getMessage());
             }
            
             if((job.plotType == PlotType.FastPlotErrors || job.plotType == PlotType.FullPlotErrors) && (failures==null || failures.isEmpty()))
@@ -365,14 +371,16 @@ public class SETestDriver
         catch(Exception ex)
         {
         	report.createErrorSuite(job.name,reportFile);
-        	Log.error("Need file with TestReportData object, not in "+reportFile, ex);
+        	Log.error("Need file with TestReportData object, not in "+reportFile);
+          Log.error(ex.getMessage());
         }
       }
     }    
     try {
       report.write();
     } catch (InvalidProtocolBufferException e) {
-      Log.error("Unable to write test report", e);
+      Log.error("Unable to write test report");
+      Log.error(e.getMessage());
     }
     // Write the HTML to a file
     try
@@ -383,7 +391,8 @@ public class SETestDriver
     }
     catch(Exception ex)
     {
-      Log.error("Unable to write HTML report for "+cfg.testName,ex);
+      Log.error("Unable to write HTML report for "+cfg.testName);
+      Log.error(ex.getMessage());
     }
   }
 

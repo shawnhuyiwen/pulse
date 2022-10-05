@@ -326,9 +326,10 @@ public class SETestConfiguration
       }
       br.close();
     }
-    catch (IOException e)
+    catch (IOException ex)
     {
-      Log.error("Ouch",e);
+      Log.error("Ouch");
+      Log.error(ex.getMessage());
     }
   }
   

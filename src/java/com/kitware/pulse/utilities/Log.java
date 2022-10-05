@@ -139,32 +139,6 @@ public class Log
     }
   }
 
-  public synchronized static void debug(String msg, String origin)
-  {
-    if(output2Console && isDebug(level))
-      System.out.println("[DEBUG] "+origin+"::"+msg);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.debug(msg,origin);
-    }
-  }
-
-  public synchronized static void debug(String msg, Throwable t)
-  {
-    if(output2Console && isDebug(level))
-      System.out.println("[DEBUG] "+getOrigin()+"::"+msg+t);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.debug(msg,t);
-    }
-  }
-
   public synchronized static void info(String msg)
   {
     if(output2Console && isInfo(level))
@@ -175,32 +149,6 @@ public class Log
     {
       for(LogListener a : listeners)
         a.info(msg);
-    }
-  }
-
-  public synchronized static void info(String msg, String origin)
-  {
-    if(output2Console && isInfo(level))
-      System.out.println("[INFO] "+origin+"::"+msg);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.info(msg,origin);
-    }
-  }
-
-  public synchronized static void info(String msg, Throwable t)
-  {
-    if(output2Console && isInfo(level))
-      System.out.println("[INFO] "+getOrigin()+"::"+msg+t);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.info(msg,t);
     }
   }
 
@@ -217,32 +165,6 @@ public class Log
     }
   }
 
-  public synchronized static void warn(String msg, String origin)
-  {
-    if(output2Console && isWarn(level))
-      System.out.println("[WARN] "+origin+"::"+msg);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.warn(msg,origin);
-    }
-  }
-
-  public synchronized static void warn(String msg, Throwable t)
-  {
-    if(output2Console && isWarn(level))
-      System.out.println("[WARN] "+getOrigin()+"::"+msg+t);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.warn(msg,t);
-    }
-  }
-
   public synchronized static void error(String msg)
   {
     if(output2Console && isError(level))
@@ -253,45 +175,6 @@ public class Log
     {
       for(LogListener a : listeners)
         a.error(msg);
-    }
-  }
-
-  public synchronized static void error(String msg, String origin)
-  {
-    if(output2Console && isError(level))
-      System.out.println("[ERROR] "+origin+"::"+msg);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.error(msg,origin);
-    }
-  }
-
-  public synchronized static void error(String msg, Throwable t)
-  {
-    if(output2Console && isError(level))
-      System.out.println("[ERROR] "+getOrigin()+"::"+msg+t);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.error(msg,t);
-    }
-  }
-
-  public synchronized static void error(Throwable t)
-  {
-    if(output2Console && isError(level))
-      System.out.println("[ERROR] "+getOrigin()+t);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.error(t);
     }
   }
 
@@ -308,42 +191,4 @@ public class Log
     }
   }
 
-  public synchronized static void fatal(String msg, String origin)
-  {
-    if(output2Console && isFatal(level))
-      System.out.println("[FATAL] "+origin+"::"+msg);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.fatal(msg,origin);
-    }
-  }
-
-  public synchronized static void fatal(String msg, Throwable t)
-  {
-    if(output2Console && isFatal(level))
-      System.out.println("[FATAL] "+getOrigin()+"::"+msg+t);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.fatal(msg,t);
-    }
-  }
-
-  public synchronized static void fatal(Throwable t)
-  {
-    if(output2Console && isFatal(level))
-      System.out.println("[FATAL] "+getOrigin()+t);
-    String tName = Thread.currentThread().getName();
-    Set<LogListener> listeners=appenders.get(tName);
-    if(listeners!=null)
-    {
-      for(LogListener a : listeners)
-        a.fatal(t);
-    }
-  }
 }
