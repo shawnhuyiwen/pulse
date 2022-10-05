@@ -81,6 +81,8 @@ namespace pulse
     double m_RestingBloodInsulin_mg_Per_mL;
     double m_RestingPatientMass_kg;
     double m_RestingFluidMass_kg;
+    // Cache of flows to use to calculate consumption/production during cardiac arrest
+    std::map<SELiquidCompartment*, double> m_CardiacArrestVascularFlows_ml_per_min;
 
     // Stateless member variable (Set in SetUp())
     double m_AlbuminProdutionRate_g_Per_s;
@@ -122,7 +124,7 @@ namespace pulse
     SELiquidCompartment* m_LeftPulmonaryCapillaries;
     SELiquidCompartment* m_RightPulmonaryCapillaries;
 
-    std::map<SETissueCompartment*, SELiquidCompartment*>          m_TissueToVascular;
+    std::map<SETissueCompartment*, SELiquidCompartment*> m_TissueToVascular;
     std::vector<SETissueCompartment*>                    m_ConsumptionProdutionTissues;
   };
 END_NAMESPACE

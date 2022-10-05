@@ -6,22 +6,27 @@
 
 #include "cdm/properties/SEScalarLength.h"
 #include "cdm/utils/FileUtils.h"
-#include "io/protobuf/PBUtils.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/io/protobuf/PBPatient.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarLength.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTime.h"
 
 using namespace pulse::study::patient_variability;
 
 int main(int argc, char* argv[])
 {
   bool clear                   = false;
-  bool binary                  = false;
+  bool binary                  = true;
   bool generateOnly            = false;
   bool postProcessOnly         = false;
   bool validationMode          = false;
   bool hemorrhageMode          = false;
-  bool useBaseline             = true;
-  bool includeStandardPatients = true;
-  std::string data = "test";
-  Mode mode = Mode::Hemorrhage;
+  eStandardValidationType vType = eStandardValidationType::None;
+  std::string data = "full";
+  eMode mode = eMode::Validation;
   std::string rootDir = "./test_results/patient_variability/";
 
   // Process arguments
@@ -62,27 +67,26 @@ int main(int argc, char* argv[])
     if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--validation"))
     {
       validationMode = true;
-      mode = Mode::Validation;
+      mode = eMode::Validation;
     }
     // Hemorrhage RunMode
     if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--hemorrhage"))
     {
       hemorrhageMode = true;
-      mode = Mode::Hemorrhage;
+      mode = eMode::Hemorrhage;
     }
 
-    // Use existing baseline results for comparison
-    if(!strcmp(argv[i], "-n") || !strcmp(argv[i], "--no-baseline"))
+    // Generate standard validation from baseline results for comparison
+    if(!strcmp(argv[i], "-b") || !strcmp(argv[i], "--baseline"))
     {
-      useBaseline = false;
+      vType = eStandardValidationType::Baseline;
+    }
+    // Generate standard validation from current code base
+    if (!strcmp(argv[i], "-rv") || !strcmp(argv[i], "--run_validation"))
+    {
+      vType = eStandardValidationType::Current;
     }
 
-    // Adjust parameters to exclude standard patients
-    if(!strcmp(argv[i], "-x") || !strcmp(argv[i], "--exclude-standard-patients"))
-    {
-      includeStandardPatients = false;
-    }
-    
   }
   if (validationMode && hemorrhageMode)
   {
@@ -93,10 +97,10 @@ int main(int argc, char* argv[])
   std::string modeDir = "";
   switch (mode)
   {
-  case Mode::Validation:
+  case eMode::Validation:
     modeDir = "validation/";
     break;
-  case Mode::Hemorrhage:
+  case eMode::Hemorrhage:
     modeDir = "hemorrhage/";
     break;
   }
@@ -108,7 +112,6 @@ int main(int argc, char* argv[])
   pulse::study::bind::patient_variability::PatientStateListData patients;
   PVGenerator pvg(&log);
   pvg.GenerateMode = mode;
-  pvg.IncludeStandardPatients = includeStandardPatients;
 
   if (data == "solo")
   {
@@ -129,27 +132,21 @@ int main(int argc, char* argv[])
     double systolic_mmHg = 114;// Set to -1 if you want it computed
     double diastolic_mmHg = 73.5;// Set to -1 if you want it computed
 
-    auto p = patients.add_patient();
+    SEPatient patient(&log);
+    patient.SetSex(ePatient_Sex::Male);
+    patient.GetAge().SetValue(age_yr, TimeUnit::yr);
+
+    //patientData->set_bmi(bmi);
+    patient.GetHeight().SetValue(height_cm, LengthUnit::cm);
+    patient.GetHeartRateBaseline().SetValue(hr_bpm, FrequencyUnit::Per_min);
+    //patientData->set_meanarterialpressure_mmhg(map_mmHg);
+    //patientData->set_pulsepressure_mmhg(pp_mmHg);
+    patient.GetSystolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+    patient.GetDiastolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+
+    auto p = patients.add_patientstate();
     p->set_id(0);
-    p->set_sex(pulse::cdm::bind::PatientData_eSex::PatientData_eSex_Male);
-    p->set_age_yr(age_yr);
-    p->set_bmi(bmi);
-    p->set_heartrate_bpm(hr_bpm);
-    p->set_height_cm(height_cm);
-    p->set_meanarterialpressure_mmhg(map_mmHg);
-    p->set_pulsepressure_mmhg(pp_mmHg);
-    // Caclulate weight (kg) from height (m) and BMI
-    double height_m = Convert(height_cm, LengthUnit::cm, LengthUnit::m);
-    double weight_kg = bmi * height_m * height_m;
-    p->set_weight_kg(weight_kg);
-    // systolic - diastolic = pulse pressure
-    // MAP = (systolic + 2 * diastolic) / 3
-    if(diastolic_mmHg<0)
-      diastolic_mmHg = (3 * map_mmHg - pp_mmHg) / 3.0;
-    if(systolic_mmHg<0)
-      systolic_mmHg = pp_mmHg + diastolic_mmHg;
-    p->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
-    p->set_systolicarterialpressure_mmhg(systolic_mmHg);
+
 
     p->set_outputbasefilename("solo/");
     p->set_maxsimulationtime_s(120); // Generate 2 mins of data
@@ -162,16 +159,6 @@ int main(int argc, char* argv[])
       DeleteDirectory(rootDir);
     log.SetLogFile(rootDir + logName);
 
-    // The default min/max are the model bounds
-    // So just increase the fidelity via step size
-    pvg.Age_yr.AdjustStepSize(1);
-    pvg.HeightMale_cm.AdjustStepSize(1);
-    pvg.HeightFemale_cm.AdjustStepSize(1);
-    pvg.BMI.AdjustStepSize(1);
-    pvg.HR_bpm.AdjustStepSize(1);
-    pvg.MAP_mmHg.AdjustStepSize(1);
-    pvg.PP_mmHg.AdjustStepSize(1);
-
     ////////////////////////
     // Hemorrhage Options //
     ////////////////////////
@@ -180,26 +167,7 @@ int main(int argc, char* argv[])
     // HemorrhageSeverity(0.25,1.00,0.25)
     // HemorrhageTriageTime(1.0,5.0,1.0)
 
-    pvg.GenerateIndividualParamaterVariabilityPatientList(patients);
-  }
-  else if (data == "test")
-  {
-    rootDir += modeDir+"test/";
-    if(clear)
-      DeleteDirectory(rootDir);
-    log.SetLogFile(rootDir + logName);
-
-    // This will use the defaults, 2 patients for each parameter
-
-    ////////////////////////
-    // Hemorrhage Options //
-    ////////////////////////
-
-    // Defaults are
-    // HemorrhageSeverity(0.25,1.00,0.25)
-    // HemorrhageTriageTime(1.0,5.0,1.0)
-
-    pvg.GenerateIndividualParamaterVariabilityPatientList(patients);
+    pvg.GenerateData(eSetType::Both, patients);
   }
 
   if (generateOnly)
@@ -211,7 +179,7 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  PVRunner pvr(rootDir, useBaseline, &log);
+  PVRunner pvr(rootDir, vType, &log);
   pvr.PostProcessOnly = postProcessOnly;
   pvr.SerializationFormat = binary ? eSerializationFormat::BINARY : eSerializationFormat::JSON;
   return !pvr.Run(patients);

@@ -16,14 +16,21 @@ POP_PROTO_WARNINGS
 
 namespace pulse::study::patient_variability
 {
+  enum class eStandardValidationType
+  {
+    None = 0,
+    Baseline,
+    Current
+  };
+
   class PVRunner : public Loggable
   {
   public:
-    PVRunner(const std::string& rootDir, bool useBaseline, Logger* logger=nullptr);
+    PVRunner(const std::string& rootDir, eStandardValidationType t, Logger* logger=nullptr);
     virtual ~PVRunner();
 
     bool PostProcessOnly = false;
-    eSerializationFormat SerializationFormat = eSerializationFormat::JSON;
+    eSerializationFormat SerializationFormat = eSerializationFormat::BINARY;
 
     bool Run(const std::string& filename);
     bool Run(pulse::study::bind::patient_variability::PatientStateListData& patients);
@@ -40,13 +47,14 @@ namespace pulse::study::patient_variability
     void ControllerLoop();
     bool RunPatient(pulse::study::bind::patient_variability::PatientStateData& patient);
     pulse::study::bind::patient_variability::PatientStateData* GetNextPatient();
+    void CompletePatient(pulse::study::bind::patient_variability::PatientStateData& patientState);
 
     bool AggregateResults(pulse::study::bind::patient_variability::PatientStateData& patient, const std::vector<std::string>& validation_files, Logger* logger);
 
     std::mutex  m_VectorMutex;
     std::mutex  m_SystemMutex;
 
-    bool m_UseBaseline;
+    eStandardValidationType m_StandardValidationType;
     std::string m_RootDir;
     std::string m_PatientResultsListFile;
     std::set<unsigned int> m_PatientsToRun;

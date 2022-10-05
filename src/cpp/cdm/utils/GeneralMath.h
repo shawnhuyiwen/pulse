@@ -19,7 +19,7 @@ public:
   static void CalculateOsmolality(const SEScalarAmountPerVolume& sodiumMolarity, const SEScalarAmountPerVolume& potassiumMolarity, const SEScalarAmountPerVolume& glucoseMolarity, const SEScalarAmountPerVolume& ureaMolarity, const SEScalar& specificGravity, SEScalarOsmolality& fluidOsmolality);
   static bool CalculateSpecificGravity(const SEScalarMass& mass, const SEScalarVolume& volume, SEScalar& specificGravity, Logger* logger = nullptr);
 
-  static void   Combinations(std::vector<int> maxValues, std::vector<std::vector<int>>& permutations);
+  static void   Combinations(std::vector<size_t> maxValues, std::vector<std::vector<size_t>>& permutations);
 
   static bool LinearInterpolator(std::vector<double>& v, size_t newSize);
   static void LinearInterpolator1(std::vector<double>& v, size_t newSize);

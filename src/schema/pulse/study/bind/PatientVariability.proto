@@ -7,34 +7,37 @@ option optimize_for = SPEED;
 import "pulse/cdm/bind/Patient.proto";
 import "pulse/cdm/bind/TestReport.proto";
 
+
+
 message PatientStateData
 {
+
+  /** @brief Enumeration for engine failure types */
+  enum eFailure
+  {
+    None=0;               /**<< @brief No stabilization failures. */
+    FailedSetup=1;        /**<< @brief SetupPatient could not create a valid Pulse patient with provided patient values. */
+    FailedStabilization=2;/**<< @brief Pulse was unable to stabilize to provided/computed patient values. */
+    RuntimeError=3;       /**<< @brief Error running the engine with (optional) actions. */
+    FatalRuntimeError=4;  /**<< @brief Fatal error running the engine with (optional) actions. */
+  }
+
   uint32                                                  ID                                = 1;
   string                                                  OutputBaseFilename                = 2;
   double                                                  MaxSimulationTime_s               = 3;
   double                                                  FinalSimulationTime_s             = 4;/**<< @brief We could stop the sim early (ex. due to hemorrhage) */
-  // Initial Conditions
-  pulse.cdm.bind.PatientData.eSex                         Sex                               = 5;
-  uint32                                                  Age_yr                            = 6;
-  double                                                  BMI                               = 7;
-  double                                                  HeartRate_bpm                     = 8;
-  double                                                  Height_cm                         = 9;
-  double                                                  MeanArterialPressure_mmHg         = 10;
-  double                                                  PulsePressure_mmHg                = 11;
-  
-  // Initial patient data of interest for completeness, but not used in the generator (i.e. these are calculated from the above)
-  double                                                  DiastolicArterialPressure_mmHg    = 12;
-  double                                                  SystolicArterialPressure_mmHg     = 13;
-  double                                                  Weight_kg                         = 14;
+  // Requested Patient
+  pulse.cdm.bind.PatientData                              Patient                           = 5;
+  pulse.cdm.bind.PatientData                              SetupPatient                      = 6;
   // Stabilization Info
-  bool                                                    AchievedStabilization             = 15;
-  double                                                  StabilizationTime_s               = 16;
+  eFailure                                                Failure                           = 7;
+  double                                                  StabilizationTime_s               = 8;
   
   // Run Modes
   oneof RunMode
   {
-    HemorrhageData                                        Hemorrhage                        = 17;
-    ValidationData                                        Validation                        = 18;
+    HemorrhageData                                        Hemorrhage                        = 9;
+    ValidationData                                        Validation                        = 10;
   }
 
   message ValidationData
@@ -74,7 +77,7 @@ message PatientStateData
 
 message PatientStateListData
 {
-  repeated PatientStateData      Patient                    = 1;
+  repeated PatientStateData      PatientState               = 1;
 }
 
 message LogData

@@ -22,22 +22,53 @@ POP_PROTO_WARNINGS
 
 namespace pulse::study::patient_variability
 {
-  enum class Mode
+  enum class eMode
   {
     Hemorrhage = 0,
     Validation
   };
 
+  enum class eSetType
+  {
+    Slice = 0,
+    Combo,
+    Both
+  };
+
   class Parameter
   {
   public:
-    Parameter(double lowerLimit, double upperLimit)
+    Parameter()
+    {
+
+    }
+    void Set(double min, double max, double standard)
+    {
+      m_Values.clear();
+      m_Values.push_back(min);
+      m_Values.push_back(max);
+      m_Values.push_back(standard);
+    }
+
+    double Min() const { return m_Values[0]; }
+    double Max() const { return m_Values[1]; }
+    double Standard() const { return m_Values[2]; }
+    const std::vector<double>& Values() const { return m_Values; }
+
+  protected:
+    std::vector<double> m_Values;
+  };
+
+  class StepParameter
+  {
+  public:
+    StepParameter(double lowerLimit, double upperLimit)
     {
       m_LowerLimit = lowerLimit;
       m_UpperLimit = upperLimit;
-      Set(lowerLimit, upperLimit, upperLimit-lowerLimit);
+      Set(lowerLimit, upperLimit, upperLimit - lowerLimit);
     }
-    Parameter(double lowerLimit, double upperLimit, double stepSize)
+    StepParameter(double lowerLimit, double upperLimit, double stepSize)
     {
       m_LowerLimit = lowerLimit;
       m_UpperLimit = upperLimit;
@@ -46,7 +77,7 @@ namespace pulse::study::patient_variability
 
     void AdjustBounds(double lowerLimit, double upperLimit)
     {
-      AdjustBounds(lowerLimit, upperLimit,m_StepSize);
+      AdjustBounds(lowerLimit, upperLimit, m_StepSize);
     }
     void AdjustBounds(double lowerLimit, double upperLimit, double stepSize)
     {
@@ -63,7 +94,7 @@ namespace pulse::study::patient_variability
     {
       Set(min, max, max - min);
     }
-    void Set(double min, double max, double stepSize, bool includeUpper=true)
+    void Set(double min, double max, double stepSize, bool includeUpper = true)
     {
       if (min < m_LowerLimit)
       {
@@ -106,7 +137,7 @@ namespace pulse::study::patient_variability
     void Insert(double v)
     {
       // Make sure v is not in our list and add it
-      if (std::find_if(m_Values.begin(), m_Values.end(),  [v] (const double& val) { return Equals(v, val); }) != m_Values.end())
+      if (std::find_if(m_Values.begin(), m_Values.end(), [v](const double& val) { return Equals(v, val); }) != m_Values.end())
         return;
       m_Values.push_back(v);
 
@@ -128,6 +159,7 @@ namespace pulse::study::patient_variability
     std::vector<double> m_Values;
   };
 
+
   class PVGenerator : public Loggable
   {
     using PatientStateListData = pulse::study::bind::patient_variability::PatientStateListData;
@@ -135,51 +167,43 @@ namespace pulse::study::patient_variability
     PVGenerator(Logger* logger=nullptr);
     virtual ~PVGenerator();
 
-    static bool TestPatientCombo(Logger*, ePatient_Sex sex,
-                                 double age_yr, double height_cm, double weight_kg,
-                                 double hr_bpm, double systolic_mmHg, double diastolic_mmHg);
-    void GenerateMultiVariableCombinationPatientList(PatientStateListData& pList);
-    void GenerateIndividualParamaterVariabilityPatientList(PatientStateListData& pList);
 
-    bool            IncludeStandardPatients = true;
-    Mode            GenerateMode = Mode::Validation;
+    eMode           GenerateMode = eMode::Validation;
     
     Parameter       Age_yr;
-    Parameter       HeightMale_cm;
-    Parameter       HeightFemale_cm;
+    Parameter       Height_cm;
     Parameter       BMI;
+    Parameter       BFF;
     Parameter       HR_bpm;
     Parameter       MAP_mmHg;
     Parameter       PP_mmHg;
+    Parameter       RR_bpm;
 
-    Parameter       HemorrhageSeverity;
-    Parameter       HemorrhageTriageTime_min;
+    StepParameter   HemorrhageSeverity;
+    StepParameter   HemorrhageTriageTime_min;
+
+    static std::string ToString(SEPatient& patient);
+    void GenerateData(eSetType t, PatientStateListData& pList);
 
   protected:
-    unsigned int m_MaxNumPatients=0; // This is the maximum number of patients for the set, not all combination may be valid, so the actual number of patients for a set could be less that this.
+    eSetType     m_SetType;
     unsigned int m_TotalPatients=0; // The actual number of patients for this data set, (NOT the number of runs, i.e. hemorrhage options can create more runs for each patient)
+    unsigned int m_NumPatientsFailedToSetup = 0;
     unsigned int m_TotalRuns=0; // This is the actual number of runs to perform
+    unsigned int m_Duplicates = 0;
+    std::set<std::string> m_PatientSet;
 
-    void ResetParameters();
 
-    void CreatePatient(PatientStateListData& pList,
-      const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
-      double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg, const std::string& full_dir_path);
+    void GenerateSlicedPatientList(PatientStateListData& pList, const SEPatient& basePatient);
+    void GenerateMultiVariableCombinationPatientList(PatientStateListData& pList);
 
-    void GenerateHemorrhageOptions(PatientStateListData& pList,
-      const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
-      double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg,
-      const std::string& full_dir_path);
+    void ResetParameters(ePatient_Sex sex);
+
+    void CreatePatient(PatientStateListData& pList, SEPatient& patient, const std::string& full_dir_path);
+
+    void GenerateHemorrhageOptions(PatientStateListData& pList, SEPatient& patient, const std::string& full_dir_path);
 
     pulse::study::bind::patient_variability::PatientStateData* AddPatientToList(PatientStateListData& pList,
-      const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
-      double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg,
-      double runDuration_s, const std::string& full_dir_path);
-
-    bool AddPatientParameters(const SEPatient& patient);
-
-    bool AdjustMeanArterialPressureBounds(double targetPulsePressure_mmHg);
-    bool AdjustPulsePressureBounds(double targetMAP_mmHg);
-    bool IsValidBloodPressure_mmHg(double map, double systolic, double diastolic);
+      SEPatient& patient, double runDuration_s, const std::string& full_dir_path);
   };
 }

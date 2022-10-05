@@ -204,10 +204,14 @@ namespace pulse { namespace human_adult_whole_body
     void ConditionCombinations(const std::string& rptDirectory);
     void SerializationTest(const std::string& sTestDirectory);
     void SolverSpeedTest(const std::string& sTestDirectory);
+
+    void SetupPatientTest(const std::string& sTestDirectory);
   protected:
     void InhalerState(PhysiologyEngine* bg, HowToTracker& tracker);
     void InjectSuccsState(PhysiologyEngine* bg, HowToTracker& tracker, const SESubstance& succs);
-  
+
+    void SetupPatientTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient* patient, SEPatient* expectedPatient, bool expectedPass);
+    bool CheckSetupPatient(SEPatient& setupPatient, SEPatient& expectedPatient, std::vector<std::string>& errs);
   public:
     //////////////////////
     // Black Box Tests //

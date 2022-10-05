@@ -7,6 +7,7 @@ import com.google.protobuf.util.JsonFormat;
 
 import com.kitware.pulse.cdm.bind.Patient.PatientData;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
+import com.kitware.pulse.cdm.properties.SEScalar;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 import com.kitware.pulse.cdm.properties.SEScalarArea;
 import com.kitware.pulse.cdm.properties.SEScalarFrequency;
@@ -28,6 +29,7 @@ public class SEPatient
   protected SEScalarLength            height;
   protected SEScalarMassPerVolume     bodyDensity;
   protected SEScalar0To1              bodyFatFraction;
+  protected SEScalar                  bodyMassIndex;
   protected SEScalarMass              leanBodyMass;
   protected SEScalarMass              idealBodyWeight;
 
@@ -40,6 +42,7 @@ public class SEPatient
   protected SEScalarPressure          diastolicArterialPressureBaseline;
   protected SEScalarFrequency         heartRateBaseline;
   protected SEScalarPressure          meanArterialPressureBaseline;
+  protected SEScalarPressure          pulsePressureBaseline;
   protected SEScalarFrequency         respirationRateBaseline;
   protected SEScalarPressure          systolicArterialPressureBaseline;
   protected SEScalarVolume            tidalVolumeBaseline;
@@ -73,6 +76,8 @@ public class SEPatient
       this.bodyDensity.invalidate();
     if(bodyFatFraction != null)
       this.bodyFatFraction.invalidate();
+    if(bodyMassIndex != null)
+      this.bodyMassIndex.invalidate();
     if(leanBodyMass != null)
       this.leanBodyMass.invalidate();
     if(idealBodyWeight != null)
@@ -96,6 +101,8 @@ public class SEPatient
       this.heartRateBaseline.invalidate();
     if(meanArterialPressureBaseline != null)
       this.meanArterialPressureBaseline.invalidate();
+    if(pulsePressureBaseline != null)
+      this.pulsePressureBaseline.invalidate();
     if(respirationRateBaseline != null)
       this.respirationRateBaseline.invalidate();
     if(systolicArterialPressureBaseline != null)
@@ -150,6 +157,8 @@ public class SEPatient
       SEScalarMassPerVolume.load(src.getBodyDensity(),dst.getBodyDensity());
     if(src.hasBodyFatFraction())
       SEScalar0To1.load(src.getBodyFatFraction(),dst.getBodyFatFraction());
+    if(src.hasBodyMassIndex())
+      SEScalar.load(src.getBodyMassIndex(),dst.getBodyMassIndex());
     if(src.hasLeanBodyMass())
       SEScalarMass.load(src.getLeanBodyMass(),dst.getLeanBodyMass());
     if(src.hasIdealBodyWeight())
@@ -172,6 +181,8 @@ public class SEPatient
       SEScalarFrequency.load(src.getHeartRateBaseline(),dst.getHeartRateBaseline());
     if(src.hasMeanArterialPressureBaseline())
       SEScalarPressure.load(src.getMeanArterialPressureBaseline(),dst.getMeanArterialPressureBaseline());
+    if(src.hasPulsePressureBaseline())
+      SEScalarPressure.load(src.getPulsePressureBaseline(),dst.getPulsePressureBaseline());
     if(src.hasRespirationRateBaseline())
       SEScalarFrequency.load(src.getRespirationRateBaseline(),dst.getRespirationRateBaseline());
     if(src.hasSystolicArterialPressureBaseline())
@@ -221,6 +232,8 @@ public class SEPatient
       dst.setBodyDensity(SEScalarMassPerVolume.unload(src.bodyDensity));
     if(src.hasBodyFatFraction())
       dst.setBodyFatFraction(SEScalar0To1.unload(src.bodyFatFraction));
+    if(src.hasBodyMassIndex())
+      dst.setBodyMassIndex(SEScalar.unload(src.bodyMassIndex));
     if(src.hasLeanBodyMass())
       dst.setLeanBodyMass(SEScalarMass.unload(src.leanBodyMass));
     if(src.hasIdealBodyWeight())
@@ -241,6 +254,8 @@ public class SEPatient
       dst.setHeartRateBaseline(SEScalarFrequency.unload(src.heartRateBaseline));
     if(src.hasMeanArterialPressureBaseline())
       dst.setMeanArterialPressureBaseline(SEScalarPressure.unload(src.meanArterialPressureBaseline));
+    if(src.hasPulsePressureBaseline())
+      dst.setPulsePressureBaseline(SEScalarPressure.unload(src.pulsePressureBaseline));
     if(src.hasRespirationRateBaseline())
       dst.setRespirationRateBaseline(SEScalarFrequency.unload(src.respirationRateBaseline));
     if(src.hasSystolicArterialPressureBaseline())
@@ -338,6 +353,14 @@ public class SEPatient
   }
   public boolean hasBodyFatFraction() {return this.bodyFatFraction==null?false:this.bodyFatFraction.isValid();}
 
+  public SEScalar getBodyMassIndex()
+  {
+    if(this.bodyMassIndex==null)
+      this.bodyMassIndex=new SEScalar();
+    return this.bodyMassIndex;
+  }
+  public boolean hasBodyMassIndex() {return this.bodyMassIndex==null?false:this.bodyMassIndex.isValid();}
+
   public SEScalarPressure getDiastolicArterialPressureBaseline() 
   { 
     if(this.diastolicArterialPressureBaseline==null)
@@ -427,6 +450,14 @@ public class SEPatient
     return this.meanArterialPressureBaseline;
   }
   public boolean          hasMeanArterialPressureBaseline() {return this.meanArterialPressureBaseline==null?false:this.meanArterialPressureBaseline.isValid();}
+
+  public SEScalarPressure getPulsePressureBaseline() 
+  { 
+    if(this.pulsePressureBaseline==null)
+      this.pulsePressureBaseline=new SEScalarPressure();
+    return this.pulsePressureBaseline;
+  }
+  public boolean          hasPulsePressureBaseline() {return this.pulsePressureBaseline==null?false:this.pulsePressureBaseline.isValid();}
 
   public SEScalarVolume getResidualVolume() 
   { 

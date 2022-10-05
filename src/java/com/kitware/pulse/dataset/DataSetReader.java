@@ -337,6 +337,11 @@ public class DataSetReader
       patient.getBodyFatFraction().setValue(Double.parseDouble(value),unit);
       return true;
     }  
+    if(property.equals("BodyMassIndex"))
+    {
+      patient.getBodyMassIndex().setValue(Double.parseDouble(value),unit);
+      return true;
+    }  
     if(property.equals("DiastolicArterialPressureBaseline"))
     {
       patient.getDiastolicArterialPressureBaseline().setValue(Double.parseDouble(value),unit);
@@ -391,6 +396,11 @@ public class DataSetReader
     if(property.equals("MeanArterialPressureBaseline"))
     {
       patient.getMeanArterialPressureBaseline().setValue(Double.parseDouble(value),unit);
+      return true;
+    }
+    if(property.equals("PulsePressureBaseline"))
+    {
+      patient.getPulsePressureBaseline().setValue(Double.parseDouble(value),unit);
       return true;
     }
     if(property.equals("ResidualVolume"))

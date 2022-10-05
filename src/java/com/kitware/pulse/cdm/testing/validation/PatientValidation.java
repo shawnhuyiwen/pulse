@@ -54,6 +54,7 @@ public class PatientValidation extends ValidationTool
       writer.println("|Height                            |"+patient.getHeight());
       writer.println("|BodyDensity                       |"+patient.getBodyDensity());
       writer.println("|BodyFatFraction                   |"+patient.getBodyFatFraction());
+      writer.println("|BodyMassIndex                     |"+patient.getBodyMassIndex());
       writer.println("|LeanBodyMass                      |"+patient.getLeanBodyMass());
       writer.println("|IdealBodyWeight                   |"+patient.getIdealBodyWeight());
       writer.println("|AlveoliSurfaceArea                |"+patient.getAlveoliSurfaceArea());
@@ -64,6 +65,7 @@ public class PatientValidation extends ValidationTool
       writer.println("|DiastolicArterialPressureBaseline |"+patient.getDiastolicArterialPressureBaseline());
       writer.println("|HeartRateBaseline                 |"+patient.getHeartRateBaseline());
       writer.println("|MeanArterialPressureBaseline      |"+patient.getMeanArterialPressureBaseline());
+      writer.println("|PulsePressureBaseline             |"+patient.getPulsePressureBaseline());
       writer.println("|RespirationRateBaseline           |"+patient.getRespirationRateBaseline());
       writer.println("|SystolicArterialPressureBaseline  |"+patient.getSystolicArterialPressureBaseline());
       writer.println("|TidalVolumeBaseline               |"+patient.getTidalVolumeBaseline());

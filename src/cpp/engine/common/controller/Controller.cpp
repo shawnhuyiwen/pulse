@@ -358,6 +358,7 @@ namespace pulse
     }
     else
       return false;
+
     InitializeModels();
     AdvanceCallback(-1);
 

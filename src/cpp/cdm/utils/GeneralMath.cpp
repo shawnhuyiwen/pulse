@@ -258,12 +258,12 @@ double GeneralMath::PercentTolerance(double expected, double calculated, double 
   return err;
 }
 
-void GeneralMath::Combinations(std::vector<int> maxValues, std::vector<std::vector<int>>& permutations)
+void GeneralMath::Combinations(std::vector<size_t> maxValues, std::vector<std::vector<size_t>>& permutations)
 {
   int Oidx = 0;
   int numVals = 1;
   size_t Olength = maxValues.size();
-  std::vector<int> *current, *next;
+  std::vector<size_t> *current, *next;
 
   for (size_t i = 0; i < Olength; i++)
     numVals *= maxValues[Oidx] + 1;

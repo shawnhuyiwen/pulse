@@ -541,6 +541,21 @@ namespace pulse
     dst.m_RestingBloodLipid_mg_Per_mL = src.restingbloodlipid_mg_per_ml();
     dst.m_RestingBloodInsulin_mg_Per_mL = src.restingbloodinsulin_mg_per_ml();
     dst.m_RestingFluidMass_kg = src.restingfluidmass_kg();
+    for (auto sitr : src.cardiacarrestvascularflows_ml_per_min())
+    {
+      bool found = false;
+      for (auto ditr : dst.m_CardiacArrestVascularFlows_ml_per_min)
+      {
+        if (ditr.first->GetName() == sitr.first)
+        {
+          found = true;
+          dst.m_CardiacArrestVascularFlows_ml_per_min[ditr.first] = sitr.second;
+          break;
+        }
+      }
+      if(!found)
+        dst.Warning("Unknown vasculature cmpt in Tissue::CardiacArrestVascularFlows_ml_per_min : " + sitr.first);
+    }
   }
   PULSE_BIND::TissueData* PBPhysiology::Unload(const TissueModel& src)
   {
@@ -551,11 +566,12 @@ namespace pulse
   void PBPhysiology::Serialize(const TissueModel& src, PULSE_BIND::TissueData& dst)
   {
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
-    //dst.set_cardiacarrestcarbondioxideproductionfactor(src.m_CardiacArrestCarbonDioxideProductionFactor);
     dst.set_restingtissueglucose_g(src.m_RestingTissueGlucose_g);
     dst.set_restingbloodglucose_mg_per_ml(src.m_RestingBloodGlucose_mg_Per_mL);
     dst.set_restingbloodlipid_mg_per_ml(src.m_RestingBloodLipid_mg_Per_mL);
     dst.set_restingbloodinsulin_mg_per_ml(src.m_RestingBloodInsulin_mg_Per_mL);
     dst.set_restingfluidmass_kg(src.m_RestingFluidMass_kg);
+    for (auto ditr : src.m_CardiacArrestVascularFlows_ml_per_min)
+      (*dst.mutable_cardiacarrestvascularflows_ml_per_min())[ditr.first->GetName()] = ditr.second;
   }
 }

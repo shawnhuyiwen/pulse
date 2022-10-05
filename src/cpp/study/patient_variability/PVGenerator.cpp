@@ -3,6 +3,8 @@
 
 #include "PVGenerator.h"
 #include "cdm/patient/SEPatient.h"
+#include "cdm/io/protobuf/PBPatient.h"
+#include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarLength.h"
 #include "cdm/properties/SEScalarMass.h"
@@ -15,6 +17,8 @@
 
 #include <map>
 
+using eFailure = pulse::study::bind::patient_variability::PatientStateData_eFailure;
+
 // Bounds from: https://pulse.kitware.com/_patient_methodology.html
 // And: https://pulse.kitware.com/_cardiovascular_methodology.html#cardiovascular-validation-resting
 
@@ -26,381 +30,283 @@
 #define maxFemaleHeight_cm 175.5
 #define minBMI 16
 #define maxBMI 29.9
+#define minMaleBFF 0.02
+#define maxMaleBFF 0.25
+#define minFemaleBFF 0.1
+#define maxFemaleBFF 0.32
 #define minHR_bpm 60
 #define maxHR_bpm 100
-#define minSystolic_mmHg 90
-#define maxSystolic_mmHg 120
-#define minDiastolic_mmHg 60
-#define maxDiastolic_mmHg 80
 #define minMAP_mmHg 70
 #define maxMAP_mmHg 100
 #define minPulsePressure_mmHg 30
 #define maxPulsePressure_mmHg 60
+#define minRR_bpm 8
+#define maxRR_bpm 20
 
 namespace pulse::study::patient_variability
 {
   // Bounds from: https://pulse.kitware.com/_patient_methodology.html
   PVGenerator::PVGenerator(Logger* logger) : Loggable(logger),
-    Age_yr(minAge_yr, maxAge_yr),
-    HeightMale_cm(minMaleHeight_cm, maxMaleHeight_cm),
-    HeightFemale_cm(minFemaleHeight_cm, maxFemaleHeight_cm),
-    BMI(minBMI, maxBMI),
-    HR_bpm(minHR_bpm, maxHR_bpm),
-    MAP_mmHg(minMAP_mmHg, maxMAP_mmHg),
-    PP_mmHg(minPulsePressure_mmHg, maxPulsePressure_mmHg),
-    HemorrhageSeverity(0.1,0.3,0.1),
+    HemorrhageSeverity(0.1, 0.3, 0.1),
     HemorrhageTriageTime_min(1.0, 1.0)
   {
-    ResetParameters();
   }
   PVGenerator::~PVGenerator()
   {
   }
 
   // Reset ParameterSpace
-  void PVGenerator::ResetParameters()
+  void PVGenerator::ResetParameters(ePatient_Sex sex)
   {
-    Age_yr.AdjustBounds(minAge_yr, maxAge_yr);
-    HeightMale_cm.AdjustBounds(minMaleHeight_cm, maxMaleHeight_cm);
-    HeightFemale_cm.AdjustBounds(minFemaleHeight_cm, maxFemaleHeight_cm);
-    BMI.AdjustBounds(minBMI, maxBMI);
-    HR_bpm.AdjustBounds(minHR_bpm, maxHR_bpm);
-    MAP_mmHg.AdjustBounds(minMAP_mmHg, maxMAP_mmHg);
-    PP_mmHg.AdjustBounds(minPulsePressure_mmHg, maxPulsePressure_mmHg);
-
-    Age_yr.Reset();
-    HeightMale_cm.Reset();
-    HeightFemale_cm.Reset();
-    BMI.Reset();
-    HR_bpm.Reset();
-    MAP_mmHg.Reset();
-    PP_mmHg.Reset();
-  }
-
-  bool PVGenerator::AdjustMeanArterialPressureBounds(double targetPulsePressure_mmHg)
-  {
-    bool found;
-
-    double minDiastolic = minDiastolic_mmHg;
-    double minSystolic;
-    double minMAP=0;
-    found = false;
-    for (; minDiastolic < maxDiastolic_mmHg; minDiastolic++)
+    // The third number is generally a compromise between standard and default
+    Age_yr.Set(minAge_yr, maxAge_yr, 44.);
+    HR_bpm.Set(minHR_bpm, maxHR_bpm, 72);
+    MAP_mmHg.Set(minMAP_mmHg, maxMAP_mmHg, 87);
+    PP_mmHg.Set(minPulsePressure_mmHg, maxPulsePressure_mmHg, 40.5);
+    RR_bpm.Set(minRR_bpm, maxRR_bpm, 12);
+    if (sex == ePatient_Sex::Male)
     {
-      minSystolic = minDiastolic + targetPulsePressure_mmHg;
-      minMAP = (minSystolic + (2. * minDiastolic)) / 3.;
-      if (IsValidBloodPressure_mmHg(minMAP, minSystolic, minDiastolic))
-      {
-        found = true;
-        break;
-      }
+      Height_cm.Set(minMaleHeight_cm, maxMaleHeight_cm, 180.34);
+      BMI.Set(minBMI, maxBMI, 23.71);
+      BFF.Set(minMaleBFF, maxMaleBFF, 0.21);
     }
-    if (!found) return false;
-    if (MAP_mmHg.LowerLimit() > minMAP)
-      minMAP = MAP_mmHg.LowerLimit(); // Keep it!
-
-    double maxSystolic = maxSystolic_mmHg;
-    double maxDiastolic;
-    double maxMAP=0;
-    found = false;
-    for (; maxSystolic >= minSystolic_mmHg; maxSystolic--)
+    else
     {
-      maxDiastolic = maxSystolic - targetPulsePressure_mmHg;
-      maxMAP = (maxSystolic + (2. * maxDiastolic)) / 3.;
-      if (IsValidBloodPressure_mmHg(maxMAP, maxSystolic, maxDiastolic))
-      {
-        found = true;
-        break;
-      }
+      Height_cm.Set(minFemaleHeight_cm, maxFemaleHeight_cm, 162.56);
+      BMI.Set(minBMI, maxBMI, 22.31);
+      BFF.Set(minFemaleBFF, maxFemaleBFF, 0.28);
     }
-    if (!found) return false;
-    if (MAP_mmHg.UpperLimit() < maxMAP)
-      maxMAP = MAP_mmHg.UpperLimit(); // Keep it!
-
-    double step = maxMAP - minMAP;
-    if (MAP_mmHg.StepSize() < (maxMAP - minMAP))
-      step = MAP_mmHg.StepSize(); // Keep it!
-
-    MAP_mmHg.AdjustBounds(minMAP, maxMAP, step);
-    return true;
-  }
-  bool PVGenerator::AdjustPulsePressureBounds(double targetMAP_mmHg)
-  {
-    bool found = true;
-    double maxPulsePressure = maxPulsePressure_mmHg;
-    for (; maxPulsePressure >= minPulsePressure_mmHg; maxPulsePressure -= 0.5)
-    {
-      double systolic = maxPulsePressure + (((3 * targetMAP_mmHg) - maxPulsePressure) / 3);
-      double diastolic = systolic - maxPulsePressure;
-      if (IsValidBloodPressure_mmHg(targetMAP_mmHg, systolic, diastolic))
-      {
-        found = true;
-        break;
-      }
-    }
-    if (!found) return false;
-    if (PP_mmHg.UpperLimit() < maxPulsePressure)
-      maxPulsePressure = PP_mmHg.UpperLimit(); // Keep it!
-
-    found = true;
-    double minPulsePressure = minPulsePressure_mmHg;
-    for (; minPulsePressure <= maxPulsePressure_mmHg; minPulsePressure += 0.5)
-    {
-      double systolic = minPulsePressure + (((3 * targetMAP_mmHg) - minPulsePressure) / 3);
-      double diastolic = systolic - minPulsePressure;
-      if (IsValidBloodPressure_mmHg(targetMAP_mmHg, systolic, diastolic))
-      {
-        found = true;
-        break;
-      }
-    }
-    if (!found) return false;
-    if (PP_mmHg.LowerLimit() > minPulsePressure)
-      minPulsePressure = PP_mmHg.LowerLimit(); // Keep it!
-
-    double step = maxPulsePressure - minPulsePressure;
-    if (PP_mmHg.StepSize() < (maxPulsePressure - minPulsePressure))
-      step = PP_mmHg.StepSize(); // Keep it!
-
-    PP_mmHg.AdjustBounds(minPulsePressure, maxPulsePressure, step);
-    return true;
-  }
-  bool PVGenerator::IsValidBloodPressure_mmHg(double map, double systolic, double diastolic)
-  {
-    return (systolic >= MAX(minSystolic_mmHg, 6.0/5.0 * map) && systolic <= maxSystolic_mmHg &&
-            diastolic >= minDiastolic_mmHg && diastolic <= MIN(maxDiastolic_mmHg, 9.0/10.0 * map));
   }
 
-  bool PVGenerator::TestPatientCombo(Logger* logger, ePatient_Sex sex,
-    double age_yr, double height_cm, double weight_kg,
-    double hr_bpm, double systolic_mmHg, double diastolic_mmHg)
+  void PVGenerator::GenerateData(eSetType t, PatientStateListData& pList)
   {
-    auto lvl = logger->GetLogLevel();
-    logger->SetLogLevel(Logger::Level::Error);
-    // Ensure patient is valid
-    SEPatient test(logger);
-    test.SetSex(sex);
-    test.GetAge().SetValue(age_yr, TimeUnit::yr);
-    test.GetHeight().SetValue(height_cm, LengthUnit::cm);
-    test.GetWeight().SetValue(weight_kg, MassUnit::kg);
-    test.GetHeartRateBaseline().SetValue(hr_bpm, FrequencyUnit::Per_min);
-    test.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
-    test.GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
-    bool b = pulse::human_adult_whole_body::SetupPatient(test);
-    logger->SetLogLevel(lvl);
-    return b;
-  }
-
-  void PVGenerator::GenerateIndividualParamaterVariabilityPatientList(PatientStateListData& pList)
-  {
-    m_MaxNumPatients = 0;
-    m_TotalPatients = 0;
     m_TotalRuns = 0;
+    m_Duplicates = 0;
+    m_TotalPatients = 0;
+    m_NumPatientsFailedToSetup = 0;
+    m_SetType = t;
 
+    if(t == eSetType::Both || t == eSetType::Combo)
+      GenerateMultiVariableCombinationPatientList(pList);
 
-    std::map<ePatient_Sex, std::string> sexes = { {ePatient_Sex::Male, "male"}, {ePatient_Sex::Female, "female"} };
-    for (auto sex : sexes)
+    if (t == eSetType::Both || t == eSetType::Slice)
     {
-      // Adjust parameter space to standard patient based on settings
+      // Explicitly setting these:
+      // We are using different parameter combinations than whats in json
+      // The units we use in analysis are also different
+      // And those tools are not unit converting
+
+      SEPatient standardMale(GetLogger());
+      standardMale.GetAge().SetValue(44, TimeUnit::yr);
+      standardMale.GetHeight().SetValue(180.34, LengthUnit::cm);
+      standardMale.GetBodyMassIndex().SetValue(23.71);
+      standardMale.GetBodyFatFraction().SetValue(0.21);
+      standardMale.GetHeartRateBaseline().SetValue(72, FrequencyUnit::Per_min);
+      standardMale.GetMeanArterialPressureBaseline().SetValue(87, PressureUnit::mmHg);
+      standardMale.GetPulsePressureBaseline().SetValue(40.5, PressureUnit::mmHg);
+      standardMale.GetRespirationRateBaseline().SetValue(12, FrequencyUnit::Per_min);
+      GenerateSlicedPatientList(pList, standardMale);
+
+      SEPatient standardFemale(GetLogger());
+      standardFemale.SetSex(ePatient_Sex::Female);
+      standardFemale.GetAge().SetValue(44, TimeUnit::yr);
+      standardFemale.GetHeight().SetValue(162.56, LengthUnit::cm);
+      standardFemale.GetBodyMassIndex().SetValue(22.31);
+      standardFemale.GetBodyFatFraction().SetValue(0.28);
+      standardFemale.GetHeartRateBaseline().SetValue(72, FrequencyUnit::Per_min);
+      standardFemale.GetMeanArterialPressureBaseline().SetValue(87, PressureUnit::mmHg);
+      standardFemale.GetPulsePressureBaseline().SetValue(40.5, PressureUnit::mmHg);
+      standardFemale.GetRespirationRateBaseline().SetValue(12, FrequencyUnit::Per_min);
+      GenerateSlicedPatientList(pList, standardFemale);
+    }
+
+    Info("Removed " + std::to_string(m_Duplicates) + " duplicates");
+    Info("Created " + std::to_string(m_TotalPatients) + " patients");
+    Info("Created " + std::to_string(m_TotalRuns) + " total runs");
+  }
+
+  void PVGenerator::GenerateSlicedPatientList(PatientStateListData& pList, const SEPatient& basePatient)
+  {
+    Info("Generating Age slice data set for "+basePatient.GetName());
+    for (size_t age_yr = minAge_yr; age_yr <= maxAge_yr; age_yr++)
+    {
       SEPatient patient(GetLogger());
-      if (sex.first == ePatient_Sex::Male)
-      {
-        patient.SerializeFromFile("./patients/StandardMale.json");
-      }
-      else if (sex.first == ePatient_Sex::Female)
-      {
-        patient.SerializeFromFile("./patients/StandardFemale.json");
-      }
+      patient.Copy(basePatient);
+      patient.GetAge().SetValue(age_yr, TimeUnit::yr);
+      CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
+    }
 
-      double age_yr = patient.GetAge(TimeUnit::yr);
-      double height_cm = patient.GetHeight(LengthUnit::cm);
-      double height_m = patient.GetHeight(LengthUnit::m);
-      double weight_kg = patient.GetWeight(MassUnit::kg);
-      double bmi = weight_kg / (height_m * height_m);
-      double hr_bpm = patient.GetHeartRateBaseline(FrequencyUnit::Per_min);
-      double systolic_mmHg = patient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
-      double diastolic_mmHg = patient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
-      double map_mmHg = (systolic_mmHg + 2.0 * diastolic_mmHg) / 3.0;
-      double pp_mmHg = systolic_mmHg - diastolic_mmHg;
-      Parameter& Height_cm = sex.first == ePatient_Sex::Male ? HeightMale_cm : HeightFemale_cm;
+    Info("Generating Height slice data set for " + basePatient.GetName());
+    double minHeight_cm = basePatient.GetSex() == ePatient_Sex::Male ? minMaleHeight_cm : minFemaleHeight_cm;
+    double maxHeight_cm = basePatient.GetSex() == ePatient_Sex::Male ? maxMaleHeight_cm : maxFemaleHeight_cm;
+    for (double height_cm = minHeight_cm; height_cm <= maxHeight_cm; height_cm += 0.5)
+    {
+      SEPatient patient(GetLogger());
+      patient.Copy(basePatient);
+      patient.GetHeight().SetValue(height_cm, LengthUnit::cm);
+      CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
+    }
 
-      std::string sex_dir = "/" + sex.second;
-      if (IncludeStandardPatients)
-      {
-        std::string dir = sex_dir+"/standard";
-        CreatePatient(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
-          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, dir);
-      }
+    Info("Generating BMI slice data set for " + basePatient.GetName());
+    for (double bmi = minBMI; bmi <= maxBMI; bmi += 0.5)
+    {
+      SEPatient patient(GetLogger());
+      patient.Copy(basePatient);
+      patient.GetBodyMassIndex().SetValue(bmi);
+      CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
+    }
 
-      for (auto v : Age_yr.Values())
-      {
-        std::string dir = sex_dir+"/age_yr" + pulse::cdm::to_string(v);
-        CreatePatient(pList, sex.first, (unsigned int)v, height_cm, weight_kg, bmi,
-          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, dir);
-      }
+    Info("Generating BFF slice data set for " + basePatient.GetName());
+    double minBFF = basePatient.GetSex() == ePatient_Sex::Male ? minMaleBFF : minFemaleBFF;
+    double maxBFF = basePatient.GetSex() == ePatient_Sex::Male ? maxMaleBFF : maxFemaleBFF;
+    for (double bff = minBFF; bff <= maxBFF; bff += 0.01)
+    {
+      SEPatient patient(GetLogger());
+      patient.Copy(basePatient);
+      patient.GetBodyFatFraction().SetValue(bff);
+      CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
+    }
 
-      for (auto v : Height_cm.Values())
-      {
-        std::string dir = sex_dir+"/height_cm" + pulse::cdm::to_string(v);
-        CreatePatient(pList, sex.first, (unsigned int)age_yr, v, weight_kg, bmi,
-          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, dir);
-      }
+    Info("Generating HR slice data set for " + basePatient.GetName());
+    for (size_t hr_bpm = minHR_bpm; hr_bpm <= maxHR_bpm; hr_bpm++)
+    {
+      SEPatient patient(GetLogger());
+      patient.Copy(basePatient);
+      patient.GetHeartRateBaseline().SetValue(hr_bpm, FrequencyUnit::Per_min);
+      CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
+    }
 
-      for (auto v : BMI.Values())
+    Info("Generating MAP/PP combo slice data set for " + basePatient.GetName());
+    // Iterating MAP and Pulse Pressure by themselves don't effectivly cover the variability we would like
+    // They are dependent on each other and Systolic/Diastolic, so to get a good coverage,
+    // we are going to combo these two values and toss invalid patients.
+    // This gives us a pretty good coverage of variabile cv pressures
+    Logger null;// I don't want to log the SetupPatient failures
+    null.LogToConsole(false);
+    for (size_t map = minMAP_mmHg; map <= maxMAP_mmHg; map++)
+    {
+      for (size_t pp_mmHg = minPulsePressure_mmHg; pp_mmHg <= maxPulsePressure_mmHg; pp_mmHg++)
       {
-        std::string dir = sex_dir+"/bmi" + pulse::cdm::to_string(v);
-        // Caclulate weight (kg) = BMI * m2
-        double w = bmi * height_m * height_m;
-        CreatePatient(pList, sex.first, (unsigned int)age_yr, height_cm, w, v,
-          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, dir);
-      }
-
-      for (auto v : HR_bpm.Values())
-      {
-        std::string dir = sex_dir+"/hr_bpm" + pulse::cdm::to_string(v);
-        CreatePatient(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
-          v, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, dir);
-      }
-
-      AdjustMeanArterialPressureBounds(pp_mmHg);
-      for (auto v : MAP_mmHg.Values())
-      {
-        std::string dir = sex_dir+"/map_mmHg" + pulse::cdm::to_string(v);
-        double s = pp_mmHg + (((3.0 * v) - pp_mmHg) / 3.0);
-        double d = s - pp_mmHg;
-        CreatePatient(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
-          hr_bpm, v, pp_mmHg, s, d, dir);
-      }
-
-      AdjustPulsePressureBounds(map_mmHg);
-      for (auto v : PP_mmHg.Values())
-      {
-        std::string dir = sex_dir+"/pp_mmHg" + pulse::cdm::to_string(v);
-        double s = v + (((3.0 * map_mmHg) - v) / 3.0);
-        double d = s - v;
-        CreatePatient(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
-          hr_bpm, map_mmHg, v, s, d, dir);
+        SEPatient patient(&null);
+        patient.Copy(basePatient);
+        patient.GetSystolicArterialPressureBaseline().Invalidate();
+        patient.GetDiastolicArterialPressureBaseline().Invalidate();
+        patient.GetMeanArterialPressureBaseline().SetValue(map, PressureUnit::mmHg);
+        patient.GetPulsePressureBaseline().SetValue(pp_mmHg, PressureUnit::mmHg);
+        if (pulse::human_adult_whole_body::SetupPatient(patient))
+        {
+          CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
+          //  std::cout << "MAP: " << map << " PP: " << pp_mmHg << " -> " << patient.GetSystolicArterialPressureBaseline() << "/" << patient.GetDiastolicArterialPressureBaseline() << std::endl;
+        }
       }
     }
-    Info("Created " + std::to_string(m_TotalPatients) + " out a total of " + std::to_string(m_MaxNumPatients) + " possible patients");
-    Info("Created " + std::to_string(m_TotalRuns) + " total runs");
+
+    /*
+    for (size_t map = minMAP_mmHg; map <= maxMAP_mmHg; map++)
+    {
+      SEPatient patient(GetLogger());
+      patient.Copy(basePatient);
+      patient.GetSystolicArterialPressureBaseline().Invalidate();
+      patient.GetDiastolicArterialPressureBaseline().Invalidate();
+      patient.GetMeanArterialPressureBaseline().SetValue(map, PressureUnit::mmHg);
+      std::cout << "MAP: " << map;
+      //if (pulse::human_adult_whole_body::SetupPatient(patient))
+      //  std::cout << " -> " << patient.GetPulsePressureBaseline() << " " << patient.GetSystolicArterialPressureBaseline() << "/" << patient.GetDiastolicArterialPressureBaseline() << std::endl;
+      //else
+      //  std::cout << "INVALID" << std::endl;
+      CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
+    }
+
+    for (size_t pp_mmHg = minPulsePressure_mmHg; pp_mmHg <= maxPulsePressure_mmHg; pp_mmHg++)
+    {
+      SEPatient patient(GetLogger());
+      patient.Copy(basePatient);
+
+      //patient.GetDiastolicArterialPressureBaseline().SetValue(60, PressureUnit::mmHg);
+      patient.GetDiastolicArterialPressureBaseline().Invalidate();
+      patient.GetSystolicArterialPressureBaseline().Invalidate();
+      patient.GetPulsePressureBaseline().SetValue(pp_mmHg, PressureUnit::mmHg);
+      //std::cout << "Pulse Pressure: " << pp_mmHg;
+      //if (pulse::human_adult_whole_body::SetupPatient(patient))
+      //  std::cout << " -> " << patient.GetMeanArterialPressureBaseline() << " " << patient.GetSystolicArterialPressureBaseline() << "/" << patient.GetDiastolicArterialPressureBaseline() << std::endl;
+      //else
+      //  std::cout << "INVALID" << std::endl;
+      CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
+    }
+    */
+
+    Info("Generating RR slice data set for " + basePatient.GetName());
+    for (double rr = minRR_bpm; rr <= maxRR_bpm; rr += 0.5)
+    {
+      SEPatient patient(GetLogger());
+      patient.Copy(basePatient);
+      patient.GetRespirationRateBaseline().SetValue(rr, FrequencyUnit::Per_min);
+      CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
+    }
   }
 
   void PVGenerator::GenerateMultiVariableCombinationPatientList(PatientStateListData& pList)
   {
-    m_MaxNumPatients = 0;
-    m_TotalPatients = 0;
-    m_TotalRuns = 0;
+    Info("Generating combinatorial data set");
+    // Each parameter we want to include in our permutations, has 3 options, min, max, standard/default
+    std::vector<size_t> opts = { 2,2,2,2,2,2,2,2 }; // max index is 2
+    std::vector<std::vector<size_t>> permutations;
+    GeneralMath::Combinations(opts, permutations);
 
-    std::map<ePatient_Sex, std::string> sexes = { {ePatient_Sex::Male, "male"}, {ePatient_Sex::Female, "female"} };
+    std::vector<ePatient_Sex> sexes = { ePatient_Sex::Male, ePatient_Sex::Female };
     for (auto sex : sexes)
     {
-      ResetParameters();
-
-      // Adjust parameter space to standard patient based on settings
-      SEPatient standard(GetLogger());
-      std::pair<double, double> standardBP_mmHg(0, 0);
-      double standardMAP_mmHg = 0;
-      double standardPP_mmHg = 0;
-      if (IncludeStandardPatients)
+      ResetParameters(sex);
+      for (auto idxs : permutations)
       {
-        if (sex.first == ePatient_Sex::Male)
-        {
-          standard.SerializeFromFile("./patients/StandardMale.json");
-        }
-        else if (sex.first == ePatient_Sex::Female)
-        {
-          standard.SerializeFromFile("./patients/StandardFemale.json");
-        }
-        if (!AddPatientParameters(standard))
-        {
-          Error("No data generated");
-          return;
-        }
-        double stdSystolic_mmHg = standard.GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
-        double stdDiastolic_mmHg = standard.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
-        standardBP_mmHg = std::make_pair(stdSystolic_mmHg, stdDiastolic_mmHg);
-        standardMAP_mmHg = (stdSystolic_mmHg + 2.0 * stdDiastolic_mmHg) / 3.0;
-        standardPP_mmHg = stdSystolic_mmHg - stdDiastolic_mmHg;
-      }
+        SEPatient patient(GetLogger());
+        patient.SetName("Patient" + std::to_string(m_TotalPatients));
+        patient.SetSex(sex);
 
-      std::string sex_dir = "/" + sex.second;
-      Parameter& Height_cm = sex.first == ePatient_Sex::Male ? HeightMale_cm : HeightFemale_cm;
+        patient.GetAge().SetValue(Age_yr.Values()[idxs[0]], TimeUnit::yr);
+        patient.GetHeight().SetValue(Height_cm.Values()[idxs[1]], LengthUnit::cm);
+        patient.GetBodyFatFraction().SetValue(BFF.Values()[idxs[2]]);
+        patient.GetBodyMassIndex().SetValue(BMI.Values()[idxs[3]]);
+        patient.GetHeartRateBaseline().SetValue(HR_bpm.Values()[idxs[4]], FrequencyUnit::Per_min);
+        patient.GetMeanArterialPressureBaseline().SetValue(MAP_mmHg.Values()[idxs[5]], PressureUnit::mmHg);
+        patient.GetPulsePressureBaseline().SetValue(PP_mmHg.Values()[idxs[6]], PressureUnit::mmHg);
+        patient.GetRespirationRateBaseline().SetValue(RR_bpm.Values()[idxs[7]], FrequencyUnit::Per_min);
 
-      for (auto age : Age_yr.Values())
-      {
-        unsigned int age_yr = (unsigned int)age;
-        std::string age_dir = "/age_yr" + std::to_string(age_yr);
-
-        for (auto height_cm : Height_cm.Values())
-        {
-          std::string height_dir = "/height_cm" + pulse::cdm::to_string(height_cm);
-
-          for (auto bmi : BMI.Values())
-          {
-            std::string bmi_dir = "/bmi" + pulse::cdm::to_string(bmi);
-
-            // BMI = kg/m2
-            // kg = BMI * m2
-            double height_m = Convert(height_cm, LengthUnit::cm, LengthUnit::m);
-
-            // Caclulate weight (kg) from height (m) and BMI
-            double weight_kg = bmi * height_m * height_m;
-
-            for (auto hr_bpm : HR_bpm.Values())
-            {
-              std::string hr_dir = "/hr_bpm" + pulse::cdm::to_string(hr_bpm);
-
-              for (auto map_mmHg : MAP_mmHg.Values())
-              {
-                std::string map_dir = "/map_mmHg" + pulse::cdm::to_string(map_mmHg);
-
-                for (auto pp_mmHg : PP_mmHg.Values())
-                {
-                  std::string pp_dir = "/pp_mmHg" + pulse::cdm::to_string(pp_mmHg);
-                  std::string full_dir_path = sex_dir + age_dir + height_dir + bmi_dir + hr_dir + map_dir + pp_dir;
-
-                  double systolic_mmHg = pp_mmHg + (((3. * map_mmHg) - pp_mmHg) / 3.);
-                  double diastolic_mmHg = systolic_mmHg - pp_mmHg;
-
-                  CreatePatient(pList, sex.first, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, full_dir_path);
-                }
-              }
-            }
-          }
-        }
+        CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
       }
     }
-
-    Info("Created " + std::to_string(m_TotalPatients) + " out a total of " + std::to_string(m_MaxNumPatients) + " possible patients");
-    Info("Created " + std::to_string(m_TotalRuns) + " total runs");
   }
 
-  void PVGenerator::CreatePatient(PatientStateListData& pList,
-    const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
-    double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg, const std::string& full_dir_path)
+  void PVGenerator::CreatePatient(PatientStateListData& pList, SEPatient& patient, const std::string& full_dir_path)
   {
+    std::string pstr = ToString(patient);
+    if (m_PatientSet.find(pstr) != m_PatientSet.end())
+    {
+      Info("Ignoring duplicate: " + pstr);
+      m_Duplicates++;
+      return;
+    }
+    m_PatientSet.insert(pstr);
+
+    m_TotalPatients++;
     switch (GenerateMode)
     {
-    case Mode::Validation:
+    case eMode::Validation:
     {
-      AddPatientToList(pList, sex, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 120, full_dir_path);
+      AddPatientToList(pList, patient, 120, full_dir_path);
       break;
     }
 
-    case Mode::Hemorrhage:
+    case eMode::Hemorrhage:
     {
-      GenerateHemorrhageOptions(pList, sex, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, full_dir_path);
+      GenerateHemorrhageOptions(pList, patient, full_dir_path);
       break;
     }
     }
   }
 
   // Creates a new list of patients, adding all hemorrhage variables to each patient in originalPatients
-  void PVGenerator::GenerateHemorrhageOptions(PatientStateListData& pList,
-    const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
-    double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg,
-    const std::string& full_dir_path)
+  void PVGenerator::GenerateHemorrhageOptions(PatientStateListData& pList, SEPatient& patient, const std::string& full_dir_path)
   {
     std::vector<std::string> HemorrhageCompartments = { "RightArm", "RightLeg" };
     for (auto hemorrhageCompartment : HemorrhageCompartments)
@@ -417,8 +323,7 @@ namespace pulse::study::patient_variability
           std::string triageTime_dir = "/triage_min" + pulse::cdm::to_string(triageTime_min);
           std::string hemorrhage_dir_path = full_dir_path + compartment_dir + severity_dir + triageTime_dir;
 
-          auto patientData =
-            AddPatientToList(pList, sex, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 2*60*60, hemorrhage_dir_path);
+          auto patientData = AddPatientToList(pList, patient, 2 * 60 * 60, hemorrhage_dir_path);
 
           auto hemorrhage = patientData->mutable_hemorrhage();
           hemorrhage->set_starttime_s(10);
@@ -431,78 +336,35 @@ namespace pulse::study::patient_variability
   }
 
   pulse::study::bind::patient_variability::PatientStateData* PVGenerator::AddPatientToList(PatientStateListData& pList,
-    const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
-    double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg,
-    double runDuration_s, const std::string& full_dir_path)
+    SEPatient& patient, double runDuration_s, const std::string& full_dir_path)
   {
-    m_MaxNumPatients++;
     Info("Creating patient: " + full_dir_path);
-
-    if (!IsValidBloodPressure_mmHg(map_mmHg, systolic_mmHg, diastolic_mmHg))
-    {
-      Error("Invalid blood pressure for " + full_dir_path + " : " + pulse::cdm::to_string(systolic_mmHg) + "/" + pulse::cdm::to_string(diastolic_mmHg));
-      return nullptr;
-    }
-
-    if (!TestPatientCombo(GetLogger(), sex, age_yr, height_cm, weight_kg, hr_bpm, systolic_mmHg, diastolic_mmHg))
-    {
-      Error("The invalid patient was: " + full_dir_path);
-      return nullptr;
-    }
-
+    //Info("  " + ToString(patient));
+    pulse::study::bind::patient_variability::PatientStateData* patientStateData = pList.add_patientstate();
+    patientStateData->set_id(m_TotalRuns);
+    patientStateData->set_outputbasefilename(full_dir_path);
+    patientStateData->set_maxsimulationtime_s(runDuration_s); // Generate 2 mins of data
+    patientStateData->mutable_validation();// Create a validation object to fill
+    pulse::cdm::bind::PatientData* patientData = patientStateData->mutable_patient();
+    PBPatient::Serialize(patient, *patientData);
     m_TotalRuns++;
-    m_TotalPatients++;
-    pulse::study::bind::patient_variability::PatientStateData* patientData = pList.add_patient();
-    patientData->set_id(m_TotalRuns);
-    patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex);
-    patientData->set_age_yr(age_yr);
-    patientData->set_bmi(bmi);
-    patientData->set_heartrate_bpm(hr_bpm);
-    patientData->set_height_cm(height_cm);
-    patientData->set_meanarterialpressure_mmhg(map_mmHg);
-    patientData->set_pulsepressure_mmhg(pp_mmHg);
 
-    patientData->set_weight_kg(weight_kg);
-    patientData->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
-    patientData->set_systolicarterialpressure_mmhg(systolic_mmHg);
-    patientData->set_outputbasefilename(full_dir_path);
-    patientData->set_maxsimulationtime_s(runDuration_s); // Generate 2 mins of data
-    patientData->mutable_validation();// Create a validation object to fill
-
-    return patientData;
+    return patientStateData;
   }
 
-  // Add values to our ParameterSpace
-  bool PVGenerator::AddPatientParameters(const SEPatient& patient)
+  std::string PVGenerator::ToString(SEPatient& p)
   {
-    Age_yr.Insert(patient.GetAge(TimeUnit::yr));
+    std::string out;
+    out = ePatient_Sex_Name(p.GetSex()) + "_";
+    out += p.GetAge().ToString() + "_";
+    out += p.GetHeight().ToString() + "_";
+    out += p.GetBodyMassIndex().ToString() + "_";
+    out += p.GetBodyFatFraction().ToString() + "_";
+    out += p.GetHeartRateBaseline().ToString() + "_";
+    out += p.GetMeanArterialPressureBaseline().ToString() + "_";
+    out += p.GetPulsePressureBaseline().ToString() + "_";
+    out += p.GetRespirationRateBaseline().ToString();
 
-    double height_cm = patient.GetHeight(LengthUnit::cm);
-    if (patient.GetSex() == ePatient_Sex::Male)
-      HeightMale_cm.Insert(height_cm);
-    else if (patient.GetSex() == ePatient_Sex::Female)
-      HeightFemale_cm.Insert(height_cm);
-
-    double height_m = patient.GetHeight(LengthUnit::m);
-    double weight_kg = patient.GetWeight(MassUnit::kg);
-    double bmi = weight_kg / (height_m * height_m);
-    BMI.Insert(bmi);
-
-    HR_bpm.Insert(patient.GetHeartRateBaseline(FrequencyUnit::Per_min));
-
-    double systolic_mmHg = patient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
-    double diastolic_mmHg = patient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
-    double map_mmHg = (systolic_mmHg + 2 * diastolic_mmHg) / 3.0;
-    double pp_mmHg = systolic_mmHg - diastolic_mmHg;
-
-    if (!AdjustMeanArterialPressureBounds(pp_mmHg))
-    {
-      Error("Unable to adjust bounds to provided patient");
-      return false;
-    }
-
-    MAP_mmHg.Insert(map_mmHg);
-    PP_mmHg.Insert(pp_mmHg);
-    return true;
+    return out;
   }
 }

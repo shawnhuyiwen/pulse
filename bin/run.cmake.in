@@ -53,9 +53,9 @@ if(TYPE STREQUAL "tests" OR TYPE STREQUAL "SystemValidation" OR TYPE STREQUAL "P
     execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SETestDriver PatientVerification.config)
     execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.validation.PatientValidation TEST)
   endif()
-elseif(TYPE STREQUAL "validateFolder")# ARG1 is folder path, if ARG2 is provided and 'false', java logging is turned off
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.validation.PatientValidation ${ARG1} ${ARG2})
+elseif(TYPE STREQUAL "ValidateFolder")# ARG1 is folder path, if ARG2 is provided and 'false', java logging is turned off
     execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.validation.SystemValidation ${ARG1} ${ARG2})
+    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.validation.PatientValidation ${ARG1} ${ARG2})
 elseif(TYPE STREQUAL "genData")
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.dataset.DataSetReader)
   execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.dataset.ValidationDataSetReader)
