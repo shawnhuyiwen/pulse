@@ -115,9 +115,11 @@ public:
   virtual void Fatal(std::stringstream &msg, std::string const&  origin = "");
   virtual void Fatal(std::ostream &msg, std::string const&  origin = "");
 
+  std::string static JoinOutput(std::string const& msg, std::string const& origin);
+
 protected:
 
-  virtual std::string FormatLogMessage(std::string const&  origin, std::string const&  msg);
+  virtual std::string FormatLogMessage(std::string const&  msg);
 
   std::vector<LoggerForward*>   m_Forwards;
   const SEScalarTime*           m_time;

@@ -23,7 +23,7 @@ public:
   {
     return requested_level >= _log_level;
   }
-  void log(Logger::Level requested_level, const std::string& out)
+  void log(Logger::Level requested_level, const std::string& fmtMsg, const std::string& origin)
   {
     std::scoped_lock lock(_mutex);
     if (!_log_to_console && !_log_to_file)
@@ -50,10 +50,11 @@ public:
       }
       _last_requested_level = requested_level;
     }
+
     if (_log_to_console)
-      std::cout << _str_requested_level << out << "\n";
+      std::cout << _str_requested_level << Logger::JoinOutput(fmtMsg, origin) << "\n";
     if (_log_to_file)
-      _file << _str_requested_level << out << std::endl;
+      _file << _str_requested_level << Logger::JoinOutput(fmtMsg, origin) << std::endl;
   }
 
   bool _log_to_console = false;
@@ -143,29 +144,38 @@ void Logger::RemoveForwards()
   m_Forwards.clear();
 }
 
-std::string Logger::FormatLogMessage(const std::string& msg, const std::string& origin)
+std::string Logger::JoinOutput(std::string const& msg, std::string const& origin)
 {
   std::string out = " ";
-  size_t min = out.length();
-  if (m_time != nullptr && m_time->IsValid())
-    out += "[" + m_time->ToString() + "] ";
-
-  if(!origin.empty())
+  if (!origin.empty())
     out += origin + " : ";
 
   if (!msg.empty())
     out += msg;
 
-  return (out.length() > min)? out : "";
+  return out;
+}
+
+std::string Logger::FormatLogMessage(const std::string& msg)
+{
+  std::string out = "";
+  if (m_time != nullptr && m_time->IsValid())
+    out += "[" + m_time->ToString() + "] ";
+
+  if (!msg.empty())
+    out += msg;
+
+  return out;
 }
 
 void Logger::Debug(std::string const& msg, const std::string& origin)
 {
   if (_log_lib->log(Level::Debug))
   {
-    _log_lib->log(Level::Debug, FormatLogMessage(msg, origin));
+    std::string fmtMsg = FormatLogMessage(msg);
+    _log_lib->log(Level::Debug, fmtMsg, origin);
     for (auto fwd : m_Forwards)
-      fwd->ForwardDebug(msg, origin);
+      fwd->ForwardDebug(fmtMsg, origin);
   }
 }
 
@@ -186,9 +196,10 @@ void Logger::Info(const std::string& msg, const std::string& origin)
 {
   if (_log_lib->log(Level::Info))
   {
-    _log_lib->log(Level::Info, FormatLogMessage(msg, origin));
+    std::string fmtMsg = FormatLogMessage(msg);
+    _log_lib->log(Level::Info, fmtMsg, origin);
     for (auto fwd : m_Forwards)
-      fwd->ForwardInfo(msg, origin);
+      fwd->ForwardInfo(fmtMsg, origin);
   }
 }
 
@@ -215,9 +226,10 @@ void Logger::Warning(const std::string& msg, const std::string& origin)
 {
   if (_log_lib->log(Level::Warn))
   {
-    _log_lib->log(Level::Warn, FormatLogMessage(msg, origin));
+    std::string fmtMsg = FormatLogMessage(msg);
+    _log_lib->log(Level::Warn, fmtMsg, origin);
     for (auto fwd : m_Forwards)
-      fwd->ForwardWarning(msg, origin);
+      fwd->ForwardWarning(fmtMsg, origin);
   }
 }
 void Logger::Warning(std::stringstream& msg, const std::string& origin)
@@ -237,9 +249,10 @@ void Logger::Error(const std::string& msg, const std::string& origin)
 {
   if (_log_lib->log(Level::Error))
   {
-    _log_lib->log(Level::Error, FormatLogMessage(msg, origin));
+    std::string fmtMsg = FormatLogMessage(msg);
+    _log_lib->log(Level::Error, fmtMsg, origin);
     for (auto fwd : m_Forwards)
-      fwd->ForwardError(msg, origin);
+      fwd->ForwardError(fmtMsg, origin);
   }
 }
 void Logger::Error(std::stringstream& msg, const std::string& origin)
@@ -259,12 +272,13 @@ void Logger::Fatal(const std::string& msg, const std::string& origin)
 {
   if (_log_lib->log(Level::Fatal))
   {
-    _log_lib->log(Level::Fatal, FormatLogMessage(msg, origin));
+    std::string fmtMsg = FormatLogMessage(msg);
+    _log_lib->log(Level::Fatal, fmtMsg, origin);
     // Going through forwards in reverse, as our controller handler will be first
     // And that will kick out an exception and halt the engine, so let's let
     // the other forwards process this fatal first, before we halt the engine
     for (auto fwd = m_Forwards.rbegin(); fwd != m_Forwards.rend(); ++fwd)
-      (*fwd)->ForwardFatal(msg, origin);
+      (*fwd)->ForwardFatal(fmtMsg, origin);
   }
 }
 void Logger::Fatal(std::stringstream& msg, const std::string& origin)
