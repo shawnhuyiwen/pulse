@@ -1328,7 +1328,7 @@ namespace pulse
   {
   public:
     DEFINE_STATIC_STRING(VasculatureToBloodSamplingPort);
-    DEFINE_STATIC_STRING(BloodSamplingPortToOxygenator);
+    DEFINE_STATIC_STRING(BloodSamplingPortToGround);
     DEFINE_STATIC_STRING(OxygenatorToVasculature);
 
     static const std::vector<std::string>& GetValues()
@@ -1337,7 +1337,7 @@ namespace pulse
       if (_values.empty())
       {
         _values.push_back(VasculatureToBloodSamplingPort);
-        _values.push_back(BloodSamplingPortToOxygenator);
+        _values.push_back(BloodSamplingPortToGround);
         _values.push_back(OxygenatorToVasculature);
       }
       return _values;

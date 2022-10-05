@@ -56,6 +56,7 @@ namespace pulse
     SELiquidCompartment*     m_InflowCmpt;
     SELiquidCompartmentLink* m_lVascularToBloodSamplingPort;
     SELiquidCompartment*     m_cBloodSamplingPort;
+    SELiquidCompartmentLink* m_lBloodSamplingPortToGround;
     SELiquidCompartment*     m_cOxygenator;
     SELiquidCompartmentLink* m_lOxygenatorToVascular;
     SELiquidCompartment*     m_OutflowCmpt;
@@ -64,7 +65,8 @@ namespace pulse
     SEFluidCircuitNode*      m_InflowNode;
     SEFluidCircuitPath*      m_pVascularToBloodSamplingPort;
     SEFluidCircuitNode*      m_nBloodSamplingPort;
-    SEFluidCircuitPath*      m_pBloodSamplingPortToOxygenator;
+    SEFluidCircuitPath*      m_pBloodSamplingPortToGround;
+    SEFluidCircuitPath*      m_pGroundToOxygenator;
     SEFluidCircuitNode*      m_nOxygenator;
     SEFluidCircuitPath*      m_pOxygenatorToVascular;
     SEFluidCircuitNode*      m_OutflowNode;
