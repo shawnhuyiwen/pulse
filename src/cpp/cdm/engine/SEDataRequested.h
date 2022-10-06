@@ -38,15 +38,17 @@ public:
   virtual void KeepLogMessages(bool b) { m_KeepLogMessages = b; }
   virtual const std::vector<SEEventChange>& GetEventChanges() const;
   virtual const LogMessages& GetLogMessages() const;
-  virtual void ForwardDebug(const std::string& msg, const std::string& origin);
-  virtual void ForwardInfo(const std::string& msg, const std::string& origin);
-  virtual void ForwardWarning(const std::string& msg, const std::string& origin);
-  virtual void ForwardError(const std::string& msg, const std::string& origin);
-  virtual void ForwardFatal(const std::string& msg, const std::string& origin);
+  
+  void ForwardDebug(const std::string& msg) override;
+  void ForwardInfo(const std::string& msg) override;
+  void ForwardWarning(const std::string& msg) override;
+  void ForwardError(const std::string& msg) override;
+  void ForwardFatal(const std::string& msg) override;
 
   virtual bool KeepEventChanges() const { return m_KeepEventChanges; }
   virtual void KeepEventChanges(bool b) { m_KeepEventChanges = b; }
-  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
+
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override;
 
 protected:
   int                             m_ID;
