@@ -87,36 +87,12 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
     def __init__(self, dir: str):
         super().__init__(dir)
 
-    def exampleProcess(self):
-        # Create queries and analyze them
-        query = Conditional()
-        query.sex(PatientData.eSex.Male)
-        query.addCondition(Field.Age_yr, '<=', 45)
-        results = self.conditionalFilter([query])
-        # The results are a map{"SystemName" : map{"PropertyName" : PropertyError()} }
-        # The PropertyError class has an array, errors, of all the errors of that property in the query results
-        # This condition filter will ONLY create PropertyName entries if the property is PatientSpecific
-
-        patient_ids = results["ids"]
-        print("I found "+str(len(patient_ids)))
-        for pid in patient_ids:
-            patient = self.getPatient(pid)
-            age_yr = patient.Age.ScalarTime.Value
-            print(str(patient.Name)+" id:"+str(pid)+" is "+str(age_yr)+" yrs old")
-
-        # Let's go through and calculate 'stuff' for each property
-        for system,properties in results.items():
-            print("Examining system "+system)
-            for property,property_error in properties.items():
-                print("Examining Property" + property)
-                self.analyzePropertyError(property_error)
-                print("  Average Error: " + str(property_error.average_error))
-
     def process(self):
         # Count everything
         results = analysis.everythingQuery()
         numAllPatients = analysis.numPatients(results)
         print("All patients: " + str(numAllPatients))
+        del results["ids"]
         analysis.systems = analysis.combineCategories(results)
 
         analysis.createRadarCharts()
@@ -128,12 +104,14 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         results = analysis.standardQuery(PatientData.eSex.Male)
         numStandardMalePatients = analysis.numPatients(results)
         print("Standard male patients: " + str(numStandardMalePatients))
+        del results["ids"]
         standardMaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
         #Standard female
         results = analysis.standardQuery(PatientData.eSex.Female)
         numStandardFemalePatients = analysis.numPatients(results)
         print("Standard female patients: " + str(numStandardFemalePatients))
+        del results["ids"]
         standardFemaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
         for idx, system in enumerate(analysis.systems):
@@ -141,8 +119,10 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
             for field in fields:
                 print("Evaluating " + system + " system with " + str(field))
                 results = analysis.singleParameterQuery(PatientData.eSex.Male, field)
+                del results["ids"]
                 maleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
                 results = analysis.singleParameterQuery(PatientData.eSex.Female, field)
+                del results["ids"]
                 femaleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
                 # Clean up the category names for the plot
                 strField = str(field).replace("Field.", "")
@@ -187,24 +167,28 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         results = analysis.standardQuery(PatientData.eSex.Male)
         numStandardMalePatients = analysis.numPatients(results)
         print("Standard male patients: " + str(numStandardMalePatients))
+        del results["ids"]
         radarStandardMaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
         #Standard female
         results = analysis.standardQuery(PatientData.eSex.Female)
         numStandardFemalePatients = analysis.numPatients(results)
         print("Standard female patients: " + str(numStandardFemalePatients))
+        del results["ids"]
         radarStandardFemaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
         # Nonstandard male query
         results = analysis.nonStandardQuery(PatientData.eSex.Male)
         numNonstandardMalePatients = analysis.numPatients(results)
         print("Nonstandard male patients: " + str(numNonstandardMalePatients))
+        del results["ids"]
         radarNonstandardMaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
         # Nonstandard female query
         results = analysis.nonStandardQuery(PatientData.eSex.Female)
         numNonstandardFemalePatients = analysis.numPatients(results)
         print("Nonstandard female patients: " + str(numNonstandardFemalePatients))
+        del results["ids"]
         radarNonstandardFemaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
         # Generate radar chart
@@ -366,5 +350,4 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
 
 if __name__ == '__main__':
     analysis = PatientVariabilityAnalysis("./test_results/patient_variability/validation/full/")
-    #analysis.exampleProcess()
     analysis.process()
