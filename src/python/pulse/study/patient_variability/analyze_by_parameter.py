@@ -107,7 +107,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         del results["ids"]
         standardMaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
-        #Standard female
+        # Standard female
         results = analysis.standardQuery(PatientData.eSex.Female)
         numStandardFemalePatients = analysis.numPatients(results)
         print("Standard female patients: " + str(numStandardFemalePatients))
@@ -133,9 +133,23 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
                 strField = strField.replace("MeanArterialPressureBaseline", "MAP")
                 strField = strField.replace("PulsePressureBaseline", "PP")
                 strField = strField.replace("RespirationRateBaseline", "RR")
-                strField = strField + "(" + str(len(maleValues + femaleValues)) + ")"
-                plotData.update({strField: maleValues + femaleValues})
-                print("Patients evaluated: " + str(len(maleValues + femaleValues)))
+                # Blood pressures are special
+                if strField != "MAP" and strField != "PP":
+                    strField = strField + " (" + str(len(maleValues + femaleValues)) + ")"
+                    plotData.update({strField: maleValues + femaleValues})
+                    print("Patients evaluated: " + str(len(maleValues + femaleValues)))
+
+            # Blood pressures are special
+            results = analysis.bloodPressureQuery(PatientData.eSex.Male)
+            del results["ids"]
+            maleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
+            results = analysis.bloodPressureQuery(PatientData.eSex.Female)
+            del results["ids"]
+            femaleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
+            strField = "BP"
+            strField = strField + " (" + str(len(maleValues + femaleValues)) + ")"
+            plotData.update({strField: maleValues + femaleValues})
+            print("Patients evaluated: " + str(len(maleValues + femaleValues)))
 
             # Add NaNs to make data size the same, so pandas doesn't complain
             dataLength = 0
@@ -225,7 +239,6 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         property_error.average_error = property_error.average_error / len(property_error.errors)
 
     def standardQuery(self, sex:PatientData.eSex):
-        #jbw
         #print("Standard " + PatientData.eSex(sex).name + " query")
         query = Conditional()
         query.sex(sex)
@@ -257,6 +270,16 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         query.sex(sex)
         for currentField in fields:
             if field != currentField:
+                query.addCondition(currentField, '==', standardValues[sex, currentField])
+        results = self.conditionalFilter([query])
+        return results
+
+    def bloodPressureQuery(self, sex:PatientData.eSex):
+        #print(sex.name + " " + field.name + " query")
+        query = Conditional()
+        query.sex(sex)
+        for currentField in fields:
+            if "Field.MeanArterialPressureBaseline_mmHg" != str(currentField) and "Field.PulsePressureBaseline_mmHg" != str(currentField):
                 query.addCondition(currentField, '==', standardValues[sex, currentField])
         results = self.conditionalFilter([query])
         return results
