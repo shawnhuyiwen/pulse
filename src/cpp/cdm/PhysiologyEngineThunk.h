@@ -54,13 +54,13 @@ public:
   double* PullDataPtr();
   void PullData(std::vector<double>& data);
 
-  virtual void ForwardDebug(const std::string& msg, const std::string& origin);
-  virtual void ForwardInfo(const std::string& msg, const std::string& origin);
-  virtual void ForwardWarning(const std::string& msg, const std::string& origin);
-  virtual void ForwardError(const std::string& msg, const std::string& origin);
-  virtual void ForwardFatal(const std::string& msg, const std::string& origin);
+  void ForwardDebug(const std::string& msg) override;
+  void ForwardInfo(const std::string& msg) override;
+  void ForwardWarning(const std::string& msg) override;
+  void ForwardError(const std::string& msg) override;
+  void ForwardFatal(const std::string& msg) override;
 
-  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override;
 
 protected:
   virtual void AllocateEngine() = 0;

@@ -51,11 +51,11 @@
 class MyLogger : public LoggerForward
 {
 public:
-  virtual void ForwardDebug  (const std::string& msg, const std::string& origin) { std::cout << "[DEBUG] " << origin << msg << std::endl; }
-  virtual void ForwardInfo   (const std::string& msg, const std::string& origin) { std::cout << "[INFO] " << origin << msg << std::endl; }
-  virtual void ForwardWarning(const std::string& msg, const std::string& origin) { std::cout << "[WARN] " << origin << msg << std::endl; }
-  virtual void ForwardError  (const std::string& msg, const std::string& origin) { std::cout << "[ERROR] " << origin << msg << std::endl; }
-  virtual void ForwardFatal  (const std::string& msg, const std::string& origin) { std::cout << "[FATAL] " << origin << msg << std::endl; }
+  void ForwardDebug  (const std::string& msg) override { std::cout << "[DEBUG] " << msg << std::endl; }
+  void ForwardInfo   (const std::string& msg) override { std::cout << "[INFO] " << msg << std::endl; }
+  void ForwardWarning(const std::string& msg) override { std::cout << "[WARN] " << msg << std::endl; }
+  void ForwardError  (const std::string& msg) override { std::cout << "[ERROR] " << msg << std::endl; }
+  void ForwardFatal  (const std::string& msg) override { std::cout << "[FATAL] " << msg << std::endl; }
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ class MyEventHandler : public SEEventHandler
 {
 public:
   MyEventHandler() : SEEventHandler() {}
-  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) {}
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override {}
 };
 
 //--------------------------------------------------------------------------------------------------

@@ -27,7 +27,7 @@ void SEGasCompartment::StateChange()
 void SEGasCompartment::Balance(BalanceGasBy by)
 {
   if (!m_FluidChildren.empty())
-    Fatal("You cannot balance a quantity with children", "SEGasCompartment::Balance");
+    Fatal("You cannot balance a quantity with children");
   switch (by)
   {
     case BalanceGasBy::Volume:

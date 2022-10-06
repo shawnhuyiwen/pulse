@@ -62,7 +62,8 @@ public class Proto2Doxygen
     }
     catch (Exception ex)
     {
-      Log.error("Unable to create single validation table file.",ex);
+      Log.error("Unable to create single validation table file.");
+      Log.error(ex.getMessage());
     }
   }
 

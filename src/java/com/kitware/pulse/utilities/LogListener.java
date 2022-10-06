@@ -43,24 +43,6 @@ public abstract class LogListener
   }
   abstract protected void handleDebug(String msg);
   
-  public final void debug(String msg, String origin)
-  {
-    if(Log.isDebug(this.level))
-    {
-      handleDebug(msg,origin);
-    }
-  }
-  protected void handleDebug(String msg, String origin){handleDebug(origin + " : " + msg);}
-  
-  public final void debug(String msg, Throwable t)
-  {
-    if(Log.isDebug(this.level))
-    {
-      handleDebug(msg,t);
-    }
-  }
-  protected void handleDebug(String msg, Throwable t){handleDebug(msg+" "+t.getMessage());}
-  
   public final void info(String msg)
   {
     if(Log.isInfo(this.level))
@@ -69,24 +51,6 @@ public abstract class LogListener
     }
   }
   abstract protected void handleInfo(String msg);
-  
-  public final void info(String msg, String origin)
-  {
-    if(Log.isInfo(this.level))
-    {
-      handleInfo(msg,origin);
-    }
-  }
-  protected void handleInfo(String msg, String origin){handleInfo(origin + " : " + msg);}
-  
-  public final void info(String msg, Throwable t)
-  {
-    if(Log.isInfo(this.level))
-    {
-      handleInfo(msg,t);
-    }
-  }
-  protected void handleInfo(String msg, Throwable t){handleInfo(msg+" "+t.getMessage());}
   
   public final void warn(String msg)
   {
@@ -97,24 +61,6 @@ public abstract class LogListener
   }
   abstract protected void handleWarn(String msg);
   
-  public final void warn(String msg, String origin)
-  {
-    if(Log.isWarn(this.level))
-    {
-      handleWarn(msg,origin);
-    }
-  }
-  protected void handleWarn(String msg, String origin){handleWarn(origin + " : " + msg);}
-  
-  public final void warn(String msg, Throwable t)
-  {
-    if(Log.isWarn(this.level))
-    {
-      handleWarn(msg,t);
-    }
-  }
-  protected void handleWarn(String msg, Throwable t){handleWarn(msg+" "+t.getMessage());}
-  
   public final void error(String msg)
   {
     if(Log.isError(this.level))
@@ -124,33 +70,6 @@ public abstract class LogListener
   }
   abstract protected void handleError(String msg);
   
-  public final void error(String msg, String origin)
-  {
-    if(Log.isError(this.level))
-    {
-      handleError(msg,origin);
-    }
-  }
-  protected void handleError(String msg, String origin){handleError(origin + " : " + msg);}
-  
-  public final void error(String msg, Throwable t)
-  {
-    if(Log.isError(this.level))
-    {
-      handleError(msg,t);
-    }
-  }
-  protected void handleError(String msg, Throwable t){handleError(msg+" "+t.getMessage());}
-  
-  public final void error(Throwable t)
-  {
-    if(Log.isError(this.level))
-    {
-      handleError(t);
-    }
-  }
-  protected void handleError(Throwable t){handleError(t.getMessage());}
-  
   public final void fatal(String msg)
   {
     if(Log.isFatal(this.level))
@@ -159,31 +78,4 @@ public abstract class LogListener
     }
   }
   abstract protected void handleFatal(String msg);
-  
-  public final void fatal(String msg, String origin)
-  {
-    if(Log.isFatal(this.level))
-    {
-      handleFatal(msg,origin);
-    }
-  }
-  protected void handleFatal(String msg, String origin){handleFatal(origin + " : " + msg);}
-  
-  public final void fatal(String msg, Throwable t)
-  {
-    if(Log.isFatal(this.level))
-    {
-      handleFatal(msg,t);
-    }
-  }
-  protected void handleFatal(String msg, Throwable t){handleFatal(msg+" "+t.getMessage());}
-  
-  public final void fatal(Throwable t)
-  {
-    if(Log.isFatal(this.level))
-    {
-      handleFatal(t);
-    }
-  }
-  protected void handleFatal(Throwable t){handleFatal(t.getMessage());}
 }

@@ -27,26 +27,26 @@ public:
   virtual Logger* GetLogger() const;
   virtual void    SetLogger(Logger& logger);
 
-  virtual void Debug(std::string const&  msg, std::string const&  origin = "") const;
-  virtual void Debug(std::stringstream &msg, std::string const&  origin = "") const;
-  virtual void Debug(std::ostream &msg, std::string const&  origin = "") const;
+  virtual void Debug(std::string const&  msg) const;
+  virtual void Debug(std::stringstream &msg) const;
+  virtual void Debug(std::ostream &msg) const;
 
-  virtual void Info(std::string const&  msg, std::string const&  origin = "") const;
-  virtual void Info(std::stringstream &msg, std::string const&  origin = "") const;
-  virtual void Info(const std::stringstream &msg, std::string const&  origin = "") const;
-  virtual void Info(std::ostream &msg, std::string const&  origin = "") const;
+  virtual void Info(std::string const&  msg) const;
+  virtual void Info(std::stringstream &msg) const;
+  virtual void Info(const std::stringstream &msg) const;
+  virtual void Info(std::ostream &msg) const;
 
-  virtual void Warning(std::string const&  msg, std::string const&  origin = "") const;
-  virtual void Warning(std::stringstream &msg, std::string const&  origin = "") const;
-  virtual void Warning(std::ostream &msg, std::string const&  origin = "") const;
+  virtual void Warning(std::string const&  msg) const;
+  virtual void Warning(std::stringstream &msg) const;
+  virtual void Warning(std::ostream &msg) const;
 
-  virtual void Error(std::string const&  msg, std::string const&  origin = "") const;
-  virtual void Error(std::stringstream &msg, std::string const&  origin = "") const;
-  virtual void Error(std::ostream &msg, std::string const&  origin = "") const;
+  virtual void Error(std::string const&  msg) const;
+  virtual void Error(std::stringstream &msg) const;
+  virtual void Error(std::ostream &msg) const;
 
-  virtual void Fatal(std::string const&  msg, std::string const&  origin = "") const;
-  virtual void Fatal(std::stringstream &msg, std::string const&  origin = "") const;
-  virtual void Fatal(std::ostream &msg, std::string const&  origin = "") const;
+  virtual void Fatal(std::string const&  msg) const;
+  virtual void Fatal(std::stringstream &msg) const;
+  virtual void Fatal(std::ostream &msg) const;
 
 protected:
   bool    myLogger;
@@ -57,11 +57,11 @@ class CDM_DECL LoggerForward
 {
 public:
   virtual ~LoggerForward() = default;
-  virtual void ForwardDebug(std::string const& /*msg*/, std::string const& /*origin*/) {};
-  virtual void ForwardInfo(std::string const& /*msg*/, std::string const& /*origin*/){};
-  virtual void ForwardWarning(std::string const& /*msg*/, std::string const& /*origin*/){};
-  virtual void ForwardError(std::string const& /*msg*/, std::string const& /*origin*/){};
-  virtual void ForwardFatal(std::string const& /*msg*/, std::string const& /*origin*/){};
+  virtual void ForwardDebug(std::string const& /*msg*/) {};
+  virtual void ForwardInfo(std::string const& /*msg*/){};
+  virtual void ForwardWarning(std::string const& /*msg*/){};
+  virtual void ForwardError(std::string const& /*msg*/){};
+  virtual void ForwardFatal(std::string const& /*msg*/){};
 };
 
 class CDM_DECL Logger
@@ -94,30 +94,30 @@ public:
   virtual void RemoveForward(LoggerForward* forward);
   virtual void RemoveForwards();
 
-  virtual void Debug(std::string const&  msg, std::string const&  origin = "");
-  virtual void Debug(std::stringstream &msg, std::string const&  origin = "");
-  virtual void Debug(std::ostream &msg, std::string const&  origin = "");
+  virtual void Debug(std::string const&  msg);
+  virtual void Debug(std::stringstream &msg);
+  virtual void Debug(std::ostream &msg);
 
-  virtual void Info(std::string const&  msg, std::string const&  origin = "");
-  virtual void Info(std::stringstream &msg, std::string const&  origin = "");
-  virtual void Info(const std::stringstream &msg, std::string const&  origin = "");
-  virtual void Info(std::ostream &msg, std::string const&  origin = "");
+  virtual void Info(std::string const&  msg);
+  virtual void Info(std::stringstream &msg);
+  virtual void Info(const std::stringstream &msg);
+  virtual void Info(std::ostream &msg);
 
-  virtual void Warning(std::string const&  msg, std::string const&  origin = "");
-  virtual void Warning(std::stringstream &msg, std::string const&  origin = "");
-  virtual void Warning(std::ostream &msg, std::string const&  origin = "");
+  virtual void Warning(std::string const&  msg);
+  virtual void Warning(std::stringstream &msg);
+  virtual void Warning(std::ostream &msg);
 
-  virtual void Error(std::string const&  msg, std::string const&  origin = "");
-  virtual void Error(std::stringstream &msg, std::string const&  origin = "");
-  virtual void Error(std::ostream &msg, std::string const&  origin = "");
+  virtual void Error(std::string const&  msg);
+  virtual void Error(std::stringstream &msg);
+  virtual void Error(std::ostream &msg);
 
-  virtual void Fatal(std::string const&  msg, std::string const&  origin = "");
-  virtual void Fatal(std::stringstream &msg, std::string const&  origin = "");
-  virtual void Fatal(std::ostream &msg, std::string const&  origin = "");
+  virtual void Fatal(std::string const&  msg);
+  virtual void Fatal(std::stringstream &msg);
+  virtual void Fatal(std::ostream &msg);
 
 protected:
 
-  virtual std::string FormatLogMessage(std::string const&  origin, std::string const&  msg);
+  virtual std::string FormatLogMessage(std::string const&  msg);
 
   std::vector<LoggerForward*>   m_Forwards;
   const SEScalarTime*           m_time;

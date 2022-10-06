@@ -14,30 +14,28 @@ Logger* g_logger = nullptr;
 
 void PBUtils::ProtobufLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
 {
-  std::stringstream ss;
-  ss << filename << "::" << line;
   if (g_logger != nullptr)
   {
     switch (level)
     {
     case google::protobuf::LOGLEVEL_INFO:
-      g_logger->Info(message, ss.str());
+      g_logger->Info(message);
       break;
       // Going to treat everything else as a warning, as Pulse will try to handle Errors/Fatal messages
       // Pulse will report an error/fatal when it feels it did everything it could but still is unable to serialize
     case google::protobuf::LOGLEVEL_WARNING:
-      g_logger->Warning(message, ss.str());
+      g_logger->Warning(message);
       break;
     case google::protobuf::LOGLEVEL_ERROR:
-      g_logger->Warning(message, ss.str());
+      g_logger->Warning(message);
       break;
     case google::protobuf::LOGLEVEL_FATAL:
-      g_logger->Warning(message, ss.str());
+      g_logger->Warning(message);
       break;
     }
   }
   else
-    std::cerr << message << " " << ss.str() << std::endl;
+    std::cerr << message << std::endl;
 
   g_logger = nullptr;
 }

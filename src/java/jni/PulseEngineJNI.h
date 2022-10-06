@@ -12,11 +12,11 @@ public:
   LoggerForwardJNI() { Reset(); }
   virtual void Reset();
 
-  void ForwardDebug(const std::string& msg, const std::string& origin) override;
-  void ForwardInfo(const std::string& msg, const std::string& origin) override;
-  void ForwardWarning(const std::string& msg, const std::string& origin) override;
-  void ForwardError(const std::string& msg, const std::string& origin) override;
-  void ForwardFatal(const std::string& msg, const std::string& origin) override;
+  void ForwardDebug(const std::string& msg) override;
+  void ForwardInfo(const std::string& msg) override;
+  void ForwardWarning(const std::string& msg) override;
+  void ForwardError(const std::string& msg) override;
+  void ForwardFatal(const std::string& msg) override;
 
   JNIEnv*   jniEnv;
   jobject   jniObj;

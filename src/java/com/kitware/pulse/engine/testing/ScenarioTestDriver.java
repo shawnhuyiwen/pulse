@@ -41,7 +41,8 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       }
       catch(InvalidProtocolBufferException ex2)
       {
-        Log.error("Unable to read scenario"+job.scenarioDirectory+"/"+job.name,ex2);
+        Log.error("Unable to read scenario"+job.scenarioDirectory+"/"+job.name);
+        Log.error(ex2.getMessage());
         return false;
       }
     }
@@ -83,7 +84,8 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     } 
     catch (InvalidProtocolBufferException ex) 
     {
-      Log.error("Unable to refactor the scenario",ex);
+      Log.error("Unable to refactor the scenario");
+      Log.error(ex.getMessage());
       return false;
     }
     

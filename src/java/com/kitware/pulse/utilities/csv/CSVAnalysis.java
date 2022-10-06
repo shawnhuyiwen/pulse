@@ -37,7 +37,8 @@ public class CSVAnalysis
     }
     catch(Exception ex)
     {
-      Log.error("Could not analyze file "+fileName, ex);
+      Log.error("Could not analyze file "+fileName);
+      Log.error(ex.getMessage());
     }
   }
   

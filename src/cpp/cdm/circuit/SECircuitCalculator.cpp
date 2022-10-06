@@ -207,7 +207,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       if (!ref->HasPotential() && !ref->HasNextPotential())
       {
         ///\error Warning: Reference pressure is not defined - setting it to 0.
-        Warning("Reference pressure is not defined - setting it to 0.", "SECircuitCalculator::ParseIn");
+        Warning("Reference pressure is not defined - setting it to 0.");
         ValueOverride<PotentialUnit>(ref->GetNextPotential(), 0, m_PotentialUnit);
         Override<PotentialUnit>(ref->GetNextPotential(), ref->GetPotential());
       }
@@ -314,7 +314,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         if (sourceNode->IsReferenceNode())
         {
           /// \error Fatal: Black boxes cannot set the reference node potential
-          Fatal("Black boxes cannot set the reference node potential", sourceNode->GetName());
+          Fatal("Black boxes cannot set the reference node potential : " + sourceNode->GetName());
         }
         else
         {
@@ -331,7 +331,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         if (targetNode->IsReferenceNode())
         {
           /// \error Fatal: Black boxes cannot set the reference node potential
-          Fatal("Black boxes cannot set the reference node potential", targetNode->GetName());
+          Fatal("Black boxes cannot set the reference node potential : " + targetNode->GetName());
         }
         else
         {
@@ -395,7 +395,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         if (r <= 0.0)
         {
           /// \error Fatal: Resistance cannot be negative
-          Fatal("Resistance cannot be negative or zero.", p->GetName());
+          Fatal("Resistance cannot be negative or zero : " + p->GetName());
         }
         double dMultiplier = 1.0 / r;
         PopulateAMatrix(*n, *p, dMultiplier);

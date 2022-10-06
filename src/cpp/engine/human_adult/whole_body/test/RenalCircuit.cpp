@@ -170,7 +170,7 @@ namespace pulse { namespace human_adult_whole_body
     circuitFile.close();
     std::stringstream ss;
     ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
-    pc.GetLogger()->Info(ss.str(), "RenalCircuitAndTransportTest");
+    pc.GetLogger()->Info(ss.str());
   }
 
   // runs renal system at constant MAP to test TGF feedback function
@@ -469,7 +469,7 @@ namespace pulse { namespace human_adult_whole_body
     trk.WriteTrackToFile(std::string(sTestDirectory + "/" + sTestName + ".csv").c_str());
     std::stringstream ss;
     ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run " << sTestName << "CircuitAndTransportTest";
-    pc.GetLogger()->Info(ss.str(), "RenalFeedbackTest");
+    pc.GetLogger()->Info(ss.str());
   }
 
   void EngineTest::RenalTGFFeedbackTest(const std::string& sTestDirectory)
@@ -705,7 +705,7 @@ namespace pulse { namespace human_adult_whole_body
     trk.WriteTrackToFile(std::string(sTestDirectory + "/" + sTestName + ".csv").c_str());
     std::stringstream ss;
     ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run " << sTestName << "SecretionandUrinatingTest";
-    pc.GetLogger()->Info(ss.str(), "RenalSystemTest");
+    pc.GetLogger()->Info(ss.str());
   }
 
   void EngineTest::RenalSecretionTest(const std::string& sTestDirectory)

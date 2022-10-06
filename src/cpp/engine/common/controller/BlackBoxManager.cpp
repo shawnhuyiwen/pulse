@@ -29,12 +29,12 @@ namespace pulse
   {
     if (srcCmpt == nullptr)
     {
-      Error("Source Compartment does not exist", "BlackBoxManager::IsValidBlackBoxRequest");
+      Error("Source Compartment does not exist");
       return false;
     }
     if (tgtCmpt == nullptr)
     {
-      Error("Target Compartment, does not exist", "BlackBoxManager::IsValidBlackBoxRequest");
+      Error("Target Compartment, does not exist");
       return false;
     }
 

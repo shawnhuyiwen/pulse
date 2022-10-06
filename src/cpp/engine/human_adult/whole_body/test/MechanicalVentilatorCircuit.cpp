@@ -163,8 +163,8 @@ namespace pulse { namespace human_adult_whole_body
     fileCircuit.close();
     fileGraph.close();
     std::stringstream ss;
-    ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
-    pc.GetLogger()->Info(ss.str(), "MechanicalVentilatorCircuitAndTransportTest");
+    ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run MechanicalVentilatorCircuitAndTransportTest";
+    pc.GetLogger()->Info(ss.str());
   }
 
   void EngineTest::MechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory)

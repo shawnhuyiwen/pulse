@@ -217,7 +217,8 @@ public class DataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XSSF : "+xlsFile,ex);
+      Log.error("Error reading XSSF : "+xlsFile);
+      Log.error(ex.getMessage());
       return;
     }
     Log.info("Data Generation Complete");
@@ -285,7 +286,8 @@ public class DataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XLS",ex);
+      Log.error("Error reading XLS");
+      Log.error(ex.getMessage());
       return null;
     }
     return patients;
@@ -562,7 +564,8 @@ public class DataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XLS",ex);
+      Log.error("Error reading XLS");
+      Log.error(ex.getMessage());
       return null;
     }    
     Map<String,SESubstance> map = new HashMap<>();
@@ -979,7 +982,8 @@ public class DataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XLS",ex);
+      Log.error("Error reading XLS");
+      Log.error(ex.getMessage());
       return null;
     }
     return compounds;      
@@ -1095,7 +1099,8 @@ public class DataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XLS",ex);
+      Log.error("Error reading XLS");
+      Log.error(ex.getMessage());
       return null;
     }    
     return map;
@@ -1243,7 +1248,8 @@ public class DataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XLS",ex);
+      Log.error("Error reading XLS");
+      Log.error(ex.getMessage());
       return null;
     }    
     return map;
@@ -1428,7 +1434,8 @@ public class DataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XLS",ex);
+      Log.error("Error reading XLS");
+      Log.error(ex.getMessage());
       return false;
     }   
     return true;
@@ -1491,7 +1498,8 @@ public class DataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XLS",ex);
+      Log.error("Error reading XLS");
+      Log.error(ex.getMessage());
       return null;
     }   
     return map;

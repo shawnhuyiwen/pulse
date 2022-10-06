@@ -94,7 +94,8 @@ public class PlotDriver
         }
         catch(Exception e)
         {
-          Log.error("Plotter couldn't plot job "+job.name+". Check your config file line.", e);
+          Log.error("Plotter couldn't plot job "+job.name+". Check your config file line.");
+          Log.error(e.getMessage());
           continue;
         }
         job.Reset();
@@ -434,7 +435,8 @@ public class PlotDriver
     }
     catch (IOException e)
     {
-      Log.error("Ouch",e);
+      Log.error("Ouch");
+      Log.error(e.getMessage());
     }
   }
 

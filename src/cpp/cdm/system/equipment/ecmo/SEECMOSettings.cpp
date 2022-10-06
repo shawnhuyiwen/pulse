@@ -54,7 +54,7 @@ void SEECMOSettings::ProcessConfiguration(SEECMOConfiguration& config, SESubstan
     // Update the action with the file contents
     std::string cfg_file = config.GetSettingsFile();
     if (!config.GetSettings().SerializeFromFile(cfg_file, subMgr))
-      Error("Unable to load settings file", "SEECMOSettings::ProcessConfiguration");
+      Error("Unable to load settings file");
     Merge(config.GetSettings());
   }
 }

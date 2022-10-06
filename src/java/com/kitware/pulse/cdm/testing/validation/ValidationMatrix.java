@@ -274,7 +274,8 @@ public class ValidationMatrix
     }
     catch(Exception ex)
     {
-      Log.error("Error writing tables for "+from,ex);
+      Log.error("Error writing tables for "+from);
+      Log.error(ex.getMessage());
       writer.close();
     }
   }
@@ -291,7 +292,8 @@ public class ValidationMatrix
     }
     catch(Exception ex)
     {
-      Log.error("Could not pad "+s+" with a max of "+max,ex);
+      Log.error("Could not pad "+s+" with a max of "+max);
+      Log.error(ex.getMessage());
       return "";
     }
   }

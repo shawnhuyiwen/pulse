@@ -188,7 +188,7 @@ void SEMechanicalVentilatorSettings::ProcessConfiguration(SEMechanicalVentilator
     // Update the action with the file contents
     std::string cfg_file = config.GetSettingsFile();
     if (!config.GetSettings().SerializeFromFile(cfg_file, subMgr))
-      Error("Unable to load settings file", "SEMechanicalVentilatorSettings::ProcessConfiguration");
+      Error("Unable to load settings file");
     Merge(config.GetSettings(), subMgr);
   }
 }

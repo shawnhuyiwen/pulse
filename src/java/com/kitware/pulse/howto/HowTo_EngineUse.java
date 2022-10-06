@@ -76,15 +76,10 @@ public class HowTo_EngineUse
     private static final Logger LOG = LoggerFactory.getLogger("CppPulseEngine"); // select a name that makes it clear where these logs are coming from
 
     @Override public void handleDebug(String msg) { LOG.debug(msg); }
-    @Override public void handleDebug(String msg, Throwable t) { LOG.debug(msg, t); }
     @Override public void handleInfo(String msg)  { LOG.info(msg); }
-    @Override public void handleInfo(String msg, Throwable t)  { LOG.info(msg, t); }
     @Override public void handleWarn(String msg)  { LOG.warn(msg); }
-    @Override public void handleWarn(String msg, Throwable t)  { LOG.warn(msg, t); }
     @Override public void handleError(String msg) { LOG.error(msg); }
-    @Override public void handleError(String msg, Throwable t) { LOG.error(msg, t); }
     @Override public void handleFatal(String msg) { LOG.error("FATAL: {}", msg); }
-    @Override public void handleFatal(String msg, Throwable t) { LOG.error("FATAL: {}", msg, t); }
   }
 
   protected static class MyEventHandler implements SEEventHandler

@@ -79,7 +79,7 @@ void PBECMO::Serialize(const CDM_BIND::ECMOSettingsData& src, SEECMOSettings& ds
     if (substance == nullptr)
     {
       /// \fatal Could not load find substance compound component for specified substance
-      dst.Fatal("Could not load find substance component : " + cData.name(), "PBECMO::Load");
+      dst.Fatal("Could not load find substance component : " + cData.name());
       continue;
     }
     SESubstanceConcentration& sc = dst.GetSubstanceConcentration(*substance);

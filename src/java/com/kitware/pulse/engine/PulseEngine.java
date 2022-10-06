@@ -125,7 +125,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to serialize state file", ex);
+      {
+        logListener.error("Unable to serialize state file");
+        logListener.error(ex.getMessage());
+      }
       alive = false;
     }
     return alive;
@@ -154,7 +157,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to serialize state file", ex);
+      {
+        logListener.error("Unable to serialize state file");
+        logListener.error(ex.getMessage());
+      }
       alive = false;
     }
     return alive;
@@ -184,7 +190,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to initialize engine", ex);
+      {
+        logListener.error("Unable to initialize engine");
+        logListener.error(ex.getMessage());
+      }
       alive = false;
     }
     return alive;
@@ -207,7 +216,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to get initial patient", ex);
+      {
+        logListener.error("Unable to get initial patient");
+        logListener.error(ex.getMessage());
+      }
       return false;
     }
     return true;
@@ -232,7 +244,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to get conditions", ex);
+      {
+        logListener.error("Unable to get conditions");
+        logListener.error(ex.getMessage());
+      }
       return false;
     }
     return true;
@@ -286,7 +301,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to get patient assessment", ex);
+      {
+        logListener.error("Unable to get patient assessment");
+        logListener.error(ex.getMessage());
+      }
     }
     return false;
   }
@@ -328,7 +346,8 @@ public class PulseEngine
         }
         catch(Exception ex)
         {
-          Log.error("Unable to process log messages", ex);
+          Log.error("Unable to process log messages");
+          Log.error(ex.getMessage());
         }
       }
     }
@@ -401,7 +420,8 @@ public class PulseEngine
       }
       catch(Exception ex)
       {
-        Log.error("Unable to convert action to json",ex);
+        Log.error("Unable to convert action to json");
+        Log.error(ex.getMessage());
         alive = false;
       }
     }
@@ -427,7 +447,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to get active actions", ex);
+      {
+        logListener.error("Unable to get active actions");
+        logListener.error(ex.getMessage());
+      }
       return false;
     }
     return true;
@@ -447,30 +470,30 @@ public class PulseEngine
     nativeSetLogFilename(nativeObj, logFilename);
   }
   
-  protected void handleDebug(String msg, String origin)
+  protected void handleDebug(String msg)
   {
     if(this.logListener!=null)
-      this.logListener.debug(msg, origin);
+      this.logListener.debug(msg);
   }
-  protected void handleInfo(String msg, String origin)
+  protected void handleInfo(String msg)
   {
     if(this.logListener!=null)
-      this.logListener.info(msg, origin);
+      this.logListener.info(msg);
   }
-  protected void handleWarning(String msg, String origin)
+  protected void handleWarning(String msg)
   {
     if(this.logListener!=null)
-      this.logListener.warn(msg, origin);
+      this.logListener.warn(msg);
   }
-  protected void handleError(String msg, String origin)
+  protected void handleError(String msg)
   {
     if(this.logListener!=null)
-      this.logListener.error(msg, origin);
+      this.logListener.error(msg);
   }
-  protected void handleFatal(String msg, String origin)
+  protected void handleFatal(String msg)
   {
     if(this.logListener!=null)
-      this.logListener.fatal(msg, origin);
+      this.logListener.fatal(msg);
   }
   
   public void setEventHandler(SEEventHandler eh)
@@ -499,7 +522,8 @@ public class PulseEngine
     }
     catch(Exception ex)
     {
-      Log.error("Unable to pull active events",ex);
+      Log.error("Unable to pull active events");
+      Log.error(ex.getMessage());
     }
   }
   

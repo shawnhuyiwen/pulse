@@ -232,7 +232,7 @@ namespace pulse
         break;
       default:
         /// \error Error: Unavailable Administration Route
-        Error("Unavailable Bolus Administration Route for substance " + sub->GetName(), "DrugModel::AdministerSubstanceBolus");
+        Error("Unavailable Bolus Administration Route for substance " + sub->GetName());
         completedBolus.push_back(sub);// Remove it
         continue;
       }

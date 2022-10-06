@@ -496,7 +496,7 @@ namespace pulse
     if (rf > 0.3)
     {
       /// \error if too much hemoglobin is removed, we will no longer meet validation, so set to maximum amount that can be removed.
-      Error("Cannot remove more than 30% of hemoglobin in anemia in the Pulse Engine. Setting value to 30% and continuing.", "CardiovascularModel::Anemia");
+      Error("Cannot remove more than 30% of hemoglobin in anemia in the Pulse Engine. Setting value to 30% and continuing.");
       rf = 0.3;
     }
     // Empirical resistance modification

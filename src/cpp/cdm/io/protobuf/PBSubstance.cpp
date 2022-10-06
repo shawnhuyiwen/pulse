@@ -340,7 +340,7 @@ void PBSubstance::Serialize(const CDM_BIND::SubstanceCompoundData& src, SESubsta
     if (substance == nullptr)
     {
       /// \fatal Could not load find substance compound component for specified substance
-      dst.Fatal("Could not load find substance compound component : " + cData.name(), "SESubstanceCompound::Load");
+      dst.Fatal("Could not load find substance compound component : " + cData.name());
       continue;
     }
     SESubstanceConcentration& sc = dst.GetComponent(*substance);
