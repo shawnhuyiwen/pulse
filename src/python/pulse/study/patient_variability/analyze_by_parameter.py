@@ -82,7 +82,7 @@ lineSep = "-------------------------------------------------------------------"
 
 class PatientVariabilityAnalysis(PatientVariabilityResults):
     systems = []
-    passError = 10.0  # Errors are in %, not fraction!!!
+    passErrors = [10.0, 30.0]  # Errors are in %, not fraction!!!
 
     def __init__(self, dir: str):
         super().__init__(dir)
@@ -100,133 +100,135 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
 
     def createBoxPlots(self):
         print(" --------------------- Create box plots ---------------------")
-        # Standard male
-        results = analysis.standardQuery(PatientData.eSex.Male)
-        numStandardMalePatients = analysis.numPatients(results)
-        print("Standard male patients: " + str(numStandardMalePatients))
-        del results["ids"]
-        standardMaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
+        for passError in analysis.passErrors:
+            # Standard male
+            results = analysis.standardQuery(PatientData.eSex.Male)
+            numStandardMalePatients = analysis.numPatients(results)
+            print("Standard male patients: " + str(numStandardMalePatients))
+            del results["ids"]
+            standardMaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
 
-        # Standard female
-        results = analysis.standardQuery(PatientData.eSex.Female)
-        numStandardFemalePatients = analysis.numPatients(results)
-        print("Standard female patients: " + str(numStandardFemalePatients))
-        del results["ids"]
-        standardFemaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
+            # Standard female
+            results = analysis.standardQuery(PatientData.eSex.Female)
+            numStandardFemalePatients = analysis.numPatients(results)
+            print("Standard female patients: " + str(numStandardFemalePatients))
+            del results["ids"]
+            standardFemaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
 
-        for idx, system in enumerate(analysis.systems):
-            plotData = {}
-            for field in fields:
-                print("Evaluating " + system + " system with " + str(field))
-                results = analysis.singleParameterQuery(PatientData.eSex.Male, field)
-                del results["ids"]
-                maleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
-                results = analysis.singleParameterQuery(PatientData.eSex.Female, field)
-                del results["ids"]
-                femaleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
-                # Clean up the category names for the plot
-                strField = str(field).replace("Field.", "")
-                strField = strField.split("_", 1)[0]
-                strField = strField.replace("BodyMassIndex", "BMI")
-                strField = strField.replace("BodyFatFraction", "FF")
-                strField = strField.replace("HeartRateBaseline", "HR")
-                strField = strField.replace("MeanArterialPressureBaseline", "MAP")
-                strField = strField.replace("PulsePressureBaseline", "PP")
-                strField = strField.replace("RespirationRateBaseline", "RR")
+            for idx, system in enumerate(analysis.systems):
+                plotData = {}
+                for field in fields:
+                    print("Evaluating " + system + " system with " + str(field))
+                    results = analysis.singleParameterQuery(PatientData.eSex.Male, field)
+                    del results["ids"]
+                    maleValues = analysis.calculateParameterPassRate(results, passError, system)
+                    results = analysis.singleParameterQuery(PatientData.eSex.Female, field)
+                    del results["ids"]
+                    femaleValues = analysis.calculateParameterPassRate(results, passError, system)
+                    # Clean up the category names for the plot
+                    strField = str(field).replace("Field.", "")
+                    strField = strField.split("_", 1)[0]
+                    strField = strField.replace("BodyMassIndex", "BMI")
+                    strField = strField.replace("BodyFatFraction", "FF")
+                    strField = strField.replace("HeartRateBaseline", "HR")
+                    strField = strField.replace("MeanArterialPressureBaseline", "MAP")
+                    strField = strField.replace("PulsePressureBaseline", "PP")
+                    strField = strField.replace("RespirationRateBaseline", "RR")
+                    # Blood pressures are special
+                    if strField != "MAP" and strField != "PP":
+                        strField = strField + " (" + str(len(maleValues + femaleValues)) + ")"
+                        plotData.update({strField: maleValues + femaleValues})
+                        print("Patients evaluated: " + str(len(maleValues + femaleValues)))
+
                 # Blood pressures are special
-                if strField != "MAP" and strField != "PP":
-                    strField = strField + " (" + str(len(maleValues + femaleValues)) + ")"
-                    plotData.update({strField: maleValues + femaleValues})
-                    print("Patients evaluated: " + str(len(maleValues + femaleValues)))
+                results = analysis.bloodPressureQuery(PatientData.eSex.Male)
+                del results["ids"]
+                maleValues = analysis.calculateParameterPassRate(results, passError, system)
+                results = analysis.bloodPressureQuery(PatientData.eSex.Female)
+                del results["ids"]
+                femaleValues = analysis.calculateParameterPassRate(results, passError, system)
+                strField = "BP"
+                strField = strField + " (" + str(len(maleValues + femaleValues)) + ")"
+                plotData.update({strField: maleValues + femaleValues})
+                print("Patients evaluated: " + str(len(maleValues + femaleValues)))
 
-            # Blood pressures are special
-            results = analysis.bloodPressureQuery(PatientData.eSex.Male)
-            del results["ids"]
-            maleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
-            results = analysis.bloodPressureQuery(PatientData.eSex.Female)
-            del results["ids"]
-            femaleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
-            strField = "BP"
-            strField = strField + " (" + str(len(maleValues + femaleValues)) + ")"
-            plotData.update({strField: maleValues + femaleValues})
-            print("Patients evaluated: " + str(len(maleValues + femaleValues)))
+                # Add NaNs to make data size the same, so pandas doesn't complain
+                dataLength = 0
+                for key, value in plotData.items():
+                    length = len(value)
+                    if length > dataLength:
+                        dataLength = length
+                for key, value in plotData.items():
+                    lengthDiff = dataLength - len(value)
+                    if lengthDiff > 0:
+                        value = np.append(value, np.repeat(np.nan, lengthDiff))
+                        plotData.update({key: value})
 
-            # Add NaNs to make data size the same, so pandas doesn't complain
-            dataLength = 0
-            for key, value in plotData.items():
-                length = len(value)
-                if length > dataLength:
-                    dataLength = length
-            for key, value in plotData.items():
-                lengthDiff = dataLength - len(value)
-                if lengthDiff > 0:
-                    value = np.append(value, np.repeat(np.nan, lengthDiff))
-                    plotData.update({key: value})
-
-            df = pd.DataFrame(plotData)
-            df.boxplot(grid=True, rot=0)
-            left, right = plt.xlim()
-            plt.hlines(standardMaleValues[idx], xmin=left, xmax=right, color='blue', linestyles='--')
-            plt.hlines(standardFemaleValues[idx], xmin=left, xmax=right, color='r', linestyles='--')
-            plt.ylim([0.0, 1.01])
-            plt.title(system + " Pass Rate Per Parameter")
-            plt.tight_layout()
-            #plt.show()
-            plt.savefig(system + ".png")
-            plt.clf()
+                df = pd.DataFrame(plotData)
+                df.boxplot(grid=True, rot=0)
+                left, right = plt.xlim()
+                plt.hlines(standardMaleValues[idx], xmin=left, xmax=right, color='blue', linestyles='--')
+                plt.hlines(standardFemaleValues[idx], xmin=left, xmax=right, color='r', linestyles='--')
+                plt.ylim([0.0, 1.01])
+                plt.title(system + " Pass Rate Per Parameter within " + str(passError) + "%")
+                plt.tight_layout()
+                #plt.show()
+                plt.savefig("test_results/patient_variability/Box_Plot_" + str(passError) + "%_" + system + ".png")
+                plt.clf()
 
     def createRadarCharts(self):
         print(" --------------------- Create radar chart ---------------------")
-        # Standard male
-        results = analysis.standardQuery(PatientData.eSex.Male)
-        numStandardMalePatients = analysis.numPatients(results)
-        print("Standard male patients: " + str(numStandardMalePatients))
-        del results["ids"]
-        radarStandardMaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
+        for passError in analysis.passErrors:
+            # Standard male
+            results = analysis.standardQuery(PatientData.eSex.Male)
+            numStandardMalePatients = analysis.numPatients(results)
+            print("Standard male patients: " + str(numStandardMalePatients))
+            del results["ids"]
+            radarStandardMaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
 
-        #Standard female
-        results = analysis.standardQuery(PatientData.eSex.Female)
-        numStandardFemalePatients = analysis.numPatients(results)
-        print("Standard female patients: " + str(numStandardFemalePatients))
-        del results["ids"]
-        radarStandardFemaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
+            #Standard female
+            results = analysis.standardQuery(PatientData.eSex.Female)
+            numStandardFemalePatients = analysis.numPatients(results)
+            print("Standard female patients: " + str(numStandardFemalePatients))
+            del results["ids"]
+            radarStandardFemaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
 
-        # Nonstandard male query
-        results = analysis.nonStandardQuery(PatientData.eSex.Male)
-        numNonstandardMalePatients = analysis.numPatients(results)
-        print("Nonstandard male patients: " + str(numNonstandardMalePatients))
-        del results["ids"]
-        radarNonstandardMaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
+            # Nonstandard male query
+            results = analysis.nonStandardQuery(PatientData.eSex.Male)
+            numNonstandardMalePatients = analysis.numPatients(results)
+            print("Nonstandard male patients: " + str(numNonstandardMalePatients))
+            del results["ids"]
+            radarNonstandardMaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
 
-        # Nonstandard female query
-        results = analysis.nonStandardQuery(PatientData.eSex.Female)
-        numNonstandardFemalePatients = analysis.numPatients(results)
-        print("Nonstandard female patients: " + str(numNonstandardFemalePatients))
-        del results["ids"]
-        radarNonstandardFemaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
+            # Nonstandard female query
+            results = analysis.nonStandardQuery(PatientData.eSex.Female)
+            numNonstandardFemalePatients = analysis.numPatients(results)
+            print("Nonstandard female patients: " + str(numNonstandardFemalePatients))
+            del results["ids"]
+            radarNonstandardFemaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
 
-        # Generate radar chart
-        radarCategories = [*analysis.systems, analysis.systems[0]]
+            # Generate radar chart
+            radarCategories = [*analysis.systems, analysis.systems[0]]
 
-        radarStandardMaleValues = [*radarStandardMaleValues, radarStandardMaleValues[0]]
-        radarStandardFemaleValues = [*radarStandardFemaleValues, radarStandardFemaleValues[0]]
-        radarNonstandardMaleValues = [*radarNonstandardMaleValues, radarNonstandardMaleValues[0]]
-        radarNonstandardFemaleValues = [*radarNonstandardFemaleValues, radarNonstandardFemaleValues[0]]
+            radarStandardMaleValues = [*radarStandardMaleValues, radarStandardMaleValues[0]]
+            radarStandardFemaleValues = [*radarStandardFemaleValues, radarStandardFemaleValues[0]]
+            radarNonstandardMaleValues = [*radarNonstandardMaleValues, radarNonstandardMaleValues[0]]
+            radarNonstandardFemaleValues = [*radarNonstandardFemaleValues, radarNonstandardFemaleValues[0]]
 
-        fig = go.Figure(
-            data=[
-                go.Scatterpolar(r=radarStandardMaleValues, theta=radarCategories, name='Standard Male ('+str(numStandardMalePatients)+' total)'),
-                go.Scatterpolar(r=radarStandardFemaleValues, theta=radarCategories, name='Standard Female ('+str(numStandardFemalePatients)+' total)'),
-                go.Scatterpolar(r=radarNonstandardMaleValues, theta=radarCategories, name='Cumulative Nonstandard Male ('+str(numNonstandardMalePatients)+' total)'),
-                go.Scatterpolar(r=radarNonstandardFemaleValues, theta=radarCategories, name='Cumulative Nonstandard Female ('+str(numNonstandardFemalePatients)+' total)')
-            ],
-            layout=go.Layout(
-                title=go.layout.Title(text='Physiology System Pass Rate'),
-                polar={'radialaxis': {'visible': True}},
-                showlegend=True
+            fig = go.Figure(
+                data=[
+                    go.Scatterpolar(r=radarStandardMaleValues, theta=radarCategories, name='Standard Male ('+str(numStandardMalePatients)+' total)'),
+                    go.Scatterpolar(r=radarStandardFemaleValues, theta=radarCategories, name='Standard Female ('+str(numStandardFemalePatients)+' total)'),
+                    go.Scatterpolar(r=radarNonstandardMaleValues, theta=radarCategories, name='Cumulative Nonstandard Male ('+str(numNonstandardMalePatients)+' total)'),
+                    go.Scatterpolar(r=radarNonstandardFemaleValues, theta=radarCategories, name='Cumulative Nonstandard Female ('+str(numNonstandardFemalePatients)+' total)')
+                ],
+                layout=go.Layout(
+                    title=go.layout.Title(text="Physiology System Pass Rate within " + str(passError) + "%"),
+                    polar={'radialaxis': {'visible': True}},
+                    showlegend=True
+                )
             )
-        )
-        pyo.plot(fig)
+            pyo.offline.plot(fig, filename="test_results/patient_variability/RadarChart_" + str(passError) + "%_" + ".html")
 
     def numPatients(self, results):
         return len(results["ids"])
