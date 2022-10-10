@@ -89,6 +89,30 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
 
     def process(self):
         # Count everything
+        no_errors = 0
+        failed_setup = 0
+        failed_stabilization = 0
+        runtime_error = 0
+        fatal_runtime_error = 0
+        for state in self._results.PatientState:
+            if state.Failure == 0:
+                no_errors = no_errors + 1
+            elif state.Failure == 1:
+                failed_setup = failed_setup + 1
+            elif state.Failure == 2:
+                failed_stabilization = failed_stabilization + 1
+            elif state.Failure == 3:
+                runtime_error = runtime_error + 1
+            elif state.Failure == 4:
+                fatal_runtime_error = fatal_runtime_error + 1
+
+        print("Total Runs " + str(len(self._results.PatientState)))
+        print("Valid Runs " + str(no_errors))
+        print("FailedSetup Runs " + str(failed_setup))
+        print("FailedStabilization Runs " + str(failed_stabilization))
+        print("RuntimeError Runs " + str(runtime_error))
+        print("FatalRuntimeError Runs " + str(fatal_runtime_error))
+
         results = analysis.everythingQuery()
         numAllPatients = analysis.numPatients(results)
         print("All patients: " + str(numAllPatients))
@@ -281,7 +305,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         query = Conditional()
         query.sex(sex)
         for currentField in fields:
-            if "Field.MeanArterialPressureBaseline_mmHg" != str(currentField) and "Field.PulsePressureBaseline_mmHg" != str(currentField):
+            if Field.MeanArterialPressureBaseline_mmHg != currentField and Field.PulsePressureBaseline_mmHg != currentField:
                 query.addCondition(currentField, '==', standardValues[sex, currentField])
         results = self.conditionalFilter([query])
         return results
