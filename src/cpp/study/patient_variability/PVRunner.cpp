@@ -170,7 +170,7 @@ namespace pulse::study::patient_variability
           auto patientData = m_PatientResultsList->add_patientstate();
           patientData->CopyFrom(patientStateData);
           patientData->set_failure(eFailure::PatientStateData_eFailure_FailedSetup);
-          Info("[!Setup]  " + PVGenerator::ToString(p));
+          Info("[!Setup]  " + p.GetName()+"_"+PVGenerator::ToString(p));
         }
       }
       // Write this file to disk

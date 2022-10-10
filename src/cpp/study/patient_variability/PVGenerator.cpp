@@ -127,7 +127,7 @@ namespace pulse::study::patient_variability
 
   void PVGenerator::GenerateSlicedPatientList(PatientStateListData& pList, const SEPatient& basePatient)
   {
-    Info("Generating Age slice data set for "+basePatient.GetName());
+    Info("Generating Age slice data set for "+basePatient.GetName() + " Starting at " + std::to_string(m_TotalPatients));
     for (size_t age_yr = minAge_yr; age_yr <= maxAge_yr; age_yr++)
     {
       SEPatient patient(GetLogger());
@@ -136,7 +136,7 @@ namespace pulse::study::patient_variability
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
     }
 
-    Info("Generating Height slice data set for " + basePatient.GetName());
+    Info("Generating Height slice data set for " + basePatient.GetName() + " Starting at " + std::to_string(m_TotalPatients));
     double minHeight_cm = basePatient.GetSex() == ePatient_Sex::Male ? minMaleHeight_cm : minFemaleHeight_cm;
     double maxHeight_cm = basePatient.GetSex() == ePatient_Sex::Male ? maxMaleHeight_cm : maxFemaleHeight_cm;
     for (double height_cm = minHeight_cm; height_cm <= maxHeight_cm; height_cm += 0.5)
@@ -147,7 +147,7 @@ namespace pulse::study::patient_variability
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
     }
 
-    Info("Generating BMI slice data set for " + basePatient.GetName());
+    Info("Generating BMI slice data set for " + basePatient.GetName() + " Starting at " + std::to_string(m_TotalPatients));
     for (double bmi = minBMI; bmi <= maxBMI; bmi += 0.5)
     {
       SEPatient patient(GetLogger());
@@ -156,7 +156,7 @@ namespace pulse::study::patient_variability
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
     }
 
-    Info("Generating BFF slice data set for " + basePatient.GetName());
+    Info("Generating BFF slice data set for " + basePatient.GetName() + " Starting at " + std::to_string(m_TotalPatients));
     double minBFF = basePatient.GetSex() == ePatient_Sex::Male ? minMaleBFF : minFemaleBFF;
     double maxBFF = basePatient.GetSex() == ePatient_Sex::Male ? maxMaleBFF : maxFemaleBFF;
     for (double bff = minBFF; bff <= maxBFF; bff += 0.01)
@@ -167,7 +167,7 @@ namespace pulse::study::patient_variability
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
     }
 
-    Info("Generating HR slice data set for " + basePatient.GetName());
+    Info("Generating HR slice data set for " + basePatient.GetName() + " Starting at " + std::to_string(m_TotalPatients));
     for (size_t hr_bpm = minHR_bpm; hr_bpm <= maxHR_bpm; hr_bpm++)
     {
       SEPatient patient(GetLogger());
@@ -176,13 +176,14 @@ namespace pulse::study::patient_variability
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
     }
 
-    Info("Generating MAP/PP combo slice data set for " + basePatient.GetName());
+    Info("Generating MAP/PP combo slice data set for " + basePatient.GetName() + " Starting at " + std::to_string(m_TotalPatients));
     // Iterating MAP and Pulse Pressure by themselves don't effectivly cover the variability we would like
     // They are dependent on each other and Systolic/Diastolic, so to get a good coverage,
     // we are going to combo these two values and toss invalid patients.
     // This gives us a pretty good coverage of variabile cv pressures
     Logger null;// I don't want to log the SetupPatient failures
     null.LogToConsole(false);
+    //size_t cnt = 0, bad = 0;
     for (size_t map = minMAP_mmHg; map <= maxMAP_mmHg; map++)
     {
       for (size_t pp_mmHg = minPulsePressure_mmHg; pp_mmHg <= maxPulsePressure_mmHg; pp_mmHg++)
@@ -193,11 +194,19 @@ namespace pulse::study::patient_variability
         patient.GetDiastolicArterialPressureBaseline().Invalidate();
         patient.GetMeanArterialPressureBaseline().SetValue(map, PressureUnit::mmHg);
         patient.GetPulsePressureBaseline().SetValue(pp_mmHg, PressureUnit::mmHg);
-        if (pulse::human_adult_whole_body::SetupPatient(patient))
-        {
-          CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
-          //  std::cout << "MAP: " << map << " PP: " << pp_mmHg << " -> " << patient.GetSystolicArterialPressureBaseline() << "/" << patient.GetDiastolicArterialPressureBaseline() << std::endl;
-        }
+        CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
+
+        // Check that this combo is valid
+        //cnt++;
+        //SEPatient setupCheck(&null);
+        //setupCheck.Copy(patient);// Make a copy as the patient cannot be setup twice (maybe that will change in the future)
+        //if (!pulse::human_adult_whole_body::SetupPatient(setupCheck))
+        //{
+        //  std::cout << "VALID " << patient.GetName() << " MAP: " << map << " PP: " << pp_mmHg << " -> " << setupCheck.GetSystolicArterialPressureBaseline() << "/" << setupCheck.GetDiastolicArterialPressureBaseline() << std::endl;
+        //  bad++;
+        //}
+        //else
+        //  std::cout << "INVALID " << patient.GetName() << " MAP: " << map << " PP: " << pp_mmHg << " -> " << setupCheck.GetSystolicArterialPressureBaseline() << "/" << setupCheck.GetDiastolicArterialPressureBaseline() << std::endl;
       }
     }
 
@@ -235,7 +244,7 @@ namespace pulse::study::patient_variability
     }
     */
 
-    Info("Generating RR slice data set for " + basePatient.GetName());
+    Info("Generating RR slice data set for " + basePatient.GetName() + " Starting at " + std::to_string(m_TotalPatients));
     for (double rr = minRR_bpm; rr <= maxRR_bpm; rr += 0.5)
     {
       SEPatient patient(GetLogger());
@@ -260,7 +269,6 @@ namespace pulse::study::patient_variability
       for (auto idxs : permutations)
       {
         SEPatient patient(GetLogger());
-        patient.SetName("Patient" + std::to_string(m_TotalPatients));
         patient.SetSex(sex);
 
         patient.GetAge().SetValue(Age_yr.Values()[idxs[0]], TimeUnit::yr);
@@ -288,6 +296,7 @@ namespace pulse::study::patient_variability
     }
     m_PatientSet.insert(pstr);
 
+    patient.SetName("Patient" + std::to_string(m_TotalPatients));
     m_TotalPatients++;
     switch (GenerateMode)
     {
