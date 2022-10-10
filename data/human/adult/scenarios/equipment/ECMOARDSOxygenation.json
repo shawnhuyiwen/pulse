@@ -105,8 +105,8 @@
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "PropertyName": "Pressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "SubstanceName": "CarbonDioxide", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "SubstanceName": "CarbonDioxide", "PropertyName": "Mass",   "Unit": "mg" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "SubstanceName": "Carbaminohemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "SubstanceName": "Carboxyhemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
@@ -119,15 +119,15 @@
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOOxygenator", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOOxygenator", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOOxygenator", "PropertyName": "Pressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOOxygenator", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOOxygenator", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOOxygenator", "SubstanceName": "CarbonDioxide", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "PropertyName": "Pressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "SubstanceName": "CarbonDioxide", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "SubstanceName": "CarbonDioxide", "PropertyName": "Mass",   "Unit": "mg" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "SubstanceName": "Carbaminohemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "SubstanceName": "Carboxyhemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
@@ -140,29 +140,28 @@
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightLegVasculature", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightLegVasculature", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightLegVasculature", "PropertyName": "Pressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightLegVasculature", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightLegVasculature", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightLegVasculature", "SubstanceName": "CarbonDioxide", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "PropertyName": "Pressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "SubstanceName": "CarbonDioxide", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "PropertyName": "Pressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "SubstanceName": "CarbonDioxide", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "Pressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "CarbonDioxide", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "CarbonDioxide", "PropertyName": "Mass",   "Unit": "mg" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Carbaminohemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Carboxyhemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
@@ -171,12 +170,26 @@
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Oxyhemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Hemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
       
+      { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "InFlow", "Unit": "mL/s" },
+      { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "OutFlow", "Unit": "mL/s" },
+      { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "Volume", "Unit": "mL" },
+      { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "Pressure", "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "SubstanceName": "CarbonDioxide", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "SubstanceName": "CarbonDioxide", "PropertyName": "Mass",   "Unit": "mg" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "SubstanceName": "Carbaminohemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "SubstanceName": "Carboxyhemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "SubstanceName": "Oxygen", "PropertyName": "Mass",   "Unit": "mg" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "SubstanceName": "OxyCarbaminohemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "SubstanceName": "Oxyhemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "SubstanceName": "Hemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
+      
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "PropertyName": "Pressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "CarbonDioxide", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "CarbonDioxide", "PropertyName": "Mass",   "Unit": "mg" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Carbaminohemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Carboxyhemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
@@ -185,7 +198,6 @@
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Oxyhemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Hemoglobin", "PropertyName": "Mass",   "Unit": "mg" },
       
-      { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Sodium","PropertyName": "BloodConcentration",  "Unit": "g/dL" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Oxygen","PropertyName": "BloodConcentration",  "Unit": "mg/mL" }
     ]
   },
@@ -202,16 +214,20 @@
    "EquipmentAction": {
       "ECMOConfiguration": {
         "ECMOAction": { "EquipmentAction": { "Action": {
-              "Comment": "Attach the ECMO machine from vena cava to left leg" }}},
+              "Comment": "Attach the ECMO machine from vena cava to left leg,
+                          Oxygen is 1.2532(ug/mL) and CarbonDioxide is 63.2988(ug/mL),
+                          Replace with 10% more O2 and 10% less CO2"}}},
         "Settings":
         {
           "InflowLocation": "InternalJugular",
           "OutflowLocation": "LeftFemoralVein",
           "OxygenatorVolume": { "ScalarVolume": { "Value": 500.0, "Unit": "mL" } },
-          "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 5.0, "Unit": "L/min" } },
+          "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 2.0, "Unit": "L/min" } },
           "SubstanceConcentrations":
           [
-            { "Name": "Oxygen", "Concentration": { "ScalarMassPerVolume": { "Value": 0.075, "Unit": "mg/mL" }}}
+            {
+              "Name": "Oxygen", "Concentration": { "ScalarMassPerVolume": { "Value": 2.6, "Unit": "ug/mL" }}
+            }
           ]
         }
       }

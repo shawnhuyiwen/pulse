@@ -6,6 +6,7 @@
 #include "engine/common/controller/CompartmentManager.h"
 #include "engine/common/controller/SubstanceManager.h"
 #include "engine/common/system/equipment/ECMOModel.h"
+#include "engine/common/system/physiology/Saturation.h"
 
 #include "cdm/system/equipment/ecmo/actions/SEECMOConfiguration.h"
 #include "cdm/engine/SEActionManager.h"
@@ -109,7 +110,7 @@ namespace pulse
     if (m_lVascularToBloodSamplingPort != nullptr)
       m_InflowCmpt = &m_lVascularToBloodSamplingPort->GetSourceCompartment();
     m_cBloodSamplingPort = m_data.GetCompartments().GetLiquidCompartment(pulse::ECMOCompartment::BloodSamplingPort);
-    m_lBloodSamplingPortToGround = m_data.GetCompartments().GetLiquidLink(pulse::ECMOLink::BloodSamplingPortToGround);
+    m_lBloodSamplingPortToOxygenator = m_data.GetCompartments().GetLiquidLink(pulse::ECMOLink::BloodSamplingPortToOxygenator);
     m_cOxygenator = m_data.GetCompartments().GetLiquidCompartment(pulse::ECMOCompartment::Oxygenator);
     m_lOxygenatorToVascular = m_data.GetCompartments().GetLiquidLink(pulse::ECMOLink::OxygenatorToVasculature);
     if (m_lOxygenatorToVascular != nullptr)
@@ -232,13 +233,40 @@ namespace pulse
 
       m_lVascularToBloodSamplingPort = &m_data.GetCompartments().CreateLiquidLink(*m_InflowCmpt, *m_cBloodSamplingPort, pulse::ECMOLink::VasculatureToBloodSamplingPort);
       m_lVascularToBloodSamplingPort->MapPath(*m_pVascularToBloodSamplingPort);
-      
+
       m_lOxygenatorToVascular = &m_data.GetCompartments().CreateLiquidLink(*m_cOxygenator, *m_OutflowCmpt, pulse::ECMOLink::OxygenatorToVasculature);
       m_lOxygenatorToVascular->MapPath(*m_pOxygenatorToVascular);
+
+      // Update Oxygenator Volume
+      m_nOxygenator->GetNextVolume().Set(s.GetOxygenatorVolume());
+
+      // Copy the substance values from the vasulature to the ECMO machine
+      for (SELiquidSubstanceQuantity* srcSubQ : m_InflowCmpt->GetSubstanceQuantities())
+      {
+        if (!srcSubQ->HasConcentration())
+          continue;
+        Info("Initial ECMO Concentration: " + srcSubQ->GetSubstance().GetName() + " " + srcSubQ->GetConcentration().ToString());
+
+        SELiquidSubstanceQuantity* tgtSubQ;
+        tgtSubQ = m_cBloodSamplingPort->GetSubstanceQuantity(srcSubQ->GetSubstance());
+        tgtSubQ->GetConcentration().Set(srcSubQ->GetConcentration());
+        tgtSubQ->Balance(BalanceLiquidBy::Concentration);
+
+        tgtSubQ = m_cOxygenator->GetSubstanceQuantity(srcSubQ->GetSubstance());
+        tgtSubQ->GetConcentration().Set(srcSubQ->GetConcentration());
+        tgtSubQ->Balance(BalanceLiquidBy::Concentration);
+      }
+      m_cOxygenator->GetPH().Set(m_InflowCmpt->GetPH());
+      m_cBloodSamplingPort->GetPH().Set(m_InflowCmpt->GetPH());
+      m_data.GetSaturationCalculator().CalculateBloodGasDistribution(*m_cBloodSamplingPort);
+      m_data.GetSaturationCalculator().CalculateBloodGasDistribution(*m_cOxygenator);
+
+      m_lBloodSamplingPortToOxygenator->GetFlow().Set(s.GetTransfusionFlow());
+
       m_data.GetCompartments().GetActiveCardiovascularGraph().AddCompartment(*m_cBloodSamplingPort);
       m_data.GetCompartments().GetActiveCardiovascularGraph().AddCompartment(*m_cOxygenator);
-      //m_data.GetCompartments().GetActiveCardiovascularGraph().AddLink(*m_lVascularToBloodSamplingPort);
-      //m_data.GetCompartments().GetActiveCardiovascularGraph().AddLink(*m_lBloodSamplingPortToGround);
+      m_data.GetCompartments().GetActiveCardiovascularGraph().AddLink(*m_lVascularToBloodSamplingPort);
+      m_data.GetCompartments().GetActiveCardiovascularGraph().AddLink(*m_lBloodSamplingPortToOxygenator);
       m_data.GetCompartments().GetActiveCardiovascularGraph().AddLink(*m_lOxygenatorToVascular);
       // Update Graph
       m_data.GetCompartments().StateChange();
@@ -285,7 +313,7 @@ namespace pulse
       m_lOxygenatorToVascular = nullptr;
       Info("ECMO Detached");
     }
-    m_data.GetCompartments().GetActiveCardiovascularGraph().RemoveLink(*m_lBloodSamplingPortToGround);
+    m_data.GetCompartments().GetActiveCardiovascularGraph().RemoveLink(*m_lBloodSamplingPortToOxygenator);
 
     m_data.GetCircuits().GetActiveCardiovascularCircuit().RemoveNode(*m_nBloodSamplingPort);
     m_data.GetCircuits().GetActiveCardiovascularCircuit().RemoveNode(*m_nOxygenator);
@@ -317,8 +345,10 @@ namespace pulse
     {
       m_nOxygenator->GetNextVolume().Set(s.GetOxygenatorVolume());
 
+      bool saturate = false;
       if (s.HasSubstanceCompound())
       {
+        saturate = true;
         for (const SESubstanceConcentration* sc : s.GetSubstanceCompound()->GetComponents())
         {
           m_data.GetSubstances().AddActiveSubstance(sc->GetSubstance());
@@ -330,6 +360,7 @@ namespace pulse
 
       if (s.HasSubstanceConcentrations())
       {
+        saturate = true;
         for (const SESubstanceConcentration* sc : s.GetSubstanceConcentrations())
         {
           m_data.GetSubstances().AddActiveSubstance(sc->GetSubstance());
@@ -337,6 +368,11 @@ namespace pulse
           sq->GetConcentration().Set(*sc->GetConcentration());
           sq->Balance(BalanceLiquidBy::Concentration);
         }
+      }
+      if (saturate)
+      {
+        m_data.GetSaturationCalculator().CalculateBloodGasDistribution(*m_cBloodSamplingPort);
+        m_data.GetSaturationCalculator().CalculateBloodGasDistribution(*m_cOxygenator);
       }
     }
   }

@@ -2918,9 +2918,7 @@ namespace pulse
     SELiquidCompartment& cOxygenator = m_Compartments->CreateLiquidCompartment(pulse::ECMOCompartment::Oxygenator);
     cOxygenator.MapNode(nOxygenator);
     // Setup Links //
-    SELiquidCompartment* cGround = m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::Ground);
-    SELiquidCompartmentLink& lBloodSamplingPortToGround = m_Compartments->CreateLiquidLink(cBloodSamplingPort, *cGround, pulse::ECMOLink::BloodSamplingPortToGround);
-    lBloodSamplingPortToGround.MapPath(pBloodSamplingPortToGround);
+    SELiquidCompartmentLink& lBloodSamplingPortToGround = m_Compartments->CreateLiquidLink(cBloodSamplingPort, cOxygenator, pulse::ECMOLink::BloodSamplingPortToOxygenator);
 
     // Will dynamically add/remove nodes/paths and compartments/links to ciruict/graph on ECMOModel::StateChange
     // This will also include creating/deleting paths from vasculature to/from the ECMO machine
