@@ -246,9 +246,8 @@ namespace pulse { namespace human_adult_whole_body
     //Lean Body Mass ---------------------------------------------------------------
     if (patient.HasLeanBodyMass())
     {
-      ss << "Patient lean body mass cannot be set. It is determined by weight and body fat fraction.";
-      patient.Error(ss);
-      err = true;
+      ss << "Patient lean body mass cannot be set. It is determined by weight and body fat fraction. Ignoring provided value.";
+      patient.Warning(ss);
     }
     double leanBodyMass_kg = weight_kg * (1.0 - fatFraction);
     patient.GetLeanBodyMass().SetValue(leanBodyMass_kg, MassUnit::kg);
@@ -258,9 +257,8 @@ namespace pulse { namespace human_adult_whole_body
     //Body Density ---------------------------------------------------------------
     if (patient.HasBodyDensity())
     {
-      ss << "Patient body density cannot be set. It is determined using body fat fraction.";
-      patient.Error(ss);
-      err = true;
+      ss << "Patient body density cannot be set. It is determined using body fat fraction. Ignoring provided value.";
+      patient.Warning(ss);
     }
     //Using the average of Siri and Brozek formulas
     /// \cite siri1961body 
@@ -669,33 +667,28 @@ namespace pulse { namespace human_adult_whole_body
 
     if (patient.HasTidalVolumeBaseline())
     {
-      ss << "Patient tidal volume baseline cannot be set. It is determined through homeostatic simulation.";
-      patient.Error(ss);
-      err = true;
+      ss << "Patient tidal volume baseline cannot be set. It is determined through homeostatic simulation. Ignoring provided value.";
+      patient.Warning(ss);
     }
     if (patient.HasVitalCapacity())
     {
-      ss << "Patient vital capacity cannot be set. It is directly computed via other lung volume patient parameters.";
-      patient.Error(ss);
-      err = true;
+      ss << "Patient vital capacity cannot be set. It is directly computed via other lung volume patient parameters. Ignoring provided value.";
+      patient.Warning(ss);
     }
     if (patient.HasExpiratoryReserveVolume())
     {
-      ss << "Patient expiratory reserve volume cannot be set. It is directly computed via other lung volume patient parameters.";
-      patient.Error(ss);
-      err = true;
+      ss << "Patient expiratory reserve volume cannot be set. It is directly computed via other lung volume patient parameters. Ignoring provided value.";
+      patient.Warning(ss);
     }
     if (patient.HasInspiratoryReserveVolume())
     {
-      ss << "Patient inspiratory reserve volume cannot be set. It is directly computed via other lung volume patient parameters.";
-      patient.Error(ss);
-      err = true;
+      ss << "Patient inspiratory reserve volume cannot be set. It is directly computed via other lung volume patient parameters. Ignoring provided value.";
+      patient.Warning(ss);
     }
     if (patient.HasInspiratoryCapacity())
     {
-      ss << "Patient inspiratory capacity cannot be set. It is directly computed via other lung volume patient parameters.";
-      patient.Error(ss);
-      err = true;
+      ss << "Patient inspiratory capacity cannot be set. It is directly computed via other lung volume patient parameters. Ignoring provided value.";
+      patient.Warning(ss);
     }
 
     double tidalVolume_L = 37.0 * idealWeight_kg / 1000.0 - functionalResidualCapacity_L;

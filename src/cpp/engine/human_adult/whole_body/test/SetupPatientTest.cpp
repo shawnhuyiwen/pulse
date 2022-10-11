@@ -115,6 +115,13 @@ namespace pulse { namespace human_adult_whole_body
     ss << "Defaults (female)";
     SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
+    // Test calling setup multiple times on the same patient
+    expectedPass = true;
+    ss.str("");
+    ss.clear();
+    ss << "Set up twice";
+    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+
     ///////////////////////
     // Standard Patients //
     ///////////////////////
