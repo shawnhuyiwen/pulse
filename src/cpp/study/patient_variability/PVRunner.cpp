@@ -108,7 +108,7 @@ namespace pulse::study::patient_variability
         }
 
         Info("Validating Results in: " + dir);
-        std::string command = "cmake -DTYPE:STRING=validateFolder -DARG1:STRING=" + dir + " -DARG2:STRING=false -P run.cmake";
+        std::string command = "cmake -DTYPE:STRING=ValidateFolder -DARG1:STRING=" + dir + " -DARG2:STRING=false -P run.cmake";
         std::system(command.c_str());
         Info("Finished Validating");
 
@@ -129,7 +129,7 @@ namespace pulse::study::patient_variability
 
           // Save validation results
           std::vector<std::string> validation_files;
-          ListFiles(dir, validation_files, true, "-" + standard + "ValidationResults.json");
+          ListFiles(dir, validation_files, true, "-" + standard + "-ValidationResults.json");
           if (!AggregateResults(*patientStateData, validation_files, GetLogger()))
           {
             GetLogger()->Warning("Unable to aggregate results for " + standard);
