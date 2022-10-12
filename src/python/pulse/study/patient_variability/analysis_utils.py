@@ -195,10 +195,10 @@ class PatientVariabilityResults():
                 json = f.read()
             json_format.Parse(json, self._results)
 
-    def getPatient(self, id):
+    def getPatientState(self, id):
         for state in self._results.PatientState:
             if state.ID is id:
-                return state.SetupPatient
+                return state
         return None
 
     def createFilterList(self):
