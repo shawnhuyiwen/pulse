@@ -30,6 +30,9 @@ class PatientValidationAnalysis(NamedTuple):
     # failure type -> sex -> list of id's of patients that experienced failure
     failures: dict
 
+    # id -> str description of patient
+    descriptors: dict
+
 
 # Results for System Validation, compared to standard baselines
 class SystemsAnalysis(NamedTuple):
@@ -61,6 +64,21 @@ def initResultsDict():
 # Dictonary of empty dictionaries for each sex
 def initSexDict():
     return {PatientData.eSex.Male: {}, PatientData.eSex.Female: {}}
+
+
+# Generate patient descriptor string
+def getPatientDescriptor(p):
+    out = ("male" if p.Sex == PatientData.eSex.Male else "female")
+    out += "/{}({})".format(p.Age.ScalarTime.Value, p.Age.ScalarTime.Unit)
+    out += "/{:.2f}({})".format(p.Height.ScalarLength.Value, p.Height.ScalarLength.Unit)
+    out += "/{:.2f}".format(p.BodyMassIndex.Value)
+    out += "/{:.2f}".format(p.BodyFatFraction.Scalar0To1.Value)
+    out += "/{:.2f}({})".format(p.HeartRateBaseline.ScalarFrequency.Value, p.HeartRateBaseline.ScalarFrequency.Unit)
+    out += "/{:.2f}({})".format(p.MeanArterialPressureBaseline.ScalarPressure.Value, p.MeanArterialPressureBaseline.ScalarPressure.Unit)
+    out += "/{:.2f}({})".format(p.PulsePressureBaseline.ScalarPressure.Value, p.PulsePressureBaseline.ScalarPressure.Unit)
+    out += "/{:.2f}({})".format(p.RespirationRateBaseline.ScalarFrequency.Value, p.RespirationRateBaseline.ScalarFrequency.Unit)
+
+    return out
 
 
 # Determine result of standard paitent for given criteria
@@ -146,6 +164,7 @@ def patientValidation(patientStates, passThreshold = 10, failThreshold = 30):
                 }
     byPatient = initSexDict()
     byProperty = initSexDict()
+    descriptors = initSexDict()
     for patientState in patientStates:
         sex = patientState.Patient.Sex
         ID = patientState.ID
@@ -153,6 +172,8 @@ def patientValidation(patientStates, passThreshold = 10, failThreshold = 30):
         # Did the patient fail to stabilize
         if patientState.Failure:
             failures[patientState.Failure][sex].append(ID)
+
+        descriptors[sex][ID] = getPatientDescriptor(patientState.Patient)
 
         # Get patient validation results for this patient
         patientFile = "Patient-Patient" + str(ID) + "-ValidationResults.json"
@@ -173,7 +194,7 @@ def patientValidation(patientStates, passThreshold = 10, failThreshold = 30):
             byPatient[sex][ID][result] += 1
             byProperty[sex][propertyName][result] += 1
     
-    return PatientValidationAnalysis(byPatient, byProperty, failures)
+    return PatientValidationAnalysis(byPatient, byProperty, failures, descriptors)
 
 # Analysis driver
 def analyze(patientStates, passThreshold = 10, failThreshold = 30):
@@ -186,6 +207,7 @@ def writeAnalysis(patientAnalysis, systemsAnalysis):
     # Separate everything by sex
     sexLabels = {PatientData.eSex.Male: "Male", PatientData.eSex.Female: "Female"}
     for sex in sexLabels.keys():
+        descriptors = patientAnalysis.descriptors[sex]
         PAbyPatient = patientAnalysis.byPatient[sex]
         PAbyProperty = patientAnalysis.byProperty[sex]
         SAbyPatient = systemsAnalysis.byPatient[sex]
@@ -199,12 +221,12 @@ def writeAnalysis(patientAnalysis, systemsAnalysis):
         numStabilizedPatients = totalPatientsRun - numStabilizationFailures - numSetupFailures
 
         # Patient validation by patient
-        spacer = "-" * 48 + "\n"
+        spacer = "-" * 148 + "\n"
         with open(basePath + "PatientValidationByPatient-" + sexLabels[sex] + ".txt", "w") as f:
             f.write("Stabilized {} of {} set up patients (failed to stabilize {} patients [*], failed to set up {} patients [^]).\n".format(numStabilizedPatients, totalPatientsRun - numSetupFailures, numStabilizationFailures, numSetupFailures))
             f.write("\nPatient Validation Results (by patient) -- " + sexLabels[sex] + " [" + str(len(PAbyProperty)) + " expected]\n" + spacer)
-            format_row = "{:>12}" * 4 + "\n"
-            f.write(format_row.format("ID", "Green", "Yellow", "Red"))
+            format_row = "{:>12}" * 4 + "{:>100}" + "\n"
+            f.write(format_row.format("ID", "Green", "Yellow", "Red", "Descriptor"))
             for p in sorted(PAbyPatient.keys(), key=lambda x: (PAbyPatient[x][ResultType.Pass], -PAbyPatient[x][ResultType.Fail], -PAbyPatient[x][ResultType.Marginal])):
                 patient = PAbyPatient[p]
                 stabilizedStr = ""
@@ -212,7 +234,7 @@ def writeAnalysis(patientAnalysis, systemsAnalysis):
                     stabilizedStr = "^"
                 elif p in patientAnalysis.failures[PatientStateData.eFailure.FailedStabilization][sex]:
                     stabilizedStr = "*"
-                f.write(format_row.format(stabilizedStr+str(p), patient[ResultType.Pass], patient[ResultType.Marginal], patient[ResultType.Fail]))
+                f.write(format_row.format(stabilizedStr+str(p), patient[ResultType.Pass], patient[ResultType.Marginal], patient[ResultType.Fail], descriptors[p]))
 
         # Patient validation summary by property
         spacer = "-" * 96 + "\n"
@@ -231,16 +253,16 @@ def writeAnalysis(patientAnalysis, systemsAnalysis):
             f.write("\n" + format_row.format("Total", total[ResultType.Pass], total[ResultType.Marginal], total[ResultType.Fail]) + "\n")
 
         # System validation by patient
-        spacer = "-" * 48 + "\n"
+        spacer = "-" * 148 + "\n"
         with open(basePath + "SystemValidationByPatient-" + sexLabels[sex] + ".txt", "w") as f:
             f.write("****Only stabilized patients are included in results below.****\n".format(numStabilizedPatients))
             f.write("Values indicate degradation from standard patient baseline.\n")
             f.write("\nSystem Validation Results (by patient) -- " + sexLabels[sex] + "\n" + spacer)
-            format_row = "{:>12}" * 4 + "\n"
-            f.write(format_row.format("ID", "Green", "Yellow", "Red"))
+            format_row = "{:>12}" * 4 + "{:>100}" + "\n"
+            f.write(format_row.format("ID", "Green", "Yellow", "Red", "Descriptor"))
             for p in sorted(SAbyPatient.keys(), key=lambda x: (SAbyPatient[x][ResultType.Pass], -SAbyPatient[x][ResultType.Fail], -SAbyPatient[x][ResultType.Marginal])):
                 patient = SAbyPatient[p]
-                f.write(format_row.format(p, patient[ResultType.Pass], patient[ResultType.Marginal], patient[ResultType.Fail]))
+                f.write(format_row.format(p, patient[ResultType.Pass], patient[ResultType.Marginal], patient[ResultType.Fail], descriptors[p]))
 
         # System validation summary by systems/properties
         total = initResultsDict()
