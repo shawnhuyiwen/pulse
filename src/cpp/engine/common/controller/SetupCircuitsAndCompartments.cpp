@@ -1306,24 +1306,24 @@ namespace pulse
 
     //assuming there is a left and right kidney node in cardiovascular AND that a baseline volume is set (as a function of patient mass):
     double leftKidneyFluidVolume_mL = cCardiovascular.GetNode(pulse::CardiovascularNode::LeftKidney1)->GetVolumeBaseline(VolumeUnit::mL);
-    double singleKidneyLargeVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 2;    //Total large vasculature fluid volume
-    double singleKidneySmallVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 2;    //Total small vasculature fluid volume 
+    double singleKidneyLargeVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 1.5;// / 2;    //Total large vasculature fluid volume
+    double singleKidneySmallVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 1.5;// / 2;    //Total small vasculature fluid volume 
 
     //////////////////////////
     ///// Circuit Parameters//////
     double openSwitch_mmHg_s_Per_mL = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     //Resistances with some tuning multipliers
     double urineTuningMultiplier = 0.80; //0.85;
-    double arteryTuningMultiplier = 1.0;//0.35;
+    double arteryTuningMultiplier = 1.25;//0.35;
 
     double renalArteryResistanceFactor = male ? 0.025 : 0.055;
 
     double renalArteryResistance_mmHg_s_Per_mL = Convert(renalArteryResistanceFactor * arteryTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double afferentResistance_mmHg_s_Per_mL = Convert(0.0417, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double efferentResistance_mmHg_s_Per_mL = Convert(0.0763, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double glomerularResistance_mmHg_s_Per_mL = Convert(0.0019, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double peritubularResistance_mmHg_s_Per_mL = Convert(0.0167, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double renalVeinResistance_mmHg_s_Per_mL = Convert(0.0066, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double afferentResistance_mmHg_s_Per_mL = Convert(0.0417 * arteryTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double efferentResistance_mmHg_s_Per_mL = Convert(0.0763 * arteryTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double glomerularResistance_mmHg_s_Per_mL = Convert(0.0019 * arteryTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double peritubularResistance_mmHg_s_Per_mL = Convert(0.0167 * arteryTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double renalVeinResistance_mmHg_s_Per_mL = Convert(0.0066 * arteryTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     double glomerularFilterResistance_mmHg_s_Per_mL = Convert(0.1600 * urineTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     double tubulesResistance_mmHg_s_Per_mL = Convert(0.1920 * urineTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     double reabsoprtionResistance_mmHg_s_Per_mL = Convert(0.1613 * urineTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);

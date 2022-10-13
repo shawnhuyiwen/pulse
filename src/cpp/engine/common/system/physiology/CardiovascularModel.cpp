@@ -405,9 +405,77 @@ namespace pulse
       }
     }
     // Add the portal vein!
-    SEFluidCircuitPath* p = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::PortalVeinToLiver1);
+    SEFluidCircuitPath* p;
+    p = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::PortalVeinToLiver1);
     if (!Contains(m_systemicResistancePaths, (*p)))
       m_systemicResistancePaths.push_back(p);
+    if (m_data.GetConfiguration().IsRenalEnabled())
+    {
+      // Add kidney resistance paths
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryToAfferentArteriole);
+      if (!Contains(m_systemicResistancePaths, (*p)))
+        m_systemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightAfferentArterioleToGlomerularCapillaries);
+      if (!Contains(m_systemicResistancePaths, (*p)))
+        m_systemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightGlomerularCapillariesToEfferentArteriole);
+      if (!Contains(m_systemicResistancePaths, (*p)))
+        m_systemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightEfferentArterioleToPeritubularCapillaries);
+      if (!Contains(m_systemicResistancePaths, (*p)))
+        m_systemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightPeritubularCapillariesToRenalVein);
+      if (!Contains(m_systemicResistancePaths, (*p)))
+        m_systemicResistancePaths.push_back(p);
+      //p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalVeinToVenaCavaConnection);
+      //if (!Contains(m_systemicResistancePaths, (*p)))
+      //  m_systemicResistancePaths.push_back(p);
+
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryToAfferentArteriole);
+      if (!Contains(m_systemicResistancePaths, (*p)))
+        m_systemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftAfferentArterioleToGlomerularCapillaries);
+      if (!Contains(m_systemicResistancePaths, (*p)))
+        m_systemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftGlomerularCapillariesToEfferentArteriole);
+      if (!Contains(m_systemicResistancePaths, (*p)))
+        m_systemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftEfferentArterioleToPeritubularCapillaries);
+      if (!Contains(m_systemicResistancePaths, (*p)))
+        m_systemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftPeritubularCapillariesToRenalVein);
+      if (!Contains(m_systemicResistancePaths, (*p)))
+        m_systemicResistancePaths.push_back(p);
+      //p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalVeinToVenaCavaConnection);
+      //if (!Contains(m_systemicResistancePaths, (*p)))
+      //  m_systemicResistancePaths.push_back(p);
+
+
+      // Add Compliance Paths
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryCompliance);
+      if (!Contains(m_systemicCompliancePaths, (*p)))
+        m_systemicCompliancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightGlomerularCapillariesCompliance);
+      if (!Contains(m_systemicCompliancePaths, (*p)))
+        m_systemicCompliancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalVeinCompliance);
+      if (!Contains(m_systemicCompliancePaths, (*p)))
+        m_systemicCompliancePaths.push_back(p);
+
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryCompliance);
+      if (!Contains(m_systemicCompliancePaths, (*p)))
+        m_systemicCompliancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftGlomerularCapillariesCompliance);
+      if (!Contains(m_systemicCompliancePaths, (*p)))
+        m_systemicCompliancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalVeinCompliance);
+      if (!Contains(m_systemicCompliancePaths, (*p)))
+        m_systemicCompliancePaths.push_back(p);
+    }
+
+    //for (SEFluidCircuitPath* path : m_systemicResistancePaths)
+    //  Info("Resistance Path : " + path->GetName());
+
     m_AortaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToAorta4);
     m_AortaResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
     m_VenaCavaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
