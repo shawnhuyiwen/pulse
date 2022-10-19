@@ -1,7 +1,8 @@
 {
   "Name": "ChestCompressionAutomated",
-  "Description": "This scenario tests the automated chest compression action. Cardiac function is terminated and then successive chest compressions are performed.",
-  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
+  "Description": "This scenario tests the automated chest compression action.
+  Cardiac function is terminated and then successive chest compressions are performed.",
+  "EngineStateFile":"./states/StandardMale@0s.json",
   "DataRequestManager":
   {
     "DataRequest":
@@ -73,6 +74,8 @@
       { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Pressure", "Unit": "mmHg" },
      
+      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "ExtracellularFluidVolume",             "Unit": "L" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "IntracellularFluidVolume",             "Unit": "L" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "BaroreceptorHeartRateScale",           "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "BaroreceptorHeartElastanceScale",      "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "BaroreceptorResistanceScale",          "Unit": "unitless" },
@@ -87,7 +90,9 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "CarbonDioxide",             "PropertyName": "MassInBlood",                          "Unit": "g" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "Oxygen",                    "PropertyName": "MassInTissue",                         "Unit": "g" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "CarbonDioxide",             "PropertyName": "MassInTissue",                         "Unit": "g" },
-      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "PropertyName": "InFlow",                               "Unit": "mL/min" }
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "PropertyName": "InFlow",                               "Unit": "mL/min" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",         "PropertyName": "InFlow",                               "Unit": "mL/min" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Lymph",            "PropertyName": "OutFlow",                               "Unit": "mL/min" }
     ]
   },
  "AnyAction": [
@@ -131,7 +136,7 @@
      },
      "Force": {
       "ScalarForce": {
-       "Value": 311,
+       "Value": 550,
        "Unit": "N"
       }
      },
@@ -154,7 +159,7 @@
     "Action": {},
     "Time": {
      "ScalarTime": {
-      "Value": 30,
+      "Value": 300,
       "Unit": "s"
      }
     }
@@ -166,9 +171,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.63
+     "Force": {
+      "ScalarForce": {
+       "Value": 0,
+       "Unit": "N"
       }
      },
      "CompressionFrequency": {
@@ -186,46 +192,12 @@
    }
   },
   {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 30,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.63
-      }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Unit": "1/min"
-      }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
-      }
-     }
-    }
-   }
-  },
-  {
    "PatientAction": {
     "Arrhythmia": {
      "PatientAction": {
       "Action": {}
-     }
+     },
+     "Rhythm": "NormalSinus"
     }
    }
   },
@@ -234,7 +206,7 @@
     "Action": {},
     "Time": {
      "ScalarTime": {
-      "Value": 200,
+      "Value": 100,
       "Unit": "s"
      }
     }

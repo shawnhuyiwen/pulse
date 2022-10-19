@@ -259,6 +259,21 @@ namespace pulse
           Warning("Tissue found a tissue compartment that it is not using in Consumption/Prodution : " + tissue->GetName());
       }
     }
+
+    // Collect the vascular to tissue paths to tune druing cardiac arrest
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BoneT2ToBoneT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BrainT2ToBrainT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::FatT2ToFatT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LiverT2ToLiverT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftKidneyT2ToLeftKidneyT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftLungT2ToLeftLungT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightLungT2ToRightLungT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MuscleT2ToMuscleT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SkinT2ToSkinT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MyocardiumT2ToMyocardiumT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SpleenT2ToSpleenT1));
+    m_VascularResistances.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::GutT2ToGutT1));
   }
 
   //#define logMeal
@@ -330,6 +345,24 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void TissueModel::Process(bool /*solve_and_transport*/)
   {
+    if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+    {
+      double UpdatedResistance_mmHg_s_Per_mL = 0;
+      double m_minIndividialSystemicResistance_mmHg_s_Per_mL = 0.1;
+      for (SEFluidCircuitPath* Path : m_VascularResistances)
+      {
+        /// \todo We are treating all systemic resistance paths equally, including the brain.
+        UpdatedResistance_mmHg_s_Per_mL = Path->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        UpdatedResistance_mmHg_s_Per_mL *= 50;
+        if (UpdatedResistance_mmHg_s_Per_mL < m_minIndividialSystemicResistance_mmHg_s_Per_mL)
+        {
+          UpdatedResistance_mmHg_s_Per_mL = m_minIndividialSystemicResistance_mmHg_s_Per_mL;
+        }
+        Path->GetNextResistance().SetValue(UpdatedResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        //m_data.GetDataTrack().Probe(Path->GetName() + "Resistance", Path->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL));
+      }
+    }
+
     CalculateMetabolicConsumptionAndProduction(m_data.GetTimeStep_s());
     CalculatePulmonaryCapillarySubstanceTransfer();
     CalculateDiffusion();
@@ -1133,6 +1166,8 @@ namespace pulse
     GetExtracellularFluidVolume().SetValue(ecVol_mL, VolumeUnit::mL);
     GetIntracellularFluidVolume().SetValue(icvol_mL, VolumeUnit::mL);
     GetExtravascularFluidVolume().SetValue(ecVol_mL + icvol_mL, VolumeUnit::mL);
+    m_data.GetDataTrack().Probe("TotalFluid_mL", ecVol_mL + icvol_mL + m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL));
+
 
     // Fasciculations (due to calcium deficiency) - Currently inactive for model improvement
     // The leading causes of fasciculation include magnesium deficiency, succinylcholine, nerve agents, and ALS.

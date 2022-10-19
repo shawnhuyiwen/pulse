@@ -144,9 +144,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -180,9 +181,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -272,137 +274,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
-      }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Value": 120,
-       "Unit": "1/min"
-      }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 30,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
-      }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Unit": "1/min"
-      }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
-      }
-     }
-    }
-   }
-  },
-  {
-   "EquipmentAction": {
-    "BagValveMaskSqueeze": {
-     "BagValveMaskAction": {
-      "EquipmentAction": {
-       "Action": {}
-      }
-     },
-     "ExpiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     },
-     "InspiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 5,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "EquipmentAction": {
-    "BagValveMaskSqueeze": {
-     "BagValveMaskAction": {
-      "EquipmentAction": {
-       "Action": {}
-      }
-     },
-     "ExpiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     },
-     "InspiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 5,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -436,9 +311,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -528,137 +404,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
-      }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Value": 120,
-       "Unit": "1/min"
-      }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 30,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
-      }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Unit": "1/min"
-      }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
-      }
-     }
-    }
-   }
-  },
-  {
-   "EquipmentAction": {
-    "BagValveMaskSqueeze": {
-     "BagValveMaskAction": {
-      "EquipmentAction": {
-       "Action": {}
-      }
-     },
-     "ExpiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     },
-     "InspiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 5,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "EquipmentAction": {
-    "BagValveMaskSqueeze": {
-     "BagValveMaskAction": {
-      "EquipmentAction": {
-       "Action": {}
-      }
-     },
-     "ExpiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     },
-     "InspiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 5,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -692,9 +441,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -784,137 +534,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
-      }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Value": 120,
-       "Unit": "1/min"
-      }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 30,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
-      }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Unit": "1/min"
-      }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
-      }
-     }
-    }
-   }
-  },
-  {
-   "EquipmentAction": {
-    "BagValveMaskSqueeze": {
-     "BagValveMaskAction": {
-      "EquipmentAction": {
-       "Action": {}
-      }
-     },
-     "ExpiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     },
-     "InspiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 5,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "EquipmentAction": {
-    "BagValveMaskSqueeze": {
-     "BagValveMaskAction": {
-      "EquipmentAction": {
-       "Action": {}
-      }
-     },
-     "ExpiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     },
-     "InspiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 5,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -948,9 +571,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -1040,137 +664,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
-      }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Value": 120,
-       "Unit": "1/min"
-      }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 30,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
-      }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Unit": "1/min"
-      }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
-      }
-     }
-    }
-   }
-  },
-  {
-   "EquipmentAction": {
-    "BagValveMaskSqueeze": {
-     "BagValveMaskAction": {
-      "EquipmentAction": {
-       "Action": {}
-      }
-     },
-     "ExpiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     },
-     "InspiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 5,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "EquipmentAction": {
-    "BagValveMaskSqueeze": {
-     "BagValveMaskAction": {
-      "EquipmentAction": {
-       "Action": {}
-      }
-     },
-     "ExpiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     },
-     "InspiratoryPeriod": {
-      "ScalarTime": {
-       "Value": 1,
-       "Unit": "s"
-      }
-     }
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 5,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -1204,9 +701,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -1296,9 +794,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -1332,9 +831,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -1424,9 +924,530 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Value": 120,
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
       "Scalar0To1": {
-       "Value": 0.6228
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "BagValveMaskSqueeze": {
+     "BagValveMaskAction": {
+      "EquipmentAction": {
+       "Action": {}
+      }
+     },
+     "ExpiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 5,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "BagValveMaskSqueeze": {
+     "BagValveMaskAction": {
+      "EquipmentAction": {
+       "Action": {}
+      }
+     },
+     "ExpiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 5,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Value": 120,
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "BagValveMaskSqueeze": {
+     "BagValveMaskAction": {
+      "EquipmentAction": {
+       "Action": {}
+      }
+     },
+     "ExpiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 5,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "BagValveMaskSqueeze": {
+     "BagValveMaskAction": {
+      "EquipmentAction": {
+       "Action": {}
+      }
+     },
+     "ExpiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 5,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Value": 120,
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "BagValveMaskSqueeze": {
+     "BagValveMaskAction": {
+      "EquipmentAction": {
+       "Action": {}
+      }
+     },
+     "ExpiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 5,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "BagValveMaskSqueeze": {
+     "BagValveMaskAction": {
+      "EquipmentAction": {
+       "Action": {}
+      }
+     },
+     "ExpiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 5,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Value": 120,
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "BagValveMaskSqueeze": {
+     "BagValveMaskAction": {
+      "EquipmentAction": {
+       "Action": {}
+      }
+     },
+     "ExpiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 5,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "BagValveMaskSqueeze": {
+     "BagValveMaskAction": {
+      "EquipmentAction": {
+       "Action": {}
+      }
+     },
+     "ExpiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 5,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {
@@ -1460,9 +1481,10 @@
      "PatientAction": {
       "Action": {}
      },
-     "ForceScale": {
-      "Scalar0To1": {
-       "Value": 0.6228
+     "Depth": {
+      "ScalarLength": {
+       "Value": 5.0,
+       "Unit": "cm"
       }
      },
      "CompressionFrequency": {

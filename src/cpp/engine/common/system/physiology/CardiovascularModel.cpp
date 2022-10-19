@@ -253,13 +253,13 @@ namespace pulse
     m_CardiacCycleAortaPressureHigh_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
     m_CardiacCycleAortaPressureLow_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
     m_CardiacCycleDiastolicVolume_mL = 0.0;
-    m_CardiacCycleLeftHeartPressureHigh_mmHg = 130;
-    m_CardiacCycleLeftHeartPressureLow_mmHg = 8;
+    m_CardiacCycleLeftHeartPressureHigh_mmHg = m_CardiacCycleAortaPressureHigh_mmHg;
+    m_CardiacCycleLeftHeartPressureLow_mmHg = m_CardiacCycleAortaPressureLow_mmHg;
     m_CardiacCycleStrokeVolume_mL = 0;
     m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = 26;
     m_CardiacCyclePulmonaryArteryPressureLow_mmHg = 9;
-    m_CardiacCycleRightHeartPressureHigh_mmHg = 30;
-    m_CardiacCycleRightHeartPressureLow_mmHg = 2;
+    m_CardiacCycleRightHeartPressureHigh_mmHg = m_CardiacCycleAortaPressureHigh_mmHg;
+    m_CardiacCycleRightHeartPressureLow_mmHg = m_CardiacCycleAortaPressureLow_mmHg;
     GetMeanArterialPressure().SetValue((2. / 3. * m_CardiacCycleAortaPressureLow_mmHg) + (1. / 3. * m_CardiacCycleAortaPressureHigh_mmHg), PressureUnit::mmHg);
     m_CardiacCycleArterialPressure_mmHg->Sample(GetMeanArterialPressure().GetValue(PressureUnit::mmHg));
     GetPulmonaryMeanArterialPressure().SetValue(15, PressureUnit::mmHg);
@@ -723,6 +723,8 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::PreProcess()
   {
+    m_data.GetDataTrack().Probe("CPR_Force_N", 0);
+    m_data.GetDataTrack().Probe(*m_CirculatoryCircuit);
     ProcessActions();
 
     HeartDriver();
@@ -813,12 +815,6 @@ namespace pulse
     const double LHeartVolume_mL = m_LeftHeart->GetVolume(VolumeUnit::mL);
     const double LHeartPressure_mmHg = m_LeftHeart->GetPressure(PressureUnit::mmHg);
     const double RHeartPressure_mmHg = m_RightHeart->GetPressure(PressureUnit::mmHg);
-
-    //const double muscleFlow_mL_Per_s = m_pAortaToMuscle->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
-
-    //const double gutFlow_mL_Per_s = m_pAortaToLargeIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
-    //  m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
-    //  m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
     m_FullyCompressedHeart = false;
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
@@ -969,8 +965,14 @@ namespace pulse
     {
       if (cmpt->HasVolume() && cmpt != m_Pericardium) //Don't include pericardium
       {
+        //Info(cmpt->GetName() + " Has Volume");
+        //for (auto n : cmpt->GetNodeMapping().GetNodes())
+        //  if(n->HasVolume())
+        //    Info("  -"+n->GetName());
         blood_mL += cmpt->GetVolume(VolumeUnit::mL);
       }
+      //else
+      //  Info(cmpt->GetName() + " No Volume");
     }
     GetBloodVolume().SetValue(blood_mL, VolumeUnit::mL);
   }
@@ -1758,11 +1760,12 @@ namespace pulse
     if (compressionForce_N == 0)
       return;
 
-    double leftHeartForceToPressureFactor = 0.125; // Tuning parameter to translate compression force in N to left heart pressure in mmHg
-    double rightHeartForceToPressureFactor = 0.125; // Tuning parameter to translate compression force in N to right heart pressure in mmHg
+    double leftHeartForceToPressureFactor = 0.095; // Tuning parameter to translate compression force in N to left heart pressure in mmHg
+    double rightHeartForceToPressureFactor = 0.095; // Tuning parameter to translate compression force in N to right heart pressure in mmHg
     double nextLeftPressure_mmHg = leftHeartForceToPressureFactor * compressionForce_N;
     double nextRightPressure_mmHg = rightHeartForceToPressureFactor * compressionForce_N;
 
+    m_data.GetDataTrack().Probe("CPR_Force_N", compressionForce_N);
     m_pRightHeartToGnd->GetNextPressureSource().SetValue(nextRightPressure_mmHg, PressureUnit::mmHg);
     m_pLeftHeartToGnd->GetNextPressureSource().SetValue(nextLeftPressure_mmHg, PressureUnit::mmHg);
   }
@@ -1819,7 +1822,7 @@ namespace pulse
           m_CardiacArrestVitalsUpdateTimer_s = 0;
 
           m_CurrentArrhythmiaTransitionTime_s = 0;
-          m_TotalArrhythmiaTransitionTime_s = 20;
+          m_TotalArrhythmiaTransitionTime_s = 20.0;
 
           m_InitialArrhythmiaHeartComplianceModifier =
             m_ArrhythmiaHeartComplianceModifier =
@@ -1828,13 +1831,13 @@ namespace pulse
           m_TargetArrhythmiaHeartRateBaseline_Per_min = 35;
           m_InitialArrhythmiaHeartRateBaseline_Per_min = m_ArrhythmiaHeartRateBaseline_Per_min = GetHeartRate(FrequencyUnit::Per_min);
 
-          m_TargetArrhythmiaVascularComplianceModifier = 2.;
+          m_TargetArrhythmiaVascularComplianceModifier = 0.10;
           m_InitialArrhythmiaVascularComplianceModifier = m_ArrhythmiaVascularComplianceModifier;
           
-          m_TargetArrhythmiaSystemicVascularResistanceModifier = 0.33;
+          m_TargetArrhythmiaSystemicVascularResistanceModifier = 5.0;
           m_InitialArrhythmiaSystemicVascularResistanceModifier = m_ArrhythmiaSystemicVascularResistanceModifier;
 
-          m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_TargetArrhythmiaHeartRateBaseline_Per_min, PressureUnit::mmHg);
+          m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(25, PressureUnit::mmHg);
 
           m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::Off;
           break;
@@ -2131,7 +2134,10 @@ namespace pulse
           m_ArrhythmiaHeartComplianceModifier = GeneralMath::LinearInterpolator(m_InitialArrhythmiaHeartComplianceModifier, m_TargetArrhythmiaHeartComplianceModifier, transitionPercent);
           m_ArrhythmiaHeartRateBaseline_Per_min = GeneralMath::LinearInterpolator(m_InitialArrhythmiaHeartRateBaseline_Per_min, m_TargetArrhythmiaHeartRateBaseline_Per_min, transitionPercent);
           m_ArrhythmiaVascularComplianceModifier = GeneralMath::LinearInterpolator(m_InitialArrhythmiaVascularComplianceModifier, m_TargetArrhythmiaVascularComplianceModifier, transitionPercent);
-          m_ArrhythmiaSystemicVascularResistanceModifier = GeneralMath::LinearInterpolator(m_InitialArrhythmiaSystemicVascularResistanceModifier, m_TargetArrhythmiaSystemicVascularResistanceModifier, transitionPercent);
+          if (m_InitialArrhythmiaSystemicVascularResistanceModifier < m_TargetArrhythmiaSystemicVascularResistanceModifier)
+            m_ArrhythmiaSystemicVascularResistanceModifier = GeneralMath::ExponentialGrowthFunction(10,m_InitialArrhythmiaSystemicVascularResistanceModifier, m_TargetArrhythmiaSystemicVascularResistanceModifier, transitionPercent);
+          else
+            m_ArrhythmiaSystemicVascularResistanceModifier = GeneralMath::ExponentialDecayFunction(10, m_TargetArrhythmiaSystemicVascularResistanceModifier, m_InitialArrhythmiaSystemicVascularResistanceModifier, transitionPercent);
         }
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_ArrhythmiaHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
       }
@@ -2221,8 +2227,8 @@ namespace pulse
       m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, true, m_data.GetSimulationTime());
     }
 
-    double LeftHeartCompliance_mL_Per_mmHg = 21;// Generally, the peak compliance
-    double RightHeartCompliance_mL_Per_mmHg = 42;// Generally, the peak compliance
+    double LeftHeartCompliance_mL_Per_mmHg = 21.0*0.75;// Generally, the peak compliance
+    double RightHeartCompliance_mL_Per_mmHg = 42.0*0.75;// Generally,the peak compliance
 
     if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
@@ -2245,6 +2251,9 @@ namespace pulse
     AdjustVascularTone();
     m_pLeftHeart->GetNextCompliance().SetValue(LeftHeartCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
     m_pRightHeart->GetNextCompliance().SetValue(RightHeartCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+
+    //m_data.GetDataTrack().Probe("LeftHeartCompliance_mL_Per_mmHg", LeftHeartCompliance_mL_Per_mmHg);
+    //m_data.GetDataTrack().Probe("RightHeartCompliance_mL_Per_mmHg", RightHeartCompliance_mL_Per_mmHg);
 
     m_CurrentDriverCycleTime_s += m_data.GetTimeStep_s();
   }
@@ -2428,21 +2437,21 @@ namespace pulse
       BaroreceptorComplianceScale = m_data.GetNervous().GetBaroreceptorComplianceScale().GetValue();
     }
 
-    double VascularComplianceModifier;
-    double SystemicVascularResistanceModifier;
-    double map_mmHg = GetMeanArterialPressure(PressureUnit::mmHg);
-
-    // Handle any MAP changes due to CPR
-    if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest) && (m_CurrentArrhythmiaTransitionTime_s==0) && map_mmHg < 45)
-    {
-      // 1/45 == 0.02
-      VascularComplianceModifier = GeneralMath::ExponentialDecayFunction(10, 1.15, 1.85, map_mmHg*0.02);
-      SystemicVascularResistanceModifier = GeneralMath::ExponentialGrowthFunction(10, 0.25, 0.75, map_mmHg*0.02);
-    }
-    else
+    double VascularComplianceModifier=1.;
+    double SystemicVascularResistanceModifier=1.;
+    if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
       VascularComplianceModifier = m_ArrhythmiaVascularComplianceModifier;
       SystemicVascularResistanceModifier = m_ArrhythmiaSystemicVascularResistanceModifier;
+
+      // Aorta Compliance
+      UpdatedCompliance_mL_Per_mmHg = m_AortaCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+      UpdatedCompliance_mL_Per_mmHg *= 0.65;
+      m_AortaCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+      // Vena Cava Compliance
+      UpdatedCompliance_mL_Per_mmHg = m_VenaCavaCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+      UpdatedCompliance_mL_Per_mmHg *= 0.65;
+      m_VenaCavaCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
     }
 
     for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
@@ -2456,45 +2465,16 @@ namespace pulse
         UpdatedResistance_mmHg_s_Per_mL = m_minIndividialSystemicResistance_mmHg_s_Per_mL;
       }
       Path->GetNextResistance().SetValue(UpdatedResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      //m_data.GetDataTrack().Probe(Path->GetName() + "Resistance", Path->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL));
     }
 
     for (SEFluidCircuitPath* Path : m_systemicCompliancePaths)
     {
       UpdatedCompliance_mL_Per_mmHg = Path->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
       UpdatedCompliance_mL_Per_mmHg *= BaroreceptorComplianceScale;
-      UpdatedCompliance_mL_Per_mmHg *= VascularComplianceModifier;
+      //UpdatedCompliance_mL_Per_mmHg *= VascularComplianceModifier;
       Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
     }
-
-    // Aorta Compliance
-    UpdatedCompliance_mL_Per_mmHg = m_AortaCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg *= VascularComplianceModifier;
-    m_AortaCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
-    // Vena Cava Compliance
-    UpdatedCompliance_mL_Per_mmHg = m_VenaCavaCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg *= VascularComplianceModifier;
-    m_VenaCavaCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
-    // Pulmonary Arteries
-    UpdatedCompliance_mL_Per_mmHg = m_LeftPulmonaryArteriesCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg *= VascularComplianceModifier;
-    m_LeftPulmonaryArteriesCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg = m_RightPulmonaryArteriesCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg *= VascularComplianceModifier;
-    m_RightPulmonaryArteriesCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
-    // Pulmonary Capillaries
-    UpdatedCompliance_mL_Per_mmHg = m_LeftPulmonaryCapillariesCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg *= VascularComplianceModifier;
-    m_LeftPulmonaryCapillariesCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg = m_RightPulmonaryCapillariesCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg *= VascularComplianceModifier;
-    m_RightPulmonaryCapillariesCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
-    // Pulmonary Veins
-    UpdatedCompliance_mL_Per_mmHg = m_LeftPulmonaryVeinsCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg *= VascularComplianceModifier;
-    m_LeftPulmonaryVeinsCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg = m_RightPulmonaryVeinsCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
-    UpdatedCompliance_mL_Per_mmHg *= VascularComplianceModifier;
-    m_RightPulmonaryVeinsCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
 
     //The drug response adjusts the systemic resistances according to the mean arterial pressure change calculated in Drugs.cpp
     double ResistanceChange = 0.0;
@@ -2571,16 +2551,12 @@ namespace pulse
       GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage * coverageModifier);
 
       // Update the pulmonary shunt
-      //double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      //double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       shuntModifier = GeneralMath::ExponentialGrowthFunction(10, 0.5, 1.0, baseModifier);
       leftPulmonaryShuntResistance *= shuntModifier;
       rightPulmonaryShuntResistance *= shuntModifier;
       m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
-      //double leftPulmonaryCapillariesResistance = m_LeftPulmonaryArteriesToCapillaries->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      //double rightPulmonaryCapillariesResistance = m_RightPulmonaryArteriesToCapillaries->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       leftPulmonaryCapillariesResistance *= 1 / shuntModifier;
       rightPulmonaryCapillariesResistance *= 1 / shuntModifier;
       m_LeftPulmonaryArteriesToCapillaries->GetNextResistance().SetValue(leftPulmonaryCapillariesResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -2595,6 +2571,11 @@ namespace pulse
     //m_data.GetDataTrack().Probe("RightPulmonaryArteriesToVeinsResistance", rightPulmonaryShuntResistance);
     //m_data.GetDataTrack().Probe("LeftPulmonaryArteriesToCapillariesResistance", leftPulmonaryCapillariesResistance);
     //m_data.GetDataTrack().Probe("RightPulmonaryArteriesToCapillariesResistance", rightPulmonaryCapillariesResistance);
+    //m_data.GetDataTrack().Probe("VenaCavaToRightHeartResistance", m_RightHeartResistance->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL));
+    //m_data.GetDataTrack().Probe("VenaCavaCompliance", m_VenaCavaCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
+    //m_data.GetDataTrack().Probe("AortaCompliance", m_AortaCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
+    //m_data.GetDataTrack().Probe("LeftPulmonaryArteriesCompliance", m_LeftPulmonaryArteriesCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
+    //m_data.GetDataTrack().Probe("RightPulmonaryArteriesCompliance", m_RightPulmonaryArteriesCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
   }
 
   //--------------------------------------------------------------------------------------------------
