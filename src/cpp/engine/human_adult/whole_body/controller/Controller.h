@@ -35,9 +35,5 @@ namespace pulse { namespace human_adult_whole_body
     virtual bool SetupPatient(const SEPatient& patient) override;
 
     virtual void InitializeModels() override;
-    virtual void AtSteadyState(pulse::EngineState state) override;
-    virtual void PreProcess() override;
-    virtual void Process() override;
-    virtual void PostProcess() override;
   };
 END_NAMESPACE_EX

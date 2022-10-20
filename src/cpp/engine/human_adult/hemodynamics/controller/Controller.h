@@ -35,12 +35,5 @@ namespace pulse { namespace human_adult_hemodynamics
     virtual std::string GetTypeName() const override { return "Human Adult Hemodynamics"; }
     virtual void Allocate() override;
     virtual bool Stabilize(const SEPatientConfiguration& patient_configuration) override;
-
-    virtual void InitializeModels() override;
-    // Notify systems that steady state has been achieved
-    virtual void AtSteadyState(pulse::EngineState state) override;
-    virtual void PreProcess() override;
-    virtual void Process() override;
-    virtual void PostProcess() override;
   };
 END_NAMESPACE_EX

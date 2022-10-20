@@ -97,42 +97,13 @@ namespace pulse
   void Data::SetupTracker()
   {
     m_EngineTrack = new SEEngineTracker(*m_CurrentPatient, *m_Actions, *m_Substances, *m_Compartments, m_Logger);
-    if (m_BloodChemistryModel)
-      m_EngineTrack->AddSystem(*m_BloodChemistryModel);
-    if (m_CardiovascularModel)
-      m_EngineTrack->AddSystem(*m_CardiovascularModel);
-    if (m_EndocrineModel)
-      m_EngineTrack->AddSystem(*m_EndocrineModel);
-    if (m_EnergyModel)
-      m_EngineTrack->AddSystem(*m_EnergyModel);
-    if (m_GastrointestinalModel)
-      m_EngineTrack->AddSystem(*m_GastrointestinalModel);
-    if (m_HepaticModel)
-      m_EngineTrack->AddSystem(*m_HepaticModel);
-    if (m_NervousModel)
-      m_EngineTrack->AddSystem(*m_NervousModel);
-    if (m_RenalModel)
-      m_EngineTrack->AddSystem(*m_RenalModel);
-    if (m_RespiratoryModel)
-      m_EngineTrack->AddSystem(*m_RespiratoryModel);
-    if (m_DrugModel)
-      m_EngineTrack->AddSystem(*m_DrugModel);
-    if (m_TissueModel)
-      m_EngineTrack->AddSystem(*m_TissueModel);
-    if (m_EnvironmentModel)
-      m_EngineTrack->AddSystem(*m_EnvironmentModel);
-    if (m_AnesthesiaMachineModel)
-      m_EngineTrack->AddSystem(*m_AnesthesiaMachineModel);
-    if (m_BagValveMaskModel)
-      m_EngineTrack->AddSystem(*m_BagValveMaskModel);
-    if (m_ECMOModel)
-      m_EngineTrack->AddSystem(*m_ECMOModel);
-    if (m_ElectroCardioGramModel)
-      m_EngineTrack->AddSystem(*m_ElectroCardioGramModel);
-    if (m_InhalerModel)
-      m_EngineTrack->AddSystem(*m_InhalerModel);
-    if (m_MechanicalVentilatorModel)
-      m_EngineTrack->AddSystem(*m_MechanicalVentilatorModel);
+    for (auto model : m_Models)
+    {
+      SESystem* s = dynamic_cast<SESystem*>(model);
+      if (s == nullptr)
+        throw CommonDataModelException("Setting up an engine with a model that is not an SESystem");
+      m_EngineTrack->AddSystem(*s);
+    }
   }
 
   SEEngineTracker& Data::GetEngineTracker() const { return *m_EngineTrack; }
@@ -733,5 +704,39 @@ namespace pulse
     }
 
     return GetActions().ProcessAction(action);
+  }
+
+  void Controller::InitializeModels()
+  {
+    for (auto model : m_Models)
+      model->Clear();
+    Info("Initializing Models");
+    for (auto model : m_Models)
+      model->Initialize();
+  }
+
+  void Controller::AtSteadyState(pulse::EngineState state)
+  {
+    m_State = state;
+    for (auto model : m_Models)
+      model->AtSteadyState();
+  }
+
+  void Controller::PreProcess()
+  {
+    for (auto model : m_Models)
+      model->PreProcess();
+  }
+
+  void Controller::Process()
+  {
+    for (auto model : m_Models)
+      model->Process();
+  }
+
+  void Controller::PostProcess()
+  {
+    for (auto model : m_Models)
+      model->PostProcess();
   }
 }

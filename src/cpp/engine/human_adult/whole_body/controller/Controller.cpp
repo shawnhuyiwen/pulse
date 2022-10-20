@@ -99,6 +99,27 @@ namespace pulse { namespace human_adult_whole_body
     m_InhalerModel = new InhalerModel(*this);
     m_MechanicalVentilatorModel = new MechanicalVentilatorModel(*this);
 
+    // Add in the order to init/pre/post/process
+    m_Models.push_back(m_EnvironmentModel);
+    m_Models.push_back(m_CardiovascularModel);
+    m_Models.push_back(m_RespiratoryModel);
+    m_Models.push_back(m_AnesthesiaMachineModel);
+    m_Models.push_back(m_BagValveMaskModel);
+    m_Models.push_back(m_MechanicalVentilatorModel);
+    m_Models.push_back(m_GastrointestinalModel);
+    m_Models.push_back(m_HepaticModel);
+    m_Models.push_back(m_RenalModel);
+    m_Models.push_back(m_NervousModel);
+    m_Models.push_back(m_EndocrineModel);
+    m_Models.push_back(m_DrugModel);
+    m_Models.push_back(m_EnergyModel);
+    m_Models.push_back(m_BloodChemistryModel);
+    m_Models.push_back(m_TissueModel);
+    m_Models.push_back(m_ElectroCardioGramModel);
+    m_Models.push_back(m_ECMOModel);
+    m_Models.push_back(m_InhalerModel);
+
+
     m_EventManager = new SEEventManager(GetLogger());
 
     m_Compartments = new CompartmentManager(*this);
@@ -114,132 +135,13 @@ namespace pulse { namespace human_adult_whole_body
 
   void Controller::InitializeModels()
   {
-    // Environment is cleared and initialized in circuit setup
-
-    // Clear everything before initializing
-    m_CardiovascularModel->Clear();
-    m_RespiratoryModel->Clear();
-    m_AnesthesiaMachineModel->Clear();
-    m_BagValveMaskModel->Clear();
-    m_MechanicalVentilatorModel->Clear();
-    m_GastrointestinalModel->Clear();
-    m_HepaticModel->Clear();
-    m_RenalModel->Clear();
-    m_NervousModel->Clear();
-    m_EndocrineModel->Clear();
-    m_DrugModel->Clear();
-    m_EnergyModel->Clear();
-    m_BloodChemistryModel->Clear();
-    m_TissueModel->Clear();
-    m_ElectroCardioGramModel->Clear();
-    m_ECMOModel->Clear();
-    m_InhalerModel->Clear();
+    // Environment (idx=0) is cleared and initialized in circuit setup
+    for (size_t i = 1; i < m_Models.size(); i++)
+      m_Models[i]->Clear();
 
     Info("Initializing Models");
-    m_CardiovascularModel->Initialize();
-    m_RespiratoryModel->Initialize();
-    m_AnesthesiaMachineModel->Initialize();
-    m_BagValveMaskModel->Initialize();
-    m_MechanicalVentilatorModel->Initialize();
-    m_GastrointestinalModel->Initialize();
-    m_HepaticModel->Initialize();
-    m_RenalModel->Initialize();
-    m_NervousModel->Initialize();
-    m_EndocrineModel->Initialize();
-    m_DrugModel->Initialize();
-    m_EnergyModel->Initialize();
-    m_BloodChemistryModel->Initialize();
-    m_TissueModel->Initialize(); // Depends on some parameters that Blood Chemistry initializes,needs to be after
-    m_ElectroCardioGramModel->Initialize();
-    m_ECMOModel->Initialize();
-    m_InhalerModel->Initialize();
-  }
-
-  void Controller::AtSteadyState(pulse::EngineState state)
-  {
-    m_State = state;
-    m_EnvironmentModel->AtSteadyState();
-    m_CardiovascularModel->AtSteadyState();
-    m_InhalerModel->AtSteadyState();
-    m_RespiratoryModel->AtSteadyState();
-    m_AnesthesiaMachineModel->AtSteadyState();
-    m_BagValveMaskModel->AtSteadyState();
-    m_MechanicalVentilatorModel->AtSteadyState();
-    m_GastrointestinalModel->AtSteadyState();
-    m_HepaticModel->AtSteadyState();
-    m_RenalModel->AtSteadyState();
-    m_NervousModel->AtSteadyState();
-    m_EnergyModel->AtSteadyState();
-    m_EndocrineModel->AtSteadyState();
-    m_DrugModel->AtSteadyState();
-    m_TissueModel->AtSteadyState();
-    m_BloodChemistryModel->AtSteadyState();
-    m_ElectroCardioGramModel->AtSteadyState();
-    m_ECMOModel->AtSteadyState();
-  }
-
-  void Controller::PreProcess()
-  {
-    m_EnvironmentModel->PreProcess();
-    m_CardiovascularModel->PreProcess();
-    m_InhalerModel->PreProcess();
-    m_RespiratoryModel->PreProcess();
-    m_AnesthesiaMachineModel->PreProcess();
-    m_BagValveMaskModel->PreProcess();
-    m_MechanicalVentilatorModel->PreProcess();
-    m_GastrointestinalModel->PreProcess();
-    m_HepaticModel->PreProcess();
-    m_RenalModel->PreProcess();
-    m_NervousModel->PreProcess();
-    m_EnergyModel->PreProcess();
-    m_EndocrineModel->PreProcess();
-    m_DrugModel->PreProcess();
-    m_TissueModel->PreProcess();
-    m_BloodChemistryModel->PreProcess();
-    m_ElectroCardioGramModel->PreProcess();
-    m_ECMOModel->PreProcess();
-  }
-  void Controller::Process()
-  {
-    m_EnvironmentModel->Process();
-    m_CardiovascularModel->Process();
-    m_InhalerModel->Process();
-    m_RespiratoryModel->Process();
-    m_AnesthesiaMachineModel->Process();
-    m_BagValveMaskModel->Process();
-    m_MechanicalVentilatorModel->Process();
-    m_GastrointestinalModel->Process();
-    m_HepaticModel->Process();
-    m_RenalModel->Process();
-    m_NervousModel->Process();
-    m_EnergyModel->Process();
-    m_EndocrineModel->Process();
-    m_DrugModel->Process();
-    m_TissueModel->Process();
-    m_BloodChemistryModel->Process();
-    m_ElectroCardioGramModel->Process();
-    m_ECMOModel->Process();
-  }
-  void Controller::PostProcess()
-  {
-    m_EnvironmentModel->PostProcess();
-    m_CardiovascularModel->PostProcess();
-    m_InhalerModel->PostProcess();
-    m_RespiratoryModel->PostProcess();
-    m_AnesthesiaMachineModel->PostProcess();
-    m_BagValveMaskModel->PostProcess();
-    m_MechanicalVentilatorModel->PostProcess();
-    m_GastrointestinalModel->PostProcess();
-    m_HepaticModel->PostProcess();
-    m_RenalModel->PostProcess();
-    m_NervousModel->PostProcess();
-    m_EnergyModel->PostProcess();
-    m_EndocrineModel->PostProcess();
-    m_DrugModel->PostProcess();
-    m_TissueModel->PostProcess();
-    m_BloodChemistryModel->PostProcess();
-    m_ElectroCardioGramModel->PostProcess();
-    m_ECMOModel->PostProcess();
+    for (size_t i = 1; i < m_Models.size(); i++)
+      m_Models[i]->Initialize();
   }
 
   bool Controller::GetPatientAssessment(SEPatientAssessment& assessment) const

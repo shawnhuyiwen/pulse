@@ -22,6 +22,7 @@ class SEEngineTracker;
 namespace pulse
 {
   class StabilizationController;
+  class Model;
 
   class EnvironmentModel;
 
@@ -220,6 +221,8 @@ namespace pulse
     std::string                           m_DataDir;
 
     SEScalarProperties                    m_ScalarOverrides;
+  protected:
+    std::vector<pulse::Model*>            m_Models;
   };
 
   /**
@@ -293,12 +296,12 @@ namespace pulse
     virtual void Allocate() = 0;
     virtual bool SetupPatient(const SEPatient& patient) = 0;
     // Based on what modles are used, setup order for the following
-    virtual void InitializeModels() = 0;
+    virtual void InitializeModels();
     // Notify Models that steady state has been achieved
-    virtual void AtSteadyState(EngineState state) = 0;
-    virtual void PreProcess() = 0;
-    virtual void Process() = 0;
-    virtual void PostProcess() = 0;
+    virtual void AtSteadyState(EngineState state);
+    virtual void PreProcess();
+    virtual void Process();
+    virtual void PostProcess();
 
     PulseConfiguration const*m_ConfigOverride = nullptr;
     StabilizationController *m_Stabilizer = nullptr;
