@@ -17,6 +17,6 @@ namespace pulse { namespace human_adult_hemodynamics
     CompartmentManager(pulse::Data& data);
     virtual ~CompartmentManager();
 
-    virtual void StateChange() override;
+    void StateChange() override;
   };
 END_NAMESPACE_EX
