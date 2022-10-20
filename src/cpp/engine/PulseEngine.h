@@ -1327,18 +1327,18 @@ namespace pulse
   class ECMOLink
   {
   public:
+    DEFINE_STATIC_STRING(OxygenatorToVasculature);
     DEFINE_STATIC_STRING(VasculatureToBloodSamplingPort);
     DEFINE_STATIC_STRING(BloodSamplingPortToOxygenator);
-    DEFINE_STATIC_STRING(OxygenatorToVasculature);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
+        _values.push_back(OxygenatorToVasculature);
         _values.push_back(VasculatureToBloodSamplingPort);
         _values.push_back(BloodSamplingPortToOxygenator);
-        _values.push_back(OxygenatorToVasculature);
       }
       return _values;
     }

@@ -76,30 +76,41 @@
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOBloodSamplingPort", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOOxygenator", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOOxygenator", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOOxygenator", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "ECMOOxygenator", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLegVasculature", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightLegVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightLegVasculature", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "RightLegVasculature", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "RightLegVasculature", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftArmVasculature", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "PropertyName": "OutFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "RightArmVasculature", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "OutFlow", "Unit": "mL/s" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" }
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Oxygen", "PropertyName": "Concentration",   "Unit": "mg/mL" },
+      
+      
+      { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Sodium","PropertyName": "BloodConcentration",  "Unit": "g/dL" },
+      { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Oxygen","PropertyName": "BloodConcentration",  "Unit": "mg/mL" }
     ]
   },
   "AnyAction": [{
@@ -124,7 +135,8 @@
           "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 1.0, "Unit": "mL/s" } },
           "SubstanceConcentrations":
           [
-            { "Name": "Sodium", "Concentration": { "ScalarMassPerVolume": { "Value": 0.7, "Unit": "g/dL" }}}
+            { "Name": "Sodium", "Concentration": { "ScalarMassPerVolume": { "Value": 0.7, "Unit": "g/dL" }}},
+            { "Name": "Oxygen", "Concentration": { "ScalarMassPerVolume": { "Value": 0.0043, "Unit": "mg/mL" }}}
           ]
         }
       }
