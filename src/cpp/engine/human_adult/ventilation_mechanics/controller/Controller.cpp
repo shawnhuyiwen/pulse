@@ -77,8 +77,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
     m_RespiratoryModel = new pulse::RespiratoryModel(*this);
 
     m_MechanicalVentilatorModel = new pulse::MechanicalVentilatorModel(*this);
-    m_Models.push_back(m_RespiratoryModel);
+
+    // Add in the order to init/pre/post/process
     m_Models.push_back(m_MechanicalVentilatorModel);
+    m_Models.push_back(m_RespiratoryModel);
 
     m_EventManager = new SEEventManager(GetLogger());
 
