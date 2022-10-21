@@ -102,6 +102,7 @@ namespace pulse { namespace human_adult_whole_body
     // Add in the order to init/pre/post/process
     m_Models.push_back(m_EnvironmentModel);
     m_Models.push_back(m_CardiovascularModel);
+    m_Models.push_back(m_InhalerModel);
     m_Models.push_back(m_RespiratoryModel);
     m_Models.push_back(m_AnesthesiaMachineModel);
     m_Models.push_back(m_BagValveMaskModel);
@@ -110,14 +111,13 @@ namespace pulse { namespace human_adult_whole_body
     m_Models.push_back(m_HepaticModel);
     m_Models.push_back(m_RenalModel);
     m_Models.push_back(m_NervousModel);
+    m_Models.push_back(m_EnergyModel);
     m_Models.push_back(m_EndocrineModel);
     m_Models.push_back(m_DrugModel);
-    m_Models.push_back(m_EnergyModel);
-    m_Models.push_back(m_BloodChemistryModel);
     m_Models.push_back(m_TissueModel);
+    m_Models.push_back(m_BloodChemistryModel);
     m_Models.push_back(m_ElectroCardioGramModel);
     m_Models.push_back(m_ECMOModel);
-    m_Models.push_back(m_InhalerModel);
 
 
     m_EventManager = new SEEventManager(GetLogger());
