@@ -114,8 +114,8 @@ namespace pulse { namespace human_adult_whole_body
     m_Models.push_back(m_EnergyModel);
     m_Models.push_back(m_EndocrineModel);
     m_Models.push_back(m_DrugModel);
-    m_Models.push_back(m_TissueModel);
     m_Models.push_back(m_BloodChemistryModel);
+    m_Models.push_back(m_TissueModel);
     m_Models.push_back(m_ElectroCardioGramModel);
     m_Models.push_back(m_ECMOModel);
 
