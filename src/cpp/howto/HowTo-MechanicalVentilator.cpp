@@ -199,16 +199,66 @@ void HowToMechanicalVentilator()
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
 
-  // You can also perform a hold
+
+  // You can also perform holds
   SEMechanicalVentilatorHold hold;
+
+  //Do an instantaneous hold
   hold.SetState(eSwitch::On);
+  hold.SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle::Instantaneous);
   pe->ProcessAction(hold);
-  AdvanceAndTrackTime_s(5, *pe);
+  AdvanceAndTrackTime_s(3, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
   hold.SetState(eSwitch::Off);
   pe->ProcessAction(hold);
-  AdvanceAndTrackTime_s(5, *pe);
+
+  AdvanceAndTrackTime_s(10, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
+
+  //Activate inspiratory hold for 3s during plateau of the next inspiratory phase
+  hold.SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle::Inspiratory);
+  hold.SetState(eSwitch::On);
+  pe->ProcessAction(hold);
+  //Keep advancing until the hold is applied
+  while (pe->GetMechanicalVentilator()->GetBreathState() != eBreathState::InspiratoryHold)
+  {
+    AdvanceAndTrackTime(*pe);
+  }
+  //Hold for 3s
+  AdvanceAndTrackTime_s(3, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+  hold.SetState(eSwitch::Off);
+  pe->ProcessAction(hold);
+  //Output the resulting plateau pressure at end-inspiration
+  double airwayPressure_cmH2O = pe->GetMechanicalVentilator()->GetAirwayPressure(PressureUnit::cmH2O);
+  ss << "Inspiratory hold plateau pressure is " << airwayPressure_cmH2O << " cmH2O";
+  pe->GetLogger()->Info(ss);
+
+  AdvanceAndTrackTime_s(10, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+
+  //Activate expiratory hold for 3s at the end of expiration
+  hold.SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle::Expiratory);
+  hold.SetState(eSwitch::On);
+  pe->ProcessAction(hold);
+  //Keep advancing until the hold is applied
+  while (pe->GetMechanicalVentilator()->GetBreathState() != eBreathState::ExpiratoryHold)
+  {
+    AdvanceAndTrackTime(*pe);
+  }
+  //Hold for 3s
+  AdvanceAndTrackTime_s(3, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+  hold.SetState(eSwitch::Off);
+  pe->ProcessAction(hold);
+  //Output the resulting auto PEEP value
+  airwayPressure_cmH2O = pe->GetMechanicalVentilator()->GetAirwayPressure(PressureUnit::cmH2O);
+  ss << "Expiratory hold auto PEEP pressure is " << airwayPressure_cmH2O << " cmH2O";
+  pe->GetLogger()->Info(ss);
+
+  AdvanceAndTrackTime_s(10, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+
 
   // A leak can be specified
   SEMechanicalVentilatorLeak leak;
