@@ -296,6 +296,9 @@ namespace pulse
     GetTotalRespiratoryModelCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
     GetTotalRespiratoryModelResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
+    GetInspiratoryPulmonaryResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    GetExpiratoryPulmonaryResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
     GetInspiratoryFlow().SetValue(0, VolumePerTimeUnit::L_Per_s);
 
     // Muscle Pressure Waveform
@@ -1944,11 +1947,21 @@ namespace pulse
 
     if (tracheaFlow_L_Per_s > ZERO_APPROX)
     {
-      GetInspiratoryPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      double previousResistance_cmH2O_s_Per_L = GetInspiratoryPulmonaryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      GetInspiratoryPulmonaryResistance().SetValue(abs((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      if (GetInspiratoryPulmonaryResistance().IsInfinity())
+      {
+        GetInspiratoryPulmonaryResistance().SetValue(previousResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      }
     }
     else if (tracheaFlow_L_Per_s < ZERO_APPROX)
     {
-      GetExpiratoryPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      double previousResistance_cmH2O_s_Per_L = GetExpiratoryPulmonaryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      GetExpiratoryPulmonaryResistance().SetValue(abs((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      if (GetExpiratoryPulmonaryResistance().IsInfinity())
+      {
+        GetExpiratoryPulmonaryResistance().SetValue(previousResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      }
     }
 
     //Static Compliances based on simulated values
