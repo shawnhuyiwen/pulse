@@ -1945,22 +1945,15 @@ namespace pulse
 
     m_MeanAirwayPressure_cmH2O->Sample(airwayOpeningPressure_cmH2O - bodySurfacePressure_cmH2O);
 
-    if (tracheaFlow_L_Per_s > ZERO_APPROX)
+    if (!SEScalar::IsZero(tracheaFlow_L_Per_s, ZERO_APPROX)) //Don't set it if it's ~0, since we can't divide by 0
     {
-      double previousResistance_cmH2O_s_Per_L = GetInspiratoryPulmonaryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      GetInspiratoryPulmonaryResistance().SetValue(abs((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      if (GetInspiratoryPulmonaryResistance().IsInfinity())
+      if (tracheaFlow_L_Per_s > 0.0)
       {
-        GetInspiratoryPulmonaryResistance().SetValue(previousResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        GetInspiratoryPulmonaryResistance().SetValue(abs((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       }
-    }
-    else if (tracheaFlow_L_Per_s < ZERO_APPROX)
-    {
-      double previousResistance_cmH2O_s_Per_L = GetExpiratoryPulmonaryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      GetExpiratoryPulmonaryResistance().SetValue(abs((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      if (GetExpiratoryPulmonaryResistance().IsInfinity())
+      else
       {
-        GetExpiratoryPulmonaryResistance().SetValue(previousResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        GetExpiratoryPulmonaryResistance().SetValue(abs((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       }
     }
 
