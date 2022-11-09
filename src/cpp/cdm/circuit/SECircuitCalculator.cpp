@@ -841,19 +841,9 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateFluxes()
       Override<FluxUnit>(p->GetNextFluxSource(), p->GetNextFlux());
     } 
     else if ((p->HasNextSwitch() && p->GetNextSwitch() == eGate::Open) ||
-      (p->HasNextValve() && p->GetNextValve() == eGate::Open) ||
-      (p->HasNextPolarizedState() && p->GetNextPolarizedState() == eGate::Open))
+      (p->HasNextValve() && p->GetNextValve() == eGate::Open))
     {
       ValueOverride<FluxUnit>(p->GetNextFlux(), 0, m_FluxUnit);
-    }
-    else if (p->HasNextResistance())
-    {
-      //I = V/R
-      double dResistance;
-      dResistance = p->GetNextResistance().GetValue(m_ResistanceUnit);
-      double dPressDiff = p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit);
-      double dFlow = dPressDiff / dResistance;
-      ValueOverride<FluxUnit>(p->GetNextFlux(), dFlow, m_FluxUnit);
     }
     else if (p->HasNextCapacitance())
     {
@@ -870,9 +860,39 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateFluxes()
       double dStartingPressDiff = p->GetSourceNode().GetPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetPotential().GetValue(m_PotentialUnit);
       //dStartingPressDiff is at time = T + deltaT  
       double dEndingPressDiff = p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit);
-      double dFlow = (dEndingCompliance * dEndingPressDiff - dStartingCompliance * dStartingPressDiff) / m_dT_s;
+
+      if (p->HasPolarizedState() && p->GetPolarizedState() == eGate::Open)
+      {
+        //If this was a shorted polarized element last time-step, we need to make the starting difference zero
+        //Otherwise, it will possibly think it was already charged to a certain point
+        dStartingPressDiff = 0.0;
+      }
+      if (p->HasNextPolarizedState() && p->GetNextPolarizedState() == eGate::Open)
+      {
+        //If it is currently a shorted polarized element, we need to make the ending difference zero
+        //This will make it go to the non-charged volume
+        dEndingPressDiff = 0.0;
+      }
+
+      double dVolumeIncrement = dEndingCompliance * dEndingPressDiff - dStartingCompliance * dStartingPressDiff;
+      double dFlow = dVolumeIncrement / m_dT_s;
       ValueOverride<FluxUnit>(p->GetNextFlux(), dFlow, m_FluxUnit);
     }
+    else if (p->HasNextPolarizedState() && p->GetNextPolarizedState() == eGate::Open)
+    {
+      //This needs to be after capacitance because that's a special case
+      ValueOverride<FluxUnit>(p->GetNextFlux(), 0, m_FluxUnit);
+    }
+    else if (p->HasNextResistance())
+    {
+      //I = V/R
+      double dResistance;
+      dResistance = p->GetNextResistance().GetValue(m_ResistanceUnit);
+      double dPressDiff = p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit);
+      double dFlow = dPressDiff / dResistance;
+      ValueOverride<FluxUnit>(p->GetNextFlux(), dFlow, m_FluxUnit);
+    }
+
     else if (p->HasNextInductance())
     {
       //V = L*dI/dt
@@ -909,37 +929,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateQuantities()
       //Charge is analogues to volume
       double flux = p->GetNextFlux().GetValue(m_FluxUnit);
       double dVolumeIncrement = flux * m_dT_s;
-
-      //Handle polarized elements special-like
-      if (p->HasNextPolarizedState())
-      {
-        double dStartingCompliance = 0.0;
-        if (p->HasCapacitance())
-          dStartingCompliance = p->GetCapacitance().GetValue(m_CapacitanceUnit);
-        else
-          dStartingCompliance = p->GetNextCapacitance().GetValue(m_CapacitanceUnit);
-        //dEndingCompliance is at time = T + deltaT  
-        double dEndingCompliance = p->GetNextCapacitance().GetValue(m_CapacitanceUnit);
-        //dStartingPressDiff is at time = T
-        double dStartingPressDiff = std::abs(p->GetSourceNode().GetPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetPotential().GetValue(m_PotentialUnit));
-        //dStartingPressDiff is at time = T + deltaT  
-        double dEndingPressDiff = std::abs(p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit));
-
-        if (p->GetPolarizedState() == eGate::Open)
-        {
-          //If this was a shorted polarized element last time-step, we need to make the starting difference zero
-          //Otherwise, it will possibly think it was already charged to a certain point
-          dStartingPressDiff = 0.0;
-        }
-        if (p->GetNextPolarizedState() == eGate::Open)
-        {
-          //If it is currently a shorted polarized element, we need to make the starting difference zero
-          //This will make it go to the non-charged volume
-          dEndingPressDiff = 0.0;
-        }
-
-        dVolumeIncrement = dEndingCompliance * dEndingPressDiff - dStartingCompliance * dStartingPressDiff;
-      }
 
       if (p->GetSourceNode().HasNextQuantity() && !p->GetSourceNode().GetNextQuantity().IsInfinity())
       {

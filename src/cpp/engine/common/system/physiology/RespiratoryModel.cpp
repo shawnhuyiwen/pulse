@@ -296,6 +296,9 @@ namespace pulse
     GetTotalRespiratoryModelCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
     GetTotalRespiratoryModelResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
+    GetInspiratoryPulmonaryResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    GetExpiratoryPulmonaryResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
     GetInspiratoryFlow().SetValue(0, VolumePerTimeUnit::L_Per_s);
 
     // Muscle Pressure Waveform
@@ -1942,13 +1945,16 @@ namespace pulse
 
     m_MeanAirwayPressure_cmH2O->Sample(airwayOpeningPressure_cmH2O - bodySurfacePressure_cmH2O);
 
-    if (tracheaFlow_L_Per_s > ZERO_APPROX)
+    if (!SEScalar::IsZero(tracheaFlow_L_Per_s, ZERO_APPROX)) //Don't set it if it's ~0, since we can't divide by 0
     {
-      GetInspiratoryPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    }
-    else if (tracheaFlow_L_Per_s < ZERO_APPROX)
-    {
-      GetExpiratoryPulmonaryResistance().SetValue((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      if (tracheaFlow_L_Per_s > 0.0)
+      {
+        GetInspiratoryPulmonaryResistance().SetValue(abs((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      }
+      else
+      {
+        GetExpiratoryPulmonaryResistance().SetValue(abs((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      }
     }
 
     //Static Compliances based on simulated values
