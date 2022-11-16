@@ -1,7 +1,7 @@
 {
- "Name": "CardiacArrestToNormalSinus",
- "Description": "Transition from NormalSinus to Cardiac Arrest back to NormalSinus",
-  "EngineStateFile":"./states/StandardMale@0s.json",
+ "Name": "ChestCompressionAutomatedWithBVM",
+ "Description": "1 min of cardiac arrest, then 4 min of resusitation. ~4 mins of [30 compressions@100 bpm->2 BVM squeeses@12 bpm]",
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":
@@ -68,6 +68,8 @@
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Norepinephrine","PropertyName": "BloodConcentration",  "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Norepinephrine","PropertyName": "SystemicMassCleared", "Unit": "ug" },
       
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"},
+      
       { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "Volume",   "Unit": "mL" },
       { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "Pressure", "Unit": "mmHg" },
       { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "OutFlow",  "Unit": "mL/min" },
@@ -110,6 +112,7 @@
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "ChemoreceptorHeartRateScale",          "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "ChemoreceptorHeartElastanceScale",     "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "PulmonaryCapillariesCoverageFraction", "Unit": "unitless" },
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                                               "PropertyName": "HeartEjectionFraction" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "EndTidalCarbonDioxidePressure",        "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "PulseOximetry",                        "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "CoronaryPerfusionPressure",            "Unit": "mmHg" },
@@ -121,47 +124,268 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "CarbonDioxide",             "PropertyName": "MassInBlood",                          "Unit": "g" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "Oxygen",                    "PropertyName": "MassInTissue",                         "Unit": "g" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "CarbonDioxide",             "PropertyName": "MassInTissue",                         "Unit": "g" },
-      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "PropertyName": "InFlow",                               "Unit": "mL/min" }
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "PropertyName": "InFlow",                               "Unit": "mL/min" },
+      { "DecimalFormat": { "Precision": 3 }, "Category": "ECG",                                                      "PropertyName": "Lead3ElectricPotential",               "Unit": "mV" }
     ]
   },
- "AnyAction": [{
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 30.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "Asystole"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 180.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "NormalSinus"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 120.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }]
+ "AnyAction": [
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30, "Unit": "s" }}}},
+  
+  { "PatientAction": { "Arrhythmia": { "Rhythm": "CoarseVentricularFibrillation" }}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 60, "Unit": "s" }}}},
+
+
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 6.0, "Unit": "cm" }},
+     "CompressionFrequency": { "ScalarFrequency": { "Value": 100, "Unit": "1/min" }},
+     "AppliedForceFraction": { "Scalar0To1": { "Value": 0.8 }}}}},
+     
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 18, "Unit": "s" }}}},
+  
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 0.0, "Unit": "cm" }}}}},
+  
+  { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
+      "Connection": "On",
+      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+  
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+
+
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 6.0, "Unit": "cm" }},
+     "CompressionFrequency": { "ScalarFrequency": { "Value": 100, "Unit": "1/min" }},
+     "AppliedForceFraction": { "Scalar0To1": { "Value": 0.8 }}}}},
+     
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 18, "Unit": "s" }}}},
+  
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 0.0, "Unit": "cm" }}}}},
+  
+  { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
+      "Connection": "On",
+      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+  
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+
+
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 6.0, "Unit": "cm" }},
+     "CompressionFrequency": { "ScalarFrequency": { "Value": 100, "Unit": "1/min" }},
+     "AppliedForceFraction": { "Scalar0To1": { "Value": 0.8 }}}}},
+     
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 18, "Unit": "s" }}}},
+  
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 0.0, "Unit": "cm" }}}}},
+  
+  { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
+      "Connection": "On",
+      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+  
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+
+
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 6.0, "Unit": "cm" }},
+     "CompressionFrequency": { "ScalarFrequency": { "Value": 100, "Unit": "1/min" }},
+     "AppliedForceFraction": { "Scalar0To1": { "Value": 0.8 }}}}},
+     
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 18, "Unit": "s" }}}},
+  
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 0.0, "Unit": "cm" }}}}},
+  
+  { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
+      "Connection": "On",
+      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+  
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+
+
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 6.0, "Unit": "cm" }},
+     "CompressionFrequency": { "ScalarFrequency": { "Value": 100, "Unit": "1/min" }},
+     "AppliedForceFraction": { "Scalar0To1": { "Value": 0.8 }}}}},
+     
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 18, "Unit": "s" }}}},
+  
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 0.0, "Unit": "cm" }}}}},
+  
+  { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
+      "Connection": "On",
+      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+  
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+
+
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 6.0, "Unit": "cm" }},
+     "CompressionFrequency": { "ScalarFrequency": { "Value": 100, "Unit": "1/min" }},
+     "AppliedForceFraction": { "Scalar0To1": { "Value": 0.8 }}}}},
+     
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 18, "Unit": "s" }}}},
+  
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 0.0, "Unit": "cm" }}}}},
+  
+  { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
+      "Connection": "On",
+      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+  
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+
+
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 6.0, "Unit": "cm" }},
+     "CompressionFrequency": { "ScalarFrequency": { "Value": 100, "Unit": "1/min" }},
+     "AppliedForceFraction": { "Scalar0To1": { "Value": 0.8 }}}}},
+     
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 18, "Unit": "s" }}}},
+  
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 0.0, "Unit": "cm" }}}}},
+  
+  { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
+      "Connection": "On",
+      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+  
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+
+
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 6.0, "Unit": "cm" }},
+     "CompressionFrequency": { "ScalarFrequency": { "Value": 100, "Unit": "1/min" }},
+     "AppliedForceFraction": { "Scalar0To1": { "Value": 0.8 }}}}},
+     
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 18, "Unit": "s" }}}},
+  
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 0.0, "Unit": "cm" }}}}},
+  
+  { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
+      "Connection": "On",
+      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+  
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+
+
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 6.0, "Unit": "cm" }},
+     "CompressionFrequency": { "ScalarFrequency": { "Value": 100, "Unit": "1/min" }},
+     "AppliedForceFraction": { "Scalar0To1": { "Value": 0.8 }}}}},
+     
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 18, "Unit": "s" }}}},
+  
+  { "PatientAction": { "ChestCompressionAutomated": {
+     "Depth": { "ScalarLength": { "Value": 0.0, "Unit": "cm" }}}}},
+  
+  { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
+      "Connection": "On",
+      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+  
+  { "EquipmentAction": { "BagValveMaskSqueeze": {
+     "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }}}}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5, "Unit": "s" }}}},
+
+
+  { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
+      "Connection": "Off" }}}},
+
+
+  { "PatientAction": { "Arrhythmia": { }}},
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 300, "Unit": "s" }}}}
+ ]
 }

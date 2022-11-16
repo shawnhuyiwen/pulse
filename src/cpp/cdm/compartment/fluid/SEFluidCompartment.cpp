@@ -85,8 +85,8 @@ void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Sample(bool StartCycle)
     {
       m_AverageInFlow->SetValue(m_AverageInFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
       m_AverageOutFlow->SetValue(m_AverageOutFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
-      m_AverageInFlow_mL_Per_s->Clear();
-      m_AverageOutFlow_mL_Per_s->Clear();
+      m_AverageInFlow_mL_Per_s->Invalidate();
+      m_AverageOutFlow_mL_Per_s->Invalidate();
     }
   }
 }

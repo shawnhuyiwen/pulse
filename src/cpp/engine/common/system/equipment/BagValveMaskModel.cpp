@@ -617,6 +617,7 @@ namespace pulse
       if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
       {
         m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskSqueeze();
+        Info("BVM Squeeze Complete");
       }
     }
   }

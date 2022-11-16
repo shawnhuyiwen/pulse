@@ -50,12 +50,12 @@ void HowToACLS()
   bool devRequests = false;
   bool automatedCPR = true;
 
-  double unassisted_min = 7;
+  double unassisted_min = 1;
   bool intubatedAssistance = false;
-  double assisted_min = 7;
+  double assisted_min = 4;
   // We will do cpr_block_s of CPR compressions every cpr_interval_s
-  double cpr_block_s = 30;
-  double cpr_bpm = 120;
+  double cpr_block_s = 18;
+  double cpr_bpm = 100;
   double cpr_interval_s = 1/Convert(cpr_bpm, FrequencyUnit::Per_min, FrequencyUnit::Per_s);
   // Then we will do 2 bvm squeezes every bvm_interval_s
   size_t bvmSqueezes = 2;

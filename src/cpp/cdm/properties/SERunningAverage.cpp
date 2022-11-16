@@ -6,7 +6,7 @@
 
 SERunningAverage::SERunningAverage()
 {
-  Clear();
+  Invalidate();
 }
 
 SERunningAverage::~SERunningAverage()
@@ -14,15 +14,10 @@ SERunningAverage::~SERunningAverage()
 
 }
 
-void SERunningAverage::Clear()
+void SERunningAverage::Invalidate()
 {
   m_Sum = 0.0;
   m_NumSamples = 0;
-}
-
-void SERunningAverage::Invalidate()
-{
-  Clear();
 }
 
 bool SERunningAverage::IsValid() const

@@ -253,6 +253,7 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimeMass.h
     properties/SEScalarVolumePerTimePressure.h
     properties/SEScalarVolumePerTimePressureArea.h
+    properties/SETemporalInterpolator.h
     scenario/SEScenario.h
     scenario/SEScenarioExec.h
     scenario/SEScenarioLog.h
@@ -622,6 +623,7 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimeMass.cpp
     properties/SEScalarVolumePerTimePressure.cpp
     properties/SEScalarVolumePerTimePressureArea.cpp
+    properties/SETemporalInterpolator.cpp
     scenario/SEScenario.cpp
     scenario/SEScenarioExec.cpp
     scenario/SEScenarioLog.cpp

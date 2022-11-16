@@ -14,12 +14,12 @@ int main()
 
   //HowToSandbox();
 
-  HowToEngineUse();
+  //HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
   //HowToPulseEnginePool();
 
-  HowToACLS();
+  //HowToACLS();
   //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToArrythmia();
@@ -31,7 +31,7 @@ int main()
   //HowToConsumeNutrients();
   //HowToCOPD();
   //HowToCOVID19Ventilated();
-  //HowToCPR();
+  HowToCPR();
   //HowToECMO();
   //HowToEnvironmentChange();
   //HowToExercise();

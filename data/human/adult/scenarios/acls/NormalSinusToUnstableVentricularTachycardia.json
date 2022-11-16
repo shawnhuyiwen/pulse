@@ -1,8 +1,7 @@
 {
-  "Name": "ChestCompressionAutomated",
-  "Description": "This scenario tests the automated chest compression action.
-  Cardiac function is terminated and then successive chest compressions are performed.",
-  "EngineStateFile":"./states/StandardMale@0s.json",
+  "Name": "NormalSinusToUnstableVentricularTachycardia",
+  "Description": "Transition from NormalSinus to Unstable VTACH back to NormalSinus",
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":
@@ -69,13 +68,43 @@
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Norepinephrine","PropertyName": "BloodConcentration",  "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Norepinephrine","PropertyName": "SystemicMassCleared", "Unit": "ug" },
       
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL" },
-      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Pressure", "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"},
+      
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "Volume",   "Unit": "mL" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "Pressure", "Unit": "mmHg" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "OutFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "InFlow",   "Unit": "mL/min" },
+      
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "Volume",   "Unit": "mL" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "Pressure", "Unit": "mmHg" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "OutFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "InFlow",   "Unit": "mL/min" },
+      
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryArteries", "PropertyName": "Volume",   "Unit": "mL" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryArteries", "PropertyName": "Pressure", "Unit": "mmHg" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryArteries", "PropertyName": "OutFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryArteries", "PropertyName": "InFlow",   "Unit": "mL/min" },
+      
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryCapillaries", "PropertyName": "Volume",   "Unit": "mL" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryCapillaries", "PropertyName": "Pressure", "Unit": "mmHg" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryCapillaries", "PropertyName": "OutFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryCapillaries", "PropertyName": "InFlow",   "Unit": "mL/min" },
+      
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryVeins", "PropertyName": "Volume",   "Unit": "mL" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryVeins", "PropertyName": "Pressure", "Unit": "mmHg" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryVeins", "PropertyName": "OutFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "PulmonaryVeins", "PropertyName": "InFlow",   "Unit": "mL/min" },
+      
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "LeftHeart", "PropertyName": "Volume",   "Unit": "mL" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "LeftHeart", "PropertyName": "Pressure", "Unit": "mmHg" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "LeftHeart", "PropertyName": "OutFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "LeftHeart", "PropertyName": "InFlow",   "Unit": "mL/min" },
+      
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "PropertyName": "Volume",   "Unit": "mL" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "PropertyName": "Pressure", "Unit": "mmHg" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "PropertyName": "OutFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "PropertyName": "InFlow",   "Unit": "mL/min" },
      
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "ExtracellularFluidVolume",             "Unit": "L" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "IntracellularFluidVolume",             "Unit": "L" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "BaroreceptorHeartRateScale",           "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "BaroreceptorHeartElastanceScale",      "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "BaroreceptorResistanceScale",          "Unit": "unitless" },
@@ -83,134 +112,60 @@
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "ChemoreceptorHeartRateScale",          "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "ChemoreceptorHeartElastanceScale",     "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "PulmonaryCapillariesCoverageFraction", "Unit": "unitless" },
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                                               "PropertyName": "HeartEjectionFraction" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "EndTidalCarbonDioxidePressure",        "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "PulseOximetry",                        "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "CoronaryPerfusionPressure",            "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "SystolicLeftHeartPressure",            "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "DiastolicLeftHeartPressure",           "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "SystolicRightHeartPressure",           "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "DiastolicRightHeartPressure",          "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "Oxygen",                    "PropertyName": "MassInBlood",                          "Unit": "g" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "CarbonDioxide",             "PropertyName": "MassInBlood",                          "Unit": "g" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "Oxygen",                    "PropertyName": "MassInTissue",                         "Unit": "g" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "CarbonDioxide",             "PropertyName": "MassInTissue",                         "Unit": "g" },
       { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "PropertyName": "InFlow",                               "Unit": "mL/min" },
-      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",         "PropertyName": "InFlow",                               "Unit": "mL/min" },
-      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Lymph",            "PropertyName": "OutFlow",                               "Unit": "mL/min" }
+      { "DecimalFormat": { "Precision": 3 }, "Category": "ECG",                                                      "PropertyName": "Lead3ElectricPotential",               "Unit": "mV" }
     ]
   },
- "AnyAction": [
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 30,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "Arrhythmia": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "Rhythm": "Asystole"
-    }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 30,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "Force": {
-      "ScalarForce": {
-       "Value": 550,
-       "Unit": "N"
+ "AnyAction": [{
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
       }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Value": 80,
-       "Unit": "1/min"
-      }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
-      }
-     }
     }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 300,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
-   "PatientAction": {
-    "ChestCompressionAutomated": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "Force": {
-      "ScalarForce": {
-       "Value": 0,
-       "Unit": "N"
+  }, {
+    "PatientAction": {
+      "Arrhythmia": {
+        "Rhythm": "UnstableVentricularTachycardia"
       }
-     },
-     "CompressionFrequency": {
-      "ScalarFrequency": {
-       "Value": 80,
-       "Unit": "1/min"
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 120.0,
+          "Unit": "s"
+        }
       }
-     },
-     "AppliedForceFraction": {
-      "Scalar0To1": {
-       "Value": 0.8
+    }
+  }, {
+    "PatientAction": {
+      "Arrhythmia": {
+        "Rhythm": "NormalSinus"
       }
-     }
     }
-   }
-  },
-  {
-   "PatientAction": {
-    "Arrhythmia": {
-     "PatientAction": {
-      "Action": {}
-     },
-     "Rhythm": "NormalSinus"
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 240.0,
+          "Unit": "s"
+        }
+      }
     }
-   }
-  },
-  {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 100,
-      "Unit": "s"
-     }
-    }
-   }
-  }
- ]
+  }]
 }

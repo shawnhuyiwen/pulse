@@ -87,8 +87,8 @@ void HowToCPR()
   sce.SetEngineStateFile(stateFile);
 
   // 3 possible modes of performing CPR
-  std::string mode = "single";
-  //std::string mode = "instantaneous";
+  //std::string mode = "single";
+  std::string mode = "instantaneous";
   //std::string mode = "automated";
 
   // Create data requests for each value that should be written to the output log as the engine is executing
@@ -105,16 +105,16 @@ void HowToCPR()
   dMgr.SetResultsFilename("./test_results/howto/HowTo_CPR.cpp/HowTo_CPR.csv");
 
   // This is the total amount of time that CPR will be administered in seconds
-  double durationOfCPR_s = 60;
+  double durationOfCPR_s = 240;
 
   // This is the frequency at which CPR is administered
-  double compressionRate_bpm = 80;
+  double compressionRate_bpm = 100;
 
   // This is where you specify how much force to apply to the chest. We have capped the applicable force at 550 N.
-  double compressionForce_N = 450;
+  double compressionForce_N = 500;
 
   // Force can also be specified as a depth.
-  double compressionDepth_cm = 5;
+  double compressionDepth_cm = 5.5;
 
   // This is the percent of time per period that the chest will be compressed e.g. if I have a 1 second period
   // (60 beats per minute) the chest will be compressed for 0.3 seconds

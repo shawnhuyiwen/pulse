@@ -176,14 +176,14 @@ namespace pulse
     m_leftKidneyIntracellularLactate = nullptr;
     m_rightKidneyIntracellularLactate = nullptr;
 
-    m_urineProductionRate_mL_Per_min_runningAvg->Clear();
-    m_urineOsmolarity_mOsm_Per_L_runningAvg->Clear();
-    m_sodiumExcretionRate_mg_Per_min_runningAvg->Clear();
-    m_rightSodiumFlow_mg_Per_s_runningAvg->Clear();
-    m_leftSodiumFlow_mg_Per_s_runningAvg->Clear();
-    m_leftRenalArterialPressure_mmHg_runningAvg->Clear();
-    m_rightRenalArterialPressure_mmHg_runningAvg->Clear();
-    m_sodiumConcentration_mg_Per_mL_runningAvg->Clear();
+    m_urineProductionRate_mL_Per_min_runningAvg->Invalidate();
+    m_urineOsmolarity_mOsm_Per_L_runningAvg->Invalidate();
+    m_sodiumExcretionRate_mg_Per_min_runningAvg->Invalidate();
+    m_rightSodiumFlow_mg_Per_s_runningAvg->Invalidate();
+    m_leftSodiumFlow_mg_Per_s_runningAvg->Invalidate();
+    m_leftRenalArterialPressure_mmHg_runningAvg->Invalidate();
+    m_rightRenalArterialPressure_mmHg_runningAvg->Invalidate();
+    m_sodiumConcentration_mg_Per_mL_runningAvg->Invalidate();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1529,9 +1529,9 @@ namespace pulse
       }
 
       //reset at start of cardiac cycle 
-      m_urineProductionRate_mL_Per_min_runningAvg->Clear();
-      m_urineOsmolarity_mOsm_Per_L_runningAvg->Clear();
-      m_sodiumExcretionRate_mg_Per_min_runningAvg->Clear();
+      m_urineProductionRate_mL_Per_min_runningAvg->Invalidate();
+      m_urineOsmolarity_mOsm_Per_L_runningAvg->Invalidate();
+      m_sodiumExcretionRate_mg_Per_min_runningAvg->Invalidate();
     }
 
 
@@ -1803,7 +1803,7 @@ namespace pulse
     }
     if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
-      m_sodiumConcentration_mg_Per_mL_runningAvg->Clear();
+      m_sodiumConcentration_mg_Per_mL_runningAvg->Invalidate();
     }
   }
 
@@ -1960,8 +1960,8 @@ namespace pulse
     //reset sodium flow at start of cardiac cycle 
     if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
-      m_leftSodiumFlow_mg_Per_s_runningAvg->Clear();
-      m_rightSodiumFlow_mg_Per_s_runningAvg->Clear();
+      m_leftSodiumFlow_mg_Per_s_runningAvg->Invalidate();
+      m_rightSodiumFlow_mg_Per_s_runningAvg->Invalidate();
     }
   }
 
@@ -2062,8 +2062,8 @@ namespace pulse
     //reset average at start of cardiac cycle
     if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
-      m_leftRenalArterialPressure_mmHg_runningAvg->Clear();
-      m_rightRenalArterialPressure_mmHg_runningAvg->Clear();
+      m_leftRenalArterialPressure_mmHg_runningAvg->Invalidate();
+      m_rightRenalArterialPressure_mmHg_runningAvg->Invalidate();
     }
   }
 END_NAMESPACE

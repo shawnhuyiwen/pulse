@@ -44,7 +44,7 @@ void SEChestCompressionAutomated::Copy(const SEChestCompressionAutomated& src, b
 
 bool SEChestCompressionAutomated::IsValid() const
 {
-  return SEPatientAction::IsValid() && (HasForce() || HasDepth()) && HasCompressionFrequency();
+  return SEPatientAction::IsValid() && (HasForce() || HasDepth() || HasCompressionFrequency());
 }
 
 bool SEChestCompressionAutomated::IsActive() const

@@ -249,6 +249,7 @@ class SEScalarVolumePerTimeArea; class VolumePerTimeAreaUnit;
 class SEScalarVolumePerTimePressureArea; class VolumePerTimePressureAreaUnit;
 class SEScalarVolumePerTimeMass; class VolumePerTimeMassUnit;
 class SEScalarVolumePerTimePressure; class VolumePerTimePressureUnit;
+class SETemporalInterpolator;
 
 class SEArray;
 class SEArrayElectricPotential;

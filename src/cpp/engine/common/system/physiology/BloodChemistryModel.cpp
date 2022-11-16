@@ -66,8 +66,8 @@ namespace pulse
     m_VenaCava = nullptr;
     m_VenaCavaO2 = nullptr;
     m_VenaCavaCO2 = nullptr;
-    m_ArterialOxygen_mmHg->Clear();
-    m_ArterialCarbonDioxide_mmHg->Clear();
+    m_ArterialOxygen_mmHg->Invalidate();
+    m_ArterialCarbonDioxide_mmHg->Invalidate();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -363,8 +363,8 @@ namespace pulse
         }
       }
 
-      m_ArterialOxygen_mmHg->Clear();
-      m_ArterialCarbonDioxide_mmHg->Clear();
+      m_ArterialOxygen_mmHg->Invalidate();
+      m_ArterialCarbonDioxide_mmHg->Invalidate();
     }
 
 

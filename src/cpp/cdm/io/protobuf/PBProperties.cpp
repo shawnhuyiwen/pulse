@@ -76,6 +76,7 @@ POP_PROTO_WARNINGS
 #include "cdm/properties/SEHistogramFractionVsLength.h"
 
 #include "cdm/properties/SERunningAverage.h"
+#include "cdm/properties/SETemporalInterpolator.h"
 
 void PBProperty::Copy(const SECurve& src, SECurve& dst)
 {
@@ -1886,4 +1887,34 @@ void PBProperty::Serialize(const SERunningAverage& src, CDM_BIND::RunningAverage
 {
   dst.set_sum(src.m_Sum);
   dst.set_numsamples(src.m_NumSamples);
+}
+
+void PBProperty::Load(const CDM_BIND::TemporalInterpolatorData& src, SETemporalInterpolator& dst)
+{
+  dst.Invalidate();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::TemporalInterpolatorData& src, SETemporalInterpolator& dst)
+{
+  dst.m_Complete = src.complete();
+  dst.m_PositiveTransition = src.positivetransition();
+  dst.m_Period_s = src.period_s();
+  dst.m_Current = src.current();
+  dst.m_Target = src.target();
+  dst.m_Initial = src.initial();
+}
+CDM_BIND::TemporalInterpolatorData* PBProperty::Unload(const SETemporalInterpolator& src)
+{
+  CDM_BIND::TemporalInterpolatorData* dst = new CDM_BIND::TemporalInterpolatorData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SETemporalInterpolator& src, CDM_BIND::TemporalInterpolatorData& dst)
+{
+  dst.set_complete(src.m_Complete);
+  dst.set_positivetransition(src.m_PositiveTransition);
+  dst.set_period_s(src.m_Period_s);
+  dst.set_current(src.m_Current);
+  dst.set_target(src.m_Target);
+  dst.set_initial(src.m_Initial);
 }
