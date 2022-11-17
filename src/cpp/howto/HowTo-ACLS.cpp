@@ -21,6 +21,7 @@
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarElectricPotential.h"
 #include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarLength.h"
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarPressureTimePerVolume.h"
@@ -49,12 +50,12 @@ void HowToACLS()
   bool devRequests = false;
   bool automatedCPR = true;
 
-  double unassisted_min = 7;
+  double unassisted_min = 1;
   bool intubatedAssistance = false;
-  double assisted_min = 7;
+  double assisted_min = 4;
   // We will do cpr_block_s of CPR compressions every cpr_interval_s
-  double cpr_block_s = 30;
-  double cpr_bpm = 120;
+  double cpr_block_s = 18;
+  double cpr_bpm = 100;
   double cpr_interval_s = 1/Convert(cpr_bpm, FrequencyUnit::Per_min, FrequencyUnit::Per_s);
   // Then we will do 2 bvm squeezes every bvm_interval_s
   size_t bvmSqueezes = 2;
@@ -211,7 +212,7 @@ void HowToACLS()
         compressIn_s -= timeStep_s;
         if (compressIn_s <= 0)
         {
-          cpr.GetForceScale().SetValue(0.6228);
+          cpr.GetDepth().SetValue(5, LengthUnit::cm);
           cpr.GetCompressionPeriod().SetValue(0.4,TimeUnit::s);
           pe->ProcessAction(cpr);
           compressIn_s = cpr_interval_s;
@@ -239,7 +240,7 @@ void HowToACLS()
     {
       // Start automated CPR
       pe->Info("Starting CPR Block");
-      cprA.GetForceScale().SetValue(0.6228);
+      cprA.GetDepth().SetValue(5, LengthUnit::cm);
       cprA.GetCompressionFrequency().SetValue(cpr_bpm, FrequencyUnit::Per_min);
       cprA.GetAppliedForceFraction().SetValue(0.8);
       pe->ProcessAction(cprA);

@@ -185,10 +185,10 @@ namespace pulse
     m_ConnectionToAirway = nullptr;
     m_GroundToConnection = nullptr;
 
-    m_BloodPHRunningAverage->Clear();
-    m_MeanAirwayPressure_cmH2O->Clear();
-    m_ArterialO2RunningAverage_mmHg->Clear();
-    m_ArterialCO2RunningAverage_mmHg->Clear();
+    m_BloodPHRunningAverage->Invalidate();
+    m_MeanAirwayPressure_cmH2O->Invalidate();
+    m_ArterialO2RunningAverage_mmHg->Invalidate();
+    m_ArterialCO2RunningAverage_mmHg->Invalidate();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1158,8 +1158,8 @@ namespace pulse
         m_ArterialO2PartialPressure_mmHg = m_ArterialO2RunningAverage_mmHg->Value();
         m_ArterialCO2PartialPressure_mmHg = m_ArterialCO2RunningAverage_mmHg->Value();
 
-        m_ArterialO2RunningAverage_mmHg->Clear();
-        m_ArterialCO2RunningAverage_mmHg->Clear();
+        m_ArterialO2RunningAverage_mmHg->Invalidate();
+        m_ArterialCO2RunningAverage_mmHg->Invalidate();
       }
 
   #ifdef TUNING
@@ -2085,7 +2085,7 @@ namespace pulse
         //It will be off a little when each breath isn't the same
         //It's too hard to keep a runnning average otherwise
         GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
-        m_MeanAirwayPressure_cmH2O->Clear();
+        m_MeanAirwayPressure_cmH2O->Invalidate();
       }
     }
     else //Inhaling
@@ -2159,7 +2159,7 @@ namespace pulse
       GetTotalAlveolarVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
       GetTotalPulmonaryVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
       GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
-      m_MeanAirwayPressure_cmH2O->Clear();
+      m_MeanAirwayPressure_cmH2O->Invalidate();
       GetInspiratoryExpiratoryRatio().SetValue(0);
       GetPeakInspiratoryPressure().SetValue(0, PressureUnit::cmH2O);
       GetPositiveEndExpiratoryPressure().SetValue(0, PressureUnit::cmH2O);
@@ -2226,7 +2226,7 @@ namespace pulse
       if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
       {
         m_LastCardiacCycleBloodPH = m_BloodPHRunningAverage->Value();
-        m_BloodPHRunningAverage->Clear();
+        m_BloodPHRunningAverage->Invalidate();
       }
 
       if (m_data.GetState() > EngineState::InitialStabilization)

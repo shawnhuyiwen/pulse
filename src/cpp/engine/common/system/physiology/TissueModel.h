@@ -124,6 +124,7 @@ namespace pulse
     SELiquidCompartment* m_LeftPulmonaryCapillaries;
     SELiquidCompartment* m_RightPulmonaryCapillaries;
 
+    std::vector<SEFluidCircuitPath*>                     m_VascularResistances;
     std::map<SETissueCompartment*, SELiquidCompartment*> m_TissueToVascular;
     std::vector<SETissueCompartment*>                    m_ConsumptionProdutionTissues;
   };

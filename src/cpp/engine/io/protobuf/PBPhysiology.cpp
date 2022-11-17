@@ -71,21 +71,16 @@ namespace pulse
 
     dst.m_EnableFeedbackAfterArrhythmiaTrasition = (eSwitch)src.enablefeedbackafterarrhythmiatrasition();
     dst.m_StartCardiacArrest = src.startcardiacarrest();
+    dst.m_TransitionArrhythmia = src.transitionarrhythmia();
     dst.m_CardiacArrestVitalsUpdateTimer_s = src.cardiacarrestvitalsupdatetimer_s();
-    dst.m_TotalArrhythmiaTransitionTime_s = src.totalarrhythmiatransitiontime_s();
-    dst.m_CurrentArrhythmiaTransitionTime_s = src.currentarrhythmiatransitiontime_s();
-    dst.m_ArrhythmiaHeartRateBaseline_Per_min = src.arrhythmiaheartratebaseline_per_min();
-    dst.m_InitialArrhythmiaHeartRateBaseline_Per_min = src.initialarrhythmiaheartratebaseline_per_min();
-    dst.m_TargetArrhythmiaHeartRateBaseline_Per_min = src.targetarrhythmiaheartratebaseline_per_min();
-    dst.m_ArrhythmiaHeartComplianceModifier = src.arrhythmiaheartcompliancemodifier();
-    dst.m_InitialArrhythmiaHeartComplianceModifier = src.initialarrhythmiaheartcompliancemodifier();
-    dst.m_TargetArrhythmiaHeartComplianceModifier = src.targetarrhythmiaheartcompliancemodifier();
-    dst.m_ArrhythmiaSystemicVascularResistanceModifier = src.arrhythmiasystemicvascularresistancemodifier();
-    dst.m_InitialArrhythmiaSystemicVascularResistanceModifier = src.initialarrhythmiasystemicvascularresistancemodifier();
-    dst.m_TargetArrhythmiaSystemicVascularResistanceModifier = src.targetarrhythmiasystemicvascularresistancemodifier();
-    dst.m_ArrhythmiaVascularComplianceModifier = src.arrhythmiavascularcompliancemodifier();
-    dst.m_InitialArrhythmiaVascularComplianceModifier = src.initialarrhythmiavascularcompliancemodifier();
-    dst.m_TargetArrhythmiaVascularComplianceModifier = src.targetarrhythmiavascularcompliancemodifier();
+
+    PBProperty::Load(src.heartratebaseline_per_min(), *dst.m_HeartRateBaseline_Per_min);
+    PBProperty::Load(src.heartcompliancemodifier(), *dst.m_HeartComplianceModifier);
+    PBProperty::Load(src.aortacompliancemodifier(), *dst.m_AortaComplianceModifier);
+    PBProperty::Load(src.venacavacompliancemodifier(), *dst.m_VenaCavaComplianceModifier);
+    PBProperty::Load(src.pulmonarycompliancemodifier(), *dst.m_PulmonaryComplianceModifier);
+    PBProperty::Load(src.systemicvascularresistancemodifier(), *dst.m_SystemicVascularResistanceModifier);
+    PBProperty::Load(src.systemicvascularcompliancemodifier(), *dst.m_SystemicVascularComplianceModifier);
 
     dst.m_CompressionFrequencyCurrentTime_s = src.compressionfrequencycurrenttime_s();
     dst.m_CompressionFrequencyDuration_s = src.compressionfrequencyduration_s();
@@ -127,7 +122,6 @@ namespace pulse
     dst.set_fullycompressedheart(src.m_FullyCompressedHeart);
     dst.set_stabilizedheartratebaseline_per_min(src.m_StabilizedHeartRateBaseline_Per_min);
     dst.set_stabilizedmeanarterialpressurebaseline_mmhg(src.m_StabilizedMeanArterialPressureBaseline_mmHg);
-
     dst.set_currentdrivercycletime_s(src.m_CurrentDriverCycleTime_s);
     dst.set_drivercycleperiod_s(src.m_DriverCyclePeriod_s);
     dst.set_leftheartelastance_mmhg_per_ml(src.m_LeftHeartElastance_mmHg_Per_mL);
@@ -140,21 +134,16 @@ namespace pulse
 
     dst.set_enablefeedbackafterarrhythmiatrasition((CDM_BIND::eSwitch)src.m_EnableFeedbackAfterArrhythmiaTrasition);
     dst.set_startcardiacarrest(src.m_StartCardiacArrest);
+    dst.set_transitionarrhythmia(src.m_TransitionArrhythmia);
     dst.set_cardiacarrestvitalsupdatetimer_s(src.m_CardiacArrestVitalsUpdateTimer_s);
-    dst.set_totalarrhythmiatransitiontime_s(src.m_TotalArrhythmiaTransitionTime_s);
-    dst.set_currentarrhythmiatransitiontime_s(src.m_CurrentArrhythmiaTransitionTime_s);
-    dst.set_arrhythmiaheartratebaseline_per_min(src.m_ArrhythmiaHeartRateBaseline_Per_min);
-    dst.set_initialarrhythmiaheartratebaseline_per_min(src.m_InitialArrhythmiaHeartRateBaseline_Per_min);
-    dst.set_targetarrhythmiaheartratebaseline_per_min(src.m_TargetArrhythmiaHeartRateBaseline_Per_min);
-    dst.set_arrhythmiaheartcompliancemodifier(src.m_ArrhythmiaHeartComplianceModifier);
-    dst.set_initialarrhythmiaheartcompliancemodifier(src.m_InitialArrhythmiaHeartComplianceModifier);
-    dst.set_targetarrhythmiaheartcompliancemodifier(src.m_TargetArrhythmiaHeartComplianceModifier);
-    dst.set_arrhythmiasystemicvascularresistancemodifier(src.m_ArrhythmiaSystemicVascularResistanceModifier);
-    dst.set_initialarrhythmiasystemicvascularresistancemodifier(src.m_InitialArrhythmiaSystemicVascularResistanceModifier);
-    dst.set_targetarrhythmiasystemicvascularresistancemodifier(src.m_TargetArrhythmiaSystemicVascularResistanceModifier);
-    dst.set_arrhythmiavascularcompliancemodifier(src.m_ArrhythmiaVascularComplianceModifier);
-    dst.set_initialarrhythmiavascularcompliancemodifier(src.m_InitialArrhythmiaVascularComplianceModifier);
-    dst.set_targetarrhythmiavascularcompliancemodifier(src.m_TargetArrhythmiaVascularComplianceModifier);
+
+    dst.set_allocated_heartratebaseline_per_min(PBProperty::Unload(*src.m_HeartRateBaseline_Per_min));
+    dst.set_allocated_heartcompliancemodifier(PBProperty::Unload(*src.m_HeartComplianceModifier));
+    dst.set_allocated_aortacompliancemodifier(PBProperty::Unload(*src.m_AortaComplianceModifier));
+    dst.set_allocated_venacavacompliancemodifier(PBProperty::Unload(*src.m_VenaCavaComplianceModifier));
+    dst.set_allocated_pulmonarycompliancemodifier(PBProperty::Unload(*src.m_PulmonaryComplianceModifier));
+    dst.set_allocated_systemicvascularresistancemodifier(PBProperty::Unload(*src.m_SystemicVascularResistanceModifier));
+    dst.set_allocated_systemicvascularcompliancemodifier(PBProperty::Unload(*src.m_SystemicVascularComplianceModifier));
 
     dst.set_compressionfrequencycurrenttime_s(src.m_CompressionFrequencyCurrentTime_s);
     dst.set_compressionfrequencyduration_s(src.m_CompressionFrequencyDuration_s);

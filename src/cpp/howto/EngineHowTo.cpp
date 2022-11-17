@@ -14,7 +14,7 @@ int main()
 
   //HowToSandbox();
 
-  HowToEngineUse();
+  //HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
   //HowToPulseEnginePool();
@@ -31,7 +31,7 @@ int main()
   //HowToConsumeNutrients();
   //HowToCOPD();
   //HowToCOVID19Ventilated();
-  //HowToCPR();
+  HowToCPR();
   //HowToECMO();
   //HowToEnvironmentChange();
   //HowToExercise();

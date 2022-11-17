@@ -26,13 +26,13 @@ public:
   virtual SEScalarForce& GetForce();
   virtual double GetForce(const ForceUnit& unit) const;
   
-  virtual bool HasForceScale() const;
-  virtual SEScalar0To1& GetForceScale();
-  virtual double GetForceScale() const;
+  virtual bool HasDepth() const;
+  virtual SEScalarLength& GetDepth();
+  virtual double GetDepth(const LengthUnit& unit) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalarForce*           m_Force;
-  SEScalar0To1*            m_ForceScale;
+  SEScalarLength*          m_Depth;
 };

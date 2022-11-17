@@ -5,21 +5,21 @@ package com.kitware.pulse.cdm.patient.actions;
 
 import com.kitware.pulse.cdm.properties.SEScalarForce;
 import com.kitware.pulse.cdm.bind.PatientActions.ChestCompressionData;
-import com.kitware.pulse.cdm.properties.SEScalar0To1;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
+import com.kitware.pulse.cdm.properties.SEScalarLength;
 
 public class SEChestCompression extends SEPatientAction
 {
   private static final long serialVersionUID = 4548017190134330946L;
   
   protected SEScalarForce    force;
-  protected SEScalar0To1     forceScale;
+  protected SEScalarLength   depth;
   protected SEScalarTime     compressionPeriod;
   
   public SEChestCompression()
   {
     force = null;
-    forceScale = null;
+    depth = null;
     compressionPeriod = null;
   }
   
@@ -36,10 +36,10 @@ public class SEChestCompression extends SEPatientAction
     else if (force != null)
       force.invalidate();
     
-    if (other.forceScale != null)
-      getForceScale().set(other.forceScale);
-    else if (forceScale != null)
-      forceScale.invalidate();
+    if (other.depth != null)
+      getDepth().set(other.depth);
+    else if (depth != null)
+      depth.invalidate();
     
     if (other.compressionPeriod != null)
       getCompressionPeriod().set(other.compressionPeriod);
@@ -53,8 +53,8 @@ public class SEChestCompression extends SEPatientAction
     super.clear();
     if (force != null)
       force.invalidate();
-    if (forceScale != null)
-      forceScale.invalidate();
+    if (depth != null)
+      depth.invalidate();
     if (compressionPeriod != null)
       compressionPeriod.invalidate();
   }
@@ -62,7 +62,7 @@ public class SEChestCompression extends SEPatientAction
   @Override
   public boolean isValid()
   {
-    return (hasForce() || hasForceScale()) && hasCompressionPeriod();
+    return (hasForce() || hasDepth()) && hasCompressionPeriod();
   }
   
   public static void load(ChestCompressionData src, SEChestCompression dst)
@@ -70,8 +70,8 @@ public class SEChestCompression extends SEPatientAction
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasForce())
       SEScalarForce.load(src.getForce(),dst.getForce());
-    if(src.hasForceScale())
-      SEScalar0To1.load(src.getForceScale(),dst.getForceScale());
+    if(src.hasDepth())
+      SEScalarLength.load(src.getDepth(),dst.getDepth());
     if(src.hasCompressionPeriod())
       SEScalarTime.load(src.getCompressionPeriod(),dst.getCompressionPeriod());
   }
@@ -88,8 +88,8 @@ public class SEChestCompression extends SEPatientAction
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
     if (src.hasForce())
       dst.setForce(SEScalarForce.unload(src.force));
-    if (src.hasForceScale())
-      dst.setForceScale(SEScalar0To1.unload(src.forceScale));
+    if (src.hasDepth())
+      dst.setDepth(SEScalarLength.unload(src.depth));
     if (src.hasCompressionPeriod())
       dst.setCompressionPeriod(SEScalarTime.unload(src.compressionPeriod));
   }
@@ -105,15 +105,15 @@ public class SEChestCompression extends SEPatientAction
     return force;
   }
 
-  public boolean hasForceScale()
+  public boolean hasDepth()
   {
-    return forceScale == null ? false : forceScale.isValid();
+    return depth == null ? false : depth.isValid();
   }
-  public SEScalar0To1 getForceScale()
+  public SEScalarLength getDepth()
   {
-    if (forceScale == null)
-      forceScale = new SEScalar0To1();
-    return forceScale;
+    if (depth == null)
+      depth = new SEScalarLength();
+    return depth;
   }
   
   public boolean hasCompressionPeriod()
@@ -133,7 +133,7 @@ public class SEChestCompression extends SEPatientAction
     if (force != null)
       return "Chest Compression" 
           + "\n\tForce: " +(hasForce() ? getForce() : "Not Provided")
-          + "\n\tForceScale: " + (hasForceScale() ? getForceScale() : "Not Provided")
+          + "\n\tDepth: " + (hasDepth() ? getDepth() : "Not Provided")
           + "\n\tCompressionPeriod: " + (hasCompressionPeriod() ? getCompressionPeriod() : "Not Provided");
     else
       return "Action not specified properly";

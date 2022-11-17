@@ -6,13 +6,13 @@ namespace Pulse.CDM
   public class SEChestCompression : SEPatientAction
   {
     protected SEScalarForce    force;
-    protected SEScalar0To1     force_scale;
+    protected SEScalarLength   depth;
     protected SEScalarTime     compression_period;
 
     public SEChestCompression()
     {
       force = null;
-      force_scale = null;
+      depth = null;
       compression_period = null;
     }
 
@@ -21,15 +21,15 @@ namespace Pulse.CDM
       base.Clear();
       if (force != null)
         force.Invalidate();
-      if (force_scale != null)
-        force_scale.Invalidate();
+      if (depth != null)
+        depth.Invalidate();
       if (compression_period != null)
         compression_period.Invalidate();
     }
 
     public override bool IsValid()
     {
-      return (HasForce() || HasForceScale()) && HasCompressionPeriod();
+      return (HasForce() || HasDepth()) && HasCompressionPeriod();
     }
 
     public bool HasForce()
@@ -43,15 +43,15 @@ namespace Pulse.CDM
       return force;
     }
 
-    public bool HasForceScale()
+    public bool HasDepth()
     {
-      return force_scale == null ? false : force_scale.IsValid();
+      return depth == null ? false : depth.IsValid();
     }
-    public SEScalar0To1 GetForceScale()
+    public SEScalarLength GetDepth()
     {
-      if (force_scale == null)
-        force_scale = new SEScalar0To1();
-      return force_scale;
+      if (depth == null)
+        depth = new SEScalarLength();
+      return depth;
     }
 
     public bool HasCompressionPeriod()

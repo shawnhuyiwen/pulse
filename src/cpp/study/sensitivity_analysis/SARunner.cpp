@@ -309,7 +309,7 @@ namespace pulse::study::sensitivity_analysis
         {
           element.second.Sample();
           element.second.instantaneousAverage = element.second.runningAverage.Value();
-          element.second.runningAverage.Clear();
+          element.second.runningAverage.Invalidate();
           element.second.Sample();// Start the running average off with the same last average sample
         }
       }
@@ -572,7 +572,7 @@ namespace pulse::study::sensitivity_analysis
         {
           element.second.Sample();
           element.second.instantaneousAverage = element.second.runningAverage.Value();
-          element.second.runningAverage.Clear();
+          element.second.runningAverage.Invalidate();
           element.second.Sample();// Start the running average off with the same last average sample
         }
       }

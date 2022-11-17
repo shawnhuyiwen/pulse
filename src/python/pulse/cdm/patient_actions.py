@@ -5,7 +5,7 @@ from pulse.cdm.patient import SENutrition
 from pulse.cdm.physiology import SERespiratoryMechanics
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarFrequency, \
-                              SEScalarForce, SEScalarMassPerVolume, \
+                              SEScalarForce, SEScalarLength, SEScalarMassPerVolume, \
                               SEScalarPressure, SEScalarTime, \
                               SEScalarVolumePerTime, SEScalarVolume
 
@@ -253,26 +253,26 @@ class SEBronchoconstriction(SEPatientAction):
                 "  Severity: {}").format(self._severity)
 
 class SEChestCompression(SEPatientAction):
-    __slots__ = ["_force", "_force_scale", "_compression_period"]
+    __slots__ = ["_force", "_depth", "_compression_period"]
 
     def __init__(self):
         super().__init__()
         self._force = None
-        self._force_scale = None
+        self._depth = None
         self._compression_period = None
 
     def clear(self):
         super().clear()
         if self._force is not None:
             self._force.invalidate()
-        if self._force_scale is not None:
-            self._force_scale.invalidate()
+        if self._depth is not None:
+            self._depth.invalidate()
         if self._compression_period is not None:
             self._compression_period.invalidate()
 
     def is_valid(self):
         # Must have exactly one of these
-        return (self.has_force() or self.has_force_scale()) and self.has_compression_period()
+        return (self.has_force() or self.has_depth()) and self.has_compression_period()
 
     def has_force(self):
         return self._force is not None
@@ -281,12 +281,12 @@ class SEChestCompression(SEPatientAction):
             self._force = SEScalarForce()
         return self._force
 
-    def has_force_scale(self):
-        return self._force_scale is not None
-    def get_force_scale(self):
-        if self._force_scale is None:
-            self._force_scale = SEScalar0To1()
-        return self._force_scale
+    def has_depth(self):
+        return self._depth is not None
+    def get_depth(self):
+        if self._depth is None:
+            self._depth = SEScalarLength()
+        return self._depth
 
     def has_compression_period(self):
         return self._compression_period is not None
@@ -298,18 +298,18 @@ class SEChestCompression(SEPatientAction):
     def __repr__(self):
         return ("Chest Compression\n"
                 "  Force: {}\n"
-                "  Force Scale: {}\n"
-                "  Compression Period: {}").format(self._force, self._force_scale, self._compression_period)
+                "  Depth: {}\n"
+                "  Compression Period: {}").format(self._force, self._depth, self._compression_period)
 
 class SEChestCompressionAutomated(SEPatientAction):
-    __slots__ = ["_applied_force_fraction", "_compression_frequency", "_force", "_force_scale"]
+    __slots__ = ["_applied_force_fraction", "_compression_frequency", "_force", "_depth"]
 
     def __init__(self):
         super().__init__()
         self._applied_force_fraction = None
         self._compression_frequency = None
         self._force = None
-        self._force_scale = None
+        self._depth = None
 
     def clear(self):
         super().clear()
@@ -319,11 +319,11 @@ class SEChestCompressionAutomated(SEPatientAction):
             self._compression_frequency.invalidate()
         if self._force is not None:
             self._force.invalidate()
-        if self._force_scale is not None:
-            self._force_scale.invalidate()
+        if self._depth is not None:
+            self._depth.invalidate()
 
     def is_valid(self):
-        return (self.has_force() or self.has_force_scale()) and self.has_compression_frequency()
+        return (self.has_force() or self.has_depth()) and self.has_compression_frequency()
 
     def has_applied_force_fraction(self):
         return self._applied_force_fraction is not None
@@ -346,39 +346,39 @@ class SEChestCompressionAutomated(SEPatientAction):
             self._force = SEScalarForce()
         return self._force
     
-    def has_force_scale(self):
-        return self._force_scale is not None
-    def get_force_scale(self):
-        if self._force_scale is None:
-            self._force_scale = SEScalar0To1()
-        return self._force_scale
+    def has_depth(self):
+        return self._depth is not None
+    def get_depth(self):
+        if self._depth is None:
+            self._depth = SEScalarLength()
+        return self._depth
 
     def __repr__(self):
         return ("Chest Compression Automated\n"
                 "  Applied Force Fraction: {}\n"
                 "  Compression Frequency: {}\n"
                 "  Force: {}\n"
-                "  Force Scale: {}").format(self._applied_force_fraction, self._compression_frequency,
-                                            self._force, self._force_scale)
+                "  Depth: {}").format(self._applied_force_fraction, self._compression_frequency,
+                                            self._force, self._depth)
 
 class SEChestCompressionInstantaneous(SEPatientAction):
-    __slots__ = ["_force", "_force_scale"]
+    __slots__ = ["_force", "_depth"]
 
     def __init__(self):
         super().__init__()
         self._force = None
-        self._force_scale = None
+        self._depth = None
 
     def clear(self):
         super().clear()
         if self._force is not None:
             self._force.invalidate()
-        if self._force_scale is not None:
-            self._force_scale.invalidate()
+        if self._depth is not None:
+            self._depth.invalidate()
 
     def is_valid(self):
         # Must have exactly one of these
-        return (self.has_force() or self.has_force_scale())
+        return (self.has_force() or self.has_depth())
 
     def has_force(self):
         return self._force is not None
@@ -387,17 +387,17 @@ class SEChestCompressionInstantaneous(SEPatientAction):
             self._force = SEScalarForce()
         return self._force
 
-    def has_force_scale(self):
-        return self._force_scale is not None
-    def get_force_scale(self):
-        if self._force_scale is None:
-            self._force_scale = SEScalar0To1()
-        return self._force_scale
+    def has_depth(self):
+        return self._depth is not None
+    def get_depth(self):
+        if self._depth is None:
+            self._depth = SEScalarLength()
+        return self._depth
 
     def __repr__(self):
         return ("Chest Compression Instantaneous\n"
                 "  Force: {}\n"
-                "  Force Scale: {}").format(self._force, self._force_scale)
+                "  Depth: {}").format(self._force, self._depth)
 
 class SEChestOcclusiveDressing(SEPatientAction):
     __slots__ = ["_state", "_side"]

@@ -83,8 +83,8 @@ namespace pulse
     m_InternalTemperatureCircuit = nullptr;
     m_TemperatureCircuit = nullptr;
 
-    m_BloodpH->Clear();
-    m_BicarbonateMolarity_mmol_Per_L->Clear();
+    m_BloodpH->Invalidate();
+    m_BicarbonateMolarity_mmol_Per_L->Invalidate();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -575,8 +575,8 @@ namespace pulse
           m_data.GetEvents().SetEvent(eEvent::MetabolicAlkalosis, false, m_data.GetSimulationTime());
       }
       // Reset the running averages. Why do we need running averages here? Does the aorta pH fluctuate that much? 
-      m_BloodpH->Clear();
-      m_BicarbonateMolarity_mmol_Per_L->Clear();
+      m_BloodpH->Invalidate();
+      m_BicarbonateMolarity_mmol_Per_L->Invalidate();
     }
   }
 

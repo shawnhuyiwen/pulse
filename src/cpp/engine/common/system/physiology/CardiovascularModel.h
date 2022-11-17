@@ -82,6 +82,7 @@ namespace pulse
     void ProcessActions();
     //Action methods
     /**/void CPR();
+    /****/double CalculateDepthForce(double compressionDepth_cm);
     /****/double ShapeCPRForce(double compressionForce_N);
     /****/void   ApplyCPRForce(double compressionForce_N);
     /**/void Arrhythmia();
@@ -99,8 +100,11 @@ namespace pulse
 
     // Serializable member variables (Set in Initialize and in schema)
     //Driver
+    bool   m_StartSystole;
     bool   m_HeartFlowDetected;
     bool   m_FullyCompressedHeart;
+    double m_StabilizedHeartRateBaseline_Per_min; // store for moving between arrhytmias
+    double m_StabilizedMeanArterialPressureBaseline_mmHg; // store for moving between arrhytmias
     double m_CurrentDriverCycleTime_s;
     double m_DriverCyclePeriod_s;
     double m_LeftHeartElastanceModifier;// from Heart Failure and such
@@ -111,30 +115,18 @@ namespace pulse
     double m_RightHeartElastanceMax_mmHg_Per_mL;
     double m_RightHeartElastanceMin_mmHg_Per_mL;
     // Arrhythmia
-    bool   m_StartCardiacArrest; // Can't go into cardiac arrest during the middle of a cycle
-    double m_CardiacArrestVitalsUpdateTimer_s;
-    // Transition modifiers associated with changing heart rhythms
     eSwitch m_EnableFeedbackAfterArrhythmiaTrasition;
-    double m_TotalArrhythmiaTransitionTime_s;
-    double m_CurrentArrhythmiaTransitionTime_s;
-    // Heart Rate Transition
-    double m_ArrhythmiaHeartRateBaseline_Per_min;
-    double m_InitialArrhythmiaHeartRateBaseline_Per_min;
-    double m_TargetArrhythmiaHeartRateBaseline_Per_min;
-    double m_StabilizedHeartRateBaseline_Per_min; // store for moving between arrhytmias
-    double m_StabilizedMeanArterialPressureBaseline_mmHg; // store for moving between arrhytmias
-    // Heart Compliance Transition
-    double m_ArrhythmiaHeartComplianceModifier;
-    double m_InitialArrhythmiaHeartComplianceModifier;
-    double m_TargetArrhythmiaHeartComplianceModifier;
-    // Systemic Vascular Resistance Transition
-    double m_ArrhythmiaSystemicVascularResistanceModifier;
-    double m_InitialArrhythmiaSystemicVascularResistanceModifier;
-    double m_TargetArrhythmiaSystemicVascularResistanceModifier;
-    // Vascular Compliance Transition
-    double m_ArrhythmiaVascularComplianceModifier;
-    double m_InitialArrhythmiaVascularComplianceModifier;
-    double m_TargetArrhythmiaVascularComplianceModifier;
+    bool   m_StartCardiacArrest; // Can't go into cardiac arrest during the middle of a cycle
+    bool   m_TransitionArrhythmia;
+    double m_CardiacArrestVitalsUpdateTimer_s;
+    // Transition Modifiers
+    SETemporalInterpolator* m_HeartRateBaseline_Per_min;
+    SETemporalInterpolator* m_HeartComplianceModifier;
+    SETemporalInterpolator* m_AortaComplianceModifier;
+    SETemporalInterpolator* m_VenaCavaComplianceModifier;
+    SETemporalInterpolator* m_PulmonaryComplianceModifier;
+    SETemporalInterpolator* m_SystemicVascularResistanceModifier;
+    SETemporalInterpolator* m_SystemicVascularComplianceModifier;
     //CPR
     double m_CompressionFrequencyCurrentTime_s;
     double m_CompressionFrequencyDuration_s;
@@ -152,6 +144,7 @@ namespace pulse
     double m_CardiacCycleRightHeartPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
     double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
     double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
+
     SERunningAverage* m_CardiacCycleArterialPressure_mmHg;
     SERunningAverage* m_CardiacCycleArterialCO2PartialPressure_mmHg;
     SERunningAverage* m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg;
@@ -173,31 +166,25 @@ namespace pulse
     };
     std::map<SEHemorrhage*, HemorrhageTrack*>m_HemorrhageTrack;
 
-    bool                             m_StartSystole;
     double                           m_MAPCollapse_mmHg;
-    double                           m_minIndividialSystemicResistance_mmHg_s_Per_mL;
+    double                           m_MinIndividialSystemicResistance_mmHg_s_Per_mL;
   
-    SEFluidCircuitCalculator*        m_circuitCalculator;
-    SELiquidTransporter*             m_transporter;
+    SEFluidCircuitCalculator*        m_CircuitCalculator;
+    SELiquidTransporter*             m_Transporter;
 
     SEFluidCircuit*                  m_CirculatoryCircuit;
     SELiquidCompartmentGraph*        m_CirculatoryGraph;
 
-    SEFluidCircuitNode*              m_MainPulmonaryArteries;
-    SEFluidCircuitNode*              m_LeftHeart2;
-    SEFluidCircuitNode*              m_Ground;
+    SEFluidCircuitNode*              m_GroundNode;
+    
+    SEFluidCircuitPath*              m_AortaToBrain;
+    SEFluidCircuitPath*              m_AortaToMuscle;
+    SEFluidCircuitPath*              m_AortaToMyocardium;
+    SEFluidCircuitPath*              m_AortaToSkin;
+    SEFluidCircuitPath*              m_AortaCompliancePath;
+    SEFluidCircuitPath*              m_AortaResistancePath;
 
-    SEFluidCircuitPath*              m_AortaCompliance;
-    SEFluidCircuitPath*              m_AortaResistance;
-    SEFluidCircuitPath*              m_VenaCavaCompliance;
-    SEFluidCircuitPath*              m_RightHeartResistance;
-
-    SEFluidCircuitPath*              m_LeftPulmonaryArteriesCompliance;
-    SEFluidCircuitPath*              m_RightPulmonaryArteriesCompliance;
-    SEFluidCircuitPath*              m_LeftPulmonaryCapillariesCompliance;
-    SEFluidCircuitPath*              m_RightPulmonaryCapillariesCompliance;
-    SEFluidCircuitPath*              m_LeftPulmonaryVeinsCompliance;
-    SEFluidCircuitPath*              m_RightPulmonaryVeinsCompliance;
+    SEFluidCircuitPath*              m_VenaCavaCompliancePath;
 
     SEFluidCircuitPath*              m_LeftPulmonaryArteriesToVeins;
     SEFluidCircuitPath*              m_LeftPulmonaryArteriesToCapillaries;
@@ -205,44 +192,35 @@ namespace pulse
     SEFluidCircuitPath*              m_RightPulmonaryArteriesToCapillaries;
 
     SEFluidCircuitPath*              m_InternalHemorrhageToAorta;
-    SEFluidCircuitPath*              m_pAortaToBone;
-    SEFluidCircuitPath*              m_pAortaToBrain;
-    SEFluidCircuitPath*              m_pBrainToVenaCava;
-    SEFluidCircuitPath*              m_pAortaToLiver;
-    SEFluidCircuitPath*              m_pAortaToLeftKidney;
-    SEFluidCircuitPath*              m_pAortaToLargeIntestine;
-    SEFluidCircuitPath*              m_pAortaToMuscle;
-    SEFluidCircuitPath*              m_pMuscleToVenaCava;
-    SEFluidCircuitPath*              m_pAortaToMyocardium;
-    SEFluidCircuitPath*              m_pMyocardiumToVenaCava;
-    SEFluidCircuitPath*              m_pAortaToRightKidney;
-    SEFluidCircuitPath*              m_pAortaToSkin;
-    SEFluidCircuitPath*              m_pAortaToSmallIntestine;
-    SEFluidCircuitPath*              m_pAortaToSplanchnic;
-    SEFluidCircuitPath*              m_pAortaToSpleen;
+    SEFluidCircuitPath*              m_BrainToVenaCava;
+    SEFluidCircuitPath*              m_MuscleToVenaCava;
+    SEFluidCircuitPath*              m_MyocardiumToVenaCava;
 
-    SEFluidCircuitPath*              m_pGndToPericardium;
-    SEFluidCircuitPath*              m_pPericardiumToGnd;
-    SEFluidCircuitPath*              m_pRightHeartToGnd;
-    SEFluidCircuitPath*              m_pRightHeart;
-    SEFluidCircuitPath*              m_pLeftHeartToGnd;
-    SEFluidCircuitPath*              m_pLeftHeart;
+    SEFluidCircuitPath*              m_GndToPericardium;
+    SEFluidCircuitPath*              m_PericardiumToGnd;
+
+    SEFluidCircuitPath*              m_RightHeartToGnd;
+    SEFluidCircuitPath*              m_RightHeartCompliancePath;
+    SEFluidCircuitPath*              m_RightHeartResistancePath;
+
+    SEFluidCircuitPath*              m_LeftHeartToGnd;
     SEFluidCircuitPath*              m_LeftHeartToAorta;
+    SEFluidCircuitPath*              m_LeftHeartCompliancePath;
 
-    SEFluidCircuitPath*              m_pBrainResistanceUpstream;
-    SEFluidCircuitPath*              m_pBrainResistanceDownstream;
+    SEFluidCircuitPath*              m_BrainResistanceUpstreamPath;
+    SEFluidCircuitPath*              m_BrainResistanceDownstreamPath;
 
-    SEFluidCircuitPath*              m_leftRenalArteryPath;
-    SEFluidCircuitPath*              m_rightRenalArteryPath;
+    SEFluidCircuitPath*              m_GndToAbdominalCavity;
+    SEFluidCircuitPath*              m_AbdominalCavityToGnd;
 
-    SEFluidCircuitPath*              m_pGndToAbdominalCavity;
-    SEFluidCircuitPath*              m_pAbdominalCavityToGnd;
+    SEFluidCircuitPath*              m_LeftRenalArteryPath;
+    SEFluidCircuitPath*              m_RightRenalArteryPath;
   
     SELiquidCompartment*             m_AbdominalCavity;
     SELiquidCompartment*             m_Aorta;
     SELiquidSubstanceQuantity*       m_AortaCO2;
     SELiquidCompartment*             m_Brain;
-    SELiquidCompartment*             m_Groundcmpt;
+    SELiquidCompartment*             m_Ground;
     SELiquidCompartment*             m_LeftHeart;
     SELiquidCompartment*             m_LeftPulmonaryCapillaries;
     SELiquidCompartment*             m_LeftPulmonaryArteries;
@@ -254,12 +232,17 @@ namespace pulse
     SELiquidCompartment*             m_RightPulmonaryVeins;
     SELiquidCompartment*             m_VenaCava;
 
-    SEGasCompartment*                m_leftPleuralCavity;
-    SEGasCompartment*                m_rightPleuralCavity;
+    SEGasCompartment*                m_LeftPleuralCavity;
+    SEGasCompartment*                m_RightPleuralCavity;
     SEGasCompartment*                m_PleuralCavity;
     SEGasCompartment*                m_Ambient;
 
-    std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
-    std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
+    
+    std::vector<SEFluidCircuitPath*> m_HeartCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_AortaCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_VenaCavaCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_PulmonaryCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_SystemicCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_SystemicResistancePaths;
   };
 END_NAMESPACE

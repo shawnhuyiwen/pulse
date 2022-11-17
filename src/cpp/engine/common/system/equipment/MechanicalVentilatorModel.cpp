@@ -81,7 +81,7 @@ namespace pulse
     m_ConnectionToAirway = nullptr;
     m_MachineClosedResistance_cmH2O_s_Per_L = 0;
 
-    m_MeanAirwayPressure_cmH2O->Clear();
+    m_MeanAirwayPressure_cmH2O->Invalidate();
 
     GetSettings().SetConnection(eSwitch::Off);
     GetSettings().SetExpirationCycleRespiratoryModel(eSwitch::Off);
@@ -1245,7 +1245,7 @@ namespace pulse
     GetIntrinsicPositiveEndExpiredPressure().SetValue(m_PositiveEndExpiratoryPressure_cmH2O, PressureUnit::cmH2O);
 
     GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
-    m_MeanAirwayPressure_cmH2O->Clear();
+    m_MeanAirwayPressure_cmH2O->Invalidate();
 
     double compliance_L_Per_cmH2O = 0.0;
     double pressureDifference_cmH2O = GetPlateauPressure(PressureUnit::cmH2O) - GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O);

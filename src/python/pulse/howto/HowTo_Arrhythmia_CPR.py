@@ -2,8 +2,8 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.patient_actions import SEArrhythmia, eHeartRhythm, \
-                                      SEChestCompressionAutomated, SEChestCompressionInstantaneous
-from pulse.cdm.scalars import ForceUnit, TimeUnit
+                                      SEChestCompression, SEChestCompressionInstantaneous
+from pulse.cdm.scalars import ForceUnit, TimeUnit, LengthUnit
 from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_Arrhythmia():
@@ -12,7 +12,7 @@ def HowTo_Arrhythmia():
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.pbb", None):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None):
         print("Unable to load initial state file")
         return
 
@@ -34,7 +34,7 @@ def HowTo_Arrhythmia():
     # You should pass the sensor readings over at a decent rate continuously
     cpr_force = SEChestCompressionInstantaneous()
     cpr_force.set_comment("Press and hold the chest")
-    cpr_force.get_force().set_value(400, ForceUnit.N)
+    cpr_force.get_force().set_value(450, ForceUnit.N)
     pulse.process_action(cpr_force)
 
     pulse.advance_time_s(1)
@@ -45,12 +45,12 @@ def HowTo_Arrhythmia():
     cpr_force.get_force().set_value(0, ForceUnit.N)
     pulse.process_action(cpr_force)
 
-    # If you are in software, you can pass in a scaled force value for a time period
-    cpr_scale= SEChestCompressionInstantaneous()
-    cpr_scale.set_comment("Press and hold the chest")
-    cpr_scale.get_force_scale().set_value(0.8)# Pretty hard!
-    cpr_scale.get_force_period().set_value(1, TimeUnit.s)
-    pulse.process_action(cpr_scale)
+    # If you are in software, you can pass in a depth value for a time period
+    cpr_depth = SEChestCompression()
+    cpr_depth.set_comment("Press and hold the chest")
+    cpr_depth.get_depth().set_value(5, LengthUnit.cm)
+    cpr_depth.get_compression_period().set_value(1, TimeUnit.s)
+    pulse.process_action(cpr_depth)
 
     pulse.advance_time_s(10)
     results = pulse.pull_data()
