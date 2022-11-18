@@ -51,7 +51,7 @@ void HowToRunScenario()
   // Let's make a scenario (you could just point the executor to a scenario json file on disk as well)
   SEScenario sce(&logger);
   sce.SetName("HowToRunScenario");
-  sce.SetDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
+  sce.SetDescription("Simple Scenario to demonstrate building a scenario by the CDM API");
   sce.GetPatientConfiguration().SetPatientFile("StandardMale.json");
   // Note you can set an Engine state, or create your own SEPatient object (see HowTo-CreateAPatient)
   // When filling out a data request, units are optional
@@ -84,4 +84,18 @@ void HowToRunScenario()
   std::cout << json << std::endl;
   execOpts.SetScenarioContent(json);
   execOpts.Execute();
+
+  // Create new scenario that uses data requests saved to file
+  SEScenario sce2(&logger);
+  sce2.SetName("HowToRunScenario2");
+  sce2.SetDescription("Simple Scenario to demonstrate creating data requests via a file");
+  sce2.GetPatientConfiguration().SetPatientFile("StandardMale.json");
+  sce2.GetDataRequestFiles().push_back(drFile);
+  sce2.AddAction(adv);
+  std::string json2;
+  sce2.SerializeToString(json2, eSerializationFormat::JSON);
+  std::cout << json2 << std::endl;
+  execOpts.SetScenarioContent(json2);
+  execOpts.Execute();
+
 }

@@ -35,6 +35,7 @@ void SEScenario::Clear()
     m_PatientConfiguration->Clear();
   DELETE_VECTOR(m_Actions);
   m_DataRequestMgr->Clear();
+  m_DataRequestFiles.clear();
 }
 
 void SEScenario::Copy(const SEScenario& src)

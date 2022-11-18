@@ -31,6 +31,9 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioData& src, SEScenario& dst)
   if (src.has_datarequestmanager())
     PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager());
 
+  for (int i = 0; i < src.datarequestfile_size(); i++)
+    dst.m_DataRequestFiles.push_back(src.datarequestfile()[i]);
+
   for (int i = 0; i < src.anyaction_size(); i++)
   {
     SEAction* a = PBAction::Load(src.anyaction()[i], *dst.m_SubMgr);
@@ -56,6 +59,8 @@ void PBScenario::Serialize(const SEScenario& src, CDM_BIND::ScenarioData& dst)
     dst.set_allocated_patientconfiguration(PBEngine::Unload(*src.m_PatientConfiguration));
 
   dst.set_allocated_datarequestmanager(PBEngine::Unload(*src.m_DataRequestMgr));
+
+  dst.mutable_datarequestfile()->Add(src.m_DataRequestFiles.begin(), src.m_DataRequestFiles.end());
 
   for (const SEAction* a : src.m_Actions)
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*a));

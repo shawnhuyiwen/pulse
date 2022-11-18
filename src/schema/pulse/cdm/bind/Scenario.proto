@@ -24,7 +24,7 @@ message ScenarioData
     PatientConfigurationData       PatientConfiguration          = 4;
   }
   DataRequestManagerData           DataRequestManager            = 5;
-  repeated string                  DataRequestFiles              = 6;
+  repeated string                  DataRequestFile               = 6;
   repeated AnyActionData           AnyAction                     = 7;
 }
 
