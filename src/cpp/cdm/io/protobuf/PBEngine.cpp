@@ -448,6 +448,12 @@ void PBEngine::Load(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
   dst.Clear();
   PBEngine::Serialize(src, dst);
 }
+CDM_BIND::DataRequestData* PBEngine::Unload(const SEDataRequest& src)
+{
+  CDM_BIND::DataRequestData* dst = new CDM_BIND::DataRequestData();
+  PBEngine::Serialize(src, *dst);
+  return dst;
+}
 void PBEngine::Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
 {
   if(src.has_decimalformat())
@@ -457,12 +463,6 @@ void PBEngine::Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& ds
   dst.m_SubstanceName = src.substancename();
   dst.m_PropertyName = src.propertyname();
   dst.m_RequestedUnit = src.unit();
-}
-CDM_BIND::DataRequestData* PBEngine::Unload(const SEDataRequest& src)
-{
-  CDM_BIND::DataRequestData* dst = new CDM_BIND::DataRequestData();
-  PBEngine::Serialize(src, *dst);
-  return dst;
 }
 void PBEngine::Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& dst)
 {
@@ -488,7 +488,45 @@ void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
   PBEngine::Serialize(src, data);
   PBEngine::Serialize(data, dst);
 }
+void PBEngine::Load(const CDM_BIND::DataRequestListData& src, std::vector<SEDataRequest*>& dst)
+{
+  dst.clear();
+  PBEngine::Serialize(src, dst);
+}
+void PBEngine::Serialize(const std::vector<SEDataRequest*>& src, CDM_BIND::DataRequestListData& dst)
+{
+  for (SEDataRequest* s : src)
+    Serialize(*s, *dst.add_datarequest());
+}
+bool PBEngine::Serialize(const CDM_BIND::DataRequestListData& src, std::vector<SEDataRequest*>& dst)
+{
+  for (int i = 0; i < src.datarequest_size(); i++)
+  {
+    const CDM_BIND::DataRequestData& drData = src.datarequest(i);
+    SEDataRequest* dr = new SEDataRequest((eDataRequest_Category)drData.category());
+    PBEngine::Load(drData, *dr);
+    if (!dr->IsValid())
+      return false;
+    else
+      dst.push_back(dr);
+  }
 
+  return true;
+}
+bool PBEngine::SerializeToFile(const std::vector<SEDataRequest*>& src, const std::string& filename)
+{
+  CDM_BIND::DataRequestListData data;
+  PBEngine::Serialize(src, data);
+  return PBUtils::SerializeToFile(data, filename, nullptr);
+}
+bool PBEngine::SerializeFromFile(const std::string& filename, std::vector<SEDataRequest*>& dst)
+{
+  CDM_BIND::DataRequestListData data;
+  if (!PBUtils::SerializeFromFile(filename, data, nullptr))
+    return false;
+  PBEngine::Load(data, dst);
+  return true;
+}
 
 void PBEngine::Load(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst)
 {

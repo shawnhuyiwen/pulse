@@ -16,6 +16,7 @@
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
+#include "cdm/io/protobuf/PBEngine.h"
 
 
 //--------------------------------------------------------------------------------------------------
@@ -58,9 +59,18 @@ void HowToRunScenario()
   // NOTE: The scenario makes it's own copy of these requests
   // Once you set it, any changes will not be reflected in the scenario
   // You can reuse this object for future actions
-  sce.GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate",FrequencyUnit::Per_min);
-  sce.GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  sce.GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  std::vector<SEDataRequest*> drs;
+  drs.push_back(&sce.GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate",FrequencyUnit::Per_min));
+  drs.push_back(&sce.GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min));
+  drs.push_back(&sce.GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL));
+
+  // Save data requests to a file
+  std::string drFile = "./test_results/howto/HowTo-RunScenario.cpp/HowToRunScenarioDataRequests.json";
+  if (!PBEngine::SerializeToFile(drs, drFile))
+  {
+    std::cout << "Failed to serialize data requests" << std::endl;
+  }
+
   // NOTE: the scenario will make it's own copy of this action
   // Once you set it, any changes will not be reflected in the scenario
   // You can reuse this object for future actions
