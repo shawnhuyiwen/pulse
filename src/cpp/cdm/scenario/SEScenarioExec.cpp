@@ -108,6 +108,14 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
 bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
 {
   std::string sceRelPath = "";
+  std::string scenarioDir = "";
+
+  // Try to read our config file to identify scenario directory path
+  ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
+  if (config->HasKey("scenario_dir"))
+    scenarioDir = config->GetValue("scenario_dir");
+  delete config;
+
   if (!m_ScenarioFilename.empty())
   {
     std::string ext;
@@ -119,16 +127,12 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
 
     // If this scenario file is in our source scenario files,
     // let's write the output in the same place our testing framework does
-    // Try to read our config file to properly place results in a development structure
-    ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
-    if (config->HasKey("scenario_dir"))
+    if (!scenarioDir.empty())
     {
-      std::string scenario_dir = config->GetValue("scenario_dir");
-      sceRelPath = RelativePathFrom(scenario_dir, m_ScenarioFilename);
+      sceRelPath = RelativePathFrom(scenarioDir, m_ScenarioFilename);
       if (!sceRelPath.empty())
         m_OutputRootDirectory = "./test_results/scenarios" + sceRelPath;
     }
-    delete config;
   }
   else if (sce.HasName())
   {
@@ -146,12 +150,22 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
 
   for(std::string drFile : sce.GetDataRequestFiles())
   {
-    // ELV
     Info("Merging DataRequest File: " + drFile);
+
     // Check if the file exists, also check if it can be found starting from the source scenario folder
-    // It could be StandardDataRequests.json or equipment/MechanicalVentilatorDataRequests.json
-    //if (!sce.GetDataRequestManager().MergeDataRequestFile(drFile))
-    //  Error("Unable to merge file: " + drFile);
+    std::string file = "";
+    if (FileExists(drFile))
+      file = drFile;
+    else if (!scenarioDir.empty() && FileExists(scenarioDir + "/" + drFile))
+      file = scenarioDir + "/" + drFile;
+    else
+    {
+      Error("Unable to locate file: " + drFile);
+      continue;
+    }
+
+    if (!sce.GetDataRequestManager().MergeDataRequestFile(file))
+      Error("Unable to merge file: " + drFile);
   }
 
   if (m_OrganizeOutputDirectory==eSwitch::On)

@@ -24,10 +24,9 @@ public:
   // Only serialize our data requests, for portability
   bool SerializeDataRequestsToString(std::string& output, eSerializationFormat m) const;
   bool SerializeDataRequestsToFile(const std::string& filename) const;
-  // ELV
-  //bool SerializeDataRequestsFromString(const std::string& src, eSerializationFormat m);
-  //bool SerializeDataRequestsFromFile(const std::string& filename);
-  //bool MergeDataRequestFile(const std::string& filename);
+  bool SerializeDataRequestsFromString(const std::string& src, eSerializationFormat m);
+  bool SerializeDataRequestsFromFile(const std::string& filename);
+  bool MergeDataRequestFile(const std::string& filename);
 
   bool HasResultsFilename() const { return !m_ResultsFilename.empty(); }
   std::string GetResultFilename() const { return m_ResultsFilename; }

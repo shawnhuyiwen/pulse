@@ -62,6 +62,25 @@ bool SEDataRequestManager::SerializeDataRequestsToFile(const std::string& filena
 {
   return PBEngine::SerializeToFile(m_Requests, filename);
 }
+bool SEDataRequestManager::SerializeDataRequestsFromString(const std::string& src, eSerializationFormat m)
+{
+  return PBEngine::SerializeFromString(src, m_Requests, m);
+}
+bool SEDataRequestManager::SerializeDataRequestsFromFile(const std::string& filename)
+{
+  return PBEngine::SerializeFromFile(filename, m_Requests);
+}
+bool SEDataRequestManager::MergeDataRequestFile(const std::string& filename)
+{
+  std::vector<SEDataRequest*> drs;
+  if (!PBEngine::SerializeFromFile(filename, drs))
+    return false;
+
+  for (auto dr : drs)
+    CopyDataRequest(*dr);
+
+  return true;
+}
 
 
 bool SEDataRequestManager::HasDefaultDecimalFormatting() const
