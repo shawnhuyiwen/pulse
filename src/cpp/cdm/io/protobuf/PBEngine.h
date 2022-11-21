@@ -83,10 +83,13 @@ public:
   static void Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& dst);
   static void Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& dst);
   static void Copy(const SEDataRequest& src, SEDataRequest& dst);
+
   static void Load(const CDM_BIND::DataRequestListData& src, std::vector<SEDataRequest*>& dst);
   static void Serialize(const std::vector<SEDataRequest*>& src, CDM_BIND::DataRequestListData& dst);
   static bool Serialize(const CDM_BIND::DataRequestListData& src, std::vector<SEDataRequest*>& dst);
+  static bool SerializeToString(const std::vector<SEDataRequest*>& src, std::string& output, eSerializationFormat m);
   static bool SerializeToFile(const std::vector<SEDataRequest*>& src, const std::string& filename);
+  static bool SerializeFromString(const std::string& src, std::vector<SEDataRequest*>& dst, eSerializationFormat m);
   static bool SerializeFromFile(const std::string& filename, std::vector<SEDataRequest*>& dst);
 
   static void Load(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst);

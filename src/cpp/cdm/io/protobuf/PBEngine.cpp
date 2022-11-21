@@ -488,6 +488,7 @@ void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
   PBEngine::Serialize(src, data);
   PBEngine::Serialize(data, dst);
 }
+
 void PBEngine::Load(const CDM_BIND::DataRequestListData& src, std::vector<SEDataRequest*>& dst)
 {
   dst.clear();
@@ -510,14 +511,27 @@ bool PBEngine::Serialize(const CDM_BIND::DataRequestListData& src, std::vector<S
     else
       dst.push_back(dr);
   }
-
   return true;
+}
+bool PBEngine::SerializeToString(const std::vector<SEDataRequest*>& src, std::string& dst, eSerializationFormat m)
+{
+  CDM_BIND::DataRequestListData data;
+  PBEngine::Serialize(src, data);
+  return PBUtils::SerializeToString(data, dst, m, nullptr);
 }
 bool PBEngine::SerializeToFile(const std::vector<SEDataRequest*>& src, const std::string& filename)
 {
   CDM_BIND::DataRequestListData data;
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, nullptr);
+}
+bool PBEngine::SerializeFromString(const std::string& src, std::vector<SEDataRequest*>& dst, eSerializationFormat m)
+{
+  CDM_BIND::DataRequestListData data;
+  if (!PBUtils::SerializeFromString(src, data, m, nullptr))
+    return false;
+  PBEngine::Load(data, dst);
+  return true;
 }
 bool PBEngine::SerializeFromFile(const std::string& filename, std::vector<SEDataRequest*>& dst)
 {

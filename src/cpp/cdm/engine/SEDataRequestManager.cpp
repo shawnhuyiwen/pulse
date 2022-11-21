@@ -54,6 +54,16 @@ bool SEDataRequestManager::SerializeFromFile(const std::string& filename)
   return PBEngine::SerializeFromFile(filename, *this);
 }
 
+bool SEDataRequestManager::SerializeDataRequestsToString(std::string& output, eSerializationFormat m) const
+{
+  return PBEngine::SerializeToString(m_Requests, output, m);
+}
+bool SEDataRequestManager::SerializeDataRequestsToFile(const std::string& filename) const
+{
+  return PBEngine::SerializeToFile(m_Requests, filename);
+}
+
+
 bool SEDataRequestManager::HasDefaultDecimalFormatting() const
 {
   return m_DefaultDecimalFormatting != nullptr;

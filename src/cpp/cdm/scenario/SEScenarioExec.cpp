@@ -144,6 +144,16 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
     sce.Warning("Unable to name scenario output, writing log to './Pulse.log'");
   }
 
+  for(std::string drFile : sce.GetDataRequestFiles())
+  {
+    // ELV
+    Info("Merging DataRequest File: " + drFile);
+    // Check if the file exists, also check if it can be found starting from the source scenario folder
+    // It could be StandardDataRequests.json or equipment/MechanicalVentilatorDataRequests.json
+    //if (!sce.GetDataRequestManager().MergeDataRequestFile(drFile))
+    //  Error("Unable to merge file: " + drFile);
+  }
+
   if (m_OrganizeOutputDirectory==eSwitch::On)
   {
     std::string relativePath = "";
@@ -169,7 +179,6 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
     else
       m_AutoSerializeBaseFilename = "./test_results/autoserialization/" + sceRelPath + "/" + m_BaseFilename + "/ReloadOn/";
   }
-
 
   sce.Info("Creating Log File : " + m_LogFilename);
   pe.GetLogger()->SetLogFile(m_LogFilename);

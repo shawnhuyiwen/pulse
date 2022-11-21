@@ -16,7 +16,6 @@
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
-#include "cdm/io/protobuf/PBEngine.h"
 
 
 //--------------------------------------------------------------------------------------------------
@@ -59,17 +58,9 @@ void HowToRunScenario()
   // NOTE: The scenario makes it's own copy of these requests
   // Once you set it, any changes will not be reflected in the scenario
   // You can reuse this object for future actions
-  std::vector<SEDataRequest*> drs;
-  drs.push_back(&sce.GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate",FrequencyUnit::Per_min));
-  drs.push_back(&sce.GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min));
-  drs.push_back(&sce.GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL));
-
-  // Save data requests to a file
-  std::string drFile = "./test_results/howto/HowTo-RunScenario.cpp/HowToRunScenarioDataRequests.json";
-  if (!PBEngine::SerializeToFile(drs, drFile))
-  {
-    std::cout << "Failed to serialize data requests" << std::endl;
-  }
+  sce.GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate",FrequencyUnit::Per_min);
+  sce.GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  sce.GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
 
   // NOTE: the scenario will make it's own copy of this action
   // Once you set it, any changes will not be reflected in the scenario
@@ -78,24 +69,40 @@ void HowToRunScenario()
   adv.GetTime().SetValue(2, TimeUnit::min);
   sce.AddAction(adv);
 
-  std::string json;
-  PulseScenarioExec execOpts(&logger);
-  sce.SerializeToString(json, eSerializationFormat::JSON);
-  std::cout << json << std::endl;
-  execOpts.SetScenarioContent(json);
-  execOpts.Execute();
+  if (!sce.SerializeToFile("./test_results/howto/HowTo-RunScenario.cpp/OriginalScenario.json"))
+  {
+    logger.Fatal("Failed to serialize original scenario");
+    return;
+  }
+
+  // Save data requests to a file
+  std::string drFile = "./test_results/howto/HowTo-RunScenario.cpp/DataRequests.json";
+  if (!sce.GetDataRequestManager().SerializeDataRequestsToFile(drFile))
+  {
+    logger.Fatal("Failed to serialize data requests");
+    return;
+  }
 
   // Create new scenario that uses data requests saved to file
   SEScenario sce2(&logger);
   sce2.SetName("HowToRunScenario2");
-  sce2.SetDescription("Simple Scenario to demonstrate creating data requests via a file");
+  sce2.SetDescription("Simple Scenario to demonstrate using data requests in a file");
   sce2.GetPatientConfiguration().SetPatientFile("StandardMale.json");
   sce2.GetDataRequestFiles().push_back(drFile);
   sce2.AddAction(adv);
-  std::string json2;
-  sce2.SerializeToString(json2, eSerializationFormat::JSON);
-  std::cout << json2 << std::endl;
-  execOpts.SetScenarioContent(json2);
-  execOpts.Execute();
 
+  std::string sceFilename = "./test_results/howto/HowTo-RunScenario.cpp/ScenarioWithFileReference.json";
+  if (!sce2.SerializeToFile(sceFilename))
+  {
+    logger.Fatal("Failed to serialize scenario with the file reference");
+    return;
+  }
+
+  PulseScenarioExec execOpts(&logger);
+  execOpts.SetScenarioFilename(sceFilename);
+  if (!execOpts.Execute())
+  {
+    logger.Fatal("Failed to execute scenario with the file reference");
+    return;
+  }
 }
