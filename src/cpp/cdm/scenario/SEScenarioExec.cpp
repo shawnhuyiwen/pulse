@@ -148,26 +148,6 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
     sce.Warning("Unable to name scenario output, writing log to './Pulse.log'");
   }
 
-  for(std::string drFile : sce.GetDataRequestFiles())
-  {
-    Info("Merging DataRequest File: " + drFile);
-
-    // Check if the file exists, also check if it can be found starting from the source scenario folder
-    std::string file = "";
-    if (FileExists(drFile))
-      file = drFile;
-    else if (!scenarioDir.empty() && FileExists(scenarioDir + "/" + drFile))
-      file = scenarioDir + "/" + drFile;
-    else
-    {
-      Error("Unable to locate file: " + drFile);
-      continue;
-    }
-
-    if (!sce.GetDataRequestManager().MergeDataRequestFile(file))
-      Error("Unable to merge file: " + drFile);
-  }
-
   if (m_OrganizeOutputDirectory==eSwitch::On)
   {
     std::string relativePath = "";
@@ -202,6 +182,26 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
   {
     pe.GetLogger()->Error("Invalid Scenario");
     return false;
+  }
+
+  for (std::string drFile : sce.GetDataRequestFiles())
+  {
+    pe.Info("Merging DataRequest File: " + drFile);
+
+    // Check if the file exists, also check if it can be found starting from the source scenario folder
+    std::string file = "";
+    if (FileExists(drFile))
+      file = drFile;
+    else if (!scenarioDir.empty() && FileExists(scenarioDir + "/" + drFile))
+      file = scenarioDir + "/" + drFile;
+    else
+    {
+      pe.Error("Unable to locate file: " + drFile);
+      continue;
+    }
+
+    if (!sce.GetDataRequestManager().MergeDataRequestFile(file))
+      pe.Error("Unable to merge file: " + drFile);
   }
 
   try
