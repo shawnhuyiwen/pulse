@@ -720,7 +720,6 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::PreProcess()
   {
-    m_data.GetDataTrack().Probe("CPR_Force_N", 0);
     //m_data.GetDataTrack().Probe(*m_CirculatoryCircuit);
     ProcessActions();
 
@@ -1771,7 +1770,6 @@ namespace pulse
     double nextLeftPressure_mmHg = leftHeartForceToPressureFactor * compressionForce_N;
     double nextRightPressure_mmHg = rightHeartForceToPressureFactor * compressionForce_N;
 
-    m_data.GetDataTrack().Probe("CPR_Force_N", compressionForce_N);
     m_RightHeartToGnd->GetNextPressureSource().SetValue(nextRightPressure_mmHg, PressureUnit::mmHg);
     m_LeftHeartToGnd->GetNextPressureSource().SetValue(nextLeftPressure_mmHg, PressureUnit::mmHg);
   }
@@ -2095,12 +2093,10 @@ namespace pulse
     m_LeftHeartCompliancePath->GetNextCompliance().SetValue(LeftHeartCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
     m_RightHeartCompliancePath->GetNextCompliance().SetValue(RightHeartCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
 
-    m_data.GetDataTrack().Probe("LeftHeartCompliance_mL_Per_mmHg", LeftHeartCompliance_mL_Per_mmHg);
-    m_data.GetDataTrack().Probe("RightHeartCompliance_mL_Per_mmHg", RightHeartCompliance_mL_Per_mmHg);
-
-    m_data.GetDataTrack().Probe("RightHeartPressureSource_mmHg", m_RightHeartToGnd->GetNextPressureSource().GetValue(PressureUnit::mmHg));
-    m_data.GetDataTrack().Probe("LeftHeartPressureSource_mmHg", m_LeftHeartToGnd->GetNextPressureSource().GetValue(PressureUnit::mmHg));
-    
+    //m_data.GetDataTrack().Probe("LeftHeartCompliance_mL_Per_mmHg", LeftHeartCompliance_mL_Per_mmHg);
+    //m_data.GetDataTrack().Probe("RightHeartCompliance_mL_Per_mmHg", RightHeartCompliance_mL_Per_mmHg);
+    //m_data.GetDataTrack().Probe("RightHeartPressureSource_mmHg", m_RightHeartToGnd->GetNextPressureSource().GetValue(PressureUnit::mmHg));
+    //m_data.GetDataTrack().Probe("LeftHeartPressureSource_mmHg", m_LeftHeartToGnd->GetNextPressureSource().GetValue(PressureUnit::mmHg));
 
     m_CurrentDriverCycleTime_s += m_data.GetTimeStep_s();
   }
