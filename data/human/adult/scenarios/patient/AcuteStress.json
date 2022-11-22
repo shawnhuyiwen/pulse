@@ -5,6 +5,13 @@
   "DataRequestFile": [
     "StandardDataRequests.json"
   ],
+  "DataRequestManager":
+  {
+    "DataRequest":
+    [
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Epinephrine", "PropertyName": "Concentration", "Unit": "ug/L" }
+    ]
+  },
   "AnyAction": [{
     "AdvanceTime": {
       "Time": {

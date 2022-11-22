@@ -12,6 +12,8 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SedationLevel", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-SizeModifier", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-ReactivityModifier", "Unit": "unitless" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Epinephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Epinephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Norepinephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Norepinephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BoneVasculature", "SubstanceName": "Norepinephrine", "PropertyName": "Concentration", "Unit": "ug/L" },

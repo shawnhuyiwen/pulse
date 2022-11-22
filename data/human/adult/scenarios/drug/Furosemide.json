@@ -72,7 +72,9 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LiverTissueIntracellular", "SubstanceName": "Furosemide", "PropertyName": "MassCleared", "Unit": "ug" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftKidneyTissueIntracellular", "SubstanceName": "Furosemide", "PropertyName": "MassCleared", "Unit": "ug" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "RightKidneyTissueIntracellular", "SubstanceName": "Furosemide", "PropertyName": "MassCleared", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LiverTissueIntracellular", "SubstanceName": "Furosemide", "PropertyName": "MassExcreted", "Unit": "ug" }
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LiverTissueIntracellular", "SubstanceName": "Furosemide", "PropertyName": "MassExcreted", "Unit": "ug" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Sodium", "PropertyName": "Clearance-RenalExcretionRate", "Unit": "g/day" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Chloride", "PropertyName": "Clearance-RenalExcretionRate", "Unit": "g/day" }
     ]
   },
   "AnyAction": [{

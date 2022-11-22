@@ -7,6 +7,9 @@
   ],
   "DataRequestManager": { "SamplesPerSecond": 1.0, "DataRequest":
   [
+    {"DecimalFormat":{"Precision":4}, "Category":"Physiology", "PropertyName":"WaterAbsorptionRate",               "Unit":"mL/min" },
+    {"DecimalFormat":{"Precision":4}, "Category":"Physiology", "PropertyName":"InsulinSynthesisRate",              "Unit":"pmol/min" },
+
     {"DecimalFormat":{"Precision":2}, "Category":"Physiology", "PropertyName":"BloodPH"                                          },
     {"DecimalFormat":{"Precision":2}, "Category":"Physiology", "PropertyName":"SweatRate",                      "Unit":"mg/min"  },
     {"DecimalFormat":{"Precision":2}, "Category":"Physiology", "PropertyName":"BloodUreaNitrogenConcentration", "Unit":"ug/mL"   },
