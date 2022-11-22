@@ -188,12 +188,19 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
   {
     pe.Info("Merging DataRequest File: " + drFile);
 
-    // Check if the file exists, also check if it can be found starting from the source scenario folder
     std::string file = "";
+    std::string drFilename;
+    SplitFilename(drFile, drFilename);
+
+    // Check if the file exists
+    // Also check if it can be found starting from the source scenario folder
+    // Or if it can be found at the same location as the scenario file with a cropped path
     if (FileExists(drFile))
       file = drFile;
     else if (!scenarioDir.empty() && FileExists(scenarioDir + "/" + drFile))
       file = scenarioDir + "/" + drFile;
+    else if (!m_ScenarioFilename.empty() && FileExists(m_OutputRootDirectory + "/" + drFilename))
+      file = m_OutputRootDirectory + "/" + drFilename;
     else
     {
       pe.Error("Unable to locate file: " + drFile);
@@ -291,8 +298,8 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   double spareAdvanceTime_s = 0;
   for (SEAction* a : sce.GetActions())
   {
-    // We override advance time actions in order to advance and 
-    // pull requested data at each time step, all other actions 
+    // We override advance time actions in order to advance and
+    // pull requested data at each time step, all other actions
     // will be processed by the engine
     adv=dynamic_cast<const SEAdvanceTime*>(a);
     if(adv!=nullptr)
