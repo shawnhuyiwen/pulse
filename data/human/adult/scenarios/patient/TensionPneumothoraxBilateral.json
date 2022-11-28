@@ -3,30 +3,15 @@
   "Description": "Patient is afflicted with an open pneumothorax at the left lung and a closed pneumothorax at the right lung. An occlusive dressing is applied to the open wound, and then needle decompression is given to both sides.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json"
   ],
   "DataRequestManager":
   {
     "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio", "Unit": "unitless" }, 
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",             "Unit": "L/s" }, 
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",            "Unit": "L/s" }, 
-      
-      { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina",             "PropertyName": "InFlow", "Unit": "L/s" },    
-      { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "LeftLungPulmonary",  "PropertyName": "Volume", "Unit": "mL" }, 
-      { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "RightLungPulmonary", "PropertyName": "Volume", "Unit": "mL" }, 
-      
-      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "LeftLungPulmonary",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "RightLungPulmonary", "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "LeftLungPulmonary",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "RightLungPulmonary", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      
-      { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli",        "PropertyName": "Volume",   "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli",       "PropertyName": "Volume",   "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "LeftPleuralCavity",  "PropertyName": "Volume",   "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "RightPleuralCavity", "PropertyName": "Volume",   "Unit": "mL" }
-  ]
+      { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "InFlow", "Unit": "L/s" }
+    ]
   },
   "AnyAction": [{
     "AdvanceTime": {

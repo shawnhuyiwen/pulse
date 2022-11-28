@@ -16,7 +16,8 @@
       }]}
   },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json"
   ],
   "DataRequestManager":
   {

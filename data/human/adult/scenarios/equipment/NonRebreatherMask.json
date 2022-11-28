@@ -3,7 +3,9 @@
   "Description": "Basic scenario measuring standard male patient vitals with no conditions, insults, or interventions.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json",
+    "equipment/SupplementalOxygenDataRequests.json"
   ],
   "DataRequestManager": {
     "DataRequest":
@@ -30,11 +32,7 @@
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Pressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "Carina", "SubstanceName": "Oxygen", "PropertyName": "VolumeFraction" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "Carina", "SubstanceName": "CarbonDioxide", "PropertyName": "VolumeFraction" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "NonRebreatherMaskOxygenSource", "PropertyName": "OutFlow", "Unit": "L/min" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "NonRebreatherMaskBag", "PropertyName": "Volume", "Unit": "L" }
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Pressure", "Unit": "mmHg" }
     ]
   },
   "AnyAction": [{

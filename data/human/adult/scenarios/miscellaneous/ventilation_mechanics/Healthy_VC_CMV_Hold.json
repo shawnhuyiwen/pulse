@@ -3,6 +3,11 @@
   "DataRoot": "./",
   "Patient": {}
  },
+ "DataRequestFile": [
+  "StandardDataRequests.json",
+  "RespiratoryDataRequests.json",
+  "EquipmentDataRequests.json"
+ ],
  "DataRequestManager": {
   "DataRequest":
   [

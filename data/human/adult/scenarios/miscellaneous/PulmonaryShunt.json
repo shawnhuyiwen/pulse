@@ -16,28 +16,14 @@
       }]}
   },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json"
   ],
   "DataRequestManager":
   {
     "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",     "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                 "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",                "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",            "Unit": "L/cmH2O" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",  "Unit": "cmH2O s/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HorowitzIndex",                   "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",          "Unit": "cmH2O" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction",                  "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarArterialGradient",       "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",          "Unit": "cmH2O" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalPulmonaryVentilation",      "Unit": "L/min" },
-
-      { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "OutFlow", "Unit": "L/s" },
-
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" }
+      { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "OutFlow", "Unit": "L/s" }
     ]
   },
   "AnyAction":

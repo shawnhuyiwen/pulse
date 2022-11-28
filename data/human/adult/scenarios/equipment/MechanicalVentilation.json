@@ -16,24 +16,17 @@
       }]}
   },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json",
+    "EquipmentDataRequests.json",
+    "equipment/AlbuterolDataRequests.json"
   ],
   "DataRequestManager": {
     "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow", "Unit": "L/min" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow", "Unit": "L/min" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "HorowitzIndex", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "AlveolarArterialGradient", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "CardiacIndex", "Unit": "L/min m^2" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PulmonaryVascularResistance", "Unit": "mmHg s/mL" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PulmonaryVascularResistanceIndex", "Unit": "dyn s/cm^5 m^2" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Albuterol", "PropertyName": "PlasmaConcentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Albuterol", "PropertyName": "SystemicMassCleared", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Albuterol", "PropertyName": "MassInBody", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance", "Unit": "L/cmH2O" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance", "Unit": "cmH2O s/L" }
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PulmonaryVascularResistanceIndex", "Unit": "dyn s/cm^5 m^2" }
     ]
   },
   "AnyAction": [{

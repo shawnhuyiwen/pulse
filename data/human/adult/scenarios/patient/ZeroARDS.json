@@ -26,7 +26,8 @@
     }]}
   },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json"
   ],
   "DataRequestManager":
   {
@@ -40,7 +41,7 @@
   },
   "AnyAction":
   [
-    { "AdvanceTime": { 
+    { "AdvanceTime": {
     "Action": { "Comment": "Advance some time" },
     "Time": { "ScalarTime": { "Value": 2, "Unit": "min" }}}}
   ]

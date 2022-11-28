@@ -3,44 +3,24 @@
   "Description": "Apply a VC-CMV mode ventilator to a healthy patient.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json",
+    "EquipmentDataRequests.json",
+    "equipment/MechanicalVentilatorDataRequests.json"
   ],
   "DataRequestManager":
   {
     "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                             "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",                            "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",                      "Unit": "cmH2O" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction",                              "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarArterialGradient",                   "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",                      "Unit": "cmH2O" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalPulmonaryVentilation",                  "Unit": "L/min" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "FractionOfInsipredOxygen",                   "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "SaturationAndFractionOfInspiredOxygenRatio", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "OxygenationIndex",                           "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "OxygenSaturationIndex",                      "Unit": "cmH2O" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "MeanAirwayPressure",                         "Unit": "cmH2O" },
 
       { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "OutFlow", "Unit": "L/s" },
 
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" },
-
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarDeadSpace",              "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AnatomicDeadSpace",              "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PhysiologicDeadSpace",           "Unit": "mL" },
-
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "RespirationRate",                   "Unit": "1/min" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",        "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance",    "Unit": "cmH2O s/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",     "Unit": "cmH2O s/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",               "Unit": "L/cmH2O" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BloodPH"                            },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HorowitzIndex",                     "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "OxygenSaturation",                  "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalCarbonDioxidePressure",     "Unit": "mmHg" }
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "OxygenSaturation",                  "Unit": "unitless" }
     ]
   },
   "AnyAction":

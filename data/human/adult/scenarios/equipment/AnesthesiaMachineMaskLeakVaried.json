@@ -3,24 +3,11 @@
   "Description": "Testing mask leak severity.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json",
+    "EquipmentDataRequests.json",
+    "equipment/AnesthesiaMachineDataRequests.json"
   ],
-  "DataRequestManager": {
-    "DataRequest":
-    [
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "NeuromuscularBlockLevel", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SedationLevel", "Unit": "unitless" },
-      { "DecimalFormat": { }, "Category": "GasCompartment", "CompartmentName": "AnesthesiaMachineConnection", "PropertyName": "InFlow", "Unit": "L/min" },
-      { "DecimalFormat": { }, "Category": "GasCompartment", "CompartmentName": "AnesthesiaMachineVentilator", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { }, "Category": "GasCompartment", "CompartmentName": "AnesthesiaMachineReliefValve", "PropertyName": "InFlow", "Unit": "L/min" },
-      { "DecimalFormat": { }, "Category": "GasCompartment", "CompartmentName": "AnesthesiaMachineSelector", "PropertyName": "Pressure", "Unit": "cmH2O" },
-      { "DecimalFormat": { }, "Category": "GasCompartment", "CompartmentName": "AnesthesiaMachineVentilator", "PropertyName": "Pressure", "Unit": "cmH2O" },
-      { "DecimalFormat": { }, "Category": "GasCompartment", "CompartmentName": "AnesthesiaMachineExpiratoryLimb", "PropertyName": "InFlow", "Unit": "L/min" },
-      { "DecimalFormat": { }, "Category": "GasCompartment", "CompartmentName": "AnesthesiaMachineInspiratoryLimb", "PropertyName": "InFlow", "Unit": "L/min" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "GasCompartment", "CompartmentName": "AnesthesiaMachineGasInlet", "SubstanceName": "Oxygen", "PropertyName": "VolumeFraction" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "AnesthesiaMachineGasInlet", "SubstanceName": "CarbonDioxide", "PropertyName": "VolumeFraction" }
-    ]
-  },
   "AnyAction": [{
     "AdvanceTime": {
       "Time": {

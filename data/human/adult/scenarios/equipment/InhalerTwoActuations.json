@@ -3,46 +3,16 @@
   "Description": "Patient actuates the inhaler twice.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json",
+    "EquipmentDataRequests.json",
+    "equipment/AlbuterolDataRequests.json"
   ],
   "DataRequestManager": {
     "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "InFlow", "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "OutFlow", "Unit": "L/s" },
-      { "DecimalFormat": { }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Albuterol", "PropertyName": "PlasmaConcentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Albuterol", "PropertyName": "SystemicMassCleared", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Substance", "SubstanceName": "Albuterol", "PropertyName": "MassInBody", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LiverTissueIntracellular", "SubstanceName": "Albuterol", "PropertyName": "MassCleared", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LeftKidneyTissueIntracellular", "SubstanceName": "Albuterol", "PropertyName": "MassCleared", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "RightKidneyTissueIntracellular", "SubstanceName": "Albuterol", "PropertyName": "MassCleared", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "LiverTissueIntracellular", "SubstanceName": "Albuterol", "PropertyName": "MassExcreted", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Airway", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Carina", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftAlveoli", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftAnatomicDeadSpace", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightAlveoli", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightAnatomicDeadSpace", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Airway", "SubstanceName": "Albuterol", "PropertyName": "MassDeposited", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Carina", "SubstanceName": "Albuterol", "PropertyName": "MassDeposited", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftAlveoli", "SubstanceName": "Albuterol", "PropertyName": "MassDeposited", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftAnatomicDeadSpace", "SubstanceName": "Albuterol", "PropertyName": "MassDeposited", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightAlveoli", "SubstanceName": "Albuterol", "PropertyName": "MassDeposited", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightAnatomicDeadSpace", "SubstanceName": "Albuterol", "PropertyName": "MassDeposited", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLungTissueIntracellular", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightLungTissueIntracellular", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLungTissueExtracellular", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightLungTissueExtracellular", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLungVasculature", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightLungVasculature", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow", "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow", "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance", "Unit": "L/cmH2O" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance", "Unit": "cmH2O s/L" }
+      { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "OutFlow", "Unit": "L/s" }
     ]
   },
   "AnyAction": [{
