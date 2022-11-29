@@ -6,6 +6,14 @@
     "StandardDataRequests.json",
     "RespiratoryDataRequests.json"
   ],
+  "DataRequestManager":
+  {
+    "DataRequest":
+    [
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransMusclePressure", "Unit": "cmH2O" }
+    ]
+  },
+
   "AnyAction":
   [
     { "PatientAction": { "ConsciousRespiration": { "Command": [

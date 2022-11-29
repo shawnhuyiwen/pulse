@@ -21,7 +21,10 @@
     }]}
   },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json",
+    "EquipmentDataRequests.json",
+    "equipment/MechanicalVentilatorDataRequests.json"
   ],
   "DataRequestManager":
   {
