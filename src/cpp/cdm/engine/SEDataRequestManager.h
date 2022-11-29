@@ -133,6 +133,7 @@ protected:
   SEDataRequest* FindInhalerDataRequest(const std::string& property);
   SEDataRequest* FindMechanicalVentilatorDataRequest(const std::string& property);
 
+  SEDataRequest& CopyDataRequest(const SEDataRequest& src, bool updateExisting);
   void Remove(const SEDataRequest& dr);
   // Methods to find data requests so we don't keep making the same one
   SEValidationTarget* FindValidationTarget(const SEValidationTarget& dr);
