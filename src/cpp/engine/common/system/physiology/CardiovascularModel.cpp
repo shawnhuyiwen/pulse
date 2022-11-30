@@ -973,6 +973,7 @@ namespace pulse
 
     HeartDriver();
     UpdatePulmonaryCapillaries();
+    CalculateHemothorax();
     CalculatePleuralCavityVenousEffects();
   }
 
@@ -2574,6 +2575,27 @@ namespace pulse
     //m_data.GetDataTrack().Probe("AortaCompliance", m_AortaCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
     //m_data.GetDataTrack().Probe("LeftPulmonaryArteriesCompliance", m_LeftPulmonaryArteriesCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
     //m_data.GetDataTrack().Probe("RightPulmonaryArteriesCompliance", m_RightPulmonaryArteriesCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
+  }
+
+  //--------------------------------------------------------------------------------------------------
+/// \brief
+/// Hemothorax
+///
+/// \details
+/// 
+//--------------------------------------------------------------------------------------------------
+  void CardiovascularModel::CalculateHemothorax()
+  {
+    double applicationTime_s = 10.0;
+    if (m_data.GetState() == EngineState::Active && m_data.GetSimulationTime().GetValue(TimeUnit::s) >= applicationTime_s)
+    {
+      double resistance_mmHg_s_Per_mL = 1.0;
+      m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsToRightPulmonaryLeak)->GetNextResistance().SetValue(resistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      double pressure_mmHg = 5.0;// m_rightPleuralCavity->GetPressure(PressureUnit::mmHg) - 760.0;
+      //pressure_mmHg = MAX(pressure_mmHg, 0.0);
+      double testPressure = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::RightPulmonaryVeins)->GetNextPressure(PressureUnit::mmHg);
+      m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToRightPulmonaryLeak)->GetNextPressureSource().SetValue(pressure_mmHg, PressureUnit::mmHg);
+    }
   }
 
   //--------------------------------------------------------------------------------------------------

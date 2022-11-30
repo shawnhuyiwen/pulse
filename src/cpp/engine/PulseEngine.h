@@ -496,10 +496,12 @@ namespace pulse
     /***/DEFINE_STATIC_STRING(LeftPulmonaryArteries);
     /***/DEFINE_STATIC_STRING(LeftPulmonaryCapillaries);
     /***/DEFINE_STATIC_STRING(LeftPulmonaryVeins);
+    /****/DEFINE_STATIC_STRING(LeftPulmonaryLeak);
     /**/DEFINE_STATIC_STRING_EX(RightLung, RightLungVasculature);
     /***/DEFINE_STATIC_STRING(RightPulmonaryArteries);
     /***/DEFINE_STATIC_STRING(RightPulmonaryCapillaries);
     /***/DEFINE_STATIC_STRING(RightPulmonaryVeins);
+    /****/DEFINE_STATIC_STRING(RightPulmonaryLeak);
     // Renal
     DEFINE_STATIC_STRING_EX(Kidneys, KidneyVasculature);
     /**/DEFINE_STATIC_STRING_EX(LeftKidney, LeftKidneyVasculature);
@@ -565,10 +567,12 @@ namespace pulse
         _values.push_back(LeftPulmonaryArteries);
         _values.push_back(LeftPulmonaryCapillaries);
         _values.push_back(LeftPulmonaryVeins);
+        _values.push_back(LeftPulmonaryLeak);
         _values.push_back(RightLung);
         _values.push_back(RightPulmonaryArteries);
         _values.push_back(RightPulmonaryCapillaries);
         _values.push_back(RightPulmonaryVeins);
+        _values.push_back(RightPulmonaryLeak);
         _values.push_back(Kidneys);
         _values.push_back(LeftKidney);
         _values.push_back(LeftRenalArtery);
@@ -634,11 +638,15 @@ namespace pulse
     DEFINE_STATIC_STRING(LeftPulmonaryArteriesToCapillaries);
     DEFINE_STATIC_STRING(LeftPulmonaryArteriesToVeins);
     DEFINE_STATIC_STRING(LeftPulmonaryCapillariesToVeins);
+    DEFINE_STATIC_STRING(LeftPulmonaryVeinsToLeak);
+    DEFINE_STATIC_STRING(GroundToLeftPulmonaryLeak);
     DEFINE_STATIC_STRING(LeftPulmonaryVeinsToLeftHeart);
     DEFINE_STATIC_STRING(RightHeartToRightPulmonaryArteries);
     DEFINE_STATIC_STRING(RightPulmonaryArteriesToCapillaries);
     DEFINE_STATIC_STRING(RightPulmonaryArteriesToVeins);
     DEFINE_STATIC_STRING(RightPulmonaryCapillariesToVeins);
+    DEFINE_STATIC_STRING(RightPulmonaryVeinsToLeak);
+    DEFINE_STATIC_STRING(GroundToRightPulmonaryLeak);
     DEFINE_STATIC_STRING(RightPulmonaryVeinsToLeftHeart);
     DEFINE_STATIC_STRING(LeftHeartToAorta);
     // Bone 
@@ -747,11 +755,15 @@ namespace pulse
         _values.push_back(LeftPulmonaryArteriesToCapillaries);
         _values.push_back(LeftPulmonaryArteriesToVeins);
         _values.push_back(LeftPulmonaryCapillariesToVeins);
+        _values.push_back(LeftPulmonaryVeinsToLeak);
+        _values.push_back(GroundToLeftPulmonaryLeak);
         _values.push_back(LeftPulmonaryVeinsToLeftHeart);
         _values.push_back(RightHeartToRightPulmonaryArteries);
         _values.push_back(RightPulmonaryArteriesToCapillaries);
         _values.push_back(RightPulmonaryArteriesToVeins);
         _values.push_back(RightPulmonaryCapillariesToVeins);
+        _values.push_back(RightPulmonaryVeinsToLeak);
+        _values.push_back(GroundToRightPulmonaryLeak);
         _values.push_back(RightPulmonaryVeinsToLeftHeart);
         _values.push_back(LeftHeartToAorta);
         _values.push_back(AortaToBone);

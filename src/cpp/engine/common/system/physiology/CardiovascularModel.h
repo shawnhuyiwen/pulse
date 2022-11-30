@@ -91,6 +91,7 @@ namespace pulse
     /**/void PericardialEffusionPressureApplication();
     /**/void TraumaticBrainInjury();
     void UpdatePulmonaryCapillaries();
+    void CalculateHemothorax();
     //Respiratory effects
     void CalculatePleuralCavityVenousEffects();
 
