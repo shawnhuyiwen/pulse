@@ -26,7 +26,7 @@ public class CSVComparison extends SETestReport
 {
   public double limit=2.0;
   public boolean reportDifferences=false;
-  
+
   protected class Error
   {
     public Error(double t) { firstTime = t; }
@@ -42,7 +42,7 @@ public class CSVComparison extends SETestReport
     public double minComputed;
     public double minErr=10000;
   }
-  
+
   public static void main(String[] args) throws IOException, InterruptedException
   {
     if(args.length<2)
@@ -63,11 +63,11 @@ public class CSVComparison extends SETestReport
     }
 
     CSVComparison t = new CSVComparison();
-    
+
     // Tolerance Limit
     if(args.length>2)
       t.limit=Double.parseDouble(args[2]);
-    
+
     // Report the differences
     t.reportDifferences = false;
     if(args.length>3&&args[3]!=null&&args[3].equalsIgnoreCase("true"))
@@ -89,8 +89,8 @@ public class CSVComparison extends SETestReport
    * @param args
    */
   public Set<String> compare(String expectedFilePath, String computedFilePath)
-  {    
-    
+  {
+
     File expectedFile = new File(expectedFilePath);
     if(!expectedFile.exists())
     {
@@ -110,11 +110,11 @@ public class CSVComparison extends SETestReport
       Log.error("Computed file does not exist "+computedFilePath);
       return null;
     }
-    
+
     String report = computedFilePath.substring(0,computedFilePath.length()-4)+"/"+computedFile.getName();
     report=report.substring(0, report.length()-4)+"Report.json";
     this.setFullReportPath(report);
-        
+
     Set<String> failures = new HashSet<>();
     try
     {
@@ -127,7 +127,7 @@ public class CSVComparison extends SETestReport
       Log.warn("Having a hard time deleting the old report directory");
       Log.warn(ex.getMessage());
     }
-    
+
     CSVContents expectedResults;
     CSVContents computedResults;
     try
@@ -141,12 +141,12 @@ public class CSVComparison extends SETestReport
       Log.error(ex.getMessage());
       return null;
     }
-    
+
     int totalErrors=0;
 
     List<String> expectedHeaders = expectedResults.getHeaders();
     List<String> computedHeaders = computedResults.getHeaders();
-    
+
     if(expectedHeaders==null)
     {
       Log.error("No headers for "+expectedFilePath);
@@ -157,7 +157,7 @@ public class CSVComparison extends SETestReport
       Log.error("No headers for "+computedFilePath);
       return null;
     }
-    
+
     // Create the Test Case
     SETestSuite suite = createTestSuite();
     suite.setName(this.name);
@@ -173,7 +173,7 @@ public class CSVComparison extends SETestReport
     {
       Log.warn("Number of results is different, expected("+expectedFilePath+") "+expectedHeaders.size()+" but computed ("+computedFilePath+") is "+computedHeaders.size());
     }
-    
+
     for(String header : expectedHeaders)
     {
       if(!computedHeaders.contains(header))
@@ -187,14 +187,15 @@ public class CSVComparison extends SETestReport
     boolean firstColumnIsTime = false;
     if(expectedHeaders.get(0).substring(0, 4).equalsIgnoreCase("Time"))
       firstColumnIsTime = true;
+    double initialTime = 0., timeStep = 0.02;
     int totalLines = 0;
-    
+
     while(true)
     {
       totalLines++;
       List<Double> expectedData = expectedResults.readNextLine();
       List<Double> computedData = computedResults.readNextLine();
-      
+
       if( ( expectedData.isEmpty() && !computedData.isEmpty()) ||
           (!expectedData.isEmpty() &&  computedData.isEmpty()))
       {
@@ -204,17 +205,27 @@ public class CSVComparison extends SETestReport
       }
       if(expectedData.isEmpty() || computedData.isEmpty())
         break;
-      
+
       for(int i=0; i<expectedData.size(); i++)
       {
-        
+
         String header = expectedHeaders.get(i);
         double expected=expectedData.get(i);
+        // Determine time step based on first two times, otherwise assuming 0.02s
+        // TODO: Detect variable time step. Potentially check if:
+        // timeStep * (totalLines - 1) ==  the last time
+        if(firstColumnIsTime && (totalLines == 1 || totalLines == 2) && i == 0)
+        {
+          if(totalLines == 1)
+            initialTime = expectedData.get(0);
+          else if(expectedData.get(0) > initialTime)
+            timeStep = expectedData.get(0) - initialTime;
+        }
         int idx=computedHeaders.indexOf(header);
         if(idx==-1)
           continue;
         double computed=computedData.get(idx);
-  
+
         if(!DoubleUtils.equals(expected, computed, opts))
         {
           totalErrors++;
@@ -238,7 +249,7 @@ public class CSVComparison extends SETestReport
             err.minErr = optsErr;
           }
           err.lastTime = expectedData.get(0);
-          
+
           if(reportDifferences)
           {
             if(!firstColumnIsTime)
@@ -258,7 +269,13 @@ public class CSVComparison extends SETestReport
       for(String key : headerError.keySet())
       {
         Error err = headerError.get(key);
+        double errPercent = Double.NaN;
+        if(err.lastTime > err.firstTime && timeStep > 0)
+        {
+          errPercent = 100 * err.total / ((err.lastTime - err.firstTime) / timeStep);
+        }
         Log.error(key+" has a total of "+err.total+" errors between times ["+err.firstTime+", "+err.lastTime+"] \n"+
+                      "-  " + String.format("%.2f%%",errPercent) + " of timesteps have errors between these times \n"+
                       "-  min error : @Time "+err.minTime+": expected "+err.minExpected+" != computed "+err.minComputed+" ["+err.minErr+"%] \n"+
                       "-  max error : @Time "+err.maxTime+": expected "+err.maxExpected+" != computed "+err.maxComputed+" ["+err.maxErr+"%]");
       }
@@ -267,9 +284,9 @@ public class CSVComparison extends SETestReport
       Log.error(computedFilePath +" Comparison failed!!");
     else
       Log.info(computedFilePath + " Comparison SUCCESS!!");
-        
+
     suite.endCase();
     return failures;
   }
-  
+
 }
