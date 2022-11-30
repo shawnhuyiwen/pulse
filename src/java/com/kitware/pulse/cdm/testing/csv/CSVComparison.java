@@ -270,10 +270,8 @@ public class CSVComparison extends SETestReport
       {
         Error err = headerError.get(key);
         double errPercent = Double.NaN;
-        if(err.lastTime > err.firstTime && timeStep > 0)
-        {
-          errPercent = 100 * err.total / ((err.lastTime - err.firstTime) / timeStep);
-        }
+        if(timeStep > 0)
+          errPercent = 100 * err.total / ((err.lastTime + timeStep - err.firstTime) / timeStep);
         Log.error(key+" has a total of "+err.total+" errors between times ["+err.firstTime+", "+err.lastTime+"] \n"+
                       "-  " + String.format("%.2f%%",errPercent) + " of timesteps have errors between these times \n"+
                       "-  min error : @Time "+err.minTime+": expected "+err.minExpected+" != computed "+err.minComputed+" ["+err.minErr+"%] \n"+
