@@ -1761,12 +1761,9 @@ namespace pulse
 //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::Hemothorax()
   {
-    double applicationTime_s = 10.0;
-    if (m_data.GetState() == EngineState::Active && m_data.GetSimulationTime().GetValue(TimeUnit::s) >= applicationTime_s)
-    {
-      double bloodFlow_L_Per_s = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsToRightPulmonaryLeak)->GetFlow(VolumePerTimeUnit::L_Per_s);
-      m_EnvironmentToRightPleural->GetNextFlowSource().SetValue(bloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
-    }
+    double factor = 0.8;
+    double bloodFlow_L_Per_s = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak)->GetFlow(VolumePerTimeUnit::L_Per_s);
+    m_EnvironmentToRightPleural->GetNextFlowSource().SetValue(factor * bloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
   }
 
   //--------------------------------------------------------------------------------------------------

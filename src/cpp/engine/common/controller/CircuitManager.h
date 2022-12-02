@@ -531,8 +531,6 @@ namespace pulse
     DEFINE_STATIC_STRING(RightIntermediatePulmonaryVeins1);
     DEFINE_STATIC_STRING(RightPulmonaryVeins1);
 
-    DEFINE_STATIC_STRING(LeftPulmonaryLeak1);    DEFINE_STATIC_STRING(RightPulmonaryLeak1);
-
     DEFINE_STATIC_STRING(LeftHeart1);
     DEFINE_STATIC_STRING(LeftHeart2);
     DEFINE_STATIC_STRING(LeftHeart3);
@@ -629,10 +627,7 @@ namespace pulse
     DEFINE_STATIC_STRING(LeftPulmonaryVeins1ToGround);
     DEFINE_STATIC_STRING(LeftIntermediatePulmonaryVeins1ToLeftHeart2)
 
-    DEFINE_STATIC_STRING(RightPulmonaryVeins1ToRightPulmonaryLeak1);
-    DEFINE_STATIC_STRING(GroundToRightPulmonaryLeak1);
-    DEFINE_STATIC_STRING(LeftPulmonaryVeins1ToLeftPulmonaryLeak1);
-    DEFINE_STATIC_STRING(GroundToLeftPulmonaryLeak1);    DEFINE_STATIC_STRING(LeftHeart2ToLeftHeart1);
+    DEFINE_STATIC_STRING(LeftHeart2ToLeftHeart1);
     DEFINE_STATIC_STRING(LeftHeart1ToLeftHeart3);
     DEFINE_STATIC_STRING(LeftHeart3ToGround);
     DEFINE_STATIC_STRING(LeftHeart1ToAorta2);

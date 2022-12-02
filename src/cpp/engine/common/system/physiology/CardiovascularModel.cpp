@@ -2586,15 +2586,15 @@ namespace pulse
 //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CalculateHemothorax()
   {
+    double flow_mL_Per_s = 10.0;
+    double severity = 0.9;
+
+    double appliedTime_s = 200.0;
     double applicationTime_s = 10.0;
-    if (m_data.GetState() == EngineState::Active && m_data.GetSimulationTime().GetValue(TimeUnit::s) >= applicationTime_s)
+    double currentTime_s = m_data.GetSimulationTime().GetValue(TimeUnit::s);
+    if (false) //m_data.GetState() == EngineState::Active && currentTime_s >= applicationTime_s && currentTime_s < applicationTime_s + appliedTime_s)
     {
-      double resistance_mmHg_s_Per_mL = 1.0;
-      m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsToRightPulmonaryLeak)->GetNextResistance().SetValue(resistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      double pressure_mmHg = 5.0;// m_rightPleuralCavity->GetPressure(PressureUnit::mmHg) - 760.0;
-      //pressure_mmHg = MAX(pressure_mmHg, 0.0);
-      double testPressure = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::RightPulmonaryVeins)->GetNextPressure(PressureUnit::mmHg);
-      m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToRightPulmonaryLeak)->GetNextPressureSource().SetValue(pressure_mmHg, PressureUnit::mmHg);
+      m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak)->GetNextFlowSource().SetValue(flow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
     }
   }
 
