@@ -6,7 +6,7 @@
     "StandardDataRequests.json",
     "RespiratoryDataRequests.json",
     "EquipmentDataRequests.json",
-    "equipment/AnesthesiaMachineDataRequests.json"
+    "AnesthesiaMachineDataRequests.json"
   ],
   "AnyAction": [{
     "AdvanceTime": {

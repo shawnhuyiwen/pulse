@@ -6,8 +6,8 @@
     "StandardDataRequests.json",
     "RespiratoryDataRequests.json",
     "EquipmentDataRequests.json",
-    "equipment/AnesthesiaMachineDataRequests.json",
-    "equipment/DesfluraneDataRequests.json"
+    "AnesthesiaMachineDataRequests.json",
+    "DesfluraneDataRequests.json"
   ],
   "AnyAction": [{
     "AdvanceTime": {

@@ -4,7 +4,7 @@
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
     "StandardDataRequests.json",
-    "acls/ACLSDataRequests.json"
+    "ACLSDataRequests.json"
   ],
  "AnyAction": [
   {

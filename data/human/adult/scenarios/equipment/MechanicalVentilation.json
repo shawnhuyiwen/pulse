@@ -19,7 +19,7 @@
     "StandardDataRequests.json",
     "RespiratoryDataRequests.json",
     "EquipmentDataRequests.json",
-    "equipment/AlbuterolDataRequests.json"
+    "AlbuterolDataRequests.json"
   ],
   "DataRequestManager": {
     "DataRequest":
