@@ -176,6 +176,8 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioExecData& src, SEScenarioExec
   }
   }
 
+  dst.SetDataRequestFilesSearch(src.datarequestfilessearch());
+
   dst.SetContentFormat((eSerializationFormat)src.contentformat());
   dst.SetThreadCount(src.threadcount());
 }
@@ -212,6 +214,8 @@ void PBScenario::Serialize(const SEScenarioExec& src, CDM_BIND::ScenarioExecData
     dst.set_scenariologfilename(src.GetScenarioLogFilename());
   else if (!src.GetScenarioLogDirectory().empty())
     dst.set_scenariologdirectory(src.GetScenarioLogDirectory());
+
+  dst.set_datarequestfilessearch(src.GetDataRequestFilesSearch());
 
   dst.set_contentformat((CDM_BIND::eSerializationFormat)src.GetContentFormat());
   dst.set_threadcount(src.GetThreadCount());

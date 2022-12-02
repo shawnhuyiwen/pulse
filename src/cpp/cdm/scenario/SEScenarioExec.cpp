@@ -57,6 +57,8 @@ void SEScenarioExec::Clear()
   m_ScenarioLogFilename = "";
   m_ScenarioLogDirectory = "";
 
+  m_DataRequestFilesSearch = "";
+
   m_ThreadCount = -1;// One less that number of threads the system supports
 
   m_SaveNextStep = false;
@@ -184,32 +186,7 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
     return false;
   }
 
-  for (std::string drFile : sce.GetDataRequestFiles())
-  {
-    pe.Info("Merging DataRequest File: " + drFile);
-
-    std::string file = "";
-    std::string drFilename;
-    SplitFilename(drFile, drFilename);
-
-    // Check if the file exists
-    // Also check if it can be found starting from the source scenario folder
-    // Or if it can be found at the same location as the scenario file with a cropped path
-    if (FileExists(drFile))
-      file = drFile;
-    else if (!scenarioDir.empty() && FileExists(scenarioDir + "/" + drFile))
-      file = scenarioDir + "/" + drFile;
-    else if (!m_ScenarioFilename.empty() && FileExists(m_OutputRootDirectory + "/" + drFilename))
-      file = m_OutputRootDirectory + "/" + drFilename;
-    else
-    {
-      pe.Error("Unable to locate file: " + drFile);
-      continue;
-    }
-
-    if (!sce.GetDataRequestManager().MergeDataRequestFile(file))
-      pe.Error("Unable to merge file: " + drFile);
-  }
+  sce.ProcessDataRequestFiles(m_DataRequestFilesSearch);
 
   try
   {

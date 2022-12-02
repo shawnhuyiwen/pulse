@@ -81,6 +81,9 @@ public:
     m_ScenarioDirectory = "";
   }
 
+  std::string GetDataRequestFilesSearch() const { return m_DataRequestFilesSearch; }
+  void SetDataRequestFilesSearch(const std::string& path) { m_DataRequestFilesSearch = path; }
+
   eSerializationFormat GetContentFormat() const { return m_ContentFormat; }
   void SetContentFormat(eSerializationFormat s) { m_ContentFormat = s; }
 
@@ -135,7 +138,7 @@ protected:
   bool Process(PhysiologyEngine& pe, SEScenario& sce);
   bool ProcessActions(PhysiologyEngine& pe, SEScenario& sce);
   /// This does not include advance time actions
-  /// To override default functionality with those 
+  /// To override default functionality with those
   /// actions override the ProcessActions method
   bool ProcessAction(PhysiologyEngine& pe, SEAction& action);
   void AdvanceEngine(PhysiologyEngine& pe);
@@ -163,6 +166,8 @@ protected:
 
   std::string m_ScenarioLogFilename;
   std::string m_ScenarioLogDirectory;
+
+  std::string m_DataRequestFilesSearch;
 
   // For both the EC and Scenrio Content
   eSerializationFormat m_ContentFormat;

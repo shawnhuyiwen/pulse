@@ -16,6 +16,7 @@ void CDM_DECL MakeDirectory(std::string const& dir);
 bool CDM_DECL DeleteFile(const std::string &dir, short retry=1);
 bool CDM_DECL DeleteDirectory(const std::string& dir);
 bool CDM_DECL FileExists(const std::string& filename);
+bool CDM_DECL FindFileInFilePath(const std::string& filepath, const std::string& find, std::string& found);
 bool CDM_DECL IsJSONFile(const std::string& filename);
 std::string CDM_DECL RelativePathFrom(const std::string& dir, const std::string& filepath);
 
