@@ -84,6 +84,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEDyspnea.h"
 #include "cdm/patient/actions/SEExercise.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SEHemothorax.h"
 #include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
@@ -97,6 +98,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SESubstanceInfusion.h"
 #include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
 #include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SETubeThoracostomy.h"
 #include "cdm/patient/actions/SEUrinate.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceManager.h"
@@ -303,7 +305,7 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BrainInjury));
   if (src.HasBronchoconstriction())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Bronchoconstriction));
-  
+
   if (src.HasChestCompressionInstantaneous())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionInstantaneous));
   else if (src.HasChestCompressionAutomated())
@@ -330,6 +332,10 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
         dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*h));
     }
   }
+  if (src.HasLeftHemothorax())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftHemothorax));
+  if (src.HasRightHemothorax())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightHemothorax));
   if (src.HasImpairedAlveolarExchangeExacerbation())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ImpairedAlveolarExchangeExacerbation));
   if (src.HasIntubation())
@@ -358,6 +364,10 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightClosedTensionPneumothorax));
   if (src.GetRightOpenTensionPneumothorax())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightOpenTensionPneumothorax));
+  if (src.HasLeftTubeThoracostomy())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftTubeThoracostomy));
+  if (src.HasRightTubeThoracostomy())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightTubeThoracostomy));
   for (auto b : src.m_SubstanceBoluses)
   {
     if(b->IsActive())
@@ -389,7 +399,7 @@ void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatien
     dst.SetPatientFile(src.patientfile());
   else if (src.has_patient())
     PBPatient::Load(src.patient(), dst.GetPatient());
-  
+
   if (src.has_conditions())
     PBEngine::Load(src.conditions(), dst.GetConditions(), subMgr);
 

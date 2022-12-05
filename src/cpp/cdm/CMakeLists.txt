@@ -137,6 +137,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEForcedInhale.h
     patient/actions/SEForcedPause.h
     patient/actions/SEHemorrhage.h
+    patient/actions/SEHemothorax.h
     patient/actions/SEImpairedAlveolarExchangeExacerbation.h
     patient/actions/SEIntubation.h
     patient/actions/SELobarPneumoniaExacerbation.h
@@ -154,6 +155,7 @@ add_library_ex(CommonDataModel
     patient/actions/SESubstanceInfusion.h
     patient/actions/SESupplementalOxygen.h
     patient/actions/SETensionPneumothorax.h
+    patient/actions/SETubeThoracostomy.h
     patient/actions/SEUrinate.h
     patient/actions/SEUseInhaler.h
     patient/assessments/SEArterialBloodGasTest.h
@@ -507,6 +509,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEForcedInhale.cpp
     patient/actions/SEForcedPause.cpp
     patient/actions/SEHemorrhage.cpp
+    patient/actions/SEHemothorax.cpp
     patient/actions/SEImpairedAlveolarExchangeExacerbation.cpp
     patient/actions/SEIntubation.cpp
     patient/actions/SELobarPneumoniaExacerbation.cpp
@@ -524,6 +527,7 @@ add_library_ex(CommonDataModel
     patient/actions/SESubstanceInfusion.cpp
     patient/actions/SESupplementalOxygen.cpp
     patient/actions/SETensionPneumothorax.cpp
+    patient/actions/SETubeThoracostomy.cpp
     patient/actions/SEUrinate.cpp
     patient/actions/SEUseInhaler.cpp
     patient/assessments/SEArterialBloodGasTest.cpp

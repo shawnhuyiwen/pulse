@@ -21,6 +21,7 @@
 #include "cdm/patient/actions/SEExercise.h"
 #include "cdm/patient/actions/SEDyspnea.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SEHemothorax.h"
 #include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
@@ -35,6 +36,7 @@
 #include "cdm/patient/actions/SESubstanceInfusion.h"
 #include "cdm/patient/actions/SESupplementalOxygen.h"
 #include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SETubeThoracostomy.h"
 #include "cdm/patient/actions/SEUrinate.h"
 #include "cdm/patient/actions/SEPatientAssessmentRequest.h"
 
@@ -64,6 +66,8 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_RightChestOcclusiveDressing = nullptr;
   m_Dyspnea = nullptr;
   m_Exercise = nullptr;
+  m_LeftHemothorax = nullptr;
+  m_RightHemothorax = nullptr;
   m_ImpairedAlveolarExchangeExacerbation = nullptr;
   m_Intubation = nullptr;
   m_LobarPneumoniaExacerbation = nullptr;
@@ -79,6 +83,8 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_LeftClosedTensionPneumothorax = nullptr;
   m_RightOpenTensionPneumothorax = nullptr;
   m_RightClosedTensionPneumothorax = nullptr;
+  m_LeftTubeThoracostomy = nullptr;
+  m_RightTubeThoracostomy = nullptr;
   m_Urinate = nullptr;
 }
 
@@ -101,6 +107,8 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_COPDExacerbation);
   SAFE_DELETE(m_Dyspnea);
   SAFE_DELETE(m_Exercise);
+  SAFE_DELETE(m_LeftHemothorax);
+  SAFE_DELETE(m_RightHemothorax);
   SAFE_DELETE(m_Intubation);
   SAFE_DELETE(m_ImpairedAlveolarExchangeExacerbation);
   SAFE_DELETE(m_LobarPneumoniaExacerbation);
@@ -116,6 +124,8 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_LeftOpenTensionPneumothorax);
   SAFE_DELETE(m_RightClosedTensionPneumothorax);
   SAFE_DELETE(m_RightOpenTensionPneumothorax);
+  SAFE_DELETE(m_LeftTubeThoracostomy);
+  SAFE_DELETE(m_RightTubeThoracostomy);
   SAFE_DELETE(m_Urinate);
 
   DELETE_VECTOR(m_Hemorrhages);
@@ -142,6 +152,8 @@ void SEPatientActionCollection::Clear()
   RemoveRightChestOcclusiveDressing();
   RemoveDyspnea();
   RemoveExercise();
+  RemoveLeftHemothorax();
+  RemoveRightHemothorax();
   RemoveImpairedAlveolarExchangeExacerbation();
   RemoveIntubation();
   RemoveLobarPneumoniaExacerbation();
@@ -156,6 +168,8 @@ void SEPatientActionCollection::Clear()
   RemoveLeftClosedTensionPneumothorax();
   RemoveRightOpenTensionPneumothorax();
   RemoveRightClosedTensionPneumothorax();
+  RemoveLeftTubeThoracostomy();
+  RemoveRightTubeThoracostomy();
   RemoveUrinate();
 
   for (auto a : m_Hemorrhages)
@@ -187,9 +201,9 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   // with a specific function, such as hemorrhage, and we only need
   // to have a single action in our list associated with a hemorrhage.
   // We just overwrite our saved action with the current state of that action
-  // So if the 4 hemorrhage actions come in, and lower the rate each time for a 
-  // certain compartment, we just update the single hemorrhage action associated 
-  // with that compartment. 
+  // So if the 4 hemorrhage actions come in, and lower the rate each time for a
+  // certain compartment, we just update the single hemorrhage action associated
+  // with that compartment.
   // SO, we make our own copy and manage that copy (i.e. by updating a single action)
 
   const SEAcuteRespiratoryDistressSyndromeExacerbation* ards = dynamic_cast<const SEAcuteRespiratoryDistressSyndromeExacerbation*>(&action);
@@ -413,6 +427,29 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     return true;
   }
 
+  const SEHemothorax* hemo = dynamic_cast<const SEHemothorax*>(&action);
+  if (hemo != nullptr)
+  {
+    if (hemo->GetSide() == eSide::Left)
+    {
+      GetLeftHemothorax().Copy(*hemo, true);
+      m_LeftHemothorax->Activate();
+      if (!m_LeftHemothorax->IsActive())
+        RemoveLeftHemothorax();
+      return true;
+    }
+    else if (hemo->GetSide() == eSide::Right)
+    {
+      GetRightHemothorax().Copy(*hemo, true);
+      m_RightHemothorax->Activate();
+      if (!m_RightHemothorax->IsActive())
+        RemoveRightHemothorax();
+      return true;
+    }
+    Error("Unknown Hemothorax Type");
+    return false;// Duno what this is...
+  }
+
   const SEImpairedAlveolarExchangeExacerbation* imaee = dynamic_cast<const SEImpairedAlveolarExchangeExacerbation*>(&action);
   if (imaee != nullptr)
   {
@@ -625,6 +662,29 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
       return true;
     }
     Error("Unknown Tension Pnumothorax Type");
+    return false;// Duno what this is...
+  }
+
+  const SETubeThoracostomy* tubeThora = dynamic_cast<const SETubeThoracostomy*>(&action);
+  if (tubeThora != nullptr)
+  {
+    if (tubeThora->GetSide() == eSide::Left)
+    {
+      GetLeftTubeThoracostomy().Copy(*tubeThora, true);
+      m_LeftTubeThoracostomy->Activate();
+      if (!m_LeftOpenTensionPneumothorax->IsActive())
+        RemoveLeftTubeThoracostomy();
+      return true;
+    }
+    else if (tubeThora->GetSide() == eSide::Right)
+    {
+      GetRightTubeThoracostomy().Copy(*tubeThora, true);
+      m_RightTubeThoracostomy->Activate();
+      if (!m_RightTubeThoracostomy->IsActive())
+        RemoveRightTubeThoracostomy();
+      return true;
+    }
+    Error("Unknown Tube Thoracostomy Type");
     return false;// Duno what this is...
   }
 
@@ -1031,6 +1091,57 @@ void SEPatientActionCollection::RemoveHemorrhage(eHemorrhage_Compartment cmpt)
   GetHemorrhage(cmpt).Deactivate();
 }
 
+bool SEPatientActionCollection::HasHemothorax() const
+{
+  if (m_LeftHemothorax != nullptr&&m_LeftHemothorax->IsActive())
+    return true;
+  if (m_RightHemothorax != nullptr&&m_RightHemothorax->IsActive())
+    return true;
+  return false;
+}
+bool SEPatientActionCollection::HasLeftHemothorax() const
+{
+  if (m_LeftHemothorax != nullptr&&m_LeftHemothorax->IsActive())
+    return true;
+  return false;
+}
+SEHemothorax& SEPatientActionCollection::GetLeftHemothorax()
+{
+  if (m_LeftHemothorax == nullptr)
+    m_LeftHemothorax = new SEHemothorax(GetLogger());
+  return *m_LeftHemothorax;
+}
+const SEHemothorax* SEPatientActionCollection::GetLeftHemothorax() const
+{
+  return m_LeftHemothorax;
+}
+void SEPatientActionCollection::RemoveLeftHemothorax()
+{
+  if (m_LeftHemothorax)
+    m_LeftHemothorax->Deactivate();
+}
+bool SEPatientActionCollection::HasRightHemothorax() const
+{
+  if (m_RightHemothorax != nullptr&&m_RightHemothorax->IsActive())
+    return true;
+  return false;
+}
+SEHemothorax& SEPatientActionCollection::GetRightHemothorax()
+{
+  if (m_RightHemothorax == nullptr)
+    m_RightHemothorax = new SEHemothorax(GetLogger());
+  return *m_RightHemothorax;
+}
+const SEHemothorax* SEPatientActionCollection::GetRightHemothorax() const
+{
+  return m_RightHemothorax;
+}
+void SEPatientActionCollection::RemoveRightHemothorax()
+{
+  if (m_RightHemothorax)
+    m_RightHemothorax->Deactivate();
+}
+
 bool SEPatientActionCollection::HasImpairedAlveolarExchangeExacerbation() const
 {
   return m_ImpairedAlveolarExchangeExacerbation == nullptr ? false : m_ImpairedAlveolarExchangeExacerbation->IsActive();
@@ -1367,7 +1478,7 @@ const std::vector<SESubstanceCompoundInfusion*>& SEPatientActionCollection::GetS
 }
 const std::vector<const SESubstanceCompoundInfusion*> SEPatientActionCollection::GetSubstanceCompoundInfusions() const
 {
-  
+
   return std::vector<const SESubstanceCompoundInfusion*>(m_SubstanceCompoundInfusions.begin(), m_SubstanceCompoundInfusions.end());
 }
 void SEPatientActionCollection::RemoveSubstanceCompoundInfusion(const SESubstanceCompound& sub)
@@ -1472,6 +1583,57 @@ void SEPatientActionCollection::RemoveRightClosedTensionPneumothorax()
     m_RightClosedTensionPneumothorax->Deactivate();
 }
 
+bool SEPatientActionCollection::HasTubeThoracostomy() const
+{
+  if (m_LeftTubeThoracostomy != nullptr&&m_LeftTubeThoracostomy->IsActive())
+    return true;
+  if (m_RightTubeThoracostomy != nullptr&&m_RightTubeThoracostomy->IsActive())
+    return true;
+  return false;
+}
+bool SEPatientActionCollection::HasLeftTubeThoracostomy() const
+{
+  if (m_LeftTubeThoracostomy != nullptr&&m_LeftTubeThoracostomy->IsActive())
+    return true;
+  return false;
+}
+SETubeThoracostomy& SEPatientActionCollection::GetLeftTubeThoracostomy()
+{
+  if (m_LeftTubeThoracostomy == nullptr)
+    m_LeftTubeThoracostomy = new SETubeThoracostomy(GetLogger());
+  return *m_LeftTubeThoracostomy;
+}
+const SETubeThoracostomy* SEPatientActionCollection::GetLeftTubeThoracostomy() const
+{
+  return m_LeftTubeThoracostomy;
+}
+void SEPatientActionCollection::RemoveLeftTubeThoracostomy()
+{
+  if (m_LeftTubeThoracostomy)
+    m_LeftTubeThoracostomy->Deactivate();
+}
+bool SEPatientActionCollection::HasRightTubeThoracostomy() const
+{
+  if (m_RightTubeThoracostomy != nullptr&&m_RightTubeThoracostomy->IsActive())
+    return true;
+  return false;
+}
+SETubeThoracostomy& SEPatientActionCollection::GetRightTubeThoracostomy()
+{
+  if (m_RightTubeThoracostomy == nullptr)
+    m_RightTubeThoracostomy = new SETubeThoracostomy(GetLogger());
+  return *m_RightTubeThoracostomy;
+}
+const SETubeThoracostomy* SEPatientActionCollection::GetRightTubeThoracostomy() const
+{
+  return m_RightTubeThoracostomy;
+}
+void SEPatientActionCollection::RemoveRightTubeThoracostomy()
+{
+  if (m_RightTubeThoracostomy)
+    m_RightTubeThoracostomy->Deactivate();
+}
+
 bool SEPatientActionCollection::HasUrinate() const
 {
   return m_Urinate == nullptr ? false : m_Urinate->IsActive();
@@ -1531,6 +1693,10 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     if(a->IsActive())
       actions.push_back(a);
   }
+  if (HasLeftHemothorax())
+    actions.push_back(GetLeftHemothorax());
+  if (HasRightHemothorax())
+    actions.push_back(GetRightHemothorax());
   if (HasImpairedAlveolarExchangeExacerbation())
     actions.push_back(GetImpairedAlveolarExchangeExacerbation());
   if (HasIntubation())
@@ -1561,6 +1727,10 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetRightClosedTensionPneumothorax());
   if (HasRightOpenTensionPneumothorax())
     actions.push_back(GetRightOpenTensionPneumothorax());
+  if (HasLeftTubeThoracostomy())
+    actions.push_back(GetLeftTubeThoracostomy());
+  if (HasRightTubeThoracostomy())
+    actions.push_back(GetRightTubeThoracostomy());
   for (auto a : m_SubstanceBoluses)
   {
     if (a->IsActive())
@@ -1622,6 +1792,10 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     Error("Unsupported hemorrhage compartment : " + cmptName);
     return nullptr;
   }
+  if (actionName == "LeftHemothorax")
+    return GetLeftHemothorax().GetScalar(property);
+  if (actionName == "RightHemothorax")
+    return GetRightHemothorax().GetScalar(property);
   if (actionName == "ImpairedAlveolarExchangeExacerbation")
     return GetImpairedAlveolarExchangeExacerbation().GetScalar(property);
   if (actionName == "Intubation")
@@ -1652,6 +1826,10 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetRightClosedTensionPneumothorax().GetScalar(property);
   if (actionName == "RightOpenTensionPneumothorax")
     return GetRightOpenTensionPneumothorax().GetScalar(property);
+  if (actionName == "LeftTubeThoracostomy")
+    return GetLeftTubeThoracostomy().GetScalar(property);
+  if (actionName == "RightTubeThoracostomy")
+    return GetRightTubeThoracostomy().GetScalar(property);
   if (actionName == "SubstanceBolus")
   {
     SESubstance* sub = m_SubMgr.GetSubstance(substance);
