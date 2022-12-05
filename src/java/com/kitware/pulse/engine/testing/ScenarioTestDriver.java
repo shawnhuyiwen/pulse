@@ -92,7 +92,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     job.execOpts.setLogToConsole(eSwitch.Off);
     job.execOpts.setScenarioContent(json);
     job.execOpts.setLogPrepend(job.name);
-    job.execOpts.setDataRequestFilesSearch(job.scenarioDirectory);
+    job.execOpts.setDataRequestFilesSearch(job.scenarioDirectory+"/"+job.name);
     //System.out.println(json);
     job.execOpts.execute();
     Log.info("Completed running "+job.name);
