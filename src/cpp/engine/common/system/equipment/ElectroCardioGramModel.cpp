@@ -105,8 +105,10 @@ namespace pulse
         if (rhythm == eHeartRhythm::SinusPulselessElectricalActivity)
         {
           amplitudeModifier = 0.75;
+          SEScalarFrequency peaHR;
+          peaHR.SetValue(65, FrequencyUnit::Per_min);
           StartNewCycle(eElectroCardioGram_WaveformType::Sinus,
-            m_data.GetCurrentPatient().GetHeartRateBaseline(),
+            peaHR,
             m_data.GetTimeStep(),
             amplitudeModifier);
         }

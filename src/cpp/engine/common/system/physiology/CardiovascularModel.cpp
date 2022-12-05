@@ -1835,7 +1835,7 @@ namespace pulse
 
           // No transition times
           m_TransitionArrhythmia = false;
-          m_HeartRateBaseline_Per_min->SetTransition(GetHeartRate(FrequencyUnit::Per_min), 5, 0);
+          m_HeartRateBaseline_Per_min->SetTransition(GetHeartRate(FrequencyUnit::Per_min), 15, 0);
           m_HeartComplianceModifier->SetTarget(0.75, 0);
           m_AortaComplianceModifier->SetTarget(1.25, 0);
           m_VenaCavaComplianceModifier->SetTarget(0.25, 0);
