@@ -140,7 +140,7 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "PulselessVentricularTachycardia"
+        "Rhythm": "Asystole"
       }
     }
   }, {

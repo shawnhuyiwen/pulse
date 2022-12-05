@@ -140,7 +140,7 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "FineVentricularFibrillation"
+        "Rhythm": "Asystole"
       }
     }
   }, {
