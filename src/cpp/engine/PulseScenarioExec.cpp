@@ -72,6 +72,7 @@ bool PulseScenarioExec::Execute()
   else if (!GetScenarioFilename().empty())
   {
     PulseScenario sce(GetLogger(), GetDataRootDirectory());
+    SetDataRequestFilesSearch(GetScenarioFilename());
     if (!sce.SerializeFromFile(GetScenarioFilename()))
       return false;
     return Execute(sce);
@@ -107,6 +108,7 @@ bool PulseScenarioExec::Execute()
       PulseScenarioExec* opts = new PulseScenarioExec(GetLogger());
       opts->Copy(*this);
       opts->m_ScenarioFilename = filename;
+      opts->SetDataRequestFilesSearch(filename);
       PulseScenario* sce = new PulseScenario(GetLogger(), GetDataRootDirectory());
       sce->SerializeFromFile(filename);
       pool.enqueue(ExecuteOpts, opts, sce);

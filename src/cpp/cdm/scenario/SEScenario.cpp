@@ -141,7 +141,6 @@ const std::vector<const SEAction*> SEScenario::GetActions() const
   return std::vector<const SEAction*>(m_Actions.begin(), m_Actions.end());
 }
 
-
 void SEScenario::MakeAbsoluteDataRequestFiles(const std::string& search)
 {
   for (std::string& drFile : m_DataRequestFiles)

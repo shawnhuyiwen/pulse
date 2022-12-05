@@ -49,14 +49,14 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     // Since we are passing the scenario inline via the ScenarioContent string,
     // The runner is going to the scenario name in naming output artifacts (logs, csv, etc)
     String scenarioName = "./test_results/scenarios/"+job.name.substring(0,job.name.length()-5);
-    
+
     if(job.patientFile!=null)
     {
       String patientName = job.patientFile.substring(0,job.patientFile.length()-5);
       // Any config that is running scenarios with `Patients=all`,
       // we need to add the patient name to the scenarioName
       scenarioName = scenarioName+"-"+patientName;
-      
+
       if(builder.hasPatientConfiguration())
       {
       	  builder.getPatientConfigurationBuilder().clearPatient();
@@ -78,26 +78,27 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     }
     builder.setName(scenarioName);
     pBuilder.getConfigurationBuilder();
-    try 
+    try
     {
       json = JsonFormat.printer().print(pBuilder);
-    } 
-    catch (InvalidProtocolBufferException ex) 
+    }
+    catch (InvalidProtocolBufferException ex)
     {
       Log.error("Unable to refactor the scenario");
       Log.error(ex.getMessage());
       return false;
     }
-    
+
     job.execOpts.setLogToConsole(eSwitch.Off);
     job.execOpts.setScenarioContent(json);
     job.execOpts.setLogPrepend(job.name);
+    job.execOpts.setDataRequestFilesSearch(job.scenarioDirectory);
     //System.out.println(json);
     job.execOpts.execute();
     Log.info("Completed running "+job.name);
     return true;
   }
-  
+
   public static void main(String[] args)
   {
     JNIBridge.initialize();

@@ -21,6 +21,8 @@ namespace Pulse.CDM
     protected string scenario_filename;
     protected string scenario_directory;
 
+    protected string data_request_files_search;
+
     protected eSerializationFormat contentFormat;
     protected int thread_count;
 
@@ -46,6 +48,8 @@ namespace Pulse.CDM
       scenario_content = "";
       scenario_filename = "";
       scenario_directory = "";
+
+      data_request_files_search = "";
 
       contentFormat = eSerializationFormat.JSON;
       thread_count = -1;
@@ -100,6 +104,9 @@ namespace Pulse.CDM
       scenario_filename = "";
       scenario_directory = s;
     }
+
+    public string GetDataRequestFilesSearch() { return data_request_files_search; }
+    public void SetDataRequestFilesSearch(string s) { data_request_files_search = s; }
 
     public eSerializationFormat GetContentFormat() { return contentFormat; }
     public void SetContentFormat(eSerializationFormat s) { contentFormat = s; }
