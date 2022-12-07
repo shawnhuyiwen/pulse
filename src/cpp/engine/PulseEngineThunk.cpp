@@ -19,16 +19,17 @@ PulseEngineThunk::~PulseEngineThunk()
 
 }
 
-bool PulseEngineThunk::ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format, LoggerForward* lf)
+bool PulseEngineThunk::ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format, Logger* logger)
 {
-  Logger logger;
-  logger.LogToConsole(false);
-  PulseScenarioExec opts(&logger);
-  opts.SetLoggerForward(lf);
+  PulseScenarioExec opts(logger);
+  if (logger == nullptr)
+  {
+    opts.GetLogger()->LogToConsole(false);
+    opts.GetLogger()->LogToConsole(opts.LogToConsole() == eSwitch::On);
+    opts.GetLogger()->SetLogFile(opts.GetOutputRootDirectory() + "/PulseScenarioExec.log");
+  }
   if (!opts.SerializeFromString(sceExecOpts, format))
     return false;
-  logger.LogToConsole(opts.LogToConsole()==eSwitch::On);
-  logger.SetLogFile(opts.GetOutputRootDirectory()+"/PulseScenarioExec.log");
   return opts.Execute();
 }
 

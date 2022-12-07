@@ -20,8 +20,6 @@ public:
   virtual void Clear();
   void Copy(const SEScenarioExec& src);
 
-  void SetLoggerForward(LoggerForward* lf) { m_LoggerForward = lf; }
-
   eSwitch LogToConsole() const { return m_LogToConsole; }
   void LogToConsole(eSwitch s) { m_LogToConsole = s; }
 
@@ -133,7 +131,7 @@ public:
   bool SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger=nullptr);
 
 protected:
-  bool Execute();
+  bool ConvertLog();
   bool Execute(PhysiologyEngine& pe, SEScenario& sce);
   bool Process(PhysiologyEngine& pe, SEScenario& sce);
   bool ProcessActions(PhysiologyEngine& pe, SEScenario& sce);
@@ -142,8 +140,6 @@ protected:
   /// actions override the ProcessActions method
   bool ProcessAction(PhysiologyEngine& pe, SEAction& action);
   void AdvanceEngine(PhysiologyEngine& pe);
-
-  LoggerForward* m_LoggerForward;
 
   eSwitch     m_LogToConsole;
   std::string m_DataRootDirectory;

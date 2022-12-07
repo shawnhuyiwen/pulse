@@ -11,6 +11,10 @@
 #include "cdm/io/protobuf/PBScenario.h"
 #include "cdm/utils/FileUtils.h"
 
+SEScenario::SEScenario(std::string const& dataDir) : SEScenario(nullptr, dataDir)
+{
+
+}
 SEScenario::SEScenario(Logger* logger, std::string const& dataDir) : Loggable(logger)
 {
   m_PatientConfiguration = nullptr;
@@ -183,5 +187,5 @@ bool SEScenario::ProcessDataRequestFiles(const std::string& search)
     else
       itr = m_DataRequestFiles.erase(itr);
   }
-  return err;
+  return !err;
 }

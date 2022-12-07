@@ -26,7 +26,6 @@
 SEScenarioExec::SEScenarioExec(Logger* logger) : Loggable(logger)
 {
   Clear();
-  m_LoggerForward = nullptr;
 }
 
 SEScenarioExec::~SEScenarioExec()
@@ -90,8 +89,6 @@ bool SEScenarioExec::SerializeFromString(const std::string& src, eSerializationF
 
 bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
 {
-  if(m_LoggerForward)
-    pe.GetLogger()->AddForward(m_LoggerForward);
   // Run the scenario as is
   if (!Process(pe, sce))
     return false;
@@ -413,12 +410,8 @@ void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
   }
 }
 
-bool SEScenarioExec::Execute()
+bool SEScenarioExec::ConvertLog()
 {
-  Logger log;
-  if(m_LoggerForward)
-    log.AddForward(m_LoggerForward);
-
   std::string ext;
   // Set the output to the same location as the log file
   if (m_OutputRootDirectory.empty())
@@ -438,15 +431,11 @@ bool SEScenarioExec::Execute()
     m_OutputRootDirectory += "/" + relativePath + "/";
   }
 
-  m_LogFilename = m_OutputRootDirectory + m_BaseFilename + ".cnv.log";
+  Info("Converting : " + m_ScenarioLogFilename);
   std::string outScenarioFilename = m_OutputRootDirectory + m_BaseFilename + ".json";
 
-  log.Info("Creating Log File : " + m_LogFilename);
-  log.SetLogFile(m_LogFilename);
-  log.LogToConsole(m_LogToConsole == eSwitch::On);
-
-  SEScenario sce(&log);
-  SEScenarioLog sceL(&log);
+  SEScenario sce(GetLogger());
+  SEScenarioLog sceL(GetLogger());
 
   if (!sceL.Convert(m_ScenarioLogFilename, sce))
   {
