@@ -672,7 +672,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     {
       GetLeftTubeThoracostomy().Copy(*tubeThora, true);
       m_LeftTubeThoracostomy->Activate();
-      if (!m_LeftOpenTensionPneumothorax->IsActive())
+      if (!m_LeftTubeThoracostomy->IsActive())
         RemoveLeftTubeThoracostomy();
       return true;
     }
