@@ -617,8 +617,6 @@ namespace pulse
     RightPulmonaryVeins1ToGround.GetComplianceBaseline().SetValue(0.0, VolumePerPressureUnit::mL_Per_mmHg);
     SEFluidCircuitPath& RightIntermediatePulmonaryVeins1ToLeftHeart2 = cCardiovascular.CreatePath(RightIntermediatePulmonaryVeins1, LeftHeart2, pulse::CardiovascularPath::RightIntermediatePulmonaryVeins1ToLeftHeart2);
     //RightIntermediatePulmonaryVeins1ToLeftHeart2.SetNextValve(eGate::Closed);
-    SEFluidCircuitPath& RightPulmonaryVeinsLeak = cCardiovascular.CreatePath(RightPulmonaryVeins, Ground, pulse::CardiovascularPath::RightPulmonaryVeinsLeak);
-    RightPulmonaryVeinsLeak.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SEFluidCircuitPath& MainPulmonaryArteries1ToLeftIntermediatePulmonaryArteries1 = cCardiovascular.CreatePath(MainPulmonaryArteries1, LeftIntermediatePulmonaryArteries1, pulse::CardiovascularPath::MainPulmonaryArteries1ToLeftIntermediatePulmonaryArteries1);
     //MainPulmonaryArteries1ToLeftIntermediatePulmonaryArteries1.SetNextValve(eGate::Closed);
@@ -642,8 +640,6 @@ namespace pulse
     LeftPulmonaryVeins1ToGround.GetComplianceBaseline().SetValue(0.0, VolumePerPressureUnit::mL_Per_mmHg);
     SEFluidCircuitPath& LeftIntermediatePulmonaryVeins1ToLeftHeart2 = cCardiovascular.CreatePath(LeftIntermediatePulmonaryVeins1, LeftHeart2, pulse::CardiovascularPath::LeftIntermediatePulmonaryVeins1ToLeftHeart2);
     //LeftIntermediatePulmonaryVeins1ToLeftHeart2.SetNextValve(eGate::Closed);
-    SEFluidCircuitPath& LeftPulmonaryVeinsLeak = cCardiovascular.CreatePath(LeftPulmonaryVeins, Ground, pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
-    LeftPulmonaryVeinsLeak.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
     SEFluidCircuitPath& LeftHeart2ToLeftHeart1 = cCardiovascular.CreatePath(LeftHeart2, LeftHeart1, pulse::CardiovascularPath::LeftHeart2ToLeftHeart1);
     LeftHeart2ToLeftHeart1.SetNextValve(eGate::Closed);
     SEFluidCircuitPath& LeftHeart1ToLeftHeart3 = cCardiovascular.CreatePath(LeftHeart1, LeftHeart3, pulse::CardiovascularPath::LeftHeart1ToLeftHeart3);
@@ -1106,8 +1102,6 @@ namespace pulse
     vLeftPulmonaryArteriesToVeins.MapPath(LeftPulmonaryArteries1ToLeftPulmonaryVeins1);
     SELiquidCompartmentLink& vLeftPulmonaryCapillariesToVeins = m_Compartments->CreateLiquidLink(vLeftPulmonaryCapillaries, vLeftPulmonaryVeins, pulse::VascularLink::LeftPulmonaryCapillariesToVeins);
     vLeftPulmonaryCapillariesToVeins.MapPath(LeftPulmonaryCapillaries1ToLeftPulmonaryVeins1);
-    SELiquidCompartmentLink& vLeftPulmonaryVeinsLeak = m_Compartments->CreateLiquidLink(vLeftPulmonaryVeins, vGround, pulse::VascularLink::LeftPulmonaryVeinsLeak);
-    vLeftPulmonaryVeinsLeak.MapPath(LeftPulmonaryVeinsLeak);
     SELiquidCompartmentLink& vLeftPulmonaryVeinsToLeftHeart = m_Compartments->CreateLiquidLink(vLeftPulmonaryVeins, vLeftHeart, pulse::VascularLink::LeftPulmonaryVeinsToLeftHeart);
     vLeftPulmonaryVeinsToLeftHeart.MapPath(LeftIntermediatePulmonaryVeins1ToLeftHeart2);
     SELiquidCompartmentLink& vRightHeartToRightPulmonaryArteries = m_Compartments->CreateLiquidLink(vRightHeart, vRightPulmonaryArteries, pulse::VascularLink::RightHeartToRightPulmonaryArteries);
@@ -1118,8 +1112,6 @@ namespace pulse
     vRightPulmonaryArteriesToVeins.MapPath(RightPulmonaryArteries1ToRightPulmonaryVeins1);
     SELiquidCompartmentLink& vRightPulmonaryCapillariesToVeins = m_Compartments->CreateLiquidLink(vRightPulmonaryCapillaries, vRightPulmonaryVeins, pulse::VascularLink::RightPulmonaryCapillariesToVeins);
     vRightPulmonaryCapillariesToVeins.MapPath(RightPulmonaryCapillaries1ToRightPulmonaryVeins1);
-    SELiquidCompartmentLink& vRightPulmonaryVeinsLeak = m_Compartments->CreateLiquidLink(vRightPulmonaryVeins, vGround, pulse::VascularLink::RightPulmonaryVeinsLeak);
-    vRightPulmonaryVeinsLeak.MapPath(RightPulmonaryVeinsLeak);
     SELiquidCompartmentLink& vRightPulmonaryVeinsToLeftHeart = m_Compartments->CreateLiquidLink(vRightPulmonaryVeins, vLeftHeart, pulse::VascularLink::RightPulmonaryVeinsToLeftHeart);
     vRightPulmonaryVeinsToLeftHeart.MapPath(RightIntermediatePulmonaryVeins1ToLeftHeart2);
     SELiquidCompartmentLink& vLeftHeartToAorta = m_Compartments->CreateLiquidLink(vLeftHeart, vAorta, pulse::VascularLink::LeftHeartToAorta);
@@ -1265,13 +1257,11 @@ namespace pulse
     gCardiovascular.AddLink(vLeftPulmonaryArteriesToCapillaries);
     gCardiovascular.AddLink(vLeftPulmonaryArteriesToVeins);
     gCardiovascular.AddLink(vLeftPulmonaryCapillariesToVeins);
-    gCardiovascular.AddLink(vLeftPulmonaryVeinsLeak);
     gCardiovascular.AddLink(vLeftPulmonaryVeinsToLeftHeart);
     gCardiovascular.AddLink(vRightHeartToRightPulmonaryArteries);
     gCardiovascular.AddLink(vRightPulmonaryArteriesToCapillaries);
     gCardiovascular.AddLink(vRightPulmonaryArteriesToVeins);
     gCardiovascular.AddLink(vRightPulmonaryCapillariesToVeins);
-    gCardiovascular.AddLink(vRightPulmonaryVeinsLeak);
     gCardiovascular.AddLink(vRightPulmonaryVeinsToLeftHeart);
     gCardiovascular.AddLink(vLeftHeartToAorta);
     gCardiovascular.AddLink(vAortaToBone);
@@ -3109,12 +3099,6 @@ namespace pulse
     EnvironmentToLeftNeedle.GetPressureSourceBaseline().SetValue(IntrapleuralPressure_cmH2O * 0.6, PressureUnit::cmH2O);
     SEFluidCircuitPath& LeftNeedleToLeftPleural = cRespiratory.CreatePath(LeftNeedle, LeftPleural, pulse::RespiratoryPath::LeftNeedleToLeftPleural);
     LeftNeedleToLeftPleural.GetResistanceBaseline().SetValue(openResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    // Path for hemothorax - right side
-    SEFluidCircuitPath& EnvironmentToRightPleural = cRespiratory.CreatePath(Ambient, RightPleural, pulse::RespiratoryPath::EnvironmentToRightPleural);
-    EnvironmentToRightPleural.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
-    // Path for hemothorax - left side
-    SEFluidCircuitPath& EnvironmentToLeftPleural = cRespiratory.CreatePath(Ambient, LeftPleural, pulse::RespiratoryPath::EnvironmentToLeftPleural);
-    EnvironmentToLeftPleural.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
     // Path for open (chest wound) pneumothorax circuit  - right side
     SEFluidCircuitPath& EnvironmentToRightChestLeak = cRespiratory.CreatePath(Ambient, RightChestLeak, pulse::RespiratoryPath::EnvironmentToRightChestLeak);
     EnvironmentToRightChestLeak.GetResistanceBaseline().SetValue(openResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);

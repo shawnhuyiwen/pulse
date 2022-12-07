@@ -253,8 +253,6 @@ namespace pulse
     SEFluidCircuitPath* m_RightAlveoliLeakToRightPleural;
     SEFluidCircuitPath* m_LeftNeedleToLeftPleural;
     SEFluidCircuitPath* m_RightNeedleToRightPleural;
-    SEFluidCircuitPath* m_EnvironmentToLeftPleural;
-    SEFluidCircuitPath* m_EnvironmentToRightPleural;
     SEFluidCircuitPath* m_LeftAlveoliToLeftPleuralConnection;
     SEFluidCircuitPath* m_RightAlveoliToRightPleuralConnection;
     SEFluidCircuitPath* m_LeftPulmonaryCapillary;

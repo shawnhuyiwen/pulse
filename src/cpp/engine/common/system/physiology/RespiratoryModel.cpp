@@ -25,6 +25,7 @@
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
 #include "cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "cdm/patient/actions/SEConsciousRespiration.h"
+#include "cdm/patient/actions/SEHemothorax.h"
 #include "cdm/patient/actions/SEForcedExhale.h"
 #include "cdm/patient/actions/SEForcedInhale.h"
 #include "cdm/patient/actions/SEForcedPause.h"
@@ -40,6 +41,7 @@
 #include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
 #include "cdm/patient/actions/SESupplementalOxygen.h"
 #include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SETubeThoracostomy.h"
 // Dependent Systems
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SEDrugSystem.h"
@@ -194,8 +196,6 @@ namespace pulse
     m_RightAlveoliLeakToRightPleural = nullptr;
     m_LeftNeedleToLeftPleural = nullptr;
     m_RightNeedleToRightPleural = nullptr;
-    m_EnvironmentToLeftPleural = nullptr;
-    m_EnvironmentToRightPleural = nullptr;
     m_RightAlveoliToRightPleuralConnection = nullptr;
     m_LeftPulmonaryCapillary = nullptr;
     m_RightPulmonaryCapillary = nullptr;
@@ -454,8 +454,6 @@ namespace pulse
     m_RightAlveoliLeakToRightPleural = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAlveoliLeakToRightPleural);
     m_LeftNeedleToLeftPleural = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftNeedleToLeftPleural);
     m_RightNeedleToRightPleural = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightNeedleToRightPleural);
-    m_EnvironmentToLeftPleural = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToLeftPleural);
-    m_EnvironmentToRightPleural = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRightPleural);
     m_RightAlveoliToRightPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAlveoliToRightPleuralConnection);
     m_LeftAlveoliToLeftPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
     m_ConnectionToAirway = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::ConnectionToAirway);
@@ -1761,9 +1759,78 @@ namespace pulse
 //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::Hemothorax()
   {
-    double factor = 0.8;
-    double bloodFlow_L_Per_s = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak)->GetFlow(VolumePerTimeUnit::L_Per_s);
-    m_EnvironmentToRightPleural->GetNextFlowSource().SetValue(factor * bloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+    double factor = 0.8; //Tuned factor to prevent negative volumes in circuit
+    bool stateChange = false;
+
+    bool hasLeftCardiovascularLeak = m_data.GetCircuits().GetActiveCardiovascularCircuit().HasPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
+    bool hasLeftRespirtoryLeak = m_RespiratoryCircuit->HasPath(pulse::RespiratoryPath::EnvironmentToLeftPleural);
+    bool hasLeftTubeThoracostomy = m_PatientActions->HasLeftTubeThoracostomy();
+    double leftBloodFlow_L_Per_s = 0.0;
+    if (hasLeftCardiovascularLeak)
+    {
+      //Blood coming in
+      if (m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak)->HasNextFlow())
+      {
+        leftBloodFlow_L_Per_s += m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak)->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+      }
+    }
+    if (hasLeftTubeThoracostomy)
+    {
+      //Default 200 mL/day \cite hessami2009volume
+      double thoracostomyFlowRate_L_Per_s = 2.31e-6;
+      if (m_PatientActions->GetLeftTubeThoracostomy().HasFlowRate())
+      {
+        thoracostomyFlowRate_L_Per_s = m_PatientActions->GetLeftTubeThoracostomy().GetFlowRate(VolumePerTimeUnit::L_Per_s);
+      }
+      //Blood going out
+      leftBloodFlow_L_Per_s -= thoracostomyFlowRate_L_Per_s;
+    }
+
+    if (leftBloodFlow_L_Per_s != 0.0)
+    {
+      if (!hasLeftRespirtoryLeak)
+      {
+        //Create the left chest leak in the circuit (no updates to graph needed)
+        SEFluidCircuitPath& EnvironmentToLeftPleural = m_RespiratoryCircuit->CreatePath(*m_Ambient, *m_LeftPleural, pulse::RespiratoryPath::EnvironmentToLeftPleural);
+        EnvironmentToLeftPleural.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        stateChange = true;
+      }
+
+      if (m_PatientActions->GetLeftHemothorax().HasBloodVolume())
+      {
+        m_PatientActions->GetLeftHemothorax().GetBloodVolume().IncrementValue(leftBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
+      }
+      else
+      {
+        m_PatientActions->GetLeftHemothorax().GetBloodVolume().SetValue(leftBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
+      }
+
+      if (m_PatientActions->GetLeftHemothorax().HasTargetVolume() &&
+        m_PatientActions->GetLeftHemothorax().GetBloodVolume(VolumeUnit::L) >= m_PatientActions->GetLeftHemothorax().GetBloodVolume(VolumeUnit::L))
+      {
+        Info("Hemothorax target volume reached. Setting flow rate to 0.");
+        m_PatientActions->GetLeftHemothorax().GetFlowRate().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        if (m_PatientActions->GetLeftHemothorax().HasSeverity())
+        {
+          m_PatientActions->GetLeftHemothorax().GetSeverity().SetValue(0.0);
+        }
+      }
+      else
+      {
+        m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToLeftPleural)->GetNextFlowSource().SetValue(factor * leftBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+      }
+    }
+    else if (hasLeftRespirtoryLeak)
+    {
+      //Remove the left chest leak in the circuit (no updates to graph needed)
+      m_RespiratoryCircuit->RemovePath(pulse::RespiratoryPath::EnvironmentToLeftPleural);
+      stateChange = true;
+    }
+
+    if (stateChange)
+    {
+      m_RespiratoryCircuit->StateChange();
+    }
   }
 
   //--------------------------------------------------------------------------------------------------
