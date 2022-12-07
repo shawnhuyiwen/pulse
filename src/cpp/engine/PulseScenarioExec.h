@@ -26,7 +26,7 @@ public:
 
   bool Execute();
   bool Execute(PulseScenario& sce);
-  bool ExecuteLog();
+  bool ConvertLog();
 
 protected:
   eModelType m_ModelType = eModelType::HumanAdultWholeBody;

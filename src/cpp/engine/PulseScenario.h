@@ -16,6 +16,7 @@ class PULSE_DECL PulseScenario : public SEScenario
   friend PBScenario;//friend the serialization class
 public:
 
+  PulseScenario(std::string const& dataDir = "./");
   PulseScenario(Logger* logger, std::string const& dataDir = "./");
   virtual ~PulseScenario();
 

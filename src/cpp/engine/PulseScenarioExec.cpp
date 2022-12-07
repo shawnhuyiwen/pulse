@@ -50,7 +50,7 @@ bool ExecuteOpts(PulseScenarioExec* opts, PulseScenario* sce)
   else if (!opts->GetScenarioLogFilename().empty())
   {
     opts->Info("Converting Log: " + opts->GetScenarioLogFilename());
-    bool b = opts->ExecuteLog();
+    bool b = opts->ConvertLog();
     if(b)
       opts->Info("Completed Log Conversion: " + opts->GetScenarioLogFilename());
     else
@@ -72,6 +72,7 @@ bool PulseScenarioExec::Execute()
   else if (!GetScenarioFilename().empty())
   {
     PulseScenario sce(GetLogger(), GetDataRootDirectory());
+    SetDataRequestFilesSearch(GetScenarioFilename());
     if (!sce.SerializeFromFile(GetScenarioFilename()))
       return false;
     return Execute(sce);
@@ -107,7 +108,9 @@ bool PulseScenarioExec::Execute()
       PulseScenarioExec* opts = new PulseScenarioExec(GetLogger());
       opts->Copy(*this);
       opts->m_ScenarioFilename = filename;
-      PulseScenario* sce = new PulseScenario(GetLogger(), GetDataRootDirectory());
+      opts->SetDataRequestFilesSearch(filename);
+      // Always have sceanrios create their own logger when threaded
+      PulseScenario* sce = new PulseScenario(GetDataRootDirectory());
       sce->SerializeFromFile(filename);
       pool.enqueue(ExecuteOpts, opts, sce);
     }
@@ -122,7 +125,7 @@ bool PulseScenarioExec::Execute()
   }
   else if (!GetScenarioLogFilename().empty())
   {
-    return ExecuteLog();
+    return ConvertLog();
   }
   else if (!GetScenarioLogDirectory().empty())
   {
@@ -182,18 +185,18 @@ bool PulseScenarioExec::Execute()
 
 bool PulseScenarioExec::Execute(PulseScenario& sce)
 {
-  auto pe = CreatePulseEngine(m_ModelType);
+  auto pe = CreatePulseEngine(m_ModelType, sce.GetLogger());
 
   if (!GetEngineConfigurationFilename().empty())
   {
-    PulseConfiguration pc(pe->GetLogger());
+    PulseConfiguration pc(sce.GetLogger());
     if (!pc.SerializeFromFile(GetEngineConfigurationFilename(), sce.GetSubstanceManager()))
       return false;
     sce.GetConfiguration().Merge(pc, sce.GetSubstanceManager());
   }
   else if (!GetEngineConfigurationContent().empty())
   {
-    PulseConfiguration pc(pe->GetLogger());
+    PulseConfiguration pc(sce.GetLogger());
     if (!pc.SerializeFromString(GetEngineConfigurationFilename(), GetContentFormat(), sce.GetSubstanceManager()))
       return false;
     sce.GetConfiguration().Merge(pc, sce.GetSubstanceManager());
@@ -204,7 +207,7 @@ bool PulseScenarioExec::Execute(PulseScenario& sce)
   return SEScenarioExec::Execute(*pe, sce);
 }
 
-bool PulseScenarioExec::ExecuteLog()
+bool PulseScenarioExec::ConvertLog()
 {
-  return SEScenarioExec::Execute();
+  return SEScenarioExec::ConvertLog();
 }

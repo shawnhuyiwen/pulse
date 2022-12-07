@@ -54,6 +54,34 @@ bool SEDataRequestManager::SerializeFromFile(const std::string& filename)
   return PBEngine::SerializeFromFile(filename, *this);
 }
 
+bool SEDataRequestManager::SerializeDataRequestsToString(std::string& output, eSerializationFormat m) const
+{
+  return PBEngine::SerializeToString(m_Requests, output, m);
+}
+bool SEDataRequestManager::SerializeDataRequestsToFile(const std::string& filename) const
+{
+  return PBEngine::SerializeToFile(m_Requests, filename);
+}
+bool SEDataRequestManager::SerializeDataRequestsFromString(const std::string& src, eSerializationFormat m)
+{
+  return PBEngine::SerializeFromString(src, m_Requests, m);
+}
+bool SEDataRequestManager::SerializeDataRequestsFromFile(const std::string& filename)
+{
+  return PBEngine::SerializeFromFile(filename, m_Requests);
+}
+bool SEDataRequestManager::MergeDataRequestFile(const std::string& filename)
+{
+  std::vector<SEDataRequest*> drs;
+  if (!PBEngine::SerializeFromFile(filename, drs))
+    return false;
+
+  for (auto dr : drs)
+    CopyDataRequest(*dr, false);
+
+  return true;
+}
+
 bool SEDataRequestManager::HasDefaultDecimalFormatting() const
 {
   return m_DefaultDecimalFormatting != nullptr;
@@ -84,17 +112,28 @@ void SEDataRequestManager::RemoveOverrideDecimalFormatting()
   SAFE_DELETE(m_OverrideDecimalFormatting);
 }
 
-SEDataRequest& SEDataRequestManager::CopyDataRequest(const SEDataRequest& dr)
+SEDataRequest& SEDataRequestManager::CopyDataRequest(const SEDataRequest& src, bool updateExisting)
 {
-  SEDataRequest* my_dr = FindDataRequest(dr);
-  if (my_dr == nullptr)
+  SEDataRequest* dst = FindDataRequest(src);
+  if (dst == nullptr)
   {
-    my_dr = new SEDataRequest(dr);
-    m_Requests.push_back(my_dr);
+    dst = new SEDataRequest(src);
+    m_Requests.push_back(dst);
+  }
+  else if (!updateExisting)
+  {
+    Warning("Ignoring duplicate data request:\n" + dst->ToString());
+    return *dst;
   }
 
-  my_dr->Copy(dr);
-  return *my_dr;
+  dst->Copy(src);
+
+  return *dst;
+}
+
+SEDataRequest& SEDataRequestManager::CopyDataRequest(const SEDataRequest& dr)
+{
+  return CopyDataRequest(dr, true);
 }
 
 SEDataRequest* SEDataRequestManager::FindDataRequest(const SEDataRequest& dr)
@@ -480,7 +519,7 @@ SEDataRequest* SEDataRequestManager::FindLiquidCompartmentDataRequest(const std:
 {
   for (SEDataRequest* dr : m_Requests)
   {
-    if (dr->GetCategory() == eDataRequest_Category::LiquidCompartment && 
+    if (dr->GetCategory() == eDataRequest_Category::LiquidCompartment &&
         dr->GetPropertyName() == property &&
         dr->GetCompartmentName() == cmptName &&
         dr->GetSubstanceName() == substance)
@@ -516,7 +555,7 @@ SEDataRequest* SEDataRequestManager::FindThermalCompartmentDataRequest(const std
 {
   for (SEDataRequest* dr : m_Requests)
   {
-    if (dr->GetCategory() == eDataRequest_Category::ThermalCompartment && 
+    if (dr->GetCategory() == eDataRequest_Category::ThermalCompartment &&
         dr->GetCompartmentName() == cmptName &&
         dr->GetPropertyName() == property)
       return dr;
@@ -551,7 +590,7 @@ SEDataRequest* SEDataRequestManager::FindTissueCompartmentDataRequest(const std:
 {
   for (SEDataRequest* dr : m_Requests)
   {
-    if (dr->GetCategory() == eDataRequest_Category::TissueCompartment && 
+    if (dr->GetCategory() == eDataRequest_Category::TissueCompartment &&
         dr->GetCompartmentName() == cmptName &&
         dr->GetPropertyName() == property)
       return dr;
@@ -586,8 +625,8 @@ SEDataRequest* SEDataRequestManager::FindSubstanceDataRequest(const std::string&
 {
   for (SEDataRequest* dr : m_Requests)
   {
-    if (dr->GetCategory() == eDataRequest_Category::Substance && 
-        dr->GetPropertyName() == property && 
+    if (dr->GetCategory() == eDataRequest_Category::Substance &&
+        dr->GetPropertyName() == property &&
         dr->GetSubstanceName() == substance)
       return dr;
   }

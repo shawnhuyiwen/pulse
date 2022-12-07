@@ -28,41 +28,45 @@ public class SEScenarioExec
   protected String  scenarioFilename;
   protected String  scenarioDirectory;
 
+  protected String  dataRequestFilesSearch;
+
   protected eSerializationFormat  contentFormat;
   protected int threadCount;
-  
+
   public SEScenarioExec()
   {
     clear();
   }
-  
+
   public void clear()
   {
     logToConsole = eSwitch.Off;
     dataRootDirectory = "./";
     outputRootDirectory = "";
     organizeOutputDirectory = eSwitch.Off;
-    
+
     autoSerializeAfterActions = eSwitch.Off;
     autoSerializePeriod_s = 0;
     timeStampSerializedStates = eSwitch.On;
-    
+
     engineConfigurationContent = "";
     engineConfigurationFilename = "";
-    
+
     scenarioContent = "";
     scenarioFilename = "";
     scenarioDirectory = "";
-    
+
+    dataRequestFilesSearch = "";
+
     contentFormat = eSerializationFormat.JSON;
     threadCount = -1;
   }
-  
+
   public void copy(SEScenarioExec src)
   {
     SEScenarioExec.load(SEScenarioExec.unload(src), this);
   }
-  
+
   public static void load(ScenarioExecData src, SEScenarioExec dst)
   {
     dst.clear();
@@ -72,23 +76,25 @@ public class SEScenarioExec
     if(src.getOutputRootDirectory()!=null)
       dst.outputRootDirectory = src.getOutputRootDirectory();
     dst.organizeOutputDirectory = src.getOrganizeOutputDirectory();
-    
+
     dst.autoSerializeAfterActions = src.getAutoSerializeAfterActions();
     dst.autoSerializePeriod_s = src.getAutoSerializePeriodS();
     dst.timeStampSerializedStates = src.getTimeStampSerializedStates();
-    
+
     if(src.getEngineConfigurationContent()!=null)
       dst.engineConfigurationContent = src.getEngineConfigurationContent();
     else if(src.getEngineConfigurationFilename()!=null)
       dst.engineConfigurationFilename = src.getEngineConfigurationFilename();
-    
+
     if(src.getScenarioContent()!=null)
       dst.scenarioContent = src.getScenarioContent();
     else if(src.getScenarioFilename()!=null)
       dst.scenarioFilename = src.getScenarioFilename();
     else if(src.getScenarioDirectory()!=null)
       dst.scenarioDirectory = src.getScenarioDirectory();
-    
+
+    dst.dataRequestFilesSearch = src.getDataRequestFilesSearch();
+
     dst.contentFormat = src.getContentFormat();
     dst.threadCount = src.getThreadCount();
   }
@@ -110,24 +116,26 @@ public class SEScenarioExec
     dst.setAutoSerializeAfterActions(src.autoSerializeAfterActions);
     dst.setAutoSerializePeriodS(src.autoSerializePeriod_s);
     dst.setTimeStampSerializedStates(src.timeStampSerializedStates);
-    
+
     if (!src.engineConfigurationContent.isEmpty())
       dst.setEngineConfigurationContent(src.engineConfigurationContent);
     else if (!src.engineConfigurationFilename.isEmpty())
       dst.setEngineConfigurationFilename(src.engineConfigurationFilename);
-    
+
     if (!src.scenarioContent.isEmpty())
       dst.setScenarioContent(src.scenarioContent);
     else if (!src.scenarioFilename.isEmpty())
       dst.setScenarioFilename(src.scenarioFilename);
     else if (!src.scenarioDirectory.isEmpty())
       dst.setScenarioDirectory(src.scenarioDirectory);
-    
+
+    dst.setDataRequestFilesSearch(src.dataRequestFilesSearch);
+
     dst.setContentFormat(src.contentFormat);
     dst.setThreadCount(src.threadCount);
   }
-  
-  public String toJSON() 
+
+  public String toJSON()
   {
     String json;
     try
@@ -141,16 +149,16 @@ public class SEScenarioExec
     }
     return json;
   }
-  
+
   public eSwitch getLogToConsole() { return logToConsole; }
   public void setLogToConsole(eSwitch s) { logToConsole=s; }
 
   public String getDataRootDirectory() { return dataRootDirectory; }
   public void setDataRootDirectory(String s) { dataRootDirectory=s; }
-  
+
   public String getOutputRootDirectory() { return outputRootDirectory; }
   public void setOutputRootDirectory(String s) { outputRootDirectory=s; }
-  
+
   public eSwitch getOrganizeOutputDirectory() { return organizeOutputDirectory; }
   public void setOrganizeOutputDirectory(eSwitch s) { organizeOutputDirectory=s; }
 
@@ -178,10 +186,13 @@ public class SEScenarioExec
   public String getScenarioDirectory() { return scenarioDirectory; }
   public void setScenarioDirectory(String s) { scenarioDirectory=s; }
 
+  public String getDataRequestFilesSearch() { return dataRequestFilesSearch; }
+  public void setDataRequestFilesSearch(String s) { dataRequestFilesSearch=s; }
+
   public eSerializationFormat getContentFormat() { return contentFormat; }
   public void setContentFormat(eSerializationFormat s) { contentFormat=s; }
-  
+
   public int getThreadCount() { return threadCount; }
   public void setThreadCount(int c) { threadCount=c; }
-  
+
 }

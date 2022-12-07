@@ -84,10 +84,12 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseScenarioExec_nativ
 {
   jboolean bRet;
   const char* sceOptsStr = env->GetStringUTFChars(sceOpts, JNI_FALSE);
+  Logger logger;
   LoggerForwardJNI jniForward;
   jniForward.jniEnv = env;
-  jniForward.jniObj = obj;
-  bRet = PulseEngineThunk::ExecuteScenario(sceOptsStr, (eSerializationFormat)scenario_format, &jniForward);
+  jniForward.jniObj = obj;  
+  logger.AddForward(&jniForward);
+  bRet = PulseEngineThunk::ExecuteScenario(sceOptsStr, (eSerializationFormat)scenario_format, &logger);
   env->ReleaseStringUTFChars(sceOpts, sceOptsStr);
   return bRet;
 }

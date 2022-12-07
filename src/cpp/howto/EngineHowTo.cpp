@@ -31,7 +31,7 @@ int main()
   //HowToConsumeNutrients();
   //HowToCOPD();
   //HowToCOVID19Ventilated();
-  HowToCPR();
+  //HowToCPR();
   //HowToECMO();
   //HowToEnvironmentChange();
   //HowToExercise();
@@ -45,7 +45,7 @@ int main()
   //HowToTensionPneumothorax();
 
   // These ones do not really run, pure examples
-  //HowToRunScenario();
+  HowToRunScenario();
   //HowToScenarioFromLog();
 
   // More complicated examples that do run

@@ -123,7 +123,7 @@ bool CreateFilePath(const std::string& filenamePath)
     if(!std::filesystem::exists(dirs))
       result = std::filesystem::create_directories(dirs, e);
   }
-  return result; // Nothing to do... 
+  return result; // Nothing to do...
 }
 
 bool WriteFile(const std::string& content, const std::string& filename)
@@ -232,6 +232,45 @@ std::string GetCurrentWorkingDirectory()
 bool FileExists(const std::string& filename)
 {
   return std::filesystem::exists(filename);
+}
+
+bool FindFileInFilePath(const std::string& filepath, const std::string& find, std::string& found)
+{
+  std::string filepathf = filepath;
+
+  // Treat empty string as current working directory
+  if (filepathf.empty())
+    filepathf = "./";
+
+  if (!IsRelativePath(find))
+  {
+    if (FileExists(find))
+    {
+      found = find;
+      return true;
+    }
+    return false;
+  }
+
+  std::string path;
+  SplitPath(filepathf, path);
+
+  while (!path.empty())
+  {
+    std::string possFilePath = path + find;
+    if (FileExists(possFilePath))
+    {
+      found = possFilePath;
+      return true;
+    }
+
+    size_t slash;
+    if (path.length() < 2 || (slash = path.find_last_of("/", path.length() - 2)) == std::string::npos)
+      break;
+    path = path.substr(0, ++slash);
+  }
+
+  return false;
 }
 
 bool IsJSONFile(const std::string& filename)

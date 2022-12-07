@@ -13,9 +13,10 @@ class CDM_DECL SEScenario : public Loggable
   friend class PBScenario;//friend the serialization class
 public:
 
-  SEScenario(Logger* logger=nullptr, std::string const& dataDir="./");
+  SEScenario(std::string const& dataDir = "./");
+  SEScenario(Logger* logger, std::string const& dataDir="./");
   virtual ~SEScenario();
-  
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEScenario& src);
 
@@ -37,7 +38,7 @@ public:
   virtual std::string GetEngineStateFile() const;
   virtual void SetEngineStateFile(const std::string& file);
   virtual bool HasEngineStateFile() const;
-  
+
   virtual SEPatientConfiguration& GetPatientConfiguration();
   virtual const SEPatientConfiguration* GetPatientConfiguration() const;
   virtual bool HasPatientConfiguration() const;
@@ -49,8 +50,15 @@ public:
   virtual SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
   virtual const SEDataRequestManager& GetDataRequestManager() const { return *m_DataRequestMgr; }
 
+  virtual std::vector<std::string>& GetDataRequestFiles() { return m_DataRequestFiles; }
+  virtual const std::vector<std::string>& GetDataRequestFiles() const { return m_DataRequestFiles; }
+
   virtual SESubstanceManager& GetSubstanceManager() { return *m_SubMgr; }
   virtual const SESubstanceManager& GetSubstanceManager() const { return *m_SubMgr; }
+
+  virtual void MakeAbsoluteDataRequestFiles(const std::string& search);
+  virtual void MakeRelativeDataRequestFiles(const std::string& rootDir="");
+  virtual bool ProcessDataRequestFiles(const std::string& search);
 
 protected:
   SESubstanceManager*                         m_SubMgr;
@@ -59,5 +67,6 @@ protected:
   std::string                                 m_EngineStateFile;
   SEPatientConfiguration*                     m_PatientConfiguration;
   SEDataRequestManager*                       m_DataRequestMgr;
+  std::vector<std::string>                    m_DataRequestFiles;
   std::vector<SEAction*>                      m_Actions;
 };

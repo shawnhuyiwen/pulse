@@ -68,6 +68,11 @@ message DataRequestManagerData
   repeated ValidationTargetData                        ValidationTarget                = 6;
 }
 
+message DataRequestListData
+{
+  repeated DataRequestData                             DataRequest                     = 1;
+}
+
 message DataRequestedData
 {
   int32                                                ID                              = 1;/**<< @brief A unique id associated with this engine, required when using pools. */

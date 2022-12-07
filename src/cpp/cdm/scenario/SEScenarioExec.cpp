@@ -26,7 +26,6 @@
 SEScenarioExec::SEScenarioExec(Logger* logger) : Loggable(logger)
 {
   Clear();
-  m_LoggerForward = nullptr;
 }
 
 SEScenarioExec::~SEScenarioExec()
@@ -56,6 +55,8 @@ void SEScenarioExec::Clear()
 
   m_ScenarioLogFilename = "";
   m_ScenarioLogDirectory = "";
+
+  m_DataRequestFilesSearch = "";
 
   m_ThreadCount = -1;// One less that number of threads the system supports
 
@@ -88,8 +89,6 @@ bool SEScenarioExec::SerializeFromString(const std::string& src, eSerializationF
 
 bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
 {
-  if(m_LoggerForward)
-    pe.GetLogger()->AddForward(m_LoggerForward);
   // Run the scenario as is
   if (!Process(pe, sce))
     return false;
@@ -108,6 +107,14 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
 bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
 {
   std::string sceRelPath = "";
+  std::string scenarioDir = "";
+
+  // Try to read our config file to identify scenario directory path
+  ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
+  if (config->HasKey("scenario_dir"))
+    scenarioDir = config->GetValue("scenario_dir");
+  delete config;
+
   if (!m_ScenarioFilename.empty())
   {
     std::string ext;
@@ -119,16 +126,12 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
 
     // If this scenario file is in our source scenario files,
     // let's write the output in the same place our testing framework does
-    // Try to read our config file to properly place results in a development structure
-    ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
-    if (config->HasKey("scenario_dir"))
+    if (!scenarioDir.empty())
     {
-      std::string scenario_dir = config->GetValue("scenario_dir");
-      sceRelPath = RelativePathFrom(scenario_dir, m_ScenarioFilename);
+      sceRelPath = RelativePathFrom(scenarioDir, m_ScenarioFilename);
       if (!sceRelPath.empty())
         m_OutputRootDirectory = "./test_results/scenarios" + sceRelPath;
     }
-    delete config;
   }
   else if (sce.HasName())
   {
@@ -170,7 +173,6 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
       m_AutoSerializeBaseFilename = "./test_results/autoserialization/" + sceRelPath + "/" + m_BaseFilename + "/ReloadOn/";
   }
 
-
   sce.Info("Creating Log File : " + m_LogFilename);
   pe.GetLogger()->SetLogFile(m_LogFilename);
   pe.GetLogger()->LogToConsole(m_LogToConsole == eSwitch::On);
@@ -180,6 +182,8 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
     pe.GetLogger()->Error("Invalid Scenario");
     return false;
   }
+
+  sce.ProcessDataRequestFiles(m_DataRequestFilesSearch);
 
   try
   {
@@ -268,8 +272,8 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   double spareAdvanceTime_s = 0;
   for (SEAction* a : sce.GetActions())
   {
-    // We override advance time actions in order to advance and 
-    // pull requested data at each time step, all other actions 
+    // We override advance time actions in order to advance and
+    // pull requested data at each time step, all other actions
     // will be processed by the engine
     adv=dynamic_cast<const SEAdvanceTime*>(a);
     if(adv!=nullptr)
@@ -406,12 +410,8 @@ void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
   }
 }
 
-bool SEScenarioExec::Execute()
+bool SEScenarioExec::ConvertLog()
 {
-  Logger log;
-  if(m_LoggerForward)
-    log.AddForward(m_LoggerForward);
-
   std::string ext;
   // Set the output to the same location as the log file
   if (m_OutputRootDirectory.empty())
@@ -431,15 +431,11 @@ bool SEScenarioExec::Execute()
     m_OutputRootDirectory += "/" + relativePath + "/";
   }
 
-  m_LogFilename = m_OutputRootDirectory + m_BaseFilename + ".cnv.log";
+  Info("Converting : " + m_ScenarioLogFilename);
   std::string outScenarioFilename = m_OutputRootDirectory + m_BaseFilename + ".json";
 
-  log.Info("Creating Log File : " + m_LogFilename);
-  log.SetLogFile(m_LogFilename);
-  log.LogToConsole(m_LogToConsole == eSwitch::On);
-
-  SEScenario sce(&log);
-  SEScenarioLog sceL(&log);
+  SEScenario sce(GetLogger());
+  SEScenarioLog sceL(GetLogger());
 
   if (!sceL.Convert(m_ScenarioLogFilename, sce))
   {

@@ -20,8 +20,6 @@ public:
   virtual void Clear();
   void Copy(const SEScenarioExec& src);
 
-  void SetLoggerForward(LoggerForward* lf) { m_LoggerForward = lf; }
-
   eSwitch LogToConsole() const { return m_LogToConsole; }
   void LogToConsole(eSwitch s) { m_LogToConsole = s; }
 
@@ -81,6 +79,9 @@ public:
     m_ScenarioDirectory = "";
   }
 
+  std::string GetDataRequestFilesSearch() const { return m_DataRequestFilesSearch; }
+  void SetDataRequestFilesSearch(const std::string& path) { m_DataRequestFilesSearch = path; }
+
   eSerializationFormat GetContentFormat() const { return m_ContentFormat; }
   void SetContentFormat(eSerializationFormat s) { m_ContentFormat = s; }
 
@@ -130,17 +131,15 @@ public:
   bool SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger=nullptr);
 
 protected:
-  bool Execute();
+  bool ConvertLog();
   bool Execute(PhysiologyEngine& pe, SEScenario& sce);
   bool Process(PhysiologyEngine& pe, SEScenario& sce);
   bool ProcessActions(PhysiologyEngine& pe, SEScenario& sce);
   /// This does not include advance time actions
-  /// To override default functionality with those 
+  /// To override default functionality with those
   /// actions override the ProcessActions method
   bool ProcessAction(PhysiologyEngine& pe, SEAction& action);
   void AdvanceEngine(PhysiologyEngine& pe);
-
-  LoggerForward* m_LoggerForward;
 
   eSwitch     m_LogToConsole;
   std::string m_DataRootDirectory;
@@ -163,6 +162,8 @@ protected:
 
   std::string m_ScenarioLogFilename;
   std::string m_ScenarioLogDirectory;
+
+  std::string m_DataRequestFilesSearch;
 
   // For both the EC and Scenrio Content
   eSerializationFormat m_ContentFormat;
