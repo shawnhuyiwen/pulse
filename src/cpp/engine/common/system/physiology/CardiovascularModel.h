@@ -184,8 +184,6 @@ namespace pulse
     SEFluidCircuitPath*              m_AortaToMyocardium;
     SEFluidCircuitPath*              m_AortaCompliancePath;
     SEFluidCircuitPath*              m_AortaResistancePath;
-    SEFluidCircuitNode*              m_MainPulmonaryArteries;
-    SEFluidCircuitNode*              m_LeftHeart2;
     SEFluidCircuitNode*              m_nLeftPulmonaryVeins;
     SEFluidCircuitNode*              m_nRightPulmonaryVeins;
 

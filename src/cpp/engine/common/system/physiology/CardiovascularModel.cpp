@@ -367,8 +367,6 @@ namespace pulse
     m_CirculatoryGraph = &m_data.GetCompartments().GetActiveCardiovascularGraph();
     //Nodes
     m_GroundNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::Ground);
-    m_MainPulmonaryArteries = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::MainPulmonaryArteries);
-    m_LeftHeart2 = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::LeftHeart2);
     m_nLeftPulmonaryVeins = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::LeftPulmonaryVeins);
     m_nRightPulmonaryVeins = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::RightPulmonaryVeins);
     m_AbdominalCavityNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::AbdominalCavity1);
