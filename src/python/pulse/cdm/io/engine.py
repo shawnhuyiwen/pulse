@@ -236,6 +236,10 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_hemorrhage_to_bind(action, any_action.PatientAction.Hemorrhage)
                 dst.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SEHemothorax):
+                serialize_hemothorax_to_bind(action, any_action.PatientAction.Hemothorax)
+                dst.AnyAction.append(any_action)
+                continue
             if isinstance(action, SEImpairedAlveolarExchangeExacerbation):
                 serialize_impaired_alveolar_exchange_exacerbation_to_bind(action, any_action.PatientAction.ImpairedAlveolarExchangeExacerbation)
                 dst.AnyAction.append(any_action)
@@ -290,6 +294,10 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 continue
             if isinstance(action, SETensionPneumothorax):
                 serialize_tension_pneumothorax_to_bind(action, any_action.PatientAction.TensionPneumothorax)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SETubeThoracostomy):
+                serialize_tube_thoracostomy_to_bind(action, any_action.PatientAction.TubeThoracostomy)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEUrinate):

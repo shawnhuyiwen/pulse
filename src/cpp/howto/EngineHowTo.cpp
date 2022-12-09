@@ -37,7 +37,7 @@ int main()
   //HowToExercise();
   //HowToHemorrhage();  HowToExpandedVasculature();
   //HowToHemorrhage();
-  //HowToHemothorax();
+  HowToHemothorax();
   //HowToLobarPneumonia();
   //HowToMechanicalVentilation();
   //HowToMechanicalVentilator();

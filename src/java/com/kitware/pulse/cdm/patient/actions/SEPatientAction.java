@@ -15,21 +15,21 @@ public abstract class SEPatientAction extends SEAction
 
   public SEPatientAction()
   {
-    
+
   }
-  
+
   public void copy(SEPatientAction other)
   {
     super.copy(other);
   }
-  
+
   @Override
   public void clear()
   {
     super.clear();
   }
-  
-  public static void load(PatientActionData src, SEPatientAction dst) 
+
+  public static void load(PatientActionData src, SEPatientAction dst)
   {
     SEAction.load(src.getAction(), dst);
   }
@@ -37,7 +37,7 @@ public abstract class SEPatientAction extends SEAction
   {
     SEAction.unload(src, dst.getActionBuilder());
   }
-  
+
   public static SEPatientAction ANY2CDM(AnyPatientActionData c)
   {
     switch(c.getActionCase())
@@ -149,6 +149,12 @@ public abstract class SEPatientAction extends SEAction
       SEHemorrhage.load(c.getHemorrhage(), dst);
       return dst;
     }
+    case HEMOTHORAX:
+    {
+      SEHemothorax dst = new SEHemothorax();
+      SEHemothorax.load(c.getHemothorax(), dst);
+      return dst;
+    }
     case IMPAIREDALVEOLAREXCHANGEEXACERBATION:
     {
       SEImpairedAlveolarExchangeExacerbation dst = new SEImpairedAlveolarExchangeExacerbation();
@@ -190,7 +196,7 @@ public abstract class SEPatientAction extends SEAction
       SEPulmonaryShuntExacerbation dst = new SEPulmonaryShuntExacerbation();
       SEPulmonaryShuntExacerbation.load(c.getPulmonaryShuntExacerbation(), dst);
       return dst;
-      
+
     }
     case RESPIRATORYFATIGUE:
     {
@@ -232,6 +238,12 @@ public abstract class SEPatientAction extends SEAction
     {
       SETensionPneumothorax dst = new SETensionPneumothorax();
       SETensionPneumothorax.load(c.getTensionPneumothorax(), dst);
+      return dst;
+    }
+    case TUBETHORACOSTOMY:
+    {
+      SETubeThoracostomy dst = new SETubeThoracostomy();
+      SETubeThoracostomy.load(c.getTubeThoracostomy(), dst);
       return dst;
     }
     case URINATE:
@@ -340,6 +352,11 @@ public abstract class SEPatientAction extends SEAction
       dst.setHemorrhage(SEHemorrhage.unload((SEHemorrhage)c));
       return dst.build();
     }
+    if(c instanceof SEHemothorax)
+    {
+      dst.setHemothorax(SEHemothorax.unload((SEHemothorax)c));
+      return dst.build();
+    }
     if(c instanceof SEImpairedAlveolarExchangeExacerbation)
     {
       dst.setImpairedAlveolarExchangeExacerbation(SEImpairedAlveolarExchangeExacerbation.unload((SEImpairedAlveolarExchangeExacerbation)c));
@@ -410,6 +427,11 @@ public abstract class SEPatientAction extends SEAction
       dst.setTensionPneumothorax(SETensionPneumothorax.unload((SETensionPneumothorax)c));
       return dst.build();
     }
+    if(c instanceof SETubeThoracostomy)
+    {
+      dst.setTubeThoracostomy(SETubeThoracostomy.unload((SETubeThoracostomy)c));
+      return dst.build();
+    }
     if(c instanceof SEUrinate)
     {
       dst.setUrinate(SEUrinate.unload((SEUrinate)c));
@@ -418,7 +440,7 @@ public abstract class SEPatientAction extends SEAction
     Log.error("Unsupported Patient Action type "+c);
     return dst.build();
   }
-  
+
   @Override
   public abstract String toString();
 }

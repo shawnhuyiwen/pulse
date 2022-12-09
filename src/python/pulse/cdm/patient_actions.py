@@ -345,7 +345,7 @@ class SEChestCompressionAutomated(SEPatientAction):
         if self._force is None:
             self._force = SEScalarForce()
         return self._force
-    
+
     def has_depth(self):
         return self._depth is not None
     def get_depth(self):
@@ -834,6 +834,63 @@ class SEHemorrhage(SEPatientAction):
                 "  Compartment: {}\n"
                 "  Flow Rate: {}\n"
                 "  Severity: {}").format(self._type,self._compartment,self._flow_rate, self._severity)
+
+class SEHemothorax(SEPatientAction):
+    __slots__ = ["_side", "_severity", "_flow_rate", "_target_volume"]
+
+    def __init__(self):
+        super().__init__()
+        self._side = eSide.NullSide
+        self._severity = None
+        self._flow_rate = None
+        self._target_volume = None
+
+    def clear(self):
+        super().clear()
+        self._side = eSide.NullSide
+        if self._severity is not None:
+            self._severity.invalidate()
+        if self._flow_rate is not None:
+            self._flow_rate.invalidate()
+        if self._target_volume is not None:
+            self._target_volume.invalidate()
+    def is_valid(self):
+        return self.has_side() and (self.has_severity() or self.has_flow_rate())
+
+    def has_side(self):
+        return self._side != eSide.NullSide
+    def set_side(self, side: eSide):
+        self._side = side
+    def get_side(self):
+        return self._side
+
+    def has_severity(self):
+        return False if self._severity is None else self._severity.is_valid()
+    def get_severity(self):
+        if self._severity is None:
+            self._severity = SEScalar0To1()
+        return self._severity
+
+    def has_flow_rate(self):
+        return False if self._flow_rate is None else self._flow_rate.is_valid()
+    def get_flow_rate(self):
+        if self._flow_rate is None:
+            self._flow_rate = SEScalarVolumePerTime()
+        return self._flow_rate
+
+    def has_target_volume(self):
+        return False if self._target_volume is None else self._target_volume.is_valid()
+    def get_target_volume(self):
+        if self._target_volume is None:
+            self._target_volume = SEScalarVolume()
+        return self._target_volume
+
+    def __repr__(self):
+        return ("Hemothorax\n"
+                "  Side: {}\n"
+                "  Severity: {}\n"
+                "  Flow Rate: {}\n"
+                "  Target Volume: {}").format(self._side, self._severity, self._flow_rate, self._target_volume)
 
 class SEImpairedAlveolarExchangeExacerbation(SEPatientAction):
     __slots__ = ["_impaired_surface_area", "_impaired_fraction", "_severity"]
@@ -1425,6 +1482,41 @@ class SETensionPneumothorax(SEPatientAction):
                 "  Type: {}\n"
                 "  Side: {}\n"
                 "  Severity: {}").format(self._type, self._side, self._severity)
+
+class SETubeThoracostomy(SEPatientAction):
+    __slots__ = ["_side", "_flow_rate"]
+
+    def __init__(self):
+        super().__init__()
+        self._side = eSide.NullSide
+        self._flow_rate = None
+
+    def clear(self):
+        super().clear()
+        self._side = eSide.NullSide
+        if self._flow_rate is not None:
+            self._flow_rate.invalidate()
+    def is_valid(self):
+        return self.has_side()
+
+    def has_side(self):
+        return self._side != eSide.NullSide
+    def set_side(self, side: eSide):
+        self._side = side
+    def get_side(self):
+        return self._side
+
+    def has_flow_rate(self):
+        return False if self._flow_rate is None else self._flow_rate.is_valid()
+    def get_flow_rate(self):
+        if self._flow_rate is None:
+            self._flow_rate = SEScalarVolumePerTime()
+        return self._flow_rate
+
+    def __repr__(self):
+        return ("Tube Thoracostomy\n"
+                "  Side: {}\n"
+                "  Flow Rate: {}").format(self._side, self._flow_rate)
 
 class SEUrinate(SEPatientAction):
     def __init__(self):
