@@ -160,6 +160,8 @@ namespace pulse
     m_RightPulmonaryCapillaries = nullptr;
     m_AortaO2 = nullptr;
     m_AortaCO2 = nullptr;
+    m_LeftPleuralCavity = nullptr;
+    m_RightPleuralCavity = nullptr;
 
     // Circuits
     m_RespiratoryCircuit = nullptr;
@@ -402,6 +404,8 @@ namespace pulse
     m_LeftLung = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftLung);
     m_RightLung = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightLung);
     m_PleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::PleuralCavity);
+    m_LeftPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftPleuralCavity);
+    m_RightPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightPleuralCavity);
     m_LeftLungExtravascular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::LeftLungIntracellular);
     m_RightLungExtravascular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::RightLungIntracellular);
     m_Carina = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
@@ -1301,7 +1305,7 @@ namespace pulse
           else
           {
             //This keeps it from going crazy with modifiers applied
-            changeFraction = std::abs(m_ArterialCO2PartialPressure_mmHg - targetCO2PP_mmHg) / targetCO2PP_mmHg * 0.5;
+            changeFraction = std::abs(m_ArterialCO2PartialPressure_mmHg - targetCO2PP_mmHg) / targetCO2PP_mmHg * 0.2;
           }
           changeFraction = MIN(changeFraction, 1.0);
 
@@ -1755,12 +1759,18 @@ namespace pulse
 /// Hemothorax
 ///
 /// \details
-/// jbw
+/// Model both traumatic and nontraumatic hemothorax effects of the respiratory system. Optionally set
+/// a severity or specify a blood flow into the pleural space. The blood out of the cardiovascular
+/// system is used to determine the volume change in the pleural space. The pleural space is modeled
+/// with gas in the circuit rather than fluid. Changes to lung compliance and gas exchange parameters
+/// are handled elsewhere in the respirtory model.
 //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::Hemothorax()
   {
-    double factor = 0.8; //Tuned factor to prevent negative volumes in circuit
+    double factor = 1.0; //Tuned factor to prevent negative volumes in circuit
     bool stateChange = false;
+
+    // Left ----------------------------------------------------------------------------------------
 
     bool hasLeftCardiovascularLeak = m_data.GetCircuits().GetActiveCardiovascularCircuit().HasPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
     bool hasLeftRespirtoryLeak = m_RespiratoryCircuit->HasPath(pulse::RespiratoryPath::EnvironmentToLeftPleural);
@@ -1781,6 +1791,12 @@ namespace pulse
       if (m_PatientActions->GetLeftTubeThoracostomy().HasFlowRate())
       {
         thoracostomyFlowRate_L_Per_s = m_PatientActions->GetLeftTubeThoracostomy().GetFlowRate(VolumePerTimeUnit::L_Per_s);
+        if (thoracostomyFlowRate_L_Per_s > 0.001)
+        {
+          Error("Tube thoracostomy flow rate is above maximum allowable value. Overriding to 1 mL/s.");
+          thoracostomyFlowRate_L_Per_s = 0.001;
+          m_data.GetActions().GetPatientActions().GetLeftTubeThoracostomy().GetFlowRate().SetValue(thoracostomyFlowRate_L_Per_s, VolumePerTimeUnit::L_Per_s);
+        }
       }
       //Blood going out
       leftBloodFlow_L_Per_s -= thoracostomyFlowRate_L_Per_s;
@@ -1827,9 +1843,121 @@ namespace pulse
       stateChange = true;
     }
 
+    // Right ---------------------------------------------------------------------------------------
+
+    bool hasRightCardiovascularLeak = m_data.GetCircuits().GetActiveCardiovascularCircuit().HasPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak);
+    bool hasRightRespirtoryLeak = m_RespiratoryCircuit->HasPath(pulse::RespiratoryPath::EnvironmentToRightPleural);
+    bool hasRightTubeThoracostomy = m_PatientActions->HasRightTubeThoracostomy();
+    double rightBloodFlow_L_Per_s = 0.0;
+    if (hasRightCardiovascularLeak)
+    {
+      //Blood coming in
+      if (m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak)->HasNextFlow())
+      {
+        rightBloodFlow_L_Per_s += m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak)->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+      }
+    }
+    if (hasRightTubeThoracostomy)
+    {
+      //Default 200 mL/day \cite hessami2009volume
+      double thoracostomyFlowRate_L_Per_s = 2.31e-6;
+      if (m_PatientActions->GetRightTubeThoracostomy().HasFlowRate())
+      {
+        thoracostomyFlowRate_L_Per_s = m_PatientActions->GetRightTubeThoracostomy().GetFlowRate(VolumePerTimeUnit::L_Per_s);
+        if (thoracostomyFlowRate_L_Per_s > 0.001)
+        {
+          Error("Tube thoracostomy flow rate is above maximum allowable value. Overriding to 1 mL/s.");
+          thoracostomyFlowRate_L_Per_s = 0.001;
+          m_data.GetActions().GetPatientActions().GetRightTubeThoracostomy().GetFlowRate().SetValue(thoracostomyFlowRate_L_Per_s, VolumePerTimeUnit::L_Per_s);
+        }
+      }
+      //Blood going out
+      rightBloodFlow_L_Per_s -= thoracostomyFlowRate_L_Per_s;
+    }
+
+    if (rightBloodFlow_L_Per_s != 0.0)
+    {
+      if (!hasRightRespirtoryLeak)
+      {
+        //Create the right chest leak in the circuit (no updates to graph needed)
+        SEFluidCircuitPath& EnvironmentToRightPleural = m_RespiratoryCircuit->CreatePath(*m_Ambient, *m_RightPleural, pulse::RespiratoryPath::EnvironmentToRightPleural);
+        EnvironmentToRightPleural.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        stateChange = true;
+      }
+
+      if (m_PatientActions->GetRightHemothorax().HasBloodVolume())
+      {
+        m_PatientActions->GetRightHemothorax().GetBloodVolume().IncrementValue(rightBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
+      }
+      else
+      {
+        m_PatientActions->GetRightHemothorax().GetBloodVolume().SetValue(rightBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
+      }
+
+      if (m_PatientActions->GetRightHemothorax().HasTargetVolume() &&
+        m_PatientActions->GetRightHemothorax().GetBloodVolume(VolumeUnit::L) >= m_PatientActions->GetRightHemothorax().GetBloodVolume(VolumeUnit::L))
+      {
+        Info("Hemothorax target volume reached. Setting flow rate to 0.");
+        m_PatientActions->GetRightHemothorax().GetFlowRate().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        if (m_PatientActions->GetRightHemothorax().HasSeverity())
+        {
+          m_PatientActions->GetRightHemothorax().GetSeverity().SetValue(0.0);
+        }
+      }
+      else
+      {
+        m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRightPleural)->GetNextFlowSource().SetValue(factor * rightBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+      }
+    }
+    else if (hasRightRespirtoryLeak)
+    {
+      //Remove the right chest leak in the circuit (no updates to graph needed)
+      m_RespiratoryCircuit->RemovePath(pulse::RespiratoryPath::EnvironmentToRightPleural);
+      stateChange = true;
+    }
+
+    // Update circuit ------------------------------------------------------------------------------
+
     if (stateChange)
     {
       m_RespiratoryCircuit->StateChange();
+    }
+
+    //Events ---------------------------------------------------------------------------------------
+
+    double totalBloodVolume_L = 0.0;
+    if (m_PatientActions->GetLeftHemothorax().HasBloodVolume())
+    {
+      totalBloodVolume_L += m_PatientActions->GetLeftHemothorax().GetBloodVolume(VolumeUnit::L);
+    }
+    if (m_PatientActions->GetRightHemothorax().HasBloodVolume())
+    {
+      totalBloodVolume_L += m_PatientActions->GetRightHemothorax().GetBloodVolume(VolumeUnit::L);
+    }
+
+    if (totalBloodVolume_L > 1.0)
+    {
+      m_data.GetEvents().SetEvent(eEvent::MassiveHemothorax, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::MediumHemothorax, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::MinimalHemothorax, false, m_data.GetSimulationTime());
+    }
+    else if (totalBloodVolume_L > 0.4)
+    {
+      m_data.GetEvents().SetEvent(eEvent::MassiveHemothorax, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::MediumHemothorax, true, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::MinimalHemothorax, false, m_data.GetSimulationTime());
+    }
+    else if (totalBloodVolume_L > 0.001)
+    {
+      m_data.GetEvents().SetEvent(eEvent::MassiveHemothorax, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::MediumHemothorax, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::MinimalHemothorax, true, m_data.GetSimulationTime());
+    }
+    else
+    {
+      m_data.GetEvents().SetEvent(eEvent::MassiveHemothorax, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::MediumHemothorax, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::MinimalHemothorax, false, m_data.GetSimulationTime());
     }
   }
 
@@ -3405,6 +3533,47 @@ namespace pulse
     }
 
     //------------------------------------------------------------------------------------------------------
+    //Collapsing lung (e.g., pneumothorax and hemothorax)
+    double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+    double leftLungRatio = 1.0 - rightLungRatio;
+    for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
+    {
+      //0 = right lung, 1 = left lung
+      double lungRatio = 0.0;
+      double lungVolume_L = 0.0;
+      double pleuralVolume_L = 0.0; //We use gas in the pleural space for the model
+
+      if (iterLung == 0) //right lung
+      {
+        lungRatio = rightLungRatio;
+        lungVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
+        pleuralVolume_L = m_RightPleuralCavity->GetVolume(VolumeUnit::L);
+      }
+      else //left lung
+      {
+        lungRatio = leftLungRatio;
+        lungVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
+        pleuralVolume_L = m_LeftPleuralCavity->GetVolume(VolumeUnit::L);
+      }
+
+      double volumeRatio = pleuralVolume_L / lungVolume_L;
+      if (volumeRatio > 1.0)
+      {
+        double severity = volumeRatio - 1.0;
+        severity = LIMIT(severity, 0.0, 1.0);
+        double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.32, 1.0, severity);
+        if (iterLung == 0) //right lung
+        {
+          rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, complianceScalingFactor);
+        }
+        else //left lung
+        {
+          leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, complianceScalingFactor);
+        }
+      }
+    }
+
+    //------------------------------------------------------------------------------------------------------
     //Set new values
     leftAlveoliCompliance_L_Per_cmH2O = leftAlveoliCompliance_L_Per_cmH2O * leftObstructiveComplianceScalingFactor * leftRestrictiveComplianceScalingFactor;
     rightAlveoliCompliance_L_Per_cmH2O = rightAlveoliCompliance_L_Per_cmH2O * rightObstructiveComplianceScalingFactor * rightRestrictiveComplianceScalingFactor;
@@ -3810,6 +3979,49 @@ namespace pulse
     m_RightAlveoli->GetDiffusionSurfaceArea().SetValue(rightAlveoliDiffusionArea_cm2, AreaUnit::cm2);
     m_LeftAlveoli->GetDiffusionSurfaceArea().SetValue(leftAlveoliDiffusionArea_cm2, AreaUnit::cm2);
 
+    //Collapsing lung (e.g., pneumothorax and hemothorax)
+    double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+    double leftLungRatio = 1.0 - rightLungRatio;
+    double perLungAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 / 2.0;
+    double intermediateAlveoliDiffusionArea_cm2 = 0.0;
+    for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
+    {
+      //0 = right lung, 1 = left lung
+      double lungRatio = 0.0;
+      double lungVolume_L = 0.0;
+
+      if (iterLung == 0) //right lung
+      {
+        lungRatio = rightLungRatio;
+        lungVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
+      }
+      else //left lung
+      {
+        lungRatio = leftLungRatio;
+        lungVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
+      }
+
+      double functionalResidualCapacity_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L) * lungRatio;
+      double residualVolume_L = m_data.GetCurrentPatient().GetResidualVolume(VolumeUnit::L) * lungRatio;
+
+      if (lungVolume_L < functionalResidualCapacity_L)
+      {
+        double severity = 0.0;
+        severity = 1.0 - (lungVolume_L - residualVolume_L) / (functionalResidualCapacity_L - residualVolume_L);
+        severity = LIMIT(severity, 0.0, 1.0);
+        double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
+        intermediateAlveoliDiffusionArea_cm2 += gasDiffusionScalingFactor * perLungAlveoliDiffusionArea_cm2; //Per lung
+      }
+      else
+      {
+        intermediateAlveoliDiffusionArea_cm2 += perLungAlveoliDiffusionArea_cm2;
+      }
+    }
+
+    alveoliDiffusionArea_cm2 = intermediateAlveoliDiffusionArea_cm2;
+
+    //------------------------------------------------------------------------------------------------------
+    //Set new value
     m_data.GetCurrentPatient().GetAlveoliSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
   }
 
