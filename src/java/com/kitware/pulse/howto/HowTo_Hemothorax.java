@@ -90,8 +90,8 @@ public class HowTo_Hemothorax
     dataRequests.createPhysiologyDataRequest("OxygenSaturation");
     dataRequests.createPhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit.mL_Per_min);
     dataRequests.createPhysiologyDataRequest("BloodVolume", VolumeUnit.mL);
-    dataRequests.createActionDataRequest("Hemothorax", "FlowRate", VolumePerTimeUnit.mL_Per_min);
-    dataRequests.createActionDataRequest("Hemothorax", "BloodVolume", VolumeUnit.mL);
+    dataRequests.createActionDataRequest("LeftHemothorax", "FlowRate", VolumePerTimeUnit.mL_Per_min);
+    dataRequests.createActionDataRequest("LeftHemothorax", "BloodVolume", VolumeUnit.mL);
 
     List<Double> dataValues;
     pe.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
