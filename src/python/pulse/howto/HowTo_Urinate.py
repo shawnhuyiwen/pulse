@@ -10,7 +10,7 @@ def HowTo_Urinate():
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.pbb", None):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None):
         print("Unable to load initial state file")
         return
 

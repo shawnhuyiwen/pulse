@@ -56,7 +56,7 @@ def HowTo_MechanicalVentilator():
     data_mgr.set_results_filename("./test_results/howto/HowTo_MechanicalVentilator.py.csv")
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/StandardMale@0s.pbb", data_mgr):
+    if not pulse.serialize_from_file("./states/StandardMale@0s.json", data_mgr):
         print("Unable to load initial state file")
         return
 

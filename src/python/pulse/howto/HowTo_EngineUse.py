@@ -114,7 +114,7 @@ def HowTo_UseEngine():
     # There are several ways to initialize an engine to a patient
     start_type = eStartType.Stabilize_PatientObject
     if start_type is eStartType.State: # The engine is ready instantaneously
-        if not pulse.serialize_from_file("./states/Soldier@0s.pbb", data_req_mgr):
+        if not pulse.serialize_from_file("./states/Soldier@0s.json", data_req_mgr):
             print("Unable to load initial state file")
             return
         # Stabilization will require the engine to run for several minutes
