@@ -10,11 +10,6 @@
     {
       "DataRequest":
       [
-        { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction" },
-        { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL" },
-        { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Volume", "Unit": "mL" },
-        { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Pressure", "Unit": "mmHg" },
-
         { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Sodium", "PropertyName": "BloodConcentration",              "Unit": "g/L"      },
         { "DecimalFormat": { "Precision": 5 }, "Category": "Substance", "SubstanceName": "Sodium", "PropertyName": "Clearance-RenalClearance",        "Unit":"mL/min kg" },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Sodium", "PropertyName": "Clearance-RenalReabsorptionRate", "Unit":"g/day"     },
@@ -32,10 +27,7 @@
         { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftUreter",  "PropertyName": "InFlow", "Unit": "mL/min" },
 
         { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "Bladder", "SubstanceName": "Chloride",     "PropertyName": "Concentration", "Unit": "g/L"  },
-        { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Bladder", "SubstanceName": "Urea",         "PropertyName": "Concentration", "Unit": "g/L"  },
-
-        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RightAfferentArterioleResistance",               "Unit": "mmHg min/mL" },
-        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "LeftAfferentArterioleResistance",               "Unit": "mmHg min/mL" }
+        { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Bladder", "SubstanceName": "Urea",         "PropertyName": "Concentration", "Unit": "g/L"  }
       ]
     },
     "AnyAction":

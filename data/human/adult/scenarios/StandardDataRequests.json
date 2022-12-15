@@ -65,6 +65,6 @@
     { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "BloodConcentration",  "Unit": "ug/L" },
     { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },
     { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Norepinephrine","PropertyName": "BloodConcentration",  "Unit": "ug/L" },
-    { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Norepinephrine","PropertyName": "SystemicMassCleared", "Unit": "ug" },
+    { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Norepinephrine","PropertyName": "SystemicMassCleared", "Unit": "ug" }
   ]
 }

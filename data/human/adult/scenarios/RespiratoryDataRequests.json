@@ -19,11 +19,8 @@
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PhysiologicDeadSpace",                       "Unit": "mL"        },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PositiveEndExpiratoryPressure",              "Unit": "cmH2O"     },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",                        "Unit": "L/cmH2O"   },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RespirationRate",                            "Unit": "1/min"     },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RespiratoryMuscleFatigue",                   "Unit": "unitless"  },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RespiratoryMusclePressure",                  "Unit": "cmH2O"     },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TidalVolume",                                "Unit": "mL"        },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalLungVolume",                            "Unit": "mL"        },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalPowerOfBreathing",                      "Unit": "W"         },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalPulmonaryVentilation",                  "Unit": "L/min"     },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalWorkOfBreathing",                       "Unit": "J"         },
@@ -34,31 +31,14 @@
     { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "LeftLungPulmonary",  "PropertyName": "Volume", "Unit": "mL" },
     { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "RightLungPulmonary", "PropertyName": "Volume", "Unit": "mL" },
 
-    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "LeftLungPulmonary",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "RightLungPulmonary", "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "LeftLungPulmonary",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "RightLungPulmonary", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-
     { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "LeftPleuralCavity",  "PropertyName": "Volume",   "Unit": "mL" },
     { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "RightPleuralCavity", "PropertyName": "Volume",   "Unit": "mL" },
 
     { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli",  "PropertyName": "Volume",   "Unit": "mL"    },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli",  "PropertyName": "Pressure", "Unit": "cmH2O" },
     { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "PropertyName": "Volume",   "Unit": "mL"    },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "PropertyName": "Pressure", "Unit": "cmH2O" },
-
-    { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
 
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction",      "Unit": "unitless" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Patient",    "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2"      },
-
-    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarDeadSpace",    "Unit": "mL" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AnatomicDeadSpace",    "Unit": "mL" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PhysiologicDeadSpace", "Unit": "mL" },
-    { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BloodPH"                            },
 
     { "DecimalFormat": {                }, "PropertyName": "ExpiratoryReserveVolume",    "Unit": "mL" },
     { "DecimalFormat": {                }, "PropertyName": "FunctionalResidualCapacity", "Unit": "mL" },

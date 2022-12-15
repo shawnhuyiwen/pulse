@@ -20,11 +20,8 @@
     "StandardDataRequests.json"
   ],
   "DataRequestManager": {
-    "DataRequest": 
+    "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction", "Unit": "unitless" },
-      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Pressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightPulmonaryCapillaries", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftPulmonaryCapillaries", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "RightPulmonaryCapillaries", "PropertyName": "InFlow", "Unit": "mL/s" },
