@@ -21,14 +21,6 @@
     "EquipmentDataRequests.json",
     "AlbuterolDataRequests.json"
   ],
-  "DataRequestManager": {
-    "DataRequest":
-    [
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "CardiacIndex", "Unit": "L/min m^2" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PulmonaryVascularResistance", "Unit": "mmHg s/mL" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PulmonaryVascularResistanceIndex", "Unit": "dyn s/cm^5 m^2" }
-    ]
-  },
   "AnyAction": [{
     "AdvanceTime": {
       "Time": {
