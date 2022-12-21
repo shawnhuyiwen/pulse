@@ -203,7 +203,7 @@ namespace HowTo_DeathState
       // The rest of the data values are in order of the data_requests list provided
 
       // NOTE: No data requests are being provided, so Pulse will return the default vitals data
-      if (!pulse.SerializeFromFile("./states/Soldier@0s.pbb", data_mgr))
+      if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr))
       {
         Console.WriteLine("Error Initializing Pulse!");
         return;

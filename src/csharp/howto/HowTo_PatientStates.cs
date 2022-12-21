@@ -69,7 +69,7 @@ namespace HowTo_PatientStates
       {
         Console.WriteLine("Creating states for inury set : " + injury_set_names[i]);
         // Loop over how many patients we have and the various injury combinations
-        if (!pulse.SerializeFromFile("./states/Soldier@0s.pbb", data_mgr))
+        if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr))
         {
           Console.WriteLine("Error Initializing Pulse!");
           return;

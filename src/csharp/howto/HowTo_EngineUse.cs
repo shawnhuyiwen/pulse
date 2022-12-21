@@ -90,7 +90,7 @@ namespace HowTo_UseEngine
         case InitializationType.StateFileName:
           {
             // Load a state file
-            if (!pulse.SerializeFromFile("./states/Soldier@0s.pbb", data_mgr))
+            if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr))
             {
               Console.WriteLine("Error Initializing Pulse!");
               return;
@@ -228,8 +228,10 @@ namespace HowTo_UseEngine
 
       SEHemorrhage h = new SEHemorrhage();
       h.SetExternal(SEHemorrhage.ExternalCompartment.RightLeg);
-      // Optionally, You can set the flow rate of the hemorrhage,
-      // This needs to be provided the proper flow rate associated with the anatomy
+      h.GetSeverity().SetValue(0.33);
+      // You must set the severity or flow rate of the hemorrhage
+      // We suggest you use severity as the flow rate will adjust as the blood pressure lowers
+      // The flow provided needs to reflect the rate associated with the anatomy
       // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
       // It is intended to interact with sensors or with something continuously monitoring physiology and updating the flow
       //h.GetFlowRate().SetValue(50, VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!

@@ -56,7 +56,7 @@ namespace HowTo_MechanicalVentilator
       // data_values[0] is ALWAYS the simulation time in seconds
       // The rest of the data values are in order of the data_requests list provided
 
-      if (!pulse.SerializeFromFile("./states/StandardMale@0s.pbb", data_mgr))
+      if (!pulse.SerializeFromFile("./states/StandardMale@0s.json", data_mgr))
       {
         Console.WriteLine("Error Initializing Pulse!");
         return;

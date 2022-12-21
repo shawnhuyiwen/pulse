@@ -241,7 +241,12 @@ namespace Pulse
         return false;
       string any_action_list_str = PBAction.SerializeToString(actions);
       //System.Console.Out.WriteLine(any_action_list_str);
-      return BaseProcessActions(any_action_list_str, (int)thunk_as);
+      if (!BaseProcessActions(any_action_list_str, (int)thunk_as))
+      {
+        PullLogMessages();
+        return false;
+      }
+      return true;
     }
 
     protected abstract bool BasePullActiveActions(int format, out IntPtr actions);
