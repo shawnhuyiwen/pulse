@@ -27,6 +27,7 @@
     { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",                      "Unit": "cmH2O"     },
     { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TransChestWallPressure",                     "Unit": "cmH2O"     },
     { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "IntrapulmonaryPressure",                     "Unit": "cmH2O"     },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "VentilationPerfusionRatio",                  "Unit": "unitless"  },
 
     { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "LeftLungPulmonary",  "PropertyName": "Volume", "Unit": "mL" },
     { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "RightLungPulmonary", "PropertyName": "Volume", "Unit": "mL" },

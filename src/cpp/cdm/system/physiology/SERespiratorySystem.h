@@ -149,6 +149,10 @@ public:
   virtual SEScalarVolume& GetPhysiologicDeadSpace();
   virtual double GetPhysiologicDeadSpace(const VolumeUnit& unit) const;
 
+  virtual bool HasPhysiologicDeadSpaceTidalVolumeRatio() const;
+  virtual SEScalar& GetPhysiologicDeadSpaceTidalVolumeRatio();
+  virtual double GetPhysiologicDeadSpaceTidalVolumeRatio() const;
+
   virtual bool HasPositiveEndExpiratoryPressure() const;
   virtual SEScalarPressure& GetPositiveEndExpiratoryPressure();
   virtual double GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
@@ -249,6 +253,10 @@ public:
   virtual SEScalarPressure& GetTransthoracicPressure();
   virtual double GetTransthoracicPressure(const PressureUnit& unit) const;
 
+  virtual bool HasVentilationPerfusionRatio() const;
+  virtual SEScalar& GetVentilationPerfusionRatio();
+  virtual double GetVentilationPerfusionRatio() const;
+
   virtual bool HasActiveRespiratoryMechanics() const;
   virtual bool HasRespiratoryMechanics() const;
   virtual SERespiratoryMechanics& GetRespiratoryMechanics();
@@ -289,6 +297,7 @@ protected:
   SEScalarEnergy*                m_PatientWorkOfBreathing;
   SEScalarPressure*              m_PeakInspiratoryPressure;
   SEScalarVolume*                m_PhysiologicDeadSpace;
+  SEScalar*                      m_PhysiologicDeadSpaceTidalVolumeRatio;
   SEScalarPressure*              m_PositiveEndExpiratoryPressure;
   SEScalarVolumePerPressure*     m_PulmonaryCompliance;
   SEScalarPressurePerVolume*     m_PulmonaryElastance;
@@ -314,6 +323,7 @@ protected:
   SEScalarPressure*              m_TranspulmonaryPressure;
   SEScalarPressure*              m_TransrespiratoryPressure;
   SEScalarPressure*              m_TransthoracicPressure;
+  SEScalar*                      m_VentilationPerfusionRatio;
 
   SERespiratoryMechanics*        m_RespiratoryMechanics;
 };

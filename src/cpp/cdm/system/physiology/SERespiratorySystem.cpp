@@ -51,6 +51,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_PatientWorkOfBreathing = nullptr;
   m_PeakInspiratoryPressure = nullptr;
   m_PhysiologicDeadSpace = nullptr;
+  m_PhysiologicDeadSpaceTidalVolumeRatio = nullptr;
   m_PositiveEndExpiratoryPressure = nullptr;
   m_PulmonaryCompliance = nullptr;
   m_PulmonaryElastance = nullptr;
@@ -76,6 +77,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_TranspulmonaryPressure = nullptr;
   m_TransrespiratoryPressure = nullptr;
   m_TransthoracicPressure = nullptr;
+  m_VentilationPerfusionRatio = nullptr;
 
   m_RespiratoryMechanics = nullptr;
 }
@@ -115,6 +117,7 @@ SERespiratorySystem::~SERespiratorySystem()
   SAFE_DELETE(m_PatientWorkOfBreathing);
   SAFE_DELETE(m_PeakInspiratoryPressure);
   SAFE_DELETE(m_PhysiologicDeadSpace);
+  SAFE_DELETE(m_PhysiologicDeadSpaceTidalVolumeRatio);
   SAFE_DELETE(m_PositiveEndExpiratoryPressure);
   SAFE_DELETE(m_PulmonaryCompliance);
   SAFE_DELETE(m_PulmonaryElastance);
@@ -140,6 +143,7 @@ SERespiratorySystem::~SERespiratorySystem()
   SAFE_DELETE(m_TranspulmonaryPressure);
   SAFE_DELETE(m_TransrespiratoryPressure);
   SAFE_DELETE(m_TransthoracicPressure);
+  SAFE_DELETE(m_VentilationPerfusionRatio);
 
   SAFE_DELETE(m_RespiratoryMechanics);
 }
@@ -181,6 +185,7 @@ void SERespiratorySystem::Clear()
   INVALIDATE_PROPERTY(m_PatientWorkOfBreathing);
   INVALIDATE_PROPERTY(m_PeakInspiratoryPressure);
   INVALIDATE_PROPERTY(m_PhysiologicDeadSpace);
+  INVALIDATE_PROPERTY(m_PhysiologicDeadSpaceTidalVolumeRatio);
   INVALIDATE_PROPERTY(m_PositiveEndExpiratoryPressure);
   INVALIDATE_PROPERTY(m_PulmonaryCompliance);
   INVALIDATE_PROPERTY(m_PulmonaryElastance);
@@ -206,6 +211,7 @@ void SERespiratorySystem::Clear()
   INVALIDATE_PROPERTY(m_TranspulmonaryPressure);
   INVALIDATE_PROPERTY(m_TransrespiratoryPressure);
   INVALIDATE_PROPERTY(m_TransthoracicPressure);
+  INVALIDATE_PROPERTY(m_VentilationPerfusionRatio);
 
   if (m_RespiratoryMechanics != nullptr)
     m_RespiratoryMechanics->Clear();
@@ -279,6 +285,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetPeakInspiratoryPressure();
   if (name.compare("PhysiologicDeadSpace") == 0)
     return &GetPhysiologicDeadSpace();
+  if (name.compare("PhysiologicDeadSpaceTidalVolumeRatio") == 0)
+    return &GetPhysiologicDeadSpaceTidalVolumeRatio();
   if (name.compare("PositiveEndExpiratoryPressure") == 0)
     return &GetPositiveEndExpiratoryPressure();
   if (name.compare("PulmonaryCompliance") == 0)
@@ -329,6 +337,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetTransrespiratoryPressure();
   if (name.compare("TransthoracicPressure") == 0)
     return &GetTransthoracicPressure();
+  if (name.compare("VentilationPerfusionRatio") == 0)
+    return &GetVentilationPerfusionRatio();
 
   if (m_RespiratoryMechanics != nullptr)
     return m_RespiratoryMechanics->GetScalar(name);
@@ -896,6 +906,23 @@ double SERespiratorySystem::GetPhysiologicDeadSpace(const VolumeUnit& unit) cons
   return m_PhysiologicDeadSpace->GetValue(unit);
 }
 
+bool SERespiratorySystem::HasPhysiologicDeadSpaceTidalVolumeRatio() const
+{
+  return m_PhysiologicDeadSpaceTidalVolumeRatio == nullptr ? false : m_PhysiologicDeadSpaceTidalVolumeRatio->IsValid();
+}
+SEScalar& SERespiratorySystem::GetPhysiologicDeadSpaceTidalVolumeRatio()
+{
+  if (m_PhysiologicDeadSpaceTidalVolumeRatio == nullptr)
+    m_PhysiologicDeadSpaceTidalVolumeRatio = new SEScalar();
+  return *m_PhysiologicDeadSpaceTidalVolumeRatio;
+}
+double SERespiratorySystem::GetPhysiologicDeadSpaceTidalVolumeRatio() const
+{
+  if (m_PhysiologicDeadSpaceTidalVolumeRatio == nullptr)
+    return SEScalar::dNaN();
+  return m_PhysiologicDeadSpaceTidalVolumeRatio->GetValue();
+}
+
 bool SERespiratorySystem::HasPositiveEndExpiratoryPressure() const
 {
   return m_PositiveEndExpiratoryPressure == nullptr ? false : m_PositiveEndExpiratoryPressure->IsValid();
@@ -1319,6 +1346,23 @@ double SERespiratorySystem::GetTransthoracicPressure(const PressureUnit& unit) c
   if (m_TransthoracicPressure == nullptr)
     return SEScalar::dNaN();
   return m_TransthoracicPressure->GetValue(unit);
+}
+
+bool SERespiratorySystem::HasVentilationPerfusionRatio() const
+{
+  return m_VentilationPerfusionRatio == nullptr ? false : m_VentilationPerfusionRatio->IsValid();
+}
+SEScalar& SERespiratorySystem::GetVentilationPerfusionRatio()
+{
+  if (m_VentilationPerfusionRatio == nullptr)
+    m_VentilationPerfusionRatio = new SEScalar();
+  return *m_VentilationPerfusionRatio;
+}
+double SERespiratorySystem::GetVentilationPerfusionRatio() const
+{
+  if (m_VentilationPerfusionRatio == nullptr)
+    return SEScalar::dNaN();
+  return m_VentilationPerfusionRatio->GetValue();
 }
 
 bool SERespiratorySystem::HasActiveRespiratoryMechanics() const
