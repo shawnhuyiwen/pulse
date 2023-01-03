@@ -432,11 +432,11 @@ namespace pulse
 
     /// \todo figure out how to modify these resistances without getting the cv circuit - maybe add a parameter, like baroreceptors does
     //Venous Return
-    m_RightPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryCapillariesToRightPulmonaryVeins);
-    m_LeftPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillariesToLeftPulmonaryVeins);
+    m_RightPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryCapillaries1ToRightPulmonaryVeins1);
+    m_LeftPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillaries1ToLeftPulmonaryVeins1);
     //Pulmonary Shunt
-    m_LeftPulmonaryArteriesToVeins = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryArteriesToLeftPulmonaryVeins);
-    m_RightPulmonaryArteriesToVeins = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryVeins);
+    m_LeftPulmonaryArteriesToVeins = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryVeins1);
+    m_RightPulmonaryArteriesToVeins = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryVeins1);
 
     //Mechanical Ventilation Compartments
     m_MechanicalVentilationConnection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilationCompartment::Connection);

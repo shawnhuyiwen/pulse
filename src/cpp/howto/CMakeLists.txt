@@ -23,6 +23,7 @@ add_executable_ex(HowToDriver
   HowTo-EngineUse.cpp
   HowTo-EnvironmentChange.cpp
   HowTo-Exercise.cpp
+  HowTo-ExpandedVasculature.cpp
   HowTo-Hemorrhage.cpp
   HowTo-LobarPneumonia.cpp
   HowTo-MechanicalVentilation.cpp

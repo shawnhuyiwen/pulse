@@ -156,7 +156,7 @@ namespace pulse
       switch (s.GetInflowLocation())
       {
       case eECMO_CannulationLocation::InternalJugular:
-        m_InflowNode = m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::VenaCava);
+        m_InflowNode = m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::VenaCava1);
         m_InflowCmpt = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
         break;
       case eECMO_CannulationLocation::LeftFemoralVein:
@@ -186,7 +186,7 @@ namespace pulse
       switch (s.GetOutflowLocation())
       {
       case eECMO_CannulationLocation::InternalJugular:
-        m_OutflowNode = m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::VenaCava);
+        m_OutflowNode = m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::VenaCava1);
         m_OutflowCmpt = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
         break;
       case eECMO_CannulationLocation::LeftFemoralVein:

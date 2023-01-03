@@ -30,8 +30,9 @@ message ConfigurationData
     pulse.cdm.bind.ScalarPressurePerVolumeData         RightHeartElastanceMaximum                            = 4;
     pulse.cdm.bind.ScalarPressurePerVolumeData         RightHeartElastanceMinimum                            = 5;
     pulse.cdm.bind.ScalarData                          StandardPulmonaryCapillaryCoverage                    = 6;
-    pulse.cdm.bind.eSwitch                             TuneCardiovascularCircuit                             = 7;
-    string                                             CardiovascularTuningFile                              = 8;
+    pulse.cdm.bind.eSwitch                             UseExpandedVasculature                                = 7;
+    pulse.cdm.bind.eSwitch                             TuneCardiovascularCircuit                             = 8;
+    string                                             CardiovascularTuningFile                              = 9;
   }
   
   message CircuitConfigurationData

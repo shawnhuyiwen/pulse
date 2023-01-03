@@ -95,6 +95,7 @@ namespace pulse
     virtual void InitializeLiquidCompartmentNonGases();
 
   protected:
+    virtual void CopyConcentrations(SELiquidCompartment& src, SELiquidCompartment& tgt);
     virtual void InitializeBloodGases(SETissueCompartment& tissue, SELiquidCompartment& vascular);
     virtual void InitializeBloodGases(SELiquidCompartment& cmpt, double Hb_total_mM, double O2_sat, double O2_mmol_Per_L, double CO2_sat, double CO2_mmol_Per_L, double HCO3_mmol_Per_L, double pH, bool distribute = true);
 

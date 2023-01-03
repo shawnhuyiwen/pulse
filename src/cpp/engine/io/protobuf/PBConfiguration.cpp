@@ -94,6 +94,8 @@ namespace pulse
         PBProperty::Load(config.rightheartelastanceminimum(), dst.GetRightHeartElastanceMinimum());
       if (config.has_standardpulmonarycapillarycoverage())
         PBProperty::Load(config.standardpulmonarycapillarycoverage(), dst.GetStandardPulmonaryCapillaryCoverage());
+      if (config.useexpandedvasculature() != CDM_BIND::eSwitch::NullSwitch)
+        dst.UseExpandedVasculature((eSwitch)config.useexpandedvasculature());
       if (config.tunecardiovascularcircuit() != CDM_BIND::eSwitch::NullSwitch)
         dst.TuneCardiovascularCircuit((eSwitch)config.tunecardiovascularcircuit());
       dst.CardiovascularTuningFile(config.cardiovasculartuningfile());
@@ -416,6 +418,7 @@ namespace pulse
       cv->set_allocated_rightheartelastanceminimum(PBProperty::Unload(*src.m_RightHeartElastanceMinimum));
     if (src.HasStandardPulmonaryCapillaryCoverage())
       cv->set_allocated_standardpulmonarycapillarycoverage(PBProperty::Unload(*src.m_StandardPulmonaryCapillaryCoverage));
+    cv->set_useexpandedvasculature((CDM_BIND::eSwitch)src.m_UseExpandedVasculature);
     cv->set_tunecardiovascularcircuit((CDM_BIND::eSwitch)src.m_TuneCardiovascularCircuit);
     cv->set_cardiovasculartuningfile(src.m_CardiovascularTuningFile);
 

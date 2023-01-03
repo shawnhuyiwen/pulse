@@ -35,7 +35,8 @@ int main()
   //HowToECMO();
   //HowToEnvironmentChange();
   //HowToExercise();
-  HowToHemorrhage();
+  //HowToHemorrhage();  HowToExpandedVasculature();
+  //HowToHemorrhage();
   //HowToLobarPneumonia();
   //HowToMechanicalVentilation();
   //HowToMechanicalVentilator();
@@ -45,7 +46,7 @@ int main()
   //HowToTensionPneumothorax();
 
   // These ones do not really run, pure examples
-  HowToRunScenario();
+  //HowToRunScenario();
   //HowToScenarioFromLog();
 
   // More complicated examples that do run

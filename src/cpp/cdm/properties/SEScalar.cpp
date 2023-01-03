@@ -187,6 +187,16 @@ double SEScalar::IncrementValue(double d)
   return m_value;
 }
 
+double SEScalar::ForceIncrementValue(double d)
+{
+  if (!IsValid())
+  {
+    ForceValue(d);
+    return d;
+  }
+  ForceValue(m_value + d);
+  return m_value;
+}
 
 double SEScalar::Multiply(const SEScalar& s)
 {
@@ -462,6 +472,27 @@ double SEScalarQuantity<Unit>::IncrementValue(double d, const CCompoundUnit& uni
   if (u == nullptr)
     throw CommonDataModelException("SEScalarQuantity<Unit>::IncrementValue: Provided unit is not of proper quantity type");
   return this->IncrementValue(d, *u);
+}
+
+template<typename Unit>
+double SEScalarQuantity<Unit>::ForceIncrementValue(double d, const Unit& unit)
+{
+  if (!IsValid())
+  {
+    this->ForceValue(d, unit);
+    return d;
+  }
+  this->ForceValue(m_value + Convert(d, unit, *m_unit), *m_unit);
+  return Convert(m_value, *m_unit, unit);
+}
+
+template<typename Unit>
+double SEScalarQuantity<Unit>::ForceIncrementValue(double d, const CCompoundUnit& unit)
+{
+  const Unit* u = dynamic_cast<const Unit*>(&unit);
+  if (u == nullptr)
+    throw CommonDataModelException("Provided unit is not of proper quantity type");
+  return this->ForceIncrementValue(d, *u);
 }
 
 template<typename Unit>

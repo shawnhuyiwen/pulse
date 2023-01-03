@@ -66,6 +66,7 @@ public:
 
   double Increment(const SEScalar& s);
   double IncrementValue(double d);
+  double ForceIncrementValue(double d);
 
   double Multiply(const SEScalar& s);
   double MultiplyValue(double d);
@@ -158,6 +159,7 @@ private:
 
   using SEScalar::Increment;
   using SEScalar::IncrementValue;
+  using SEScalar::ForceIncrementValue;
 
   using SEScalar::Multiply;
   using SEScalar::MultiplyValue;
@@ -195,6 +197,7 @@ public:
   virtual void   SetValue(double d, const CCompoundUnit& unit) = 0;
   virtual void   ForceValue(double d, const CCompoundUnit& unit) = 0;
   virtual double IncrementValue(double d, const CCompoundUnit& unit) = 0;
+  virtual double ForceIncrementValue(double d, const CCompoundUnit& unit) = 0;
   virtual double MultiplyValue(double d, const CCompoundUnit& unit) = 0;
 
 protected:
@@ -225,6 +228,7 @@ protected:
   virtual void   SetValue(double d, const CCompoundUnit& unit) override;
   virtual void   ForceValue(double d, const CCompoundUnit& unit) override;
   virtual double IncrementValue(double d, const CCompoundUnit& unit) override;
+  virtual double ForceIncrementValue(double d, const CCompoundUnit& unit) override;
   virtual double MultiplyValue(double d, const CCompoundUnit& unit) override;
 
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const override;
@@ -247,11 +251,14 @@ public:
   void ForceValue(double d) = delete;// Must provide a unit
   virtual void ForceValue(double d, const Unit& unit);
 
+  double Increment(const SEScalar& s) = delete;// Must provide a unit
+  virtual double Increment(const SEScalarQuantity& s);
+
   double IncrementValue(double d) = delete;// Must provide a unit
   virtual double IncrementValue(double d, const Unit& unit);
 
-  double Increment(const SEScalar& s) = delete;// Must provide a unit
-  virtual double Increment(const SEScalarQuantity& s);
+  double ForceIncrementValue(double d) = delete;// Must provide a unit
+  virtual double ForceIncrementValue(double d, const Unit& unit);
 
   double MultiplyValue(double d) = delete;// Must provide a unit
   virtual double MultiplyValue(double d, const Unit& unit);
