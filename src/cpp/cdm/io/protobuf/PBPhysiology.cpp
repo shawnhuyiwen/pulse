@@ -1043,6 +1043,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.peakinspiratorypressure(), dst.GetPeakInspiratoryPressure());
   if (src.has_physiologicdeadspace())
     PBProperty::Load(src.physiologicdeadspace(), dst.GetPhysiologicDeadSpace());
+  if (src.has_physiologicdeadspacetidalvolumeratio())
+    PBProperty::Load(src.physiologicdeadspacetidalvolumeratio(), dst.GetPhysiologicDeadSpaceTidalVolumeRatio());
   if (src.has_positiveendexpiratorypressure())
     PBProperty::Load(src.positiveendexpiratorypressure(), dst.GetPositiveEndExpiratoryPressure());
   if (src.has_pulmonarycompliance())
@@ -1093,6 +1095,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.transrespiratorypressure(), dst.GetTransrespiratoryPressure());
   if (src.has_transthoracicpressure())
     PBProperty::Load(src.transthoracicpressure(), dst.GetTransthoracicPressure());
+  if (src.has_ventilationperfusionratio())
+    PBProperty::Load(src.ventilationperfusionratio(), dst.GetVentilationPerfusionRatio());
 
   if (src.has_respiratorymechanics())
     PBPhysiology::Load(src.respiratorymechanics(), dst.GetRespiratoryMechanics());
@@ -1172,6 +1176,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_peakinspiratorypressure(PBProperty::Unload(*src.m_PeakInspiratoryPressure));
   if (src.HasPhysiologicDeadSpace())
     dst.set_allocated_physiologicdeadspace(PBProperty::Unload(*src.m_PhysiologicDeadSpace));
+  if (src.HasPhysiologicDeadSpaceTidalVolumeRatio())
+    dst.set_allocated_physiologicdeadspacetidalvolumeratio(PBProperty::Unload(*src.m_PhysiologicDeadSpaceTidalVolumeRatio));
   if (src.HasPositiveEndExpiratoryPressure())
     dst.set_allocated_positiveendexpiratorypressure(PBProperty::Unload(*src.m_PositiveEndExpiratoryPressure));
   if (src.HasPulmonaryCompliance())
@@ -1222,6 +1228,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_transrespiratorypressure(PBProperty::Unload(*src.m_TransrespiratoryPressure));
   if (src.HasTransthoracicPressure())
     dst.set_allocated_transthoracicpressure(PBProperty::Unload(*src.m_TransthoracicPressure));
+  if (src.HasVentilationPerfusionRatio())
+    dst.set_allocated_ventilationperfusionratio(PBProperty::Unload(*src.m_VentilationPerfusionRatio));
 
   if (src.HasRespiratoryMechanics())
     dst.set_allocated_respiratorymechanics(PBPhysiology::Unload(*src.m_RespiratoryMechanics));

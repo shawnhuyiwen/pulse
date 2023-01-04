@@ -260,6 +260,10 @@ namespace pulse
     GetAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetMeanAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetIntrinsicPositiveEndExpiredPressure().SetValue(0.0, PressureUnit::cmH2O);
+    GetInspiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+    GetExpiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+    GetPhysiologicDeadSpaceTidalVolumeRatio().SetValue(0.0);
+    GetVentilationPerfusionRatio().SetValue(0.0);
 
     double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetVolumeBaseline(VolumeUnit::L);
     double AlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
@@ -298,8 +302,6 @@ namespace pulse
 
     GetInspiratoryPulmonaryResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     GetExpiratoryPulmonaryResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
-    GetInspiratoryFlow().SetValue(0, VolumePerTimeUnit::L_Per_s);
 
     // Muscle Pressure Waveform
     m_InspiratoryRiseFraction = 0;
@@ -2076,6 +2078,17 @@ namespace pulse
         GetTotalAlveolarVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
         GetTotalDeadSpaceVentilation().SetValue((AnatomicDeadSpace_L + AlveolarDeadSpace_L) * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
 
+        //Calculate Ratios
+        GetPhysiologicDeadSpaceTidalVolumeRatio().SetValue(GetPhysiologicDeadSpace(VolumeUnit::L) / TidalVolume_L);
+        if (m_data.HasCardiovascular())
+        {
+          GetVentilationPerfusionRatio().SetValue(GetTotalPulmonaryVentilation(VolumePerTimeUnit::L_Per_min) / m_data.GetCardiovascular().GetPulmonaryMeanCapillaryFlow(VolumePerTimeUnit::L_Per_min));
+        }
+        else
+        {
+          GetVentilationPerfusionRatio().Invalidate();
+        }
+
         m_TopBreathTotalVolume_L = totalLungVolume_L;
         m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
         m_PeakAlveolarPressure_cmH2O = m_BottomBreathAlveoliPressure_cmH2O;
@@ -2165,9 +2178,7 @@ namespace pulse
       GetPositiveEndExpiratoryPressure().SetValue(0, PressureUnit::cmH2O);
       GetIntrinsicPositiveEndExpiredPressure().SetValue(0, PressureUnit::cmH2O);
       GetMaximalInspiratoryPressure().SetValue(0, PressureUnit::cmH2O);
-      GetTotalPulmonaryVentilation().SetValue(0, VolumePerTimeUnit::L_Per_min);
       GetSpecificVentilation().SetValue(0);
-      GetTotalAlveolarVentilation().SetValue(0, VolumePerTimeUnit::L_Per_min);
       GetTotalDeadSpaceVentilation().SetValue(0, VolumePerTimeUnit::L_Per_min);
       GetEndTidalCarbonDioxideFraction().SetValue(0);
       GetEndTidalCarbonDioxidePressure().SetValue(0, PressureUnit::cmH2O);

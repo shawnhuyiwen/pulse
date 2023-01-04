@@ -18,7 +18,6 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TotalWorkRateLevel", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "FatigueLevel", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "AchievedExerciseLevel", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Insulin", "PropertyName": "BloodConcentration", "Unit": "ug/mL" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Sodium", "PropertyName": "BloodConcentration", "Unit": "ug/mL" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "GutVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },

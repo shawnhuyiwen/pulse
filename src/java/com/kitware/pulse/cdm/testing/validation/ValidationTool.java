@@ -168,7 +168,7 @@ public abstract class ValidationTool
           String name = cName.getStringCellValue();
           if(name == null||name.isEmpty())
             break;
-          if(name.equals("Gender"))
+          if(name.equals("Sex"))
           {
             if(patient == null)
             {

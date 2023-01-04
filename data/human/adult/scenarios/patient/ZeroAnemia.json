@@ -18,19 +18,9 @@
   "DataRequestFile": [
     "StandardDataRequests.json"
   ],
-  "DataRequestManager":
-  {
-    "DataRequest":
-    [
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL" },
-      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Pressure", "Unit": "mmHg" }
-    ]
-  },
   "AnyAction":
   [
-    { "AdvanceTime": { 
+    { "AdvanceTime": {
     "Action": { "Comment": "Advance some time" },
     "Time": { "ScalarTime": { "Value": 2, "Unit": "min" }}}}
   ]
