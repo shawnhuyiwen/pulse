@@ -429,7 +429,18 @@ namespace pulse
         {
           m_BaroreceptorEffectivenessParameter = normalizedMAP * 0.005;
         }
-
+      }
+      else if (meanArterialPressure_mmHg > 43 && meanArterialPressure_mmHg < 47)
+      {
+        if (m_PreviousBloodVolume_mL - m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL) > 0)
+        {
+          m_BaroreceptorEffectivenessParameter -= 0.0001;
+          if (m_BaroreceptorEffectivenessParameter < -0.25)
+          {
+            m_BaroreceptorEffectivenessParameter = -0.25;
+          }
+        }
+        // keep previous parameter if blood volume is not decreasing.
       }
       else if (meanArterialPressure_mmHg <= 43 && meanArterialPressure_mmHg >= 41)
       {
