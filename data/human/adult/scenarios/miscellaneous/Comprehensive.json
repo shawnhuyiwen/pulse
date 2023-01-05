@@ -213,7 +213,7 @@
         "Compartment": "VenaCava",
         "FlowRate": {
           "ScalarVolumePerTime": {
-            "Value": 50.0,
+            "Value": 10.0,
             "Unit": "mL/min"
           }
         }
