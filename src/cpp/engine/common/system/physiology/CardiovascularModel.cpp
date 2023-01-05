@@ -492,41 +492,57 @@ namespace pulse
       m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMicrovasculature1ToLeftLeg2));
 
 
-      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial2ToGround));
-      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial2ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial3ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial3ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium2ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium3ToGround));
 
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmBone1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmFat1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMuscle1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmSkin1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm2ToGround));
 
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmBone1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmFat1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMuscle1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmSkin1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm2ToGround));
 
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoBone1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoFat1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMuscle1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoSkin1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso2ToGround));
 
-      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmBone1ToGround));
-      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmFat1ToGround));
-      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMuscle1ToGround));
-      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmSkin1ToGround));
-      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg2ToGround));
 
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegBone1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegFat1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMuscle1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegSkin1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg2ToGround));
 
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Liver1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Liver2ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Splanchnic1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Spleen1ToGround));
       m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LargeIntestine1ToGround));
@@ -539,8 +555,11 @@ namespace pulse
         m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftKidney3ToVenaCava2));
         m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightKidney3ToVenaCava2));
 
-        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftKidney2ToGround));
-        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightKidney2ToGround));
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryCompliance));
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryCompliance));
+
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalVeinCompliance));
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalVeinCompliance));
       }
     }
     else
@@ -616,6 +635,8 @@ namespace pulse
         m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftKidney2ToVenaCava1));
         m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightKidney2ToVenaCava1));
 
+        //TODO: Aaron: isn't this path removed when the renal system is enabled? Shouldn't you take here the paths RightRenalArteryCompliance, RightGlomerularCapillariesCompliance, etc?
+        // Probably you don't want to optimize/modify these values, but some blood volume are not considered in this way. Right?
         m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftKidney1ToGround));
         m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightKidney1ToGround));
       }
@@ -1189,19 +1210,28 @@ namespace pulse
 
     // Compute blood volume
     double blood_mL = 0;
+    Info("Evaluating blood volume -----------------------------------");
     for (SELiquidCompartment* cmpt : m_data.GetCompartments().GetVascularLeafCompartments())
     {
       if (cmpt->HasVolume() && cmpt != m_Pericardium) //Don't include pericardium
       {
-        //Info(cmpt->GetName() + " Has Volume");
-        //for (auto n : cmpt->GetNodeMapping().GetNodes())
-        //  if(n->HasVolume())
-        //    Info("  -"+n->GetName());
+        // Info(cmpt->GetName() + " Has Volume");
+        for (auto n : cmpt->GetNodeMapping().GetNodes())
+         if(n->HasVolume()){
+          //  Info("  - "+n->GetName() + " : " +std::to_string(cmpt->GetVolume(VolumeUnit::mL)) + " [mL]. Total " + std::to_string(blood_mL + cmpt->GetVolume(VolumeUnit::mL)));
+            m_ss << "Compartment - " << std::setw(30) << cmpt->GetName() <<
+              " - " << std::setw(30) << n->GetName() <<
+              " Volume(mL):"          << std::setw(10) << cmpt->GetVolume(VolumeUnit::mL) <<
+              " Total(mL):"           << std::setw(10) << blood_mL + cmpt->GetVolume(VolumeUnit::mL);
+            Info(m_ss);
+            }
+
         blood_mL += cmpt->GetVolume(VolumeUnit::mL);
       }
       //else
       //  Info(cmpt->GetName() + " No Volume");
     }
+    Info("-----------------------------------");
     GetBloodVolume().SetValue(blood_mL, VolumeUnit::mL);
   }
 

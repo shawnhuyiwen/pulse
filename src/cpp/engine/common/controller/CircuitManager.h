@@ -881,17 +881,22 @@ namespace pulse
     DEFINE_STATIC_STRING(GroundToAbdominalCavity1);
     // Brain
     DEFINE_STATIC_STRING(Aorta5ToExtracranial1);
-    DEFINE_STATIC_STRING(Extracranial1ToExtracranial2);
+    DEFINE_STATIC_STRING(Extracranial1ToGround);
     DEFINE_STATIC_STRING(Extracranial2ToGround);
+    DEFINE_STATIC_STRING(Extracranial3ToGround);
+    DEFINE_STATIC_STRING(Extracranial1ToExtracranial2);
     DEFINE_STATIC_STRING(Extracranial2ToExtracranial3);
     DEFINE_STATIC_STRING(Extracranial3ToVenaCava2);
     DEFINE_STATIC_STRING(Aorta5ToIntracranial1);
-    DEFINE_STATIC_STRING(Intracranial1ToIntracranial2);
+    DEFINE_STATIC_STRING(Intracranial1ToGround);
     DEFINE_STATIC_STRING(Intracranial2ToGround);
+    DEFINE_STATIC_STRING(Intracranial3ToGround);
+    DEFINE_STATIC_STRING(Intracranial1ToIntracranial2);
     DEFINE_STATIC_STRING(Intracranial2ToIntracranial3);
     DEFINE_STATIC_STRING(Intracranial3ToVenaCava2);
     // Gut
     DEFINE_STATIC_STRING(Aorta5ToGut1);
+    DEFINE_STATIC_STRING(Gut1ToGround);
     // Large Intestine
     DEFINE_STATIC_STRING(Gut1ToLargeIntestine1);
     DEFINE_STATIC_STRING(LargeIntestine1ToGround);
@@ -899,6 +904,7 @@ namespace pulse
     // Left Arm
     DEFINE_STATIC_STRING(Aorta5ToLeftArm1);
     DEFINE_STATIC_STRING(LeftArm1ToGround);
+    DEFINE_STATIC_STRING(LeftArm2ToGround);
     DEFINE_STATIC_STRING(LeftArm1ToLeftArmBone1);
     DEFINE_STATIC_STRING(LeftArmBone1ToGround);
     DEFINE_STATIC_STRING(LeftArmBone1ToLeftArm2);
@@ -918,12 +924,15 @@ namespace pulse
     // Left Kidney
     DEFINE_STATIC_STRING(Aorta5ToLeftKidney1);
     DEFINE_STATIC_STRING(LeftKidney1ToLeftKidney2);
+    DEFINE_STATIC_STRING(LeftKidney1ToGround);
     DEFINE_STATIC_STRING(LeftKidney2ToGround);
+    DEFINE_STATIC_STRING(LeftKidney3ToGround);
     DEFINE_STATIC_STRING(LeftKidney2ToLeftKidney3);
     DEFINE_STATIC_STRING(LeftKidney3ToVenaCava2);
     // Left Leg
     DEFINE_STATIC_STRING(Aorta5ToLeftLeg1);
     DEFINE_STATIC_STRING(LeftLeg1ToGround);
+    DEFINE_STATIC_STRING(LeftLeg2ToGround);
     DEFINE_STATIC_STRING(LeftLeg1ToLeftLegBone1);
     DEFINE_STATIC_STRING(LeftLegBone1ToGround);
     DEFINE_STATIC_STRING(LeftLegBone1ToLeftLeg2);
@@ -943,13 +952,16 @@ namespace pulse
     // Liver
     DEFINE_STATIC_STRING(Gut1ToLiver1);
     DEFINE_STATIC_STRING(Liver1ToGround);
+    DEFINE_STATIC_STRING(Liver2ToGround);
     DEFINE_STATIC_STRING(PortalVein1ToLiver1);
     DEFINE_STATIC_STRING(Liver1ToLiver2);
     DEFINE_STATIC_STRING(Liver2ToVenaCava2);
     // Myocardium
     DEFINE_STATIC_STRING(Aorta5ToMyocardium1);
     DEFINE_STATIC_STRING(Myocardium1ToMyocardium2);
+    DEFINE_STATIC_STRING(Myocardium1ToGround);
     DEFINE_STATIC_STRING(Myocardium2ToGround);
+    DEFINE_STATIC_STRING(Myocardium3ToGround);
     DEFINE_STATIC_STRING(Myocardium2ToMyocardium3);
     DEFINE_STATIC_STRING(Myocardium3ToVenaCava2);
     // Pericardium
@@ -958,6 +970,7 @@ namespace pulse
     // Right Arm
     DEFINE_STATIC_STRING(Aorta5ToRightArm1);
     DEFINE_STATIC_STRING(RightArm1ToGround);
+    DEFINE_STATIC_STRING(RightArm2ToGround);
     DEFINE_STATIC_STRING(RightArm1ToRightArmBone1);
     DEFINE_STATIC_STRING(RightArmBone1ToGround);
     DEFINE_STATIC_STRING(RightArmBone1ToRightArm2);
@@ -977,12 +990,15 @@ namespace pulse
     // Right Kidney
     DEFINE_STATIC_STRING(Aorta5ToRightKidney1);
     DEFINE_STATIC_STRING(RightKidney1ToRightKidney2);
+    DEFINE_STATIC_STRING(RightKidney1ToGround);
     DEFINE_STATIC_STRING(RightKidney2ToGround);
+    DEFINE_STATIC_STRING(RightKidney3ToGround);
     DEFINE_STATIC_STRING(RightKidney2ToRightKidney3);
     DEFINE_STATIC_STRING(RightKidney3ToVenaCava2);
     // Right Leg
     DEFINE_STATIC_STRING(Aorta5ToRightLeg1);
     DEFINE_STATIC_STRING(RightLeg1ToGround);
+    DEFINE_STATIC_STRING(RightLeg2ToGround);
     DEFINE_STATIC_STRING(RightLeg1ToRightLegBone1);
     DEFINE_STATIC_STRING(RightLegBone1ToGround);
     DEFINE_STATIC_STRING(RightLegBone1ToRightLeg2);
@@ -1014,6 +1030,7 @@ namespace pulse
     // Torso
     DEFINE_STATIC_STRING(Aorta5ToTorso1);
     DEFINE_STATIC_STRING(Torso1ToGround);
+    DEFINE_STATIC_STRING(Torso2ToGround);
     DEFINE_STATIC_STRING(Torso1ToTorsoBone1);
     DEFINE_STATIC_STRING(TorsoBone1ToGround);
     DEFINE_STATIC_STRING(TorsoBone1ToTorso2);
