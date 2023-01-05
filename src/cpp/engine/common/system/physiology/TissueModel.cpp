@@ -1166,7 +1166,7 @@ namespace pulse
     GetExtracellularFluidVolume().SetValue(ecVol_mL, VolumeUnit::mL);
     GetIntracellularFluidVolume().SetValue(icvol_mL, VolumeUnit::mL);
     GetExtravascularFluidVolume().SetValue(ecVol_mL + icvol_mL, VolumeUnit::mL);
-    m_data.GetDataTrack().Probe("TotalFluid_mL", ecVol_mL + icvol_mL + m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL));
+    //m_data.GetDataTrack().Probe("TotalFluid_mL", ecVol_mL + icvol_mL + m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL));
 
 
     // Fasciculations (due to calcium deficiency) - Currently inactive for model improvement
