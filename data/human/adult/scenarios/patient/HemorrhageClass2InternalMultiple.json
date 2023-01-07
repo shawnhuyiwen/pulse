@@ -25,7 +25,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "SpleenVasculature",
+        "Compartment": "Spleen",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 60.0,
@@ -38,7 +38,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "LiverVasculature",
+        "Compartment": "Liver",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 60.0,
@@ -51,7 +51,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "LeftKidneyVasculature",
+        "Compartment": "LeftKidney",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 60.0,
@@ -73,7 +73,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "SpleenVasculature",
+        "Compartment": "Spleen",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"
@@ -85,7 +85,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "LiverVasculature",
+        "Compartment": "Liver",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"
@@ -97,7 +97,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "LeftKidneyVasculature",
+        "Compartment": "LeftKidney",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"

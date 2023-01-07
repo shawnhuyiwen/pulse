@@ -50,7 +50,7 @@ namespace HowTo_PatientStates
       List<SEAction> injury_set_1 = new List<SEAction>();
       SEHemorrhage h1 = new SEHemorrhage();
       h1.SetType(eHemorrhage_Type.External);
-      h1.SetCompartment("RightLeg");
+      h1.SetCompartment(eHemorrhage_Compartment.RightLeg);
       h1.GetSeverity().SetValue(0.33);
       injury_set_1.Add(h1);
       injury_sets.Add(injury_set_1);
@@ -60,7 +60,7 @@ namespace HowTo_PatientStates
       List<SEAction> injury_set_2 = new List<SEAction>();
       SEHemorrhage h2 = new SEHemorrhage();
       h2.SetType(eHemorrhage_Type.External);
-      h2.SetCompartment("RightLeg");
+      h2.SetCompartment(eHemorrhage_Compartment.RightLeg);
       h2.GetSeverity().SetValue(0.66);
       injury_set_2.Add(h2);
       injury_sets.Add(injury_set_2);

@@ -17,22 +17,33 @@ const std::string& eBrainInjury_Type_Name(eBrainInjury_Type m)
   return CDM_BIND::BrainInjuryData::eType_Name((CDM_BIND::BrainInjuryData::eType)m);
 }
 
-const std::string& eHemorrhage_Type_Name(eHemorrhage_Type m)
+const std::string& eHemorrhage_Compartment_Name(eHemorrhage_Compartment c)
 {
-  return CDM_BIND::HemorrhageData::eType_Name((CDM_BIND::HemorrhageData::eType)m);
+  return CDM_BIND::HemorrhageData::eCompartment_Name((CDM_BIND::HemorrhageData::eCompartment)c);
+}
+eHemorrhage_Compartment eHemorrhage_Compartment_Parse(const std::string& s)
+{
+  CDM_BIND::HemorrhageData::eCompartment cmpt;
+  if (!CDM_BIND::HemorrhageData::eCompartment_Parse(s, &cmpt))
+    return eHemorrhage_Compartment::None;
+  return (eHemorrhage_Compartment)cmpt;
+}
+const std::string& eHemorrhage_Type_Name(eHemorrhage_Type t)
+{
+  return CDM_BIND::HemorrhageData::eCompartment_Name((CDM_BIND::HemorrhageData::eCompartment)t);
 }
 
-const std::string& eIntubation_Type_Name(eIntubation_Type m)
+const std::string& eIntubation_Type_Name(eIntubation_Type t)
 {
-  return CDM_BIND::IntubationData::eType_Name((CDM_BIND::IntubationData::eType)m);
+  return CDM_BIND::IntubationData::eType_Name((CDM_BIND::IntubationData::eType)t);
 }
 
-const std::string& eSubstanceAdministration_Route_Name(eSubstanceAdministration_Route m)
+const std::string& eSubstanceAdministration_Route_Name(eSubstanceAdministration_Route r)
 {
-  return CDM_BIND::SubstanceBolusData::eRoute_Name((CDM_BIND::SubstanceBolusData::eRoute)m);
+  return CDM_BIND::SubstanceBolusData::eRoute_Name((CDM_BIND::SubstanceBolusData::eRoute)r);
 }
 
-const std::string& eSupplementalOxygen_Device_Name(eSupplementalOxygen_Device m)
+const std::string& eSupplementalOxygen_Device_Name(eSupplementalOxygen_Device n)
 {
-  return CDM_BIND::SupplementalOxygenData::eDevice_Name((CDM_BIND::SupplementalOxygenData::eDevice)m);
+  return CDM_BIND::SupplementalOxygenData::eDevice_Name((CDM_BIND::SupplementalOxygenData::eDevice)n);
 }

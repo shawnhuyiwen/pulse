@@ -1183,17 +1183,17 @@ namespace pulse
       if (trk->Compartment == nullptr)
       {
         // Allow shorthand naming
-        trk->Compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment());
+        trk->Compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartmentName() + "Vasculature");
         //Add Vasculature to the compartment name to grab the cardiovascular compartment
         if (trk->Compartment == nullptr)
         {
-          trk->Compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment() + "Vasculature");
+          trk->Compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartmentName());
         }
         //Unsupported compartment
         if (trk->Compartment == nullptr)
         {
           /// \error Error: Removing invalid Hemorrhage due to unsupported compartment
-          Error("Removing invalid Hemorrhage due to unsupported compartment : " + h->GetCompartment());
+          Error("Removing invalid Hemorrhage due to unsupported compartment : " + h->GetCompartmentName());
           invalid_hemorrhages.push_back(h);
           continue;
         }

@@ -76,7 +76,7 @@ PulseThread::PulseThread(const std::string& logfile) : m_thread()
   // Create and initialize our actions
   m_infusion = new SESubstanceCompoundInfusion(*saline);
   m_hemorrhage = new SEHemorrhage();
-  m_hemorrhage->SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage  
+  m_hemorrhage->SetCompartment(eHemorrhage_Compartment::RightLeg);//the location of the hemorrhage  
 
   // Start advancing time in a seperate thread
   m_runThread = true;

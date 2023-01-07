@@ -27,7 +27,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0

@@ -5,6 +5,7 @@ option csharp_namespace = "pulse.study.bind.patient_variability";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Patient.proto";
+import "pulse/cdm/bind/PatientActions.proto";
 import "pulse/cdm/bind/TestReport.proto";
 
 
@@ -48,8 +49,7 @@ message PatientStateData
   message HemorrhageData
   {
     // Initial Conditions
-    string                                                Compartment                       = 1;/**<< @brief Hemorrhage Compartment. */
-    double                                                Severity                          = 2;/**<< @brief Hemorrhage Severity. */
+    pulse.cdm.bind.HemorrhageData                         Action                            = 1;/**<< @brief Hemorrhage Action. */
     double                                                StartTime_s                       = 3;/**<< @brief How far into the simulation does the hemorrhage occur. */
     double                                                TriageTime_s                      = 4;/**<< @brief How far into the simulation does the triage occur. */
 

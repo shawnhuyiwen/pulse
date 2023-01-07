@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
       // Pulse Tests //
       ////////////////////
 
-      //hawbTest.ReadScenarios(hawbDir);
+      hawbTest.ReadScenarios(hawbDir);
       //hawbTest.ReuseEngine(hawbDir);
 
       //hawbTest.CardiovascularCircuitAndTransportTest(hawbDir);

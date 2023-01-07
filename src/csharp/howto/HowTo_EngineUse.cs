@@ -227,7 +227,7 @@ namespace HowTo_UseEngine
       List<SEAction> actions = new List<SEAction>();
 
       SEHemorrhage h = new SEHemorrhage();
-      h.SetExternal(SEHemorrhage.ExternalCompartment.RightLeg);
+      h.SetCompartment(eHemorrhage_Compartment.RightLeg);
       h.GetSeverity().SetValue(0.33);
       // You must set the severity or flow rate of the hemorrhage
       // We suggest you use severity as the flow rate will adjust as the blood pressure lowers

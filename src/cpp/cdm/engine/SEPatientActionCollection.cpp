@@ -998,24 +998,23 @@ bool SEPatientActionCollection::HasHemorrhage() const
       return true;
   return false;
 }
-bool SEPatientActionCollection::HasHemorrhage(const std::string& cmptName) const
+bool SEPatientActionCollection::HasHemorrhage(eHemorrhage_Compartment cmpt) const
 {
-  return GetHemorrhage(cmptName)!=nullptr;
+  return GetHemorrhage(cmpt)!=nullptr;
 }
-SEHemorrhage& SEPatientActionCollection::GetHemorrhage(const std::string& cmptName)
+SEHemorrhage& SEPatientActionCollection::GetHemorrhage(eHemorrhage_Compartment cmpt)
 {
   for (auto h : m_Hemorrhages)
-    if (h->GetCompartment() == cmptName)
+    if (h->GetCompartment() == cmpt)
       return *h;
   SEHemorrhage* h = new SEHemorrhage(GetLogger());
-  h->SetCompartment(cmptName);
   m_Hemorrhages.push_back(h);
   return *h;
 }
-const SEHemorrhage* SEPatientActionCollection::GetHemorrhage(const std::string& cmptName) const
+const SEHemorrhage* SEPatientActionCollection::GetHemorrhage(eHemorrhage_Compartment cmpt) const
 {
   for (auto h : m_Hemorrhages)
-    if (h->GetCompartment() == cmptName)
+    if (h->GetCompartment() == cmpt)
       return h;
   return nullptr;
 }
@@ -1027,9 +1026,9 @@ const std::vector<const SEHemorrhage*> SEPatientActionCollection::GetHemorrhages
 {
   return std::vector<const SEHemorrhage*>(m_Hemorrhages.begin(), m_Hemorrhages.end());
 }
-void SEPatientActionCollection::RemoveHemorrhage(const std::string& cmptName)
+void SEPatientActionCollection::RemoveHemorrhage(eHemorrhage_Compartment cmpt)
 {
-  GetHemorrhage(cmptName).Deactivate();
+  GetHemorrhage(cmpt).Deactivate();
 }
 
 bool SEPatientActionCollection::HasImpairedAlveolarExchangeExacerbation() const
@@ -1616,7 +1615,13 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
   if (actionName == "Exercise")
     return GetExercise().GetScalar(property);
   if (actionName == "Hemorrhage")
-    return GetHemorrhage(cmptName).GetScalar(property);
+  {
+    eHemorrhage_Compartment cmpt = eHemorrhage_Compartment_Parse(cmptName);
+    if(cmpt != eHemorrhage_Compartment::None)
+      return GetHemorrhage(cmpt).GetScalar(property);
+    Error("Unsupported hemorrhage compartment : " + cmptName);
+    return nullptr;
+  }
   if (actionName == "ImpairedAlveolarExchangeExacerbation")
     return GetImpairedAlveolarExchangeExacerbation().GetScalar(property);
   if (actionName == "Intubation")

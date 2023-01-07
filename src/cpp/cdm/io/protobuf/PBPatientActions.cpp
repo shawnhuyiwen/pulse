@@ -774,8 +774,8 @@ void PBPatientAction::Load(const CDM_BIND::HemorrhageData& src, SEHemorrhage& ds
 void PBPatientAction::Serialize(const CDM_BIND::HemorrhageData& src, SEHemorrhage& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  dst.m_Compartment = src.compartment();
-  dst.SetType((eHemorrhage_Type)src.type());
+  dst.SetCompartment((eHemorrhage_Compartment)src.compartment());
+  dst.m_Type = (eHemorrhage_Type)src.type();
   if (src.has_flowrate())
     PBProperty::Load(src.flowrate(), dst.GetFlowRate());
   if (src.has_severity())
@@ -792,8 +792,7 @@ CDM_BIND::HemorrhageData* PBPatientAction::Unload(const SEHemorrhage& src)
 void PBPatientAction::Serialize(const SEHemorrhage& src, CDM_BIND::HemorrhageData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasCompartment())
-    dst.set_compartment(src.m_Compartment);
+  dst.set_compartment((CDM_BIND::HemorrhageData::eCompartment)src.m_Compartment);
   dst.set_type((CDM_BIND::HemorrhageData::eType)src.m_Type);
   if (src.HasFlowRate())
     dst.set_allocated_flowrate(PBProperty::Unload(*src.m_FlowRate));
@@ -1425,7 +1424,7 @@ void PBPatientAction::Load(const CDM_BIND::UseInhalerData& src, SEUseInhaler& ds
   dst.Clear();
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const CDM_BIND::UseInhalerData& src, SEUseInhaler& dst)
+void PBPatientAction::Serialize(const CDM_BIND::UseInhalerData& /*src*/, SEUseInhaler& /*dst*/)
 {
   
 }
@@ -1435,7 +1434,7 @@ CDM_BIND::UseInhalerData* PBPatientAction::Unload(const SEUseInhaler& src)
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEUseInhaler& src, CDM_BIND::UseInhalerData& dst)
+void PBPatientAction::Serialize(const SEUseInhaler& /*src*/, CDM_BIND::UseInhalerData& /*dst*/)
 {
 
 }

@@ -25,7 +25,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "SpleenVasculature",
+        "Compartment": "Spleen",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 60.0,
@@ -47,7 +47,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "SpleenVasculature",
+        "Compartment": "Spleen",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"

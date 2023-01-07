@@ -12,6 +12,7 @@ import com.kitware.pulse.cdm.actions.SEAction;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData;
+import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData.eCompartment;
 import com.kitware.pulse.cdm.conditions.SECondition;
 import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEActiveEvent;
@@ -261,8 +262,7 @@ public class HowTo_EngineUse
 
     // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
     SEHemorrhage h = new SEHemorrhage();
-    h.setType(HemorrhageData.eType.External);
-    h.setCompartment("RightLegVasculature");
+    h.setCompartment(eCompartment.RightLeg);
     h.getSeverity().setValue(0.8);
     // Optionally, You can set the flow rate of the hemorrhage,
     // This needs to be provided the proper flow rate associated with the anatomy

@@ -29,7 +29,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0
@@ -40,7 +40,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "LeftLegVasculature",
+        "Compartment": "LeftLeg",
         "Severity": {
           "Scalar0To1": {
             "Value": 0.0
@@ -60,7 +60,7 @@
   }, {
       "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "Severity": {
           "Scalar0To1": {
             "Value": 0.5
@@ -80,7 +80,7 @@
   }, {
       "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "Severity": {
           "Scalar0To1": {
             "Value": 0.25
@@ -100,7 +100,7 @@
   }, {
       "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "Severity": {
           "Scalar0To1": {
             "Value": 0.0
@@ -120,7 +120,7 @@
   }, {
       "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0

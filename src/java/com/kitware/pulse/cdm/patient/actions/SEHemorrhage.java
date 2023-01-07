@@ -4,45 +4,16 @@
 package com.kitware.pulse.cdm.patient.actions;
 
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData;
+import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData.eCompartment;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData.eType;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 import com.kitware.pulse.cdm.properties.SEScalarVolumePerTime;
 
 public class SEHemorrhage extends SEPatientAction
 {
-  public enum ExternalCompartment
-  {
-    RightLeg("RightLeg"), LeftLeg("LeftLeg"),
-    RightArm("RightArm"), LeftArm("LeftArm"),
-    Skin("Skin"), Muscle("Muscle"), Brain("Brain"),
-    LeftKidney("LeftKidney"), RightKidney("RightKidney"),
-    Liver("Liver"), Spleen("Spleen"), Splanchnic("Splanchnic"), 
-    SmallIntestine("SmallIntestine"), LargeIntestine("LargeIntestine"),
-    Aorta("Aorta"), VenaCava("VenaCava");
-    private String compartment;
-    private ExternalCompartment(String cmpt)
-    {
-      compartment = cmpt;
-    }
-    public String toString(){return compartment;}
-  }
-  
-  public enum InternalCompartment
-  {
-    LeftKidney("LeftKidney"), RightKidney("RightKidney"),
-    Liver("Liver"), Spleen("Spleen"), Splanchnic("Splanchnic"), 
-    SmallIntestine("SmallIntestine"), LargeIntestine("LargeIntestine"),
-    Aorta("Aorta"), VenaCava("VenaCava");
-    private String compartment;
-    private InternalCompartment(String cmpt)
-    {
-      compartment = cmpt;
-    }
-    public String toString(){return compartment;}
-  }
 
   private static final long serialVersionUID = -1654353830396880L;
-  protected String                compartment;
+  protected eCompartment          compartment;
   protected eType                 type;
   protected SEScalarVolumePerTime flowRate;
   protected SEScalar0To1          severity;
@@ -50,7 +21,7 @@ public class SEHemorrhage extends SEPatientAction
   public SEHemorrhage()
   {
     type = eType.External;
-    compartment = null;
+    compartment = eCompartment.None;
     flowRate = null;
     severity = null;
   }
@@ -77,7 +48,7 @@ public class SEHemorrhage extends SEPatientAction
   {
     super.clear();
     type = eType.External;
-    compartment = null;
+    compartment = eCompartment.None;
     if (flowRate != null)
       flowRate.invalidate();
     if (severity != null)
@@ -133,33 +104,17 @@ public class SEHemorrhage extends SEPatientAction
     return type != null;
   }
   
-  public String getCompartment()
+  public eCompartment getCompartment()
   {
     return compartment;
   }
-  public void setCompartment(Enum<?> compartment)
+  public void setCompartment(eCompartment c)
   {
-    this.compartment = compartment.name();
-  }
-  public void setCompartment(String compartment)
-  {
-    this.compartment = compartment;
+    this.compartment = c;
   }
   public boolean hasCompartment()
   {
-    return compartment == null ? false : !compartment.isEmpty();
-  }
-  
-  public void setExternal(ExternalCompartment c)
-  {
-    type = eType.External;
-    compartment = c.toString();
-  }
-  
-  public void setInternal(InternalCompartment c)
-  {
-    type = eType.Internal;
-    compartment = c.toString();
+    return compartment == null ? false : compartment != eCompartment.None;
   }
   
   public boolean hasFlowRate()

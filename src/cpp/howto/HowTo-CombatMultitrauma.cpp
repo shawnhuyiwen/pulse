@@ -87,14 +87,12 @@ void CreateState()
   pe->ProcessAction(pneumo);
 
   SEHemorrhage hemorrhageLeg;
-  hemorrhageLeg.SetType(eHemorrhage_Type::External);
-  hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
+  hemorrhageLeg.SetCompartment(eHemorrhage_Compartment::RightLeg);//the location of the hemorrhage
   hemorrhageLeg.GetSeverity().SetValue(0.8);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
 
   SEHemorrhage hemorrhageVenaCava;
-  hemorrhageVenaCava.SetType(eHemorrhage_Type::External);
-  hemorrhageVenaCava.SetCompartment(pulse::VascularCompartment::VenaCava);//the location of the hemorrhage
+  hemorrhageVenaCava.SetCompartment(eHemorrhage_Compartment::VenaCava);//the location of the hemorrhage
   hemorrhageVenaCava.GetSeverity().SetValue(0.2);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageVenaCava);
 
@@ -155,14 +153,12 @@ void LoadState()
   // Reduce the bleeding by applying manual pressure
   // Just set the hemorrhage rates lower
   SEHemorrhage hemorrhageLeg;
-  hemorrhageLeg.SetType(eHemorrhage_Type::External);
-  hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
+  hemorrhageLeg.SetCompartment(eHemorrhage_Compartment::RightLeg);//the location of the hemorrhage
   hemorrhageLeg.GetSeverity().SetValue(0.15);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
 
   SEHemorrhage hemorrhageVenaCava;
-  hemorrhageVenaCava.SetType(eHemorrhage_Type::External);
-  hemorrhageVenaCava.SetCompartment(pulse::VascularCompartment::VenaCava);//the location of the hemorrhage
+  hemorrhageVenaCava.SetCompartment(eHemorrhage_Compartment::VenaCava);//the location of the hemorrhage
   hemorrhageVenaCava.GetSeverity().SetValue(0);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageVenaCava);
 
@@ -178,8 +174,7 @@ void LoadState()
   AdvanceAndTrackTime_s(60.0 * 4.0, *pe); //4 min
 
   // Apply a tournaquet and stop the bleeding completely
-  hemorrhageLeg.SetType(eHemorrhage_Type::External);
-  hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
+  hemorrhageLeg.SetCompartment(eHemorrhage_Compartment::RightLeg);//the location of the hemorrhage
   hemorrhageLeg.GetSeverity().SetValue(0);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
    
