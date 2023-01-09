@@ -1210,7 +1210,7 @@ namespace pulse
 
     // Compute blood volume
     double blood_mL = 0;
-    Info("Evaluating blood volume -----------------------------------");
+    // Info("Evaluating blood volume -----------------------------------");
     for (SELiquidCompartment* cmpt : m_data.GetCompartments().GetVascularLeafCompartments())
     {
       if (cmpt->HasVolume() && cmpt != m_Pericardium) //Don't include pericardium
@@ -1219,11 +1219,11 @@ namespace pulse
         for (auto n : cmpt->GetNodeMapping().GetNodes())
          if(n->HasVolume()){
           //  Info("  - "+n->GetName() + " : " +std::to_string(cmpt->GetVolume(VolumeUnit::mL)) + " [mL]. Total " + std::to_string(blood_mL + cmpt->GetVolume(VolumeUnit::mL)));
-            m_ss << "Compartment - " << std::setw(30) << cmpt->GetName() <<
-              " - " << std::setw(30) << n->GetName() <<
-              " Volume(mL):"          << std::setw(10) << cmpt->GetVolume(VolumeUnit::mL) <<
-              " Total(mL):"           << std::setw(10) << blood_mL + cmpt->GetVolume(VolumeUnit::mL);
-            Info(m_ss);
+            // m_ss << "Compartment - " << std::setw(30) << cmpt->GetName() <<
+            //   " - " << std::setw(30) << n->GetName() <<
+            //   " Volume(mL):"          << std::setw(10) << cmpt->GetVolume(VolumeUnit::mL) <<
+            //   " Total(mL):"           << std::setw(10) << blood_mL + cmpt->GetVolume(VolumeUnit::mL);
+            // Info(m_ss);
             }
 
         blood_mL += cmpt->GetVolume(VolumeUnit::mL);
@@ -1231,7 +1231,7 @@ namespace pulse
       //else
       //  Info(cmpt->GetName() + " No Volume");
     }
-    Info("-----------------------------------");
+    // Info("-----------------------------------");
     GetBloodVolume().SetValue(blood_mL, VolumeUnit::mL);
   }
 
