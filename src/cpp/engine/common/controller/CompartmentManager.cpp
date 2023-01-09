@@ -159,7 +159,8 @@ for (const std::string& name : pulse::Expanded##bin##Compartment::GetValues()) \
   m_##bin##Compartments.push_back(cmpt); \
   if (!cmpt->HasChildren()) \
     m_##bin##LeafCompartments.push_back(cmpt); \
-} 
+}
+
   void CompartmentManager::StateChange()
   {
     SECompartmentManager::StateChange();
@@ -183,10 +184,14 @@ for (const std::string& name : pulse::Expanded##bin##Compartment::GetValues()) \
       SORT_CMPTS(Urine, Liquid);
     }
     if (m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::On)
-      { SORT_CMPTS_EXPANDED(Vascular, Liquid); }
+    {
+      SORT_CMPTS_EXPANDED(Vascular, Liquid);
+    }
     else
-      { SORT_CMPTS(Vascular, Liquid); }
-    
+    {
+      SORT_CMPTS(Vascular, Liquid);
+    }
+
     // Equipment
     SORT_CMPTS(AnesthesiaMachine, Gas);
     SORT_CMPTS(BagValveMask, Gas);
