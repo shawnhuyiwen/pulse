@@ -168,6 +168,9 @@ int main(int argc, char* argv[])
 
       // Basic Circuit Tests
       //cdmTest.BasicCircuitTest(cdmDir);
+      //cdmTest.MultiphysicsElectricalCircuitTest(cdmDir);
+      //cdmTest.MultiphysicsFluidCircuitTest(cdmDir);
+      //cdmTest.MultiphysicsThermalCircuitTest(cdmDir);
 
       //cdmTest.SeriesRCDCTest(cdmDir);
       //cdmTest.SeriesRCSINTest(cdmDir);

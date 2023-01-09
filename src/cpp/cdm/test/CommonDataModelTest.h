@@ -62,6 +62,9 @@ protected:
 public:
   //Basic Circuit Tests
   void BasicCircuitTest(const std::string& sOutputDirectory);
+  void MultiphysicsElectricalCircuitTest(const std::string& sOutputDirectory);
+  void MultiphysicsFluidCircuitTest(const std::string& sOutputDirectory);
+  void MultiphysicsThermalCircuitTest(const std::string& sOutputDirectory);
 
   void SeriesRCDCTest(const std::string& sOutputDirectory);
   void SeriesRCSINTest(const std::string& sOutputDirectory);
