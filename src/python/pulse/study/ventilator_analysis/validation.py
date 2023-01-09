@@ -6,8 +6,7 @@ import shutil
 import reporting
 import baseline
 
-import pandas as pd
-import matplotlib.pyplot as plt
+from pulse.cdm.utils import plotter
 
 def main(param):
     sep = '_'
@@ -29,7 +28,7 @@ def main(param):
             csvFile = csvDir+name+"Results.csv"
             if not os.path.exists(csvFile):
                 raise ValueError("Unable to load csv file: "+csvFile)
-            csvs[name] = pd.read_csv(csvFile).loc[500:1250]
+            csvs[name] = plotter.read_csv_into_df(csvFile).loc[500:1250]
             imgFilename = imgDir+name+".jpg"
             if not os.path.exists(imgFilename):
                 raise ValueError("Unable to find image file: "+imgFilename)
@@ -93,8 +92,9 @@ def main(param):
         for plot in param['plots']:
             # plots use the time column by default - unless
             # they have a $vs$ in them
-            xLabel = 'Time(s)'
+            xLabel = xParam = 'Time(s)'
             yLabel = '(' + plot.split('(')[-1]
+            yParam = plot.split("$vs$")[0].replace("/", "_Per_")
             name = sel + sep + plot.split('(')[0]
             plotX = param['plotSizes']['default']['x']
             plotY = param['plotSizes']['default']['y']
@@ -110,38 +110,40 @@ def main(param):
             if '$vs$' in plot:
                 splstr = plot.split('$vs$')
                 xLabel = splstr[0]
+                xParam = xLabel.replace("/", "_Per_")
                 yLabel = plot = splstr[1]
+                yParam = yLabel.replace("/", "_Per_")
                 name = sel + sep + xLabel.split('(')[0] + \
                     sep + 'vs' + sep + plot.split('(')[0]
                 plotX = param['plotSizes']['vsPlot']['x']
                 plotY = param['plotSizes']['vsPlot']['y']
 
             valPlots[sel][name] = {}
+            plot = plot.replace("/", "_Per_")
             if plot in csvs[sel].columns:
+                plot_source = plotter.PlotSource()
+                plot_source.df = csvs[sel]
+                plot_source.color = "blue"
+                plot_source.fill = fillPlot
                 if reverseAxes:
-                    ylist = csvs[sel][xLabel]
-                    xlist = csvs[sel][plot]
-                    temp = xLabel
-                    xLabel = yLabel
-                    yLabel = temp
-                else:
-                    xlist = csvs[sel][xLabel]
-                    ylist = csvs[sel][plot]
-                plt.clf()
-                plt.plot(xlist, ylist)
-                plt.xlabel(xLabel)
-                plt.ylabel(yLabel)
-                plt.tight_layout()
-                # check for no fill setting
-                if fillPlot:
-                    plt.fill_between(xlist, ylist, facecolor="blue")
-                # plt.show()
-                plt.title(name)
-                imgName = name + ".png"
-                fig = plt.gcf()
-                fig.set_size_inches(plotX, plotY, forward=True)
-                fig.savefig("./test_results/ventilator_analysis/"+imgName, bbox_inches='tight', dpi=100)
-                valPlots[sel][name]['Pulse'] = imgName
+                    xLabel, yLabel = yLabel, xLabel
+                    xParam, yParam = yParam, xParam
+                    tempParam = xParam
+
+                plot_settings = plotter.PlotSettings()
+                plot_settings.title = name
+                plot_settings.xlabel = xLabel
+                plot_settings.ylabel = yLabel
+                plot_settings.legend = False
+                plot_settings.grid = False
+                plot_settings.right_ticks = False
+                plot_settings.ticklabel_style = "plain"
+
+                if plotter.create_plot(xParam, yParam, [plot_source], plot_settings):
+                    imgName = name + ".png"
+                    plotter.save_current_plot("./test_results/ventilator_analysis/"+imgName, plotX, plotY)
+                    valPlots[sel][name]['Pulse'] = imgName
+                    plotter.clear_current_plot()
 
     # outDF = pd.DataFrame(valTable)
     # writeHtmlTableDocument('PulseValidation', outDF, valTable.keys())
