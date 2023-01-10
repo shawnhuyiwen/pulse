@@ -28,13 +28,14 @@ class PlotSource():
         self.style = "solid"
         self.fill = False
 
-def read_csv_into_df(csv1):
+def read_csv_into_df(csv1, replace_slashes=True):
     df = pd.read_csv(csv1)
     for column in df.columns[1:]:
         # Convert any strings to NaN
         df[column] = pd.to_numeric(df[column], errors='coerce')
         # Replace slashes in units string
-        df.rename(columns={column: column.replace("/", "_Per_")}, inplace=True)
+        if replace_slashes:
+            df.rename(columns={column: column.replace("/", "_Per_")}, inplace=True)
     return df
 
 def create_plot(column: str, plot_sources: [PlotSource], plot_settings : PlotSettings=None):

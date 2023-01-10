@@ -28,7 +28,7 @@ def main(param):
             csvFile = csvDir+name+"Results.csv"
             if not os.path.exists(csvFile):
                 raise ValueError("Unable to load csv file: "+csvFile)
-            csvs[name] = plotter.read_csv_into_df(csvFile).loc[500:1250]
+            csvs[name] = plotter.read_csv_into_df(csvFile, replace_slashes=False).loc[500:1250]
             imgFilename = imgDir+name+".jpg"
             if not os.path.exists(imgFilename):
                 raise ValueError("Unable to find image file: "+imgFilename)
@@ -94,7 +94,7 @@ def main(param):
             # they have a $vs$ in them
             xLabel = xParam = 'Time(s)'
             yLabel = '(' + plot.split('(')[-1]
-            yParam = plot.split("$vs$")[0].replace("/", "_Per_")
+            yParam = plot.split("$vs$")[0]
             name = sel + sep + plot.split('(')[0]
             plotX = param['plotSizes']['default']['x']
             plotY = param['plotSizes']['default']['y']
@@ -109,17 +109,14 @@ def main(param):
             # special plots with vs in them
             if '$vs$' in plot:
                 splstr = plot.split('$vs$')
-                xLabel = splstr[0]
-                xParam = xLabel.replace("/", "_Per_")
-                yLabel = plot = splstr[1]
-                yParam = yLabel.replace("/", "_Per_")
+                xParam = xLabel = splstr[0]
+                yParam = yLabel = plot = splstr[1]
                 name = sel + sep + xLabel.split('(')[0] + \
                     sep + 'vs' + sep + plot.split('(')[0]
                 plotX = param['plotSizes']['vsPlot']['x']
                 plotY = param['plotSizes']['vsPlot']['y']
 
             valPlots[sel][name] = {}
-            plot = plot.replace("/", "_Per_")
             if plot in csvs[sel].columns:
                 plot_source = plotter.PlotSource()
                 plot_source.df = csvs[sel]
