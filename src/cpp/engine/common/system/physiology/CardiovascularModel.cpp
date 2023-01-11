@@ -1295,6 +1295,7 @@ namespace pulse
               m_CirculatoryGraph->AddLink(hemorrhageLink);
               links.push_back(&hemorrhageLink);
               completeStateChange = true;
+              Info("Creating Path " + hemorrhagePath.GetName());
 
               if (h->HasSeverity())
                 calculateResistanceBaseline = true;
@@ -1304,10 +1305,10 @@ namespace pulse
       }
 
       //Set all existing hemorrhage paths
+      double totalFlow_mL_Per_s = trk->Compartment->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s);
       for (auto itr : trk->CmptHemorrhageLinks)
       {
         auto  cmpt = itr.first;
-        double totalVolume_mL = cmpt->GetVolume(VolumeUnit::mL);
 
         for (auto link : itr.second)
         {
@@ -1355,8 +1356,9 @@ namespace pulse
               path->GetResistanceBaseline().Invalidate();
               completeStateChange = true;
             }
-            double mL_Per_s = h->GetFlowRate(VolumePerTimeUnit::mL_Per_s) * path->GetSourceNode().GetVolume(VolumeUnit::mL) / totalVolume_mL;
+            double mL_Per_s = h->GetFlowRate(VolumePerTimeUnit::mL_Per_s) * (cmpt->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s) / totalFlow_mL_Per_s);
             path->GetNextFlowSource().SetValue(mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+            Info("Setting Path " + path->GetName() + " flow to " + pulse::cdm::to_string(mL_Per_s));
           }
         }
       }
