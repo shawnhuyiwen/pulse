@@ -295,11 +295,9 @@ message HemorrhageData
   PatientActionData                         PatientAction                   = 1;
   eCompartment                              Compartment                     = 2;
   eType                                     Type                            = 3;
-  oneof Option
-  {
-    ScalarVolumePerTimeData                 FlowRate                        = 4;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
-    Scalar0To1Data                          Severity                        = 5;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
-  }
+  // NOTE: Flow rate is filled out with the current flow rate when severity is used (hence no option group)
+  ScalarVolumePerTimeData                   FlowRate                        = 4;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
+  Scalar0To1Data                            Severity                        = 5;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
   ScalarVolumeData                          TotalBloodLost                  = 6;/**<<@brief Total blood lost from this hemorrhage. */
 }
 

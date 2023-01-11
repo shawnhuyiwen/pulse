@@ -1029,7 +1029,7 @@ namespace Pulse.CDM
       dst.SetCompartment((eHemorrhage_Compartment)(int)src.Compartment);
       if (src.FlowRate != null)
         PBProperty.Load(src.FlowRate, dst.GetFlowRate());
-      else if (src.Severity != null)
+      if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
     public static pulse.cdm.bind.HemorrhageData Unload(SEHemorrhage src)
@@ -1046,7 +1046,7 @@ namespace Pulse.CDM
       dst.Compartment = (pulse.cdm.bind.HemorrhageData.Types.eCompartment)(int)src.GetCompartment();
       if (src.HasFlowRate())
         dst.FlowRate = PBProperty.Unload(src.GetFlowRate());
-      else if (src.HasSeverity())
+      if (src.HasSeverity())
         dst.Severity = PBProperty.Unload(src.GetSeverity());
     }
     #endregion

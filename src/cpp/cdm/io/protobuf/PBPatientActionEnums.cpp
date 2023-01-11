@@ -23,8 +23,14 @@ const std::string& eHemorrhage_Compartment_Name(eHemorrhage_Compartment c)
 }
 eHemorrhage_Compartment eHemorrhage_Compartment_Parse(const std::string& s)
 {
+  std::string scmpt = s;
+  // Nix 'Vasculature' if its there
+  size_t idx = s.find("Vasculature");
+  if (idx != std::string::npos)
+    scmpt = s.substr(0, idx);
+
   CDM_BIND::HemorrhageData::eCompartment cmpt;
-  if (!CDM_BIND::HemorrhageData::eCompartment_Parse(s, &cmpt))
+  if (!CDM_BIND::HemorrhageData::eCompartment_Parse(scmpt, &cmpt))
     return eHemorrhage_Compartment::None;
   return (eHemorrhage_Compartment)cmpt;
 }

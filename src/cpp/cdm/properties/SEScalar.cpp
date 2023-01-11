@@ -356,7 +356,7 @@ template<typename Unit>
 double SEScalarQuantity<Unit>::GetValue(const Unit& unit) const
 {
   if (m_isnan)
-    throw CommonDataModelException("SEScalarQuantity<Unit>::GetValue of"+unit.GetString()+" is NaN");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::GetValue of "+unit.GetString()+" is NaN");
   if (m_isinf)
     return m_value;
   if (m_value == 0)
