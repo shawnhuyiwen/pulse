@@ -91,6 +91,12 @@ namespace pulse
     if (!dst.m_SaturationCalculator->Setup())
       return false;
 
+    // Configuration //
+    if (!src.has_configuration())
+      ss << "PulseState must have a configuration" << std::endl;
+    else
+      PBConfiguration::Load(src.configuration(), *dst.m_Config, *dst.m_Substances);
+
     // We could preserve the tracker, but I think I want to force the user to set it up
     // again, they should have the data tracks (or easily get them), and they should
     // Set it back up, and set or reset the results file they are using
@@ -178,11 +184,6 @@ namespace pulse
       ss << "PulseState must have a compartment manager" << std::endl;
     else
       PBCompartment::Load(src.compartmentmanager(), *dst.m_Compartments, dst.m_Circuits);
-    // Configuration //
-    if (!src.has_configuration())
-      ss << "PulseState must have a configuration" << std::endl;
-    else
-      PBConfiguration::Load(src.configuration(), *dst.m_Config, *dst.m_Substances);
     if (config != nullptr)
     {// Merge in any provided configuration parameters, I hope you know what you are doing....
       const PulseConfiguration* peConfig = dynamic_cast<const PulseConfiguration*>(config);
