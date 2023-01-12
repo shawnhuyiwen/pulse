@@ -26,13 +26,13 @@ message PlotData
   string                      OutputFilename              = 8;  /**<< @brief Set the desired filename for the generated plot (will default to the chart title if nothing is set for this). */
   optional string             OutputOverride              = 9;  /**<< @brief Specify the path (relative to bin) to output the plot (../verification/Plots/ by default). */
   ePercentageOfBaselineMode   PercentOfBaselineMode       = 10;
-  bool                        RemoveLegends               = 14; /**<< @brief Removes all legends from the generated plot. */
-  optional string             Title                       = 15; /**<< @brief Will override the auto-generated plot title with the supplied string. */
-  string                      VerificationDirectory       = 16; /**<< @brief Set the directory inside Scenarios in which to search for data (i.e. Patient, Drugs, Miscellaneous). */
-  optional string             X1Label                     = 17; /**<< @brief Override the lower X axis label. */
-  BoundsData                  X1Bounds                    = 18; /**<< @brief Specify the desired X1 bounds */
-  optional string             Y1Label                     = 19; /**<< @brief Override the left-side Y axis label. */
-  BoundsData                  Y1Bounds                    = 20; /**<< @brief Specify the desired Y1 bounds. */
+  bool                        RemoveLegends               = 11; /**<< @brief Removes all legends from the generated plot. */
+  optional string             Title                       = 12; /**<< @brief Will override the auto-generated plot title with the supplied string. */
+  string                      VerificationDirectory       = 13; /**<< @brief Set the directory inside Scenarios in which to search for data (i.e. Patient, Drugs, Miscellaneous). */
+  optional string             X1Label                     = 14; /**<< @brief Override the lower X axis label. */
+  BoundsData                  X1Bounds                    = 15; /**<< @brief Specify the desired X1 bounds */
+  optional string             Y1Label                     = 16; /**<< @brief Override the left-side Y axis label. */
+  BoundsData                  Y1Bounds                    = 17; /**<< @brief Specify the desired Y1 bounds. */
 }
 
 /** @brief Data used to configure action event plots. */
@@ -84,13 +84,13 @@ message MultiSourcePlotterData
 /** @brief Data used to specify bounds. */
 message BoundsData
 {
-  optional double           LowerBound                  = 1;  /**<< @brief  Specify the desired lower bound. */
-  optional double           UpperBound                  = 2;  /**<< @brief  Specify the desired upper bound. */
+  optional double           LowerBound                    = 1;  /**<< @brief  Specify the desired lower bound. */
+  optional double           UpperBound                    = 2;  /**<< @brief  Specify the desired upper bound. */
 }
 
 /** @brief Data used to specify image dimensions. */
 message ImageDimensionData
 {
-  double                    Height_pixels               = 3;  /**<< @brief  Specify the desired image height in pixels. */
-  double                    Width_pixels                = 4;  /**<< @brief  Specify the desired image width in pixels. */
+  double                    Height_pixels                 = 1;  /**<< @brief  Specify the desired image height in pixels. */
+  double                    Width_pixels                  = 2;  /**<< @brief  Specify the desired image width in pixels. */
 }
