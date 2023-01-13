@@ -183,6 +183,10 @@ public:
   virtual SEScalarVolume& GetTotalHemorrhagedVolume();
   virtual double GetTotalHemorrhagedVolume(const VolumeUnit& unit) const;
 
+  virtual bool HasTotalPulmonaryPerfusion() const;
+  virtual SEScalarVolumePerTime& GetTotalPulmonaryPerfusion();
+  virtual double GetTotalPulmonaryPerfusion(const VolumePerTimeUnit& unit) const;
+
 protected:
 
   SEScalarPressure*                      m_ArterialPressure;
@@ -223,4 +227,5 @@ protected:
   SEScalarPressureTimePerVolume*         m_SystemicVascularResistance;
   SEScalarVolumePerTime*                 m_TotalHemorrhageRate;
   SEScalarVolume*                        m_TotalHemorrhagedVolume;
+  SEScalarVolumePerTime*                 m_TotalPulmonaryPerfusion;
 };

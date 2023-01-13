@@ -234,6 +234,8 @@ void PBPhysiology::Serialize(const CDM_BIND::CardiovascularSystemData& src, SECa
     PBProperty::Load(src.totalhemorrhagerate(), dst.GetTotalHemorrhageRate());
   if (src.has_totalhemorrhagedvolume())
     PBProperty::Load(src.totalhemorrhagedvolume(), dst.GetTotalHemorrhagedVolume());
+  if (src.has_totalpulmonaryperfusion())
+    PBProperty::Load(src.totalpulmonaryperfusion(), dst.GetTotalPulmonaryPerfusion());
 }
 
 CDM_BIND::CardiovascularSystemData* PBPhysiology::Unload(const SECardiovascularSystem& src)
@@ -315,6 +317,8 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, CDM_BIND::Cardio
     dst.set_allocated_totalhemorrhagerate(PBProperty::Unload(*src.m_TotalHemorrhageRate));
   if (src.HasTotalHemorrhagedVolume())
     dst.set_allocated_totalhemorrhagedvolume(PBProperty::Unload(*src.m_TotalHemorrhagedVolume));
+  if (src.HasTotalPulmonaryPerfusion())
+    dst.set_allocated_totalpulmonaryperfusion(PBProperty::Unload(*src.m_TotalPulmonaryPerfusion));
 }
 
 

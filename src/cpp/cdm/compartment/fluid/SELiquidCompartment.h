@@ -27,6 +27,10 @@ public:
 
   virtual void Balance(BalanceLiquidBy e);// Balance all substances based on a specific property
 
+  virtual bool HasPerfusion() const;
+  virtual SEScalarVolumePerTime& GetPerfusion();
+  virtual double GetPerfusion(const VolumePerTimeUnit& unit) const;
+
   virtual bool HasPH() const;
   virtual SEScalar& GetPH();
   virtual double GetPH() const;
@@ -42,8 +46,9 @@ public:
 protected:
   virtual SELiquidSubstanceQuantity& CreateSubstanceQuantity(SESubstance& substance, bool zeroOut=true);
 
-  SEScalar* m_pH;
-  SEScalar0To1* m_WaterVolumeFraction;
+  SEScalarVolumePerTime* m_Perfusion;
+  SEScalar*              m_pH;
+  SEScalar0To1*          m_WaterVolumeFraction;
 
   std::vector<SELiquidCompartment*> m_Children;
   std::vector<SELiquidCompartment*> m_Leaves;

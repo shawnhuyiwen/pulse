@@ -12,6 +12,7 @@
 
 SELiquidCompartment::SELiquidCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {
+  m_Perfusion = nullptr;
   m_pH = nullptr;
   m_WaterVolumeFraction = nullptr;
 }
@@ -20,21 +21,22 @@ SELiquidCompartment::~SELiquidCompartment()
   Clear();
 }
 
-
 void SELiquidCompartment::Clear()
 {
   SEFluidCompartment::Clear();
+  SAFE_DELETE(m_Perfusion);
   SAFE_DELETE(m_pH);
   SAFE_DELETE(m_WaterVolumeFraction);
   m_Children.clear();
 }
-
 
 const SEScalar* SELiquidCompartment::GetScalar(const std::string& name)
 {
   const SEScalar* s = SEFluidCompartment::GetScalar(name);
   if (s != nullptr)
     return s;
+  if (name.compare("Perfusion") == 0)
+    return &GetPerfusion();
   if (name.compare("PH") == 0)
     return &GetPH(); 
   if (name.compare("WaterVolumeFraction") == 0)
@@ -60,6 +62,37 @@ void SELiquidCompartment::Balance(BalanceLiquidBy by)
     if(HasVolume())
       subQ->Balance(by);
   }
+}
+
+bool SELiquidCompartment::HasPerfusion() const
+{
+  return m_Perfusion == nullptr ? false : m_Perfusion->IsValid();
+}
+SEScalarVolumePerTime& SELiquidCompartment::GetPerfusion()
+{
+  if (m_Perfusion == nullptr)
+    m_Perfusion = new SEScalarVolumePerTime();
+  if (!m_FluidChildren.empty())
+  {
+    double v = const_cast<const SELiquidCompartment*>(this)->GetPerfusion(VolumePerTimeUnit::mL_Per_s);
+    m_Perfusion->SetReadOnly(false);
+    m_Perfusion->SetValue(v, VolumePerTimeUnit::mL_Per_s);
+    m_Perfusion->SetReadOnly(true);
+  }
+  return *m_Perfusion;
+}
+double SELiquidCompartment::GetPerfusion(const VolumePerTimeUnit& unit) const
+{
+  if (!m_Children.empty())
+  {
+    double Perfusion = 0;
+    for (SELiquidCompartment* child : m_Children)
+      Perfusion += child->GetPerfusion().GetValue(unit);
+    return Perfusion;
+  }
+  if (m_Perfusion == nullptr)
+    return SEScalar::dNaN();
+  return m_Perfusion->GetValue(unit);
 }
 
 bool SELiquidCompartment::HasPH() const
