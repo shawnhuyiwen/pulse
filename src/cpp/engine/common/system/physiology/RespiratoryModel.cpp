@@ -1812,19 +1812,19 @@ namespace pulse
         stateChange = true;
       }
 
-      if (m_PatientActions->GetLeftHemothorax().HasBloodVolume())
+      if (m_PatientActions->GetLeftHemothorax().HasTotalBloodVolume())
       {
-        m_PatientActions->GetLeftHemothorax().GetBloodVolume().IncrementValue(leftBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
+        m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume().IncrementValue(leftBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
       }
       else
       {
-        m_PatientActions->GetLeftHemothorax().GetBloodVolume().SetValue(leftBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
+        m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume().SetValue(leftBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
       }
 
-      if (m_PatientActions->GetLeftHemothorax().HasTargetVolume() &&
-        m_PatientActions->GetLeftHemothorax().GetBloodVolume(VolumeUnit::L) >= m_PatientActions->GetLeftHemothorax().GetBloodVolume(VolumeUnit::L))
+      if (m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume(VolumeUnit::L) >
+          (m_data.GetCurrentPatient().GetExpiratoryReserveVolume(VolumeUnit::L) * (1.0 - m_data.GetCurrentPatient().GetRightLungRatio().GetValue())))
       {
-        Info("Hemothorax target volume reached. Setting flow rate to 0.");
+        Error("Maximum right hemothorax volume exceeded. Removing right hemothorax");
         m_PatientActions->GetLeftHemothorax().GetFlowRate().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         if (m_PatientActions->GetLeftHemothorax().HasSeverity())
         {
@@ -1835,6 +1835,14 @@ namespace pulse
       {
         m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToLeftPleural)->GetNextFlowSource().SetValue(factor * leftBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
       }
+
+      if (hasLeftTubeThoracostomy &&
+          m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume().IsNegative() &&
+          m_PatientActions->GetLeftTubeThoracostomy().GetFlowRate().IsPositive())
+      {
+        Info("Left Tube Thoracostomy has removed all blood. Setting flow rate to 0.");
+        m_PatientActions->GetLeftTubeThoracostomy().GetFlowRate().SetValue(0, VolumePerTimeUnit::L_Per_s);
+      }
     }
     else if (hasLeftRespirtoryLeak)
     {
@@ -1842,6 +1850,9 @@ namespace pulse
       m_RespiratoryCircuit->RemovePath(pulse::RespiratoryPath::EnvironmentToLeftPleural);
       stateChange = true;
     }
+
+    if (hasLeftTubeThoracostomy && m_PatientActions->GetLeftTubeThoracostomy().GetFlowRate().IsZero())
+      m_PatientActions->RemoveLeftTubeThoracostomy();
 
     // Right ---------------------------------------------------------------------------------------
 
@@ -1885,19 +1896,19 @@ namespace pulse
         stateChange = true;
       }
 
-      if (m_PatientActions->GetRightHemothorax().HasBloodVolume())
+      if (m_PatientActions->GetRightHemothorax().HasTotalBloodVolume())
       {
-        m_PatientActions->GetRightHemothorax().GetBloodVolume().IncrementValue(rightBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
+        m_PatientActions->GetRightHemothorax().GetTotalBloodVolume().IncrementValue(rightBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
       }
       else
       {
-        m_PatientActions->GetRightHemothorax().GetBloodVolume().SetValue(rightBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
+        m_PatientActions->GetRightHemothorax().GetTotalBloodVolume().SetValue(rightBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
       }
 
-      if (m_PatientActions->GetRightHemothorax().HasTargetVolume() &&
-        m_PatientActions->GetRightHemothorax().GetBloodVolume(VolumeUnit::L) >= m_PatientActions->GetRightHemothorax().GetBloodVolume(VolumeUnit::L))
+      if(m_PatientActions->GetRightHemothorax().GetTotalBloodVolume(VolumeUnit::L) >
+        (m_data.GetCurrentPatient().GetExpiratoryReserveVolume(VolumeUnit::L) * (m_data.GetCurrentPatient().GetRightLungRatio().GetValue())))
       {
-        Info("Hemothorax target volume reached. Setting flow rate to 0.");
+        Error("Maximum right hemothorax volume exceeded. Removing right hemothorax");
         m_PatientActions->GetRightHemothorax().GetFlowRate().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         if (m_PatientActions->GetRightHemothorax().HasSeverity())
         {
@@ -1908,6 +1919,14 @@ namespace pulse
       {
         m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRightPleural)->GetNextFlowSource().SetValue(factor * rightBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
       }
+
+      if (hasRightTubeThoracostomy &&
+          m_PatientActions->GetRightHemothorax().GetTotalBloodVolume().IsNegative() &&
+          m_PatientActions->GetRightTubeThoracostomy().GetFlowRate().IsPositive())
+      {
+        Info("Right Tube Thoracostomy has removed all blood. Setting flow rate to 0.");
+        m_PatientActions->GetRightTubeThoracostomy().GetFlowRate().SetValue(0, VolumePerTimeUnit::L_Per_s);
+      }
     }
     else if (hasRightRespirtoryLeak)
     {
@@ -1915,6 +1934,9 @@ namespace pulse
       m_RespiratoryCircuit->RemovePath(pulse::RespiratoryPath::EnvironmentToRightPleural);
       stateChange = true;
     }
+
+    if (hasRightTubeThoracostomy && m_PatientActions->GetRightTubeThoracostomy().GetFlowRate().IsZero())
+      m_PatientActions->RemoveRightTubeThoracostomy();
 
     // Update circuit ------------------------------------------------------------------------------
 
@@ -1926,13 +1948,13 @@ namespace pulse
     //Events ---------------------------------------------------------------------------------------
 
     double totalBloodVolume_L = 0.0;
-    if (m_PatientActions->GetLeftHemothorax().HasBloodVolume())
+    if (m_PatientActions->GetLeftHemothorax().HasTotalBloodVolume())
     {
-      totalBloodVolume_L += m_PatientActions->GetLeftHemothorax().GetBloodVolume(VolumeUnit::L);
+      totalBloodVolume_L += m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume(VolumeUnit::L);
     }
-    if (m_PatientActions->GetRightHemothorax().HasBloodVolume())
+    if (m_PatientActions->GetRightHemothorax().HasTotalBloodVolume())
     {
-      totalBloodVolume_L += m_PatientActions->GetRightHemothorax().GetBloodVolume(VolumeUnit::L);
+      totalBloodVolume_L += m_PatientActions->GetRightHemothorax().GetTotalBloodVolume(VolumeUnit::L);
     }
 
     if (totalBloodVolume_L > 1.0)

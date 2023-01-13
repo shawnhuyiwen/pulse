@@ -317,8 +317,7 @@ message HemothoraxData
   eSide                                     Side                            = 2;/**<<@brief @ref eSideTable */
   Scalar0To1Data                            Severity                        = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
   ScalarVolumePerTimeData                   FlowRate                        = 4;/**<<@brief The flow rate of blood exiting the hemothorax. Set to zero to stop the bleeding rate. */
-  ScalarVolumeData                          TargetVolume                    = 5;/**<<@brief Target volume of hemothorax, used when flow rate is specified. */
-  ScalarVolumeData                          BloodVolume                     = 6;/**<<@brief Blood volume of this hemothorax. */
+  ScalarVolumeData                          TotalBloodVolume                = 6;/**<<@brief Total blood volume of this hemothorax. */
 }
 
 /** @brief Generic way to specify the effectivness of alveolar exchange. */

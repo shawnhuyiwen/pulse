@@ -4,20 +4,14 @@ package com.kitware.pulse.howto;
 
 import java.util.List;
 
-import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Enums.eSide;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
-import com.kitware.pulse.cdm.bind.PatientActions.HemothoraxData;
-import com.kitware.pulse.cdm.bind.PatientActions.TubeThoracostomyData;
-import com.kitware.pulse.cdm.datarequests.SEDataRequest;
 import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEEventHandler;
 import com.kitware.pulse.cdm.patient.actions.SEHemothorax;
 import com.kitware.pulse.cdm.patient.actions.SETubeThoracostomy;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.MassUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.PressureUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.TemperatureUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumePerTimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
@@ -70,7 +64,6 @@ public class HowTo_Hemothorax
 
   public static void example()
   {
-    JNIBridge.initialize();
     // Create a Pulse Engine
     PulseEngine pe = new PulseEngine();
     MyListener listener = new MyListener();

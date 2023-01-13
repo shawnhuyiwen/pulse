@@ -382,6 +382,8 @@ namespace pulse
 
 
     m_InternalHemorrhageToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAorta4);
+    m_LeftPulmonaryVeinsLeak = m_RightPulmonaryVeinsLeak = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
+    m_RightPulmonaryVeinsLeak = m_RightPulmonaryVeinsLeak = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak);
     m_GndToAbdominalCavity = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAbdominalCavity1);
     m_AbdominalCavityToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::AbdominalCavity1ToGround);
 
@@ -2599,44 +2601,56 @@ namespace pulse
     double leftBloodFlow_mL_Per_s = 0.0;
     if (m_data.GetActions().GetPatientActions().HasLeftHemothorax())
     {
+      SEHemothorax& leftHemothorax = m_data.GetActions().GetPatientActions().GetLeftHemothorax();
+
       //Blood going out
-      if (m_data.GetActions().GetPatientActions().GetLeftHemothorax().HasFlowRate())
+      if (leftHemothorax.HasSeverity())
       {
-        leftBloodFlow_mL_Per_s = m_data.GetActions().GetPatientActions().GetLeftHemothorax().GetFlowRate(VolumePerTimeUnit::mL_Per_s);
-        if (leftBloodFlow_mL_Per_s > 1)
-        {
-          Error("Hemothorax flow rate is above maximum allowable value. Overriding to 1 mL/s.");
-          leftBloodFlow_mL_Per_s = 1;
-          m_data.GetActions().GetPatientActions().GetLeftHemothorax().GetFlowRate().SetValue(leftBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-        }
-      }
-      else if (m_data.GetActions().GetPatientActions().GetLeftHemothorax().HasSeverity())
-      {
-        double severity = m_data.GetActions().GetPatientActions().GetLeftHemothorax().GetSeverity().GetValue();
-        //Piecewise linear
-        //Massive hemothorax, often defined as greater than .2 liters/hr \cite kim2020chest
-        double leftBloodFlow_L_Per_hr = 0.0;
-        if (severity > 0.9)
-        {
-          //Massive
-          leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.9, 1.0, 0.2, 1.0, severity);
-        }
-        else if (severity > 0.6)
-        {
-          //Medium
-          leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.6, 0.9, 0.1, 0.2, severity);
-        }
-        else if (severity > 0.3)
-        {
-          //Minimal
-          leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.3, 0.6, 0.05, 0.1, severity);
-        }
+        if (leftHemothorax.GetSeverity().IsZero())
+          m_data.GetActions().GetPatientActions().RemoveLeftHemothorax();
         else
         {
-          leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.0, 0.3, 0.0, 0.05, severity);
+          double severity = leftHemothorax.GetSeverity().GetValue();
+          //Piecewise linear
+          //Massive hemothorax, often defined as greater than .2 liters/hr \cite kim2020chest
+          double leftBloodFlow_L_Per_hr = 0.0;
+          if (severity > 0.9)
+          {
+            //Massive
+            leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.9, 1.0, 0.2, 1.0, severity);
+          }
+          else if (severity > 0.6)
+          {
+            //Medium
+            leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.6, 0.9, 0.1, 0.2, severity);
+          }
+          else if (severity > 0.3)
+          {
+            //Minimal
+            leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.3, 0.6, 0.05, 0.1, severity);
+          }
+          else
+          {
+            leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.0, 0.3, 0.0, 0.05, severity);
+          }
+          leftBloodFlow_mL_Per_s = Convert(leftBloodFlow_L_Per_hr, VolumePerTimeUnit::L_Per_hr, VolumePerTimeUnit::mL_Per_s);
+          //leftHemothorax.GetFlowRate().SetValue(leftBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
         }
-        leftBloodFlow_mL_Per_s = Convert(leftBloodFlow_L_Per_hr, VolumePerTimeUnit::L_Per_hr, VolumePerTimeUnit::mL_Per_s);
-        //m_data.GetActions().GetPatientActions().GetLeftHemothorax().GetFlowRate().SetValue(leftBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+      }
+      else if (leftHemothorax.HasFlowRate())
+      {
+        if (leftHemothorax.GetFlowRate().IsZero())
+          m_data.GetActions().GetPatientActions().RemoveLeftHemothorax();
+        else
+        {
+          leftBloodFlow_mL_Per_s = leftHemothorax.GetFlowRate(VolumePerTimeUnit::mL_Per_s);
+          if (leftBloodFlow_mL_Per_s > 1)
+          {
+            Error("Hemothorax flow rate is above maximum allowable value. Overriding to 1 mL/s.");
+            leftBloodFlow_mL_Per_s = 1;
+            leftHemothorax.GetFlowRate().SetValue(leftBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+          }
+        }
       }
       else
       {
@@ -2646,25 +2660,28 @@ namespace pulse
 
     if (leftBloodFlow_mL_Per_s != 0.0)
     {
-      if (!m_CirculatoryCircuit->HasPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak))
+      if (m_LeftPulmonaryVeinsLeak == nullptr)
       {
         //Create the left chest leak in the circuit
-        SEFluidCircuitPath& LeftPulmonaryVeinsLeak = m_CirculatoryCircuit->CreatePath(*m_nLeftPulmonaryVeins, *m_GroundNode, pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
-        LeftPulmonaryVeinsLeak.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        m_LeftPulmonaryVeinsLeak = &m_CirculatoryCircuit->CreatePath(*m_nLeftPulmonaryVeins, *m_GroundNode, pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
+        m_LeftPulmonaryVeinsLeak->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         //Create the left chest leak in the graph
         SELiquidCompartmentLink& vLeftPulmonaryVeinsLeak = m_data.GetCompartments().CreateLiquidLink(*m_LeftPulmonaryVeins, *m_Ground, pulse::VascularLink::LeftPulmonaryVeinsLeak);
-        vLeftPulmonaryVeinsLeak.MapPath(LeftPulmonaryVeinsLeak);
+        vLeftPulmonaryVeinsLeak.MapPath(*m_LeftPulmonaryVeinsLeak);
         m_CirculatoryGraph->AddLink(vLeftPulmonaryVeinsLeak);
         stateChange = true;
       }
 
-      m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak)->GetNextFlowSource().SetValue(leftBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      m_LeftPulmonaryVeinsLeak->GetNextFlowSource().SetValue(leftBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      if (m_data.GetActions().GetPatientActions().GetLeftHemothorax().HasSeverity())// Track the flow for end user
+        m_data.GetActions().GetPatientActions().GetLeftHemothorax().GetFlowRate().SetValue(leftBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
     }
-    else if (m_CirculatoryCircuit->HasPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak))
+    else if (m_LeftPulmonaryVeinsLeak != nullptr)
     {
       //Remove the left chest leak in the circuit and graph
       m_CirculatoryCircuit->RemovePath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
       m_CirculatoryGraph->RemoveLink(pulse::VascularLink::LeftPulmonaryVeinsLeak);
+      m_LeftPulmonaryVeinsLeak = nullptr;
       stateChange = true;
     }
 
@@ -2673,44 +2690,55 @@ namespace pulse
     double rightBloodFlow_mL_Per_s = 0.0;
     if (m_data.GetActions().GetPatientActions().HasRightHemothorax())
     {
+      SEHemothorax& rightHemothorax = m_data.GetActions().GetPatientActions().GetRightHemothorax();
       //Blood going out
-      if (m_data.GetActions().GetPatientActions().GetRightHemothorax().HasFlowRate())
+      if (rightHemothorax.HasSeverity())
       {
-        rightBloodFlow_mL_Per_s = m_data.GetActions().GetPatientActions().GetRightHemothorax().GetFlowRate(VolumePerTimeUnit::mL_Per_s);
-        if (rightBloodFlow_mL_Per_s > 1)
-        {
-          Error("Hemothorax flow rate is above maximum allowable value. Overriding to 1 mL/s.");
-          rightBloodFlow_mL_Per_s = 1;
-          m_data.GetActions().GetPatientActions().GetRightHemothorax().GetFlowRate().SetValue(rightBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-        }
-      }
-      else if (m_data.GetActions().GetPatientActions().GetRightHemothorax().HasSeverity())
-      {
-        double severity = m_data.GetActions().GetPatientActions().GetRightHemothorax().GetSeverity().GetValue();
-        //Piecewise linear
-        //Massive hemothorax, often defined as greater than .2 liters/hr \cite kim2020chest
-        double rightBloodFlow_L_Per_hr = 0.0;
-        if (severity > 0.9)
-        {
-          //Massive
-          rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.9, 1.0, 0.2, 1.0, severity);
-        }
-        else if (severity > 0.6)
-        {
-          //Medium
-          rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.6, 0.9, 0.1, 0.2, severity);
-        }
-        else if (severity > 0.3)
-        {
-          //Minimal
-          rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.3, 0.6, 0.05, 0.1, severity);
-        }
+        if (rightHemothorax.GetSeverity().IsZero())
+          m_data.GetActions().GetPatientActions().RemoveRightHemothorax();
         else
         {
-          rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.0, 0.3, 0.0, 0.05, severity);
+          double severity = rightHemothorax.GetSeverity().GetValue();
+          //Piecewise linear
+          //Massive hemothorax, often defined as greater than .2 liters/hr \cite kim2020chest
+          double rightBloodFlow_L_Per_hr = 0.0;
+          if (severity > 0.9)
+          {
+            //Massive
+            rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.9, 1.0, 0.2, 1.0, severity);
+          }
+          else if (severity > 0.6)
+          {
+            //Medium
+            rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.6, 0.9, 0.1, 0.2, severity);
+          }
+          else if (severity > 0.3)
+          {
+            //Minimal
+            rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.3, 0.6, 0.05, 0.1, severity);
+          }
+          else
+          {
+            rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.0, 0.3, 0.0, 0.05, severity);
+          }
+          rightBloodFlow_mL_Per_s = Convert(rightBloodFlow_L_Per_hr, VolumePerTimeUnit::L_Per_hr, VolumePerTimeUnit::mL_Per_s);
+          //rightHemothorax.GetFlowRate().SetValue(rightBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
         }
-        rightBloodFlow_mL_Per_s = Convert(rightBloodFlow_L_Per_hr, VolumePerTimeUnit::L_Per_hr, VolumePerTimeUnit::mL_Per_s);
-        //m_data.GetActions().GetPatientActions().GetRightHemothorax().GetFlowRate().SetValue(rightBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+      }
+      else if (rightHemothorax.HasFlowRate())
+      {
+        if (rightHemothorax.GetFlowRate().IsZero())
+          m_data.GetActions().GetPatientActions().RemoveRightHemothorax();
+        else
+        {
+          rightBloodFlow_mL_Per_s = rightHemothorax.GetFlowRate(VolumePerTimeUnit::mL_Per_s);
+          if (rightBloodFlow_mL_Per_s > 1)
+          {
+            Error("Hemothorax flow rate is above maximum allowable value. Overriding to 1 mL/s.");
+            rightBloodFlow_mL_Per_s = 1;
+            rightHemothorax.GetFlowRate().SetValue(rightBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+          }
+        }
       }
       else
       {
@@ -2720,25 +2748,28 @@ namespace pulse
 
     if (rightBloodFlow_mL_Per_s != 0.0)
     {
-      if (!m_CirculatoryCircuit->HasPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak))
+      if (m_RightPulmonaryVeinsLeak == nullptr)
       {
         //Create the right chest leak in the circuit
-        SEFluidCircuitPath& RightPulmonaryVeinsLeak = m_CirculatoryCircuit->CreatePath(*m_nRightPulmonaryVeins, *m_GroundNode, pulse::CardiovascularPath::RightPulmonaryVeinsLeak);
-        RightPulmonaryVeinsLeak.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        m_RightPulmonaryVeinsLeak = &m_CirculatoryCircuit->CreatePath(*m_nRightPulmonaryVeins, *m_GroundNode, pulse::CardiovascularPath::RightPulmonaryVeinsLeak);
+        m_RightPulmonaryVeinsLeak->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         //Create the right chest leak in the graph
         SELiquidCompartmentLink& vRightPulmonaryVeinsLeak = m_data.GetCompartments().CreateLiquidLink(*m_RightPulmonaryVeins, *m_Ground, pulse::VascularLink::RightPulmonaryVeinsLeak);
-        vRightPulmonaryVeinsLeak.MapPath(RightPulmonaryVeinsLeak);
+        vRightPulmonaryVeinsLeak.MapPath(*m_RightPulmonaryVeinsLeak);
         m_CirculatoryGraph->AddLink(vRightPulmonaryVeinsLeak);
         stateChange = true;
       }
 
-      m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak)->GetNextFlowSource().SetValue(rightBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      m_RightPulmonaryVeinsLeak->GetNextFlowSource().SetValue(rightBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      if (m_data.GetActions().GetPatientActions().GetRightHemothorax().HasSeverity())// Track the flow for end user
+        m_data.GetActions().GetPatientActions().GetRightHemothorax().GetFlowRate().SetValue(rightBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
     }
-    else if (m_CirculatoryCircuit->HasPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak))
+    else if (m_RightPulmonaryVeinsLeak != nullptr)
     {
       //Remove the right chest leak in the circuit and graph
       m_CirculatoryCircuit->RemovePath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak);
       m_CirculatoryGraph->RemoveLink(pulse::VascularLink::RightPulmonaryVeinsLeak);
+      m_RightPulmonaryVeinsLeak = nullptr;
       stateChange = true;
     }
 

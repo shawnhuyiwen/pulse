@@ -58,6 +58,8 @@ void HowToHemothorax()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateActionDataRequest("LeftHemothorax", "FlowRate", VolumePerTimeUnit::mL_Per_min);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateActionDataRequest("LeftHemothorax", "TotalBloodVolume", VolumeUnit::mL);
 
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowToHemothorax.csv");
 
@@ -118,7 +120,7 @@ void HowToHemothorax()
   auto hemoInfo = pe->GetActionManager().GetPatientActions().GetLeftHemothorax();
   //auto hemoInfo = pe->GetActionManager().GetPatientActions().GetLeftHemothorax();
   pe->GetLogger()->Info(std::stringstream() <<"Hemothorax Flow Rate : " << hemoInfo->GetFlowRate(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
-  pe->GetLogger()->Info(std::stringstream() <<"Hemothorax Blood Volume : " << hemoInfo->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
+  pe->GetLogger()->Info(std::stringstream() <<"Hemothorax Total Blood Volume : " << hemoInfo->GetTotalBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
 
   // Tube thoracostomy should help the patient out
   SETubeThoracostomy tubeThoracostomy;
@@ -153,6 +155,6 @@ void HowToHemothorax()
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Blood Volume : " << pe->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
   pe->GetLogger()->Info(std::stringstream() <<"Hemothorax Flow Rate : " << hemoInfo->GetFlowRate(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
-  pe->GetLogger()->Info(std::stringstream() <<"Hemothorax Blood Volume : " << hemoInfo->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
+  pe->GetLogger()->Info(std::stringstream() <<"Hemothorax Total Blood Volume : " << hemoInfo->GetTotalBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
   pe->GetLogger()->Info("Finished");
 }

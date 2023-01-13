@@ -35,13 +35,9 @@ public:
   virtual SEScalarVolumePerTime& GetFlowRate();
   virtual double GetFlowRate(const VolumePerTimeUnit& unit) const;
 
-  virtual bool HasTargetVolume() const;
-  virtual SEScalarVolume& GetTargetVolume();
-  virtual double GetTargetVolume(const VolumeUnit& unit) const;
-
-  virtual bool HasBloodVolume() const;
-  virtual SEScalarVolume& GetBloodVolume();
-  virtual double GetBloodVolume(const VolumeUnit& unit) const;
+  virtual bool HasTotalBloodVolume() const;
+  virtual SEScalarVolume& GetTotalBloodVolume();
+  virtual double GetTotalBloodVolume(const VolumeUnit& unit) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
@@ -49,6 +45,5 @@ protected:
   eSide                   m_Side;
   SEScalar0To1*           m_Severity;
   SEScalarVolumePerTime*  m_FlowRate;
-  SEScalarVolume*         m_TargetVolume;
-  SEScalarVolume*         m_BloodVolume;
+  SEScalarVolume*         m_TotalBloodVolume;
 };

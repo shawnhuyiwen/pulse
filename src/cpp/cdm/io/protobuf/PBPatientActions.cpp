@@ -825,10 +825,8 @@ void PBPatientAction::Serialize(const CDM_BIND::HemothoraxData& src, SEHemothora
     PBProperty::Load(src.severity(), dst.GetSeverity());
   if (src.has_flowrate())
     PBProperty::Load(src.flowrate(), dst.GetFlowRate());
-  if (src.has_targetvolume())
-    PBProperty::Load(src.targetvolume(), dst.GetTargetVolume());
-  if (src.has_bloodvolume())
-    PBProperty::Load(src.bloodvolume(), dst.GetBloodVolume());
+  if (src.has_totalbloodvolume())
+    PBProperty::Load(src.totalbloodvolume(), dst.GetTotalBloodVolume());
 }
 CDM_BIND::HemothoraxData* PBPatientAction::Unload(const SEHemothorax& src)
 {
@@ -845,10 +843,8 @@ void PBPatientAction::Serialize(const SEHemothorax& src, CDM_BIND::HemothoraxDat
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
   if (src.HasFlowRate())
     dst.set_allocated_flowrate(PBProperty::Unload(*src.m_FlowRate));
-  if (src.HasTargetVolume())
-    dst.set_allocated_targetvolume(PBProperty::Unload(*src.m_TargetVolume));
-  if (src.HasBloodVolume())
-    dst.set_allocated_bloodvolume(PBProperty::Unload(*src.m_BloodVolume));
+  if (src.HasTotalBloodVolume())
+    dst.set_allocated_totalbloodvolume(PBProperty::Unload(*src.m_TotalBloodVolume));
 }
 void PBPatientAction::Copy(const SEHemothorax& src, SEHemothorax& dst)
 {

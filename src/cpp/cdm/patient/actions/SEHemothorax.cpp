@@ -13,8 +13,7 @@ SEHemothorax::SEHemothorax(Logger* logger) : SEPatientAction(logger)
   m_Side=eSide::NullSide;
   m_Severity = nullptr;
   m_FlowRate = nullptr;
-  m_TargetVolume = nullptr;
-  m_BloodVolume = nullptr;
+  m_TotalBloodVolume = nullptr;
 }
 
 SEHemothorax::~SEHemothorax()
@@ -22,8 +21,7 @@ SEHemothorax::~SEHemothorax()
   m_Side = eSide::NullSide;
   SAFE_DELETE(m_Severity);
   SAFE_DELETE(m_FlowRate);
-  SAFE_DELETE(m_TargetVolume);
-  SAFE_DELETE(m_BloodVolume);
+  SAFE_DELETE(m_TotalBloodVolume);
 }
 
 void SEHemothorax::Clear()
@@ -32,8 +30,7 @@ void SEHemothorax::Clear()
   m_Side = eSide::NullSide;
   INVALIDATE_PROPERTY(m_Severity);
   INVALIDATE_PROPERTY(m_FlowRate);
-  INVALIDATE_PROPERTY(m_TargetVolume);
-  INVALIDATE_PROPERTY(m_BloodVolume);
+  INVALIDATE_PROPERTY(m_TotalBloodVolume);
 }
 
 void SEHemothorax::Copy(const SEHemothorax& src, bool preserveState)
@@ -42,16 +39,16 @@ void SEHemothorax::Copy(const SEHemothorax& src, bool preserveState)
   const VolumeUnit* vu = nullptr;
   if (preserveState)
   {
-    if (HasBloodVolume())
+    if (HasTotalBloodVolume())
     {
-      vu = GetBloodVolume().GetUnit();
-      v = GetBloodVolume(*vu);
+      vu = GetTotalBloodVolume().GetUnit();
+      v = GetTotalBloodVolume(*vu);
     }
   }
   PBPatientAction::Copy(src, *this);
   // Put back any state
   if (preserveState && vu != nullptr)
-    GetBloodVolume().SetValue(v, *vu);
+    GetTotalBloodVolume().SetValue(v, *vu);
 }
 
 bool SEHemothorax::IsValid() const
@@ -74,7 +71,6 @@ void SEHemothorax::Deactivate()
   SEPatientAction::Deactivate();
   INVALIDATE_PROPERTY(m_FlowRate);
   INVALIDATE_PROPERTY(m_Severity);
-  INVALIDATE_PROPERTY(m_TargetVolume);
   // Keep the other variables, as they are state
 }
 
@@ -84,10 +80,8 @@ const SEScalar* SEHemothorax::GetScalar(const std::string& name)
     return &GetSeverity();
   if (name.compare("FlowRate") == 0)
     return &GetFlowRate();
-  if (name.compare("TargetVolume") == 0)
-    return &GetTargetVolume();
-  if (name.compare("BloodVolume") == 0)
-    return &GetBloodVolume();
+  if (name.compare("TotalBloodVolume") == 0)
+    return &GetTotalBloodVolume();
   return nullptr;
 }
 
@@ -142,36 +136,19 @@ double SEHemothorax::GetFlowRate(const VolumePerTimeUnit& unit) const
   return m_FlowRate->GetValue(unit);
 }
 
-bool SEHemothorax::HasTargetVolume() const
+bool SEHemothorax::HasTotalBloodVolume() const
 {
-  return m_TargetVolume == nullptr ? false : m_TargetVolume->IsValid();
+  return m_TotalBloodVolume == nullptr ? false : m_TotalBloodVolume->IsValid();
 }
-SEScalarVolume& SEHemothorax::GetTargetVolume()
+SEScalarVolume& SEHemothorax::GetTotalBloodVolume()
 {
-  if (m_TargetVolume == nullptr)
-    m_TargetVolume = new SEScalarVolume();
-  return *m_TargetVolume;
+  if (m_TotalBloodVolume == nullptr)
+    m_TotalBloodVolume = new SEScalarVolume();
+  return *m_TotalBloodVolume;
 }
-double SEHemothorax::GetTargetVolume(const VolumeUnit& unit) const
+double SEHemothorax::GetTotalBloodVolume(const VolumeUnit& unit) const
 {
-  if (m_TargetVolume == nullptr)
+  if (m_TotalBloodVolume == nullptr)
     return SEScalar::dNaN();
-  return m_TargetVolume->GetValue(unit);
-}
-
-bool SEHemothorax::HasBloodVolume() const
-{
-  return m_BloodVolume == nullptr ? false : m_BloodVolume->IsValid();
-}
-SEScalarVolume& SEHemothorax::GetBloodVolume()
-{
-  if (m_BloodVolume == nullptr)
-    m_BloodVolume = new SEScalarVolume();
-  return *m_BloodVolume;
-}
-double SEHemothorax::GetBloodVolume(const VolumeUnit& unit) const
-{
-  if (m_BloodVolume == nullptr)
-    return SEScalar::dNaN();
-  return m_BloodVolume->GetValue(unit);
+  return m_TotalBloodVolume->GetValue(unit);
 }

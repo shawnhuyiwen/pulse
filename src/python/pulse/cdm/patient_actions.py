@@ -836,14 +836,13 @@ class SEHemorrhage(SEPatientAction):
                 "  Severity: {}").format(self._type,self._compartment,self._flow_rate, self._severity)
 
 class SEHemothorax(SEPatientAction):
-    __slots__ = ["_side", "_severity", "_flow_rate", "_target_volume"]
+    __slots__ = ["_side", "_severity", "_flow_rate"]
 
     def __init__(self):
         super().__init__()
         self._side = eSide.NullSide
         self._severity = None
         self._flow_rate = None
-        self._target_volume = None
 
     def clear(self):
         super().clear()
@@ -852,8 +851,7 @@ class SEHemothorax(SEPatientAction):
             self._severity.invalidate()
         if self._flow_rate is not None:
             self._flow_rate.invalidate()
-        if self._target_volume is not None:
-            self._target_volume.invalidate()
+
     def is_valid(self):
         return self.has_side() and (self.has_severity() or self.has_flow_rate())
 
@@ -878,19 +876,11 @@ class SEHemothorax(SEPatientAction):
             self._flow_rate = SEScalarVolumePerTime()
         return self._flow_rate
 
-    def has_target_volume(self):
-        return False if self._target_volume is None else self._target_volume.is_valid()
-    def get_target_volume(self):
-        if self._target_volume is None:
-            self._target_volume = SEScalarVolume()
-        return self._target_volume
-
     def __repr__(self):
         return ("Hemothorax\n"
                 "  Side: {}\n"
                 "  Severity: {}\n"
-                "  Flow Rate: {}\n"
-                "  Target Volume: {}").format(self._side, self._severity, self._flow_rate, self._target_volume)
+                "  Flow Rate: {}").format(self._side, self._severity, self._flow_rate)
 
 class SEImpairedAlveolarExchangeExacerbation(SEPatientAction):
     __slots__ = ["_impaired_surface_area", "_impaired_fraction", "_severity"]

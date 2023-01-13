@@ -6,6 +6,14 @@
     "StandardDataRequests.json",
     "RespiratoryDataRequests.json"
   ],
+  "DataRequestManager":
+  {
+    "DataRequest":
+    [
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "LeftHemothorax", "PropertyName": "FlowRate", "Unit": "mL/s"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "LeftHemothorax", "PropertyName": "TotalBloodVolume", "Unit": "mL"}
+    ]
+  },
   "AnyAction": [{
     "AdvanceTime": {
       "Time": {

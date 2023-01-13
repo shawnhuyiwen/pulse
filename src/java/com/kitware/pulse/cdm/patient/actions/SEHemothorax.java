@@ -14,14 +14,12 @@ public class SEHemothorax extends SEPatientAction
   protected eSide side;
   protected SEScalar0To1 severity;
   protected SEScalarVolumePerTime flowRate;
-  protected SEScalarVolume targetVolume;
 
   public SEHemothorax()
   {
     side = eSide.NullSide;
     severity = null;
     flowRate = null;
-    targetVolume = null;
   }
 
   public void copy(SEHemothorax other)
@@ -38,10 +36,6 @@ public class SEHemothorax extends SEPatientAction
       getFlowRate().set(other.getFlowRate());
     else if (flowRate != null)
       flowRate.invalidate();
-    if (other.targetVolume != null)
-      getTargetVolume().set(other.getTargetVolume());
-    else if (targetVolume != null)
-      targetVolume.invalidate();
   }
 
   @Override
@@ -53,8 +47,6 @@ public class SEHemothorax extends SEPatientAction
       severity.invalidate();
     if (flowRate != null)
       flowRate.invalidate();
-    if (targetVolume != null)
-      targetVolume.invalidate();
   }
 
   @Override
@@ -72,8 +64,6 @@ public class SEHemothorax extends SEPatientAction
       SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
     if(src.hasFlowRate())
       SEScalarVolumePerTime.load(src.getFlowRate(),dst.getFlowRate());
-    if(src.hasTargetVolume())
-      SEScalarVolume.load(src.getTargetVolume(),dst.getTargetVolume());
   }
 
   public static HemothoraxData unload(SEHemothorax src)
@@ -92,8 +82,6 @@ public class SEHemothorax extends SEPatientAction
       dst.setSeverity(SEScalar0To1.unload(src.severity));
     if (src.hasFlowRate())
       dst.setFlowRate(SEScalarVolumePerTime.unload(src.flowRate));
-    if (src.hasTargetVolume())
-      dst.setTargetVolume(SEScalarVolume.unload(src.targetVolume));
   }
 
   public eSide getSide()
@@ -131,25 +119,13 @@ public class SEHemothorax extends SEPatientAction
     return flowRate;
   }
 
-  public boolean hasTargetVolume()
-  {
-    return targetVolume == null ? false : targetVolume.isValid();
-  }
-  public SEScalarVolume getTargetVolume()
-  {
-    if (targetVolume == null)
-      targetVolume = new SEScalarVolume();
-    return targetVolume;
-  }
-
   @Override
   public String toString()
   {
     return "Hemothorax"
         + "\n\tSide : " + getSide()
         + "\n\tSeverity: " + getSeverity()
-        + "\n\tFlowRate: " + getFlowRate()
-        + "\n\tTargetVolume : " + getTargetVolume();
+        + "\n\tFlowRate: " + getFlowRate();
 
   }
 

@@ -197,6 +197,9 @@ namespace pulse
     SEFluidCircuitPath*              m_BrainToVenaCava;
     SEFluidCircuitPath*              m_MyocardiumToVenaCava;
 
+    SEFluidCircuitPath*              m_LeftPulmonaryVeinsLeak;
+    SEFluidCircuitPath*              m_RightPulmonaryVeinsLeak;
+
     SEFluidCircuitPath*              m_GndToPericardium;
     SEFluidCircuitPath*              m_PericardiumToGnd;
 

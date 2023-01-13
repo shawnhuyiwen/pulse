@@ -1087,8 +1087,6 @@ namespace Pulse.CDM
         PBProperty.Load(src.Severity, dst.GetSeverity());
       if (src.FlowRate != null)
         PBProperty.Load(src.FlowRate, dst.GetFlowRate());
-      if (src.TargetVolume != null)
-        PBProperty.Load(src.TargetVolume, dst.GetTargetVolume());
     }
     public static pulse.cdm.bind.HemothoraxData Unload(SEHemothorax src)
     {
@@ -1105,8 +1103,6 @@ namespace Pulse.CDM
         dst.Severity = PBProperty.Unload(src.GetSeverity());
       if (src.HasFlowRate())
         dst.FlowRate = PBProperty.Unload(src.GetFlowRate());
-      if (src.HasTargetVolume())
-        dst.TargetVolume = PBProperty.Unload(src.GetTargetVolume());
     }
     #endregion
 

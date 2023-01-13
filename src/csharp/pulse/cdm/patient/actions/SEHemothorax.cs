@@ -8,14 +8,12 @@ namespace Pulse.CDM
     protected eSide side;
     protected SEScalar0To1 severity;
     protected SEScalarVolumePerTime flow_rate;
-    protected SEScalarVolume target_volume;
 
     public SEHemothorax()
     {
       side = eSide.NullSide;
       severity = null;
       flow_rate = null;
-      target_volume = null;
     }
 
     public override void Clear()
@@ -26,8 +24,6 @@ namespace Pulse.CDM
         severity.Invalidate();
       if (flow_rate != null)
         flow_rate.Invalidate();
-      if (target_volume != null)
-        target_volume.Invalidate();
     }
 
     public override bool IsValid()
@@ -70,15 +66,5 @@ namespace Pulse.CDM
       return flow_rate;
     }
 
-    public bool HasTargetVolume()
-    {
-      return target_volume == null ? false : target_volume.IsValid();
-    }
-    public SEScalarVolume GetTargetVolume()
-    {
-      if (target_volume == null)
-        target_volume = new SEScalarVolume();
-      return target_volume;
-    }
   }
 }
