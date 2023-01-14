@@ -1821,20 +1821,7 @@ namespace pulse
         m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume().SetValue(leftBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
       }
 
-      if (m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume(VolumeUnit::L) >
-          (m_data.GetCurrentPatient().GetExpiratoryReserveVolume(VolumeUnit::L) * (1.0 - m_data.GetCurrentPatient().GetRightLungRatio().GetValue())))
-      {
-        Error("Maximum right hemothorax volume exceeded. Removing right hemothorax");
-        m_PatientActions->GetLeftHemothorax().GetFlowRate().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
-        if (m_PatientActions->GetLeftHemothorax().HasSeverity())
-        {
-          m_PatientActions->GetLeftHemothorax().GetSeverity().SetValue(0.0);
-        }
-      }
-      else
-      {
-        m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToLeftPleural)->GetNextFlowSource().SetValue(factor * leftBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
-      }
+      m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToLeftPleural)->GetNextFlowSource().SetValue(factor * leftBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
 
       if (hasLeftTubeThoracostomy &&
           m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume().IsNegative() &&
@@ -1905,20 +1892,7 @@ namespace pulse
         m_PatientActions->GetRightHemothorax().GetTotalBloodVolume().SetValue(rightBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
       }
 
-      if(m_PatientActions->GetRightHemothorax().GetTotalBloodVolume(VolumeUnit::L) >
-        (m_data.GetCurrentPatient().GetExpiratoryReserveVolume(VolumeUnit::L) * (m_data.GetCurrentPatient().GetRightLungRatio().GetValue())))
-      {
-        Error("Maximum right hemothorax volume exceeded. Removing right hemothorax");
-        m_PatientActions->GetRightHemothorax().GetFlowRate().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
-        if (m_PatientActions->GetRightHemothorax().HasSeverity())
-        {
-          m_PatientActions->GetRightHemothorax().GetSeverity().SetValue(0.0);
-        }
-      }
-      else
-      {
-        m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRightPleural)->GetNextFlowSource().SetValue(factor * rightBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
-      }
+      m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRightPleural)->GetNextFlowSource().SetValue(factor * rightBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
 
       if (hasRightTubeThoracostomy &&
           m_PatientActions->GetRightHemothorax().GetTotalBloodVolume().IsNegative() &&
