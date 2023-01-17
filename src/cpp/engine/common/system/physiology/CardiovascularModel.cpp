@@ -1305,8 +1305,13 @@ namespace pulse
       }
 
       //Set all existing hemorrhage paths
-      double totalFlow_mL_Per_s = trk->Compartment->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s);
-      for (auto itr : trk->CmptHemorrhageLinks)
+      double totalFlow_mL_Per_s = 0;
+      for (auto& itr : trk->CmptHemorrhageLinks)
+      {
+        totalFlow_mL_Per_s += itr.first->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s);
+      }
+
+      for (auto& itr : trk->CmptHemorrhageLinks)
       {
         auto  cmpt = itr.first;
 
