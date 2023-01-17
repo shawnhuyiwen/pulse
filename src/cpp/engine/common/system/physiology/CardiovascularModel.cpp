@@ -1290,7 +1290,7 @@ namespace pulse
             if (m_CirculatoryCircuit->HasNode(node->GetName()) && node->HasVolume())
             {
               SEFluidCircuitPath& hemorrhagePath = m_CirculatoryCircuit->CreatePath(*node, *hemorrhagePathTgt, node->GetName() + hemorrhagePathPrefix + "Hemorrhage");
-              SELiquidCompartmentLink& hemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*cmpt, *hemorrhageLinkTgt, trk->Compartment->GetName() + hemorrhagePathPrefix + "Hemorrhage");
+              SELiquidCompartmentLink& hemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*cmpt, *hemorrhageLinkTgt, cmpt->GetName() + hemorrhagePathPrefix + "Hemorrhage");
               hemorrhageLink.MapPath(hemorrhagePath);
               m_CirculatoryGraph->AddLink(hemorrhageLink);
               links.push_back(&hemorrhageLink);
