@@ -1350,6 +1350,11 @@ namespace pulse
               double resistance_mmHg_min_Per_L = GeneralMath::LinearInterpolator(0.0, 1.0, (2 * resistanceBaseline_mmHg_min_Per_L) / h->GetSeverity().GetValue(), resistanceBaseline_mmHg_min_Per_L, h->GetSeverity().GetValue());
               path->GetNextResistance().SetValue(resistance_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
             }
+            else
+            {
+              // Severity is 0.0
+              path->GetNextResistance().SetValue(0, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+            }
           }
           else if (h->HasFlowRate())
           {
