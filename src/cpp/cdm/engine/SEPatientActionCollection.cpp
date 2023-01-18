@@ -1008,6 +1008,7 @@ SEHemorrhage& SEPatientActionCollection::GetHemorrhage(eHemorrhage_Compartment c
     if (h->GetCompartment() == cmpt)
       return *h;
   SEHemorrhage* h = new SEHemorrhage(GetLogger());
+  h->SetCompartment(cmpt);
   m_Hemorrhages.push_back(h);
   return *h;
 }
