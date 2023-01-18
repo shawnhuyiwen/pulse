@@ -38,6 +38,9 @@
 #include "cdm/properties/SEFunctionVolumeVsTime.h"
 #include "cdm/properties/SEScalarPower.h"
 #include "cdm/utils/FileUtils.h"
+#include "cdm/utils/testing/SETestReport.h"
+#include "cdm/utils/testing/SETestCase.h"
+#include "cdm/utils/testing/SETestSuite.h"
 
 class HowToTracker
 {
@@ -180,152 +183,60 @@ namespace pulse { namespace human_adult_whole_body
 
   void EngineTest::SerializationTest(const std::string& sTestDirectory)
   {
-    // Create the engine and load the patient
-    Engine pe;
-    pe.GetLogger()->SetLogFile("SerializationTestSetup.log");
-    HowToTracker tracker(pe);
+    std::string testName = "SerializationTest";
+    SETestReport testReport(m_Logger);
+    SETestSuite& testSuite = testReport.CreateTestSuite();
+    testSuite.SetName(testName);
+    SETestCase& testCase = testSuite.CreateTestCase();
 
-    /*
-      SESubstanceDataRequest* subRequest;
-
-
-      SECompartmentDataRequest* cmptRequest;
-      cmptRequest = new SECompartmentDataRequest();
-      cmptRequest->Set("Aorta", CDM::enumCompartmentType::Liquid, *O2, "PartialPressure", PressureUnit::mmHg);
-      tracker.m_Requests.push_back(cmptRequest);
-      cmptRequest = new SECompartmentDataRequest();
-      cmptRequest->Set("Carina", CDM::enumCompartmentType::Gas, *O2, "PartialPressure", PressureUnit::cmH2O);
-      tracker.m_Requests.push_back(cmptRequest);
-      cmptRequest = new SECompartmentDataRequest();
-      cmptRequest->Set("Aorta", CDM::enumCompartmentType::Liquid, *CO2, "PartialPressure", PressureUnit::mmHg);
-      tracker.m_Requests.push_back(cmptRequest);
-      cmptRequest = new SECompartmentDataRequest();
-      cmptRequest->Set("Carina", CDM::enumCompartmentType::Gas, *CO2, "PartialPressure", PressureUnit::cmH2O);
-      tracker.m_Requests.push_back(cmptRequest);
-
-
-      SEPhysiologySystemDataRequest* physRequest;
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("ArterialPressure", PressureUnit::mmHg);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("BloodVolume", VolumeUnit::mL);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("CarbonDioxideProductionRate", VolumePerTimeUnit::mL_Per_min);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("CarbonDioxideSaturation");
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("CentralVenousPressure", PressureUnit::mmHg);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("DiastolicArterialPressure", PressureUnit::mmHg);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("GlomerularFiltrationRate", VolumePerTimeUnit::mL_Per_day);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("HeartRate", FrequencyUnit::Per_min);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("HeartStrokeVolume", VolumeUnit::mL);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("LeftAfferentArterioleResistance", FlowResistanceUnit::mmHg_min_Per_mL);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("MeanArterialPressure", PressureUnit::mmHg);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("NeuromuscularBlockLevel");
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("OxygenConsumptionRate", VolumePerTimeUnit::mL_Per_min);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("OxygenSaturation");
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("RenalBloodFlow",VolumePerTimeUnit::mL_Per_min);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("RespirationRate", FrequencyUnit::Per_min);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("SystolicArterialPressure", PressureUnit::mmHg);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("TotalAlveolarVentilation", VolumePerTimeUnit::L_Per_min);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("TotalLungVolume", VolumeUnit::mL);
-      tracker.m_Requests.push_back(physRequest);
-      physRequest = new SEPhysiologySystemDataRequest();
-      physRequest->Set("TranspulmonaryPressure", PressureUnit::cmH2O);
-      tracker.m_Requests.push_back(physRequest);
-      SEEquipmentSystemDataRequest* equipRequest = new SEEquipmentSystemDataRequest();
-      equipRequest->Set("Lead3ElectricPotential", ElectricPotentialUnit::mV);
-      tracker.m_Requests.push_back(equipRequest);
-    */
-
-
-    {// Basic Standard    
-
-      // Gen Basic Standard Baseline
-     /* {
-        pe.GetLogger()->ResetLogFile("BasicStandardResults.log");
-        pe.GetEngineTrack()->RequestData(tracker.m_Requests, "BasicStandardResults.csv");
-        if (!pe.InitializeEngine("StandardMale.json"))
-        {
-          std::cerr << "Could not load initialize engine, check the error" << std::endl;
-          return;
-        }
-        tracker.AdvanceModelTime(120);
-      }*/
-
-      // Gen Basic Standard State
-      /*{
-        pe.GetLogger()->ResetLogFile("BasicStandardStateSetupResults.log");
-        pe.GetEngineTrack()->RequestData(tracker.m_Requests, "BasicStandardStateSetupResults.csv");
-        if (!pe.InitializeEngine("StandardMale.json"))
-        {
-          std::cerr << "Could not load initialize engine, check the error" << std::endl;
-          return;
-        }
-        tracker.AdvanceModelTime(60);
-        pe.SaveState("./BasicStandardState@60s.json");
-      }*/
-
-      // Run Basic Standard State
-      {
-        pe.GetLogger()->SetLogFile("BasicStandardStateResults.log");
-        pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename("BasicStandardStateResults.csv");
-        pe.SerializeFromFile("./BasicStandardState@60s.json");
-        tracker.AdvanceModelTime(60);
-      }
-    }
-    // Several Options to choose how to set up our engine before we save and load
-    if (false)
+    std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+    pe->GetLogger()->LogToConsole(true);
+    pe->GetLogger()->SetLogFile(sTestDirectory+"/SerializationTest.log");
+    pe->GetLogger()->Info(testName);
+    if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
     {
-      pe.GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Albuterol", "MassInBody", MassUnit::ug);
-      pe.GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Albuterol", "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
-      pe.GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Albuterol", "RemainingSystemicMassCleared", MassUnit::ug);
-      InhalerState(&pe, tracker);
+      testCase.AddFailure("Could not load state, check the error");
     }
-    else if (false)
+    if (!pe->AdvanceModelTime(1, TimeUnit::s))
     {
-      pe.GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Succinylcholine", "MassInBody", MassUnit::ug);
-      pe.GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Succinylcholine", "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
-      pe.GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Succinylcholine", "RemainingSystemicMassCleared", MassUnit::ug);
-      pe.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainVasculature", "Succinylcholine", "Concentration", MassPerVolumeUnit::ug_Per_mL);
-      pe.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainTissueExtracellular", "Succinylcholine", "Concentration", MassPerVolumeUnit::ug_Per_mL);
-      InjectSuccsState(&pe, tracker, *pe.GetSubstanceManager().GetSubstance("Succinylcholine"));
+      testCase.AddFailure("Could not advance time");
     }
-    pe.SerializeToFile("./FinalEngineState.json");
+    // Do it again
+    if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+    {
+      testCase.AddFailure("Could not load second state, check the error");
+    }
+    if (!pe->AdvanceModelTime(1, TimeUnit::s))
+    {
+      testCase.AddFailure("Could not advance time");
+    }
+    std::string testState = "./test_results/unit_tests/pulse/SerializationTestState.json";
+    if (!pe->SerializeToFile(testState))
+    {
+      testCase.AddFailure("Could not save state, check the error");
+    }
+    if (!pe->AdvanceModelTime(1, TimeUnit::s))
+    {
+      testCase.AddFailure("Could not advance time");
+    }
+    if (!pe->SerializeFromFile(testState))
+    {
+      testCase.AddFailure("Could not load saved state, check the error");
+    }
+    // Do it again
+    if (!pe->AdvanceModelTime(1, TimeUnit::s))
+    {
+      testCase.AddFailure("Could not advance time");
+    }
+    if (!pe->SerializeFromFile(testState))
+    {
+      testCase.AddFailure("Could not load saved state, check the error");
+    }
+    if (!pe->AdvanceModelTime(1, TimeUnit::s))
+    {
+      testCase.AddFailure("Could not advance time");
+    }
+
+    testReport.SerializeToFile(sTestDirectory + "/" + testName + "Report.json");
   }
 END_NAMESPACE_EX

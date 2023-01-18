@@ -69,6 +69,8 @@ namespace pulse { namespace human_adult_whole_body
 
     testMap.insert(std::make_pair("ReadScenarios", &EngineTest::ReadScenarios));
     testMap.insert(std::make_pair("ReuseEngine", &EngineTest::ReuseEngine));
+    testMap.insert(std::make_pair("SerializationTest", &EngineTest::SerializationTest));
+    testMap.insert(std::make_pair("SetupPatientTest", setupPatientTest));
 
     //Fill a map that ties unit test names to their actual functions
     testMap.insert(std::make_pair("CardiovascularCircuitAndTransportTest", cardioCTTest));
@@ -119,7 +121,6 @@ namespace pulse { namespace human_adult_whole_body
     testMap.insert(std::make_pair("BrainInjuryTest", &EngineTest::BrainInjuryTest));
 
     testMap.insert(std::make_pair("ConditionCombinations", &EngineTest::ConditionCombinations));
-    testMap.insert(std::make_pair("SerializationTest", &EngineTest::SerializationTest));
     testMap.insert(std::make_pair("SolverSpeedTest", &EngineTest::SolverSpeedTest));
 
     testMap.insert(std::make_pair("AcidBaseMathTest", &EngineTest::AcidBaseMathTest));
@@ -140,7 +141,5 @@ namespace pulse { namespace human_adult_whole_body
     testMap.insert(std::make_pair("EmptyBlackBoxTest", &EngineTest::EmptyBlackBoxTest));
     testMap.insert(std::make_pair("ImposeFlowBlackBoxTest", &EngineTest::ImposeFlowBlackBoxTest));
     testMap.insert(std::make_pair("ImposePressureAndFlowBlackBoxTest", &EngineTest::ImposePressureAndFlowBlackBoxTest));
-
-    testMap.insert(std::make_pair("SetupPatientTest", setupPatientTest));
   }
 END_NAMESPACE_EX

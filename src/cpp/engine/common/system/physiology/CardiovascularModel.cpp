@@ -193,6 +193,13 @@ namespace pulse
     m_SystemicVascularComplianceModifier->Invalidate();
 
     DELETE_MAP_SECOND(m_HemorrhageTrack);
+
+    m_HeartCompliancePaths.clear();
+    m_AortaCompliancePaths.clear();
+    m_VenaCavaCompliancePaths.clear();
+    m_PulmonaryCompliancePaths.clear();
+    m_SystemicCompliancePaths.clear();
+    m_SystemicResistancePaths.clear();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -390,8 +397,6 @@ namespace pulse
     m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsToGround));
     m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsToGround));
 
-    m_SystemicResistancePaths.clear();
-    m_SystemicCompliancePaths.clear();
     std::vector<SEFluidCircuitNode*> venousNodes;
     SEFluidCircuitNode* aorta = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::Aorta1);
     for (SEFluidCircuitPath* path : m_CirculatoryCircuit->GetPaths())

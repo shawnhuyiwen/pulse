@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 
       //hawbTest.ConditionCombinations(hawbDir);
       //hawbTest.MultiEngineTest(hawbDir);
-      //hawbTest.SerializationTest(hawbDir);
+      hawbTest.SerializationTest(hawbDir);
       //hawbTest.SolverSpeedTest(hawbDir);
 
       //Acid Base Tests
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
       // I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);
       //cdmTest.ReadSubstanceDirectory(cdmDir);
-      cdmTest.ConvertScenarioLogs(cdmDir);
+      //cdmTest.ConvertScenarioLogs(cdmDir);
 
       // Property Tests
       //cdmTest.ScalarTest(cdmDir);

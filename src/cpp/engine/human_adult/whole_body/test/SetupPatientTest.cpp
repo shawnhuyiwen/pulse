@@ -30,7 +30,7 @@ namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::SetupPatientTest(const std::string& sTestDirectory)
   {
-    m_Logger->SetLogFile(sTestDirectory + "/SetupPatientTest.log");
+    m_Logger->SetLogFile(sTestDirectory + "/SetupPatient.log");
 
     SETestReport testReport = SETestReport(m_Logger);
     SETestSuite& testSuite = testReport.CreateTestSuite();
@@ -74,7 +74,7 @@ namespace pulse { namespace human_adult_whole_body
     expectedPatient.GetBasalMetabolicRate().SetValue(1601.1466, PowerUnit::kcal_Per_day);
     std::stringstream ss;
     ss << "Defaults (male)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -113,14 +113,14 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Defaults (female)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     // Test calling setup multiple times on the same patient
     expectedPass = true;
     ss.str("");
     ss.clear();
     ss << "Set up twice";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     ///////////////////////
     // Standard Patients //
@@ -142,7 +142,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Standard Male";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -162,7 +162,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Standard Female";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     //////////
     // Age //
@@ -174,7 +174,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Age";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -182,7 +182,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Underage";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -190,7 +190,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Over-Age";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     ///////////////////////////////////////////////////////////////
     // Height, Weight, BMI, Ideal Body Weight, Body Fat Fraction //
@@ -201,7 +201,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Too Short";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -209,7 +209,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Too Tall";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -221,7 +221,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Height and Weight (male)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -234,7 +234,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Height and Weight (female)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -242,7 +242,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Severly Underweight BMI (male)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -251,7 +251,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Severly Underweight BMI (female)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -259,7 +259,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Obese BMI (male)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -268,7 +268,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Obese BMI (female)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -277,7 +277,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Underweight BMI (male)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -287,7 +287,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Underweight BMI (female)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -296,7 +296,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Overweight BMI (male)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -306,7 +306,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Overweight BMI (female)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -317,7 +317,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify BMI and Height";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -328,7 +328,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify BMI and Weight";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -340,7 +340,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify BMI (incorrect), Weight, and Height";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -352,7 +352,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Body Fat Fraction";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -360,7 +360,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Less Than Essential Fat Body Fat Fraction (male)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -369,7 +369,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Less Than Essential Fat Body Fat Fraction (female)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -377,7 +377,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Obese Body Fat Fraction (male)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -386,7 +386,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Obese Body Fat Fraction (female)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     ////////////////
     // Heart Rate //
@@ -397,7 +397,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Extremely Low HR Baseline";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -405,7 +405,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Extremely High HR Baseline";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -414,7 +414,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Bradycardic HR Baseline";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -423,7 +423,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Tachycardic HR Baseline";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -434,7 +434,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Computed HR Maximum";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -445,7 +445,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify HR Min/Max";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -454,7 +454,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "HR Max Lower Than HR Baseline";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -463,7 +463,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "HR Min Greater Than HR Baseline";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     ////////////////////////
     // Arterial Pressures //
@@ -478,7 +478,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Systolic Arterial Pressure Baseline";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -490,7 +490,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Diastolic Arterial Pressure Baseline";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -502,7 +502,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Systolic/Diastolic Arterial Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -510,7 +510,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Hypotension (Systolic)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -518,7 +518,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Hypertension (Systolic)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -526,7 +526,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Hypotension (Diastolic)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -534,7 +534,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Hypertension (Diastolic)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -543,7 +543,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Narrow Pulse Pressure";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -555,7 +555,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Mean Arterial Pressure Baseline";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -567,7 +567,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Pulse Pressure Baseline";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -579,7 +579,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Mean Arterial Pressure and Pulse Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -591,7 +591,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Systolic Pressure and Mean Arterial Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -603,7 +603,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Systolic Pressure and Pulse Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -615,7 +615,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Diastolic Pressure and Mean Arterial Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -627,7 +627,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Diastolic Pressure and Pulse Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -640,7 +640,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Systolic, Diastolic, and Mean Arterial Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -653,7 +653,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Systolic, Diastolic, and Pulse Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -666,7 +666,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Systolic, Mean Arterial Pressure, and Pulse Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -679,7 +679,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Diastolic, Mean Arterial Pressure, and Pulse Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -693,7 +693,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Systolic, Diastolic, Mean Arterial Pressure, and Pulse Pressure Baselines";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     //////////////////
     // Blood volume //
@@ -706,7 +706,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Blood Volume";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -715,7 +715,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Hypovolemia";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -724,7 +724,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Excessive Blood Volume";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     //////////////////////
     // Respiration Rate //
@@ -736,7 +736,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Respiration Rate";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -744,7 +744,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Respiration Rate Too High";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -752,7 +752,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Respiration Rate Too Low";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     //////////////////////
     // Right Lung Ratio //
@@ -764,7 +764,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Right Lung Ratio";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -772,7 +772,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Right Lung Ratio Too High";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     expectedPass = false;
     patient.Clear();
@@ -780,7 +780,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Right Lung Ratio Too Low";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, nullptr, expectedPass);
 
     /////////////////////////
     // Respiratory Volumes //
@@ -801,7 +801,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Total Lung Capacity, Functional Residual Capacity, and Residual Volume";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     //////////////////////////
     // Alveoli Surface Area //
@@ -815,7 +815,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Alveoli Surface Area";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     ///////////////////////
     // Skin Surface Area //
@@ -829,7 +829,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Skin Surface Area";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     //////////////////////////
     // Basal Metabolic Rate //
@@ -844,7 +844,7 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Basal Metabolic Rate (male)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     expectedPass = true;
     patient.Clear();
@@ -857,12 +857,12 @@ namespace pulse { namespace human_adult_whole_body
     ss.str("");
     ss.clear();
     ss << "Specify Basal Metabolic Rate (female)";
-    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+    SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
-    testReport.SerializeToFile(sTestDirectory + "/SetupPatientTestReport.json");
+    testReport.SerializeToFile(sTestDirectory + "/SetupPatientReport.json");
   }
 
-  void EngineTest::SetupPatientTest(SETestSuite& testSuite, const std::string& /*sTestDirectory*/, const std::string& sTestName, SEPatient* patient, SEPatient* expectedPatient, bool expectedPass)
+  void EngineTest::SetupPatient(SETestSuite& testSuite, const std::string& /*sTestDirectory*/, const std::string& sTestName, SEPatient* patient, SEPatient* expectedPatient, bool expectedPass)
   {
     TimingProfile timer;
     timer.Start("TestCase");

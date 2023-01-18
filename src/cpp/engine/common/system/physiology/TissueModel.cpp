@@ -103,6 +103,9 @@ namespace pulse
     m_RightAlveoli = nullptr;
     m_LeftPulmonaryCapillaries = nullptr;
     m_RightPulmonaryCapillaries = nullptr;
+
+    m_ConsumptionProdutionTissues.clear();
+    m_CardiacArrestVascularFlows_ml_per_min.clear();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -220,7 +223,6 @@ namespace pulse
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Skin)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Skin);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Spleen)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Spleen);
 
-    m_ConsumptionProdutionTissues.clear();
     m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat));
     m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Bone));
     m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Brain));
