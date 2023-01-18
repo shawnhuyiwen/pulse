@@ -1418,8 +1418,7 @@ namespace pulse
           }
           else
           {
-            if (h->HasSeverity())
-              hemorrhageFlow_mL_Per_s += p->HasNextFlow() ? p->GetNextFlow(VolumePerTimeUnit::mL_Per_s) : 0;
+            hemorrhageFlow_mL_Per_s += p->HasNextFlow() ? p->GetNextFlow(VolumePerTimeUnit::mL_Per_s) : 0;
           }
         }
       }
@@ -1433,10 +1432,9 @@ namespace pulse
        
         if (h->HasSeverity())
           h->GetFlowRate().SetValue(hemorrhageFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-        else
-          hemorrhageFlow_mL_Per_s = h->HasFlowRate() ? h->GetFlowRate(VolumePerTimeUnit::mL_Per_s) : 0;
-        h->GetTotalBloodLost().IncrementValue(hemorrhageFlow_mL_Per_s* m_data.GetTimeStep_s(), VolumeUnit::mL);
+
         totalLossRate_mL_Per_s += hemorrhageFlow_mL_Per_s;
+        h->GetTotalBloodLost().IncrementValue(hemorrhageFlow_mL_Per_s* m_data.GetTimeStep_s(), VolumeUnit::mL);
       }
     }
     GetTotalHemorrhageRate().SetValue(totalLossRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
