@@ -859,7 +859,7 @@ namespace pulse { namespace human_adult_whole_body
     ss << "Specify Basal Metabolic Rate (female)";
     SetupPatient(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
-    testReport.SerializeToFile(sTestDirectory + "/SetupPatientReport.json");
+    testReport.SerializeToFile(sTestDirectory + "/SetupPatientTestReport.json");
   }
 
   void EngineTest::SetupPatient(SETestSuite& testSuite, const std::string& /*sTestDirectory*/, const std::string& sTestName, SEPatient* patient, SEPatient* expectedPatient, bool expectedPass)

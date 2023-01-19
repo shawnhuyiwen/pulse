@@ -632,8 +632,8 @@ namespace pulse
       {
         m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLeftKidney1));
         m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToRightKidney1));
-        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftKidney2ToVenaCava1));
-        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightKidney2ToVenaCava1));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftKidney1ToLeftKidney2));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightKidney1ToRightKidney2));
 
         //TODO: Aaron: isn't this path removed when the renal system is enabled? Shouldn't you take here the paths RightRenalArteryCompliance, RightGlomerularCapillariesCompliance, etc?
         // Probably you don't want to optimize/modify these values, but some blood volume are not considered in this way. Right?
