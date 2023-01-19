@@ -30,11 +30,11 @@ namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::SetupPatientTest(const std::string& sTestDirectory)
   {
-    m_Logger->SetLogFile(sTestDirectory + "/SetupPatient.log");
+    m_Logger->SetLogFile(sTestDirectory + "/SetupPatientTest.log");
 
     SETestReport testReport = SETestReport(m_Logger);
     SETestSuite& testSuite = testReport.CreateTestSuite();
-    testSuite.SetName("SetupPatient");
+    testSuite.SetName("SetupPatientTest");
 
     //////////////
     // Defaults //

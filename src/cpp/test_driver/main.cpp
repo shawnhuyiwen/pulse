@@ -41,6 +41,11 @@ int main(int argc, char* argv[])
 
       //hawbTest.ReadScenarios(hawbDir);
       //hawbTest.ReuseEngine(hawbDir);
+      //hawbTest.SerializationTest(hawbDir);
+      //hawbTest.ConditionCombinations(hawbDir);
+      //hawbTest.MultiEngineTest(hawbDir);
+      //hawbTest.SolverSpeedTest(hawbDir);
+      hawbTest.SetupPatientTest(hawbDir);
 
       //hawbTest.CardiovascularCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndRenalCircuitAndTransportTest(hawbDir);
@@ -83,11 +88,6 @@ int main(int argc, char* argv[])
       //hawbTest.FacilitatedDiffusionTest(hawbDir);
 
       //hawbTest.BrainInjuryTest(hawbDir);
-
-      //hawbTest.ConditionCombinations(hawbDir);
-      //hawbTest.MultiEngineTest(hawbDir);
-      hawbTest.SerializationTest(hawbDir);
-      //hawbTest.SolverSpeedTest(hawbDir);
 
       //Acid Base Tests
       //hawbTest.AcidBaseMathTest(hawbDir);

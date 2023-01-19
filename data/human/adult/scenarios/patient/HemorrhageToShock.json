@@ -15,6 +15,12 @@
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "PropertyName": "InFlow",  "Unit": "mL/min" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "PropertyName": "InFlow",  "Unit": "mL/min" },
 
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "RightLegVasculature", "PropertyName": "FlowRate", "Unit": "mL/s"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "RightLegVasculature", "PropertyName": "TotalBloodLost", "Unit": "mL"},
+      
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "VenaCava", "PropertyName": "FlowRate", "Unit": "mL/s"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "VenaCava", "PropertyName": "TotalBloodLost", "Unit": "mL"},
+      
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhageRate", "Unit": "mL/s"},
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhagedVolume", "Unit": "mL"}
     ]
@@ -31,7 +37,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 50.0,
@@ -64,7 +70,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"

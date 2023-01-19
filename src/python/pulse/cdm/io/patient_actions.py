@@ -279,8 +279,7 @@ def serialize_exercise_from_bind(src: ExerciseData, dst: SEExercise):
 def serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     dst.Type = src.get_type().value
-    if src.has_compartment():
-        dst.Compartment = src.get_compartment()
+    dst.Compartment = src.get_compartment().value
     if src.has_flow_rate():
         serialize_scalar_volume_per_time_to_bind(src.get_flow_rate(), dst.FlowRate)
     if src.has_severity():

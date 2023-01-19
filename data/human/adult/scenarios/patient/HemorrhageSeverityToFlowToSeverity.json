@@ -9,6 +9,9 @@
   {
     "DataRequest":
     [
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "RightLegVasculature", "PropertyName": "FlowRate", "Unit": "mL/s"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "RightLegVasculature", "PropertyName": "TotalBloodLost", "Unit": "mL"},
+      
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhageRate", "Unit": "mL/s"},
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhagedVolume", "Unit": "mL"}
     ]
@@ -25,7 +28,7 @@
   }, {
       "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "Severity": {
           "Scalar0To1": {
             "Value": 1.0
@@ -45,7 +48,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "FlowRate": {
           "ScalarVolumePerTime": {
 		    "Value": 90.0,
@@ -66,7 +69,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "Severity": {
           "Scalar0To1": {
             "Value": 0.5

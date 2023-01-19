@@ -21,6 +21,7 @@ class SEChronicObstructivePulmonaryDiseaseExacerbation;
 class SEDyspnea;
 class SEExercise;
 class SEHemorrhage;
+enum class eHemorrhage_Compartment;
 class SEImpairedAlveolarExchangeExacerbation;
 class SEIntubation;
 class SELobarPneumoniaExacerbation;
@@ -138,12 +139,12 @@ public:
   void RemoveExercise();
 
   bool HasHemorrhage() const;
-  bool HasHemorrhage(const std::string& cmptName) const;
-  SEHemorrhage& GetHemorrhage(const std::string& cmptName);
-  const SEHemorrhage* GetHemorrhage(const std::string& cmptName) const;
+  bool HasHemorrhage(eHemorrhage_Compartment cmpt) const;
+  SEHemorrhage& GetHemorrhage(eHemorrhage_Compartment cmpt);
+  const SEHemorrhage* GetHemorrhage(eHemorrhage_Compartment cmpt) const;
   const std::vector<SEHemorrhage*>& GetHemorrhages();
   const std::vector<const SEHemorrhage*> GetHemorrhages() const;
-  void RemoveHemorrhage(const std::string& cmptName);
+  void RemoveHemorrhage(eHemorrhage_Compartment cmpt);
 
   bool HasImpairedAlveolarExchangeExacerbation() const;
   SEImpairedAlveolarExchangeExacerbation& GetImpairedAlveolarExchangeExacerbation();

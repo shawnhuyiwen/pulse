@@ -468,8 +468,8 @@ namespace pulse::study::patient_variability
             if (time_s > patientState.hemorrhage().starttime_s())
             {
               SEHemorrhage hemorrhage;
-              hemorrhage.SetExternal(patientState.hemorrhage().compartment());
-              hemorrhage.GetSeverity().SetValue(patientState.hemorrhage().severity());
+              hemorrhage.SetCompartment((eHemorrhage_Compartment)patientState.hemorrhage().action().compartment());
+              hemorrhage.GetSeverity().SetValue(patientState.hemorrhage().action().severity().scalar0to1().value());
               pulse->ProcessAction(hemorrhage);
               hState = eHemorrhageState::TrackStart;
             }

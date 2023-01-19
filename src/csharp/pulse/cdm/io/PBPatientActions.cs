@@ -1026,8 +1026,7 @@ namespace Pulse.CDM
       if (src.PatientAction != null)
         Serialize(src.PatientAction, dst);
       dst.SetType((eHemorrhage_Type)(int)src.Type);
-      if (src.Compartment != null)
-        dst.SetCompartment(src.Compartment);
+      dst.SetCompartment((eHemorrhage_Compartment)(int)src.Compartment);
       if (src.FlowRate != null)
         PBProperty.Load(src.FlowRate, dst.GetFlowRate());
       if (src.Severity != null)
@@ -1044,8 +1043,7 @@ namespace Pulse.CDM
       dst.PatientAction = new pulse.cdm.bind.PatientActionData();
       Serialize(src, dst.PatientAction);
       dst.Type = (pulse.cdm.bind.HemorrhageData.Types.eType)(int)src.GetType();
-      if (src.HasCompartment())
-        dst.Compartment = src.GetCompartment();
+      dst.Compartment = (pulse.cdm.bind.HemorrhageData.Types.eCompartment)(int)src.GetCompartment();
       if (src.HasFlowRate())
         dst.FlowRate = PBProperty.Unload(src.GetFlowRate());
       if (src.HasSeverity())

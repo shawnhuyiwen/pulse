@@ -3,6 +3,7 @@
 
 #include "PVGenerator.h"
 #include "cdm/patient/SEPatient.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
 #include "cdm/io/protobuf/PBPatient.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
@@ -317,7 +318,8 @@ namespace pulse::study::patient_variability
   // Creates a new list of patients, adding all hemorrhage variables to each patient in originalPatients
   void PVGenerator::GenerateHemorrhageOptions(PatientStateListData& pList, SEPatient& patient, const std::string& full_dir_path)
   {
-    std::vector<std::string> HemorrhageCompartments = { "RightArm", "RightLeg" };
+    std::vector<CDM_BIND::HemorrhageData_eCompartment> HemorrhageCompartments =
+    { CDM_BIND::HemorrhageData_eCompartment_RightArm, CDM_BIND::HemorrhageData_eCompartment_RightLeg };
     for (auto hemorrhageCompartment : HemorrhageCompartments)
     {
       std::string compartment_dir = +"/" + hemorrhageCompartment;
@@ -336,8 +338,8 @@ namespace pulse::study::patient_variability
 
           auto hemorrhage = patientData->mutable_hemorrhage();
           hemorrhage->set_starttime_s(10);
-          hemorrhage->set_compartment(hemorrhageCompartment);
-          hemorrhage->set_severity(severity);
+          hemorrhage->mutable_action()->set_compartment(hemorrhageCompartment);
+          hemorrhage->mutable_action()->mutable_severity()->mutable_scalar0to1()->set_value(severity);
           hemorrhage->set_triagetime_s(triageTime_min * 60);
         }
       }

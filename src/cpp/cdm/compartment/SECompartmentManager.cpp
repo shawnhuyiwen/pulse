@@ -429,6 +429,7 @@ void SECompartmentManager::SampleByCardiacCyle(SELiquidCompartment& cmpt)
 {
   if (!Contains(m_CardiacCycleSampledCompartments, cmpt))
     m_CardiacCycleSampledCompartments.push_back(&cmpt);
+  cmpt.SampleFlow();
 }
 
 //////////////////////////

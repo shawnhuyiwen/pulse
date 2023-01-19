@@ -87,7 +87,6 @@ namespace pulse
     /****/void   ApplyCPRForce(double compressionForce_N);
     /**/void Arrhythmia();
     /**/void Hemorrhage();
-    /**/void InternalHemorrhagePressureApplication();
     /**/void PericardialEffusion();
     /**/void PericardialEffusionPressureApplication();
     /**/void TraumaticBrainInjury();
@@ -160,11 +159,10 @@ namespace pulse
     struct HemorrhageTrack
     {
       SELiquidCompartment* Compartment=nullptr;
-      std::vector<SEFluidCircuitNode*> Nodes;
-      std::map<SEFluidCircuitPath*, SELiquidCompartmentLink*> Paths2Links;
-      short NumNodesWithVolume=0;
+      std::map<SELiquidCompartment* , std::vector<SELiquidCompartmentLink*>> CmptHemorrhageLinks;
     };
-    std::map<SEHemorrhage*, HemorrhageTrack*>m_HemorrhageTrack;
+    std::map<SEHemorrhage*, HemorrhageTrack*> m_HemorrhageTrack;
+    SEFluidCircuitPath*                       m_InternalHemorrhageToAorta;
 
     double                           m_MAPCollapse_mmHg;
     double                           m_MinIndividialSystemicResistance_mmHg_s_Per_mL;
@@ -176,6 +174,7 @@ namespace pulse
     SELiquidCompartmentGraph*        m_CirculatoryGraph;
 
     SEFluidCircuitNode*              m_GroundNode;
+    SEFluidCircuitNode*              m_AbdominalCavityNode;
     
     SEFluidCircuitPath*              m_AortaToBrain;
     SEFluidCircuitPath*              m_AortaToMuscle;
@@ -191,7 +190,6 @@ namespace pulse
     SEFluidCircuitPath*              m_RightPulmonaryArteriesToVeins;
     SEFluidCircuitPath*              m_RightPulmonaryArteriesToCapillaries;
 
-    SEFluidCircuitPath*              m_InternalHemorrhageToAorta;
     SEFluidCircuitPath*              m_BrainToVenaCava;
     SEFluidCircuitPath*              m_MuscleToVenaCava;
     SEFluidCircuitPath*              m_MyocardiumToVenaCava;
@@ -215,7 +213,8 @@ namespace pulse
 
     SEFluidCircuitPath*              m_LeftRenalArteryPath;
     SEFluidCircuitPath*              m_RightRenalArteryPath;
-  
+
+    SELiquidCompartment*             m_Abdomen;
     SELiquidCompartment*             m_AbdominalCavity;
     SELiquidCompartment*             m_Aorta;
     SELiquidSubstanceQuantity*       m_AortaCO2;

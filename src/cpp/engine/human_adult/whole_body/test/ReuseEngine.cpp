@@ -68,13 +68,13 @@ namespace pulse { namespace human_adult_whole_body
 
     // Put the engine in a 'bad' way by running a hemorrhage for a while...
     SEHemorrhage h;
-    h.SetCompartment(pulse::VascularCompartment::RightLeg);
+    h.SetCompartment(eHemorrhage_Compartment::RightLeg);
     h.GetSeverity().SetValue(1.0);
     pe.ProcessAction(h);
-    h.SetCompartment(pulse::VascularCompartment::LeftLeg);
+    h.SetCompartment(eHemorrhage_Compartment::LeftLeg);
     h.GetSeverity().SetValue(1.0);
     pe.ProcessAction(h);
-    h.SetCompartment(pulse::VascularCompartment::VenaCava);
+    h.SetCompartment(eHemorrhage_Compartment::VenaCava);
     h.GetSeverity().SetValue(0.3);
     pe.ProcessAction(h);
     pe.AdvanceModelTime(120, TimeUnit::s);

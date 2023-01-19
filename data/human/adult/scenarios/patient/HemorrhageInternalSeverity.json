@@ -9,6 +9,9 @@
   {
     "DataRequest":
     [
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "Spleen", "PropertyName": "FlowRate", "Unit": "mL/s"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "Spleen", "PropertyName": "TotalBloodLost", "Unit": "mL"},
+      
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhageRate", "Unit": "mL/s"},
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhagedVolume", "Unit": "mL"}
     ]
@@ -25,7 +28,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "SpleenVasculature",
+        "Compartment": "Spleen",
         "Severity": {
           "Scalar0To1": {
             "Value": 0.5
@@ -46,7 +49,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "SpleenVasculature",
+        "Compartment": "Spleen",
         "Severity": {
           "Scalar0To1": {
             "Value": 0.0

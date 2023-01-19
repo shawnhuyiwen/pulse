@@ -35,7 +35,7 @@ int main()
   //HowToECMO();
   //HowToEnvironmentChange();
   //HowToExercise();
-  //HowToHemorrhage();
+  HowToHemorrhage();
   //HowToLobarPneumonia();
   //HowToMechanicalVentilation();
   //HowToMechanicalVentilator();
