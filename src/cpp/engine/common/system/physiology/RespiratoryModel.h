@@ -262,7 +262,12 @@ namespace pulse
     SEFluidCircuitPath* m_ConnectionToAirway;
     SEFluidCircuitPath* m_GroundToConnection;
 
-    // Transport
+    SEFluidCircuitPath* m_LeftCardiovascularLeak;
+    SEFluidCircuitPath* m_RightCardiovascularLeak;
+    SEFluidCircuitPath* m_LeftRespirtoryLeak;
+    SEFluidCircuitPath* m_RightRespirtoryLeak;
+
+    SEFluidCircuitCalculator* m_Calculator;
     SEGasTransporter* m_GasTransporter;
     SELiquidTransporter* m_AerosolTransporter;
 

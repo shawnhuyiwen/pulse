@@ -462,6 +462,10 @@ namespace pulse
     m_LeftAlveoliToLeftPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
     m_ConnectionToAirway = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::ConnectionToAirway);
     m_GroundToConnection = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::GroundToConnection);
+    m_LeftRespirtoryLeak = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToLeftPleural);
+    m_RightRespirtoryLeak = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRightPleural);
+    m_LeftCardiovascularLeak = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak1ToGround);
+    m_RightCardiovascularLeak = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak1ToGround);
 
     //Mechanical Ventilation Compartments
     m_MechanicalVentilationConnection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilationCompartment::Connection);
@@ -1772,18 +1776,23 @@ namespace pulse
 
     // Left ----------------------------------------------------------------------------------------
 
-    bool hasLeftCardiovascularLeak = m_data.GetCircuits().GetActiveCardiovascularCircuit().HasPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
-    bool hasLeftRespirtoryLeak = m_RespiratoryCircuit->HasPath(pulse::RespiratoryPath::EnvironmentToLeftPleural);
-    bool hasLeftTubeThoracostomy = m_PatientActions->HasLeftTubeThoracostomy();
     double leftBloodFlow_L_Per_s = 0.0;
-    if (hasLeftCardiovascularLeak)
+    if (m_data.GetActions().GetPatientActions().HasLeftHemothorax())
     {
-      //Blood coming in
-      if (m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak)->HasNextFlow())
+      if(m_LeftCardiovascularLeak == nullptr)
+       m_LeftCardiovascularLeak = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak1ToGround);
+
+      if (m_LeftCardiovascularLeak != nullptr)
       {
-        leftBloodFlow_L_Per_s += m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak)->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+        //Blood coming in
+        if (m_LeftCardiovascularLeak->HasNextFlow())
+        {
+          leftBloodFlow_L_Per_s += m_LeftCardiovascularLeak->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+        }
       }
     }
+
+    bool hasLeftTubeThoracostomy = m_PatientActions->HasLeftTubeThoracostomy();
     if (hasLeftTubeThoracostomy)
     {
       //Default 200 mL/day \cite hessami2009volume
@@ -1804,11 +1813,11 @@ namespace pulse
 
     if (leftBloodFlow_L_Per_s != 0.0)
     {
-      if (!hasLeftRespirtoryLeak)
+      if (m_LeftRespirtoryLeak == nullptr)
       {
         //Create the left chest leak in the circuit (no updates to graph needed)
-        SEFluidCircuitPath& EnvironmentToLeftPleural = m_RespiratoryCircuit->CreatePath(*m_Ambient, *m_LeftPleural, pulse::RespiratoryPath::EnvironmentToLeftPleural);
-        EnvironmentToLeftPleural.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        m_LeftRespirtoryLeak = &m_RespiratoryCircuit->CreatePath(*m_Ambient, *m_LeftPleural, pulse::RespiratoryPath::EnvironmentToLeftPleural);
+        m_LeftRespirtoryLeak->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         stateChange = true;
       }
 
@@ -1831,10 +1840,11 @@ namespace pulse
         m_PatientActions->GetLeftTubeThoracostomy().GetFlowRate().SetValue(0, VolumePerTimeUnit::L_Per_s);
       }
     }
-    else if (hasLeftRespirtoryLeak)
+    else if (m_LeftRespirtoryLeak != nullptr)
     {
       //Remove the left chest leak in the circuit (no updates to graph needed)
-      m_RespiratoryCircuit->RemovePath(pulse::RespiratoryPath::EnvironmentToLeftPleural);
+      m_RespiratoryCircuit->RemovePath(*m_LeftRespirtoryLeak);
+      m_LeftRespirtoryLeak = nullptr;
       stateChange = true;
     }
 
@@ -1842,19 +1852,23 @@ namespace pulse
       m_PatientActions->RemoveLeftTubeThoracostomy();
 
     // Right ---------------------------------------------------------------------------------------
-
-    bool hasRightCardiovascularLeak = m_data.GetCircuits().GetActiveCardiovascularCircuit().HasPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak);
-    bool hasRightRespirtoryLeak = m_RespiratoryCircuit->HasPath(pulse::RespiratoryPath::EnvironmentToRightPleural);
-    bool hasRightTubeThoracostomy = m_PatientActions->HasRightTubeThoracostomy();
     double rightBloodFlow_L_Per_s = 0.0;
-    if (hasRightCardiovascularLeak)
+    if (m_data.GetActions().GetPatientActions().HasRightHemothorax())
     {
-      //Blood coming in
-      if (m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak)->HasNextFlow())
+      if (m_RightCardiovascularLeak == nullptr)
+        m_RightCardiovascularLeak = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak1ToGround);
+
+      if (m_RightCardiovascularLeak != nullptr)
       {
-        rightBloodFlow_L_Per_s += m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak)->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+        //Blood coming in
+        if (m_RightCardiovascularLeak->HasNextFlow())
+        {
+          rightBloodFlow_L_Per_s += m_RightCardiovascularLeak->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+        }
       }
     }
+
+    bool hasRightTubeThoracostomy = m_PatientActions->HasRightTubeThoracostomy();
     if (hasRightTubeThoracostomy)
     {
       //Default 200 mL/day \cite hessami2009volume
@@ -1875,11 +1889,11 @@ namespace pulse
 
     if (rightBloodFlow_L_Per_s != 0.0)
     {
-      if (!hasRightRespirtoryLeak)
+      if (m_RightRespirtoryLeak ==nullptr)
       {
         //Create the right chest leak in the circuit (no updates to graph needed)
-        SEFluidCircuitPath& EnvironmentToRightPleural = m_RespiratoryCircuit->CreatePath(*m_Ambient, *m_RightPleural, pulse::RespiratoryPath::EnvironmentToRightPleural);
-        EnvironmentToRightPleural.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        m_RightRespirtoryLeak = &m_RespiratoryCircuit->CreatePath(*m_Ambient, *m_RightPleural, pulse::RespiratoryPath::EnvironmentToRightPleural);
+        m_RightRespirtoryLeak->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         stateChange = true;
       }
 
@@ -1902,10 +1916,11 @@ namespace pulse
         m_PatientActions->GetRightTubeThoracostomy().GetFlowRate().SetValue(0, VolumePerTimeUnit::L_Per_s);
       }
     }
-    else if (hasRightRespirtoryLeak)
+    else if (m_RightRespirtoryLeak !=nullptr)
     {
       //Remove the right chest leak in the circuit (no updates to graph needed)
-      m_RespiratoryCircuit->RemovePath(pulse::RespiratoryPath::EnvironmentToRightPleural);
+      m_RespiratoryCircuit->RemovePath(*m_RightRespirtoryLeak);
+      m_RightRespirtoryLeak = nullptr;
       stateChange = true;
     }
 

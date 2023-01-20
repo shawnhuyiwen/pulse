@@ -367,8 +367,8 @@ namespace pulse
     m_CirculatoryGraph = &m_data.GetCompartments().GetActiveCardiovascularGraph();
     //Nodes
     m_GroundNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::Ground);
-    m_nLeftPulmonaryVeins = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::LeftPulmonaryVeins);
-    m_nRightPulmonaryVeins = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::RightPulmonaryVeins);
+    m_LeftPulmonaryVeinsNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::LeftPulmonaryVeins1);
+    m_RightPulmonaryVeinsNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::RightPulmonaryVeins1);
     m_AbdominalCavityNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::AbdominalCavity1);
     //Paths
     m_LeftPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryVeins1);
@@ -380,12 +380,12 @@ namespace pulse
     m_AortaResistancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
     m_VenaCavaCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCava1ToGround);
 
-
     m_InternalHemorrhageToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAorta4);
-    m_LeftPulmonaryVeinsLeak = m_RightPulmonaryVeinsLeak = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
-    m_RightPulmonaryVeinsLeak = m_RightPulmonaryVeinsLeak = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak);
     m_GndToAbdominalCavity = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAbdominalCavity1);
     m_AbdominalCavityToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::AbdominalCavity1ToGround);
+
+    m_LeftPulmonaryVeinsLeak = m_RightPulmonaryVeinsLeak = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak1ToGround);
+    m_RightPulmonaryVeinsLeak = m_RightPulmonaryVeinsLeak = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak1ToGround);
 
     m_LeftRenalArteryPath = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryToAfferentArteriole);
     m_RightRenalArteryPath = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryToAfferentArteriole);
@@ -2663,7 +2663,7 @@ namespace pulse
       if (m_LeftPulmonaryVeinsLeak == nullptr)
       {
         //Create the left chest leak in the circuit
-        m_LeftPulmonaryVeinsLeak = &m_CirculatoryCircuit->CreatePath(*m_nLeftPulmonaryVeins, *m_GroundNode, pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
+        m_LeftPulmonaryVeinsLeak = &m_CirculatoryCircuit->CreatePath(*m_LeftPulmonaryVeinsNode, *m_GroundNode, pulse::CardiovascularPath::LeftPulmonaryVeinsLeak1ToGround);
         m_LeftPulmonaryVeinsLeak->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         //Create the left chest leak in the graph
         SELiquidCompartmentLink& vLeftPulmonaryVeinsLeak = m_data.GetCompartments().CreateLiquidLink(*m_LeftPulmonaryVeins, *m_Ground, pulse::VascularLink::LeftPulmonaryVeinsLeak);
@@ -2679,7 +2679,7 @@ namespace pulse
     else if (m_LeftPulmonaryVeinsLeak != nullptr)
     {
       //Remove the left chest leak in the circuit and graph
-      m_CirculatoryCircuit->RemovePath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak);
+      m_CirculatoryCircuit->RemovePath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak1ToGround);
       m_CirculatoryGraph->RemoveLink(pulse::VascularLink::LeftPulmonaryVeinsLeak);
       m_LeftPulmonaryVeinsLeak = nullptr;
       stateChange = true;
@@ -2751,7 +2751,7 @@ namespace pulse
       if (m_RightPulmonaryVeinsLeak == nullptr)
       {
         //Create the right chest leak in the circuit
-        m_RightPulmonaryVeinsLeak = &m_CirculatoryCircuit->CreatePath(*m_nRightPulmonaryVeins, *m_GroundNode, pulse::CardiovascularPath::RightPulmonaryVeinsLeak);
+        m_RightPulmonaryVeinsLeak = &m_CirculatoryCircuit->CreatePath(*m_RightPulmonaryVeinsNode, *m_GroundNode, pulse::CardiovascularPath::RightPulmonaryVeinsLeak1ToGround);
         m_RightPulmonaryVeinsLeak->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         //Create the right chest leak in the graph
         SELiquidCompartmentLink& vRightPulmonaryVeinsLeak = m_data.GetCompartments().CreateLiquidLink(*m_RightPulmonaryVeins, *m_Ground, pulse::VascularLink::RightPulmonaryVeinsLeak);
@@ -2767,7 +2767,7 @@ namespace pulse
     else if (m_RightPulmonaryVeinsLeak != nullptr)
     {
       //Remove the right chest leak in the circuit and graph
-      m_CirculatoryCircuit->RemovePath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak);
+      m_CirculatoryCircuit->RemovePath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak1ToGround);
       m_CirculatoryGraph->RemoveLink(pulse::VascularLink::RightPulmonaryVeinsLeak);
       m_RightPulmonaryVeinsLeak = nullptr;
       stateChange = true;
