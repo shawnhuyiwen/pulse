@@ -45,9 +45,9 @@ int main(int argc, char* argv[])
       //hawbTest.ConditionCombinations(hawbDir);
       //hawbTest.MultiEngineTest(hawbDir);
       //hawbTest.SolverSpeedTest(hawbDir);
-      hawbTest.SetupPatientTest(hawbDir);
+      //hawbTest.SetupPatientTest(hawbDir);
 
-      //hawbTest.CardiovascularCircuitAndTransportTest(hawbDir);
+      hawbTest.CardiovascularCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndRenalCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndTissueCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(hawbDir);

@@ -9,8 +9,10 @@
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 
-#include <Eigen/Core>
-#include <Eigen/LU>
+PUSH_EIGEN_WARNINGS
+#include "Eigen/Core"
+#include "Eigen/LU"
+POP_EIGEN_WARNINGS
 
 //#define VERBOSE
 #define ZERO_APPROX 1e-10

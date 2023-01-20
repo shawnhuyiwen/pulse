@@ -10,19 +10,14 @@
 #include "cdm/utils/GeneralMath.h"
 #include "cdm/utils/TimingProfile.h"
 
-#ifdef _MSC_VER
-#pragma warning( push )
-#pragma warning( disable : 4127 )
-#endif
+PUSH_EIGEN_WARNINGS
 #include "Eigen/Dense"
 #include "Eigen/SparseLU"
 #include "Eigen/SparseCore"
 //#include "Eigen/SparseCholesky"
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/SparseQR"
-#ifdef _MSC_VER
-#pragma warning( push )
-#endif
+POP_EIGEN_WARNINGS
 
 #include <numeric>
 #include <bitset>

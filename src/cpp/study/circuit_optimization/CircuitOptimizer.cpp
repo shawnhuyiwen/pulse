@@ -14,7 +14,9 @@
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/utils/DataTrack.h"
 
+PUSH_EIGEN_WARNINGS
 #include "Eigen/Dense"
+POP_EIGEN_WARNINGS
 
 namespace pulse::study::circuit_optimization
 {

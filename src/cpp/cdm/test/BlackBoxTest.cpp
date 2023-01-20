@@ -380,7 +380,7 @@ void CommonDataModelTest::WindkesselBlackBoxTest(const std::string& sOutputDirec
           fluidCalculator.Process(*circuitWindkessel, timeStep_s);
           fluidCalculator.Process(*circuitDriver, timeStep_s);
         }
-        catch (std::exception& ex)
+        catch (std::exception& /*ex*/)
         {
           hasError = true;
           break;

@@ -20,7 +20,9 @@
 #include "cdm/properties/SEScalarOsmolarity.h"
 #include "cdm/properties/SEScalarOsmolality.h"
 
+PUSH_EIGEN_WARNINGS
 #include "unsupported/Eigen/Splines"
+POP_EIGEN_WARNINGS
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -261,7 +263,7 @@ double GeneralMath::PercentTolerance(double expected, double calculated, double 
 void GeneralMath::Combinations(std::vector<size_t> maxValues, std::vector<std::vector<size_t>>& permutations)
 {
   int Oidx = 0;
-  int numVals = 1;
+  size_t numVals = 1;
   size_t Olength = maxValues.size();
   std::vector<size_t> *current, *next;
 

@@ -18,7 +18,9 @@
 #include "cdm/properties/SEScalarInversePressure.h"
 #include "cdm/utils/GeneralMath.h"
 
+PUSH_EIGEN_WARNINGS
 #include "unsupported/Eigen/NonLinearOptimization"
+POP_EIGEN_WARNINGS
 
 //#define VERBOSE
 namespace pulse
