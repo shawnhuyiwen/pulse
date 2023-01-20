@@ -1568,7 +1568,7 @@ namespace pulse
               //The minimum resistance is associated with the maximum flow rate across the hemorrhage path
               //Check to see if there is a resistance baseline
               double deltaPressure_mmHg = (path->GetSourceNode().GetNextPressure(PressureUnit::mmHg) - path->GetTargetNode().GetNextPressure(PressureUnit::mmHg));
-              double resistanceBaseline_mmHg_min_Per_L = deltaPressure_mmHg / (2.75 * flowRate_L_per_min);
+              double resistanceBaseline_mmHg_min_Per_L = deltaPressure_mmHg / (1.25 * flowRate_L_per_min);
               path->GetResistanceBaseline().SetValue(resistanceBaseline_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
             }
 
