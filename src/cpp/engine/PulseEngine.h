@@ -726,7 +726,7 @@ namespace pulse
     DEFINE_STATIC_STRING(RightTubulesToPeritubularCapillaries);
     DEFINE_STATIC_STRING(RightEfferentArterioleToPeritubularCapillaries);
     DEFINE_STATIC_STRING(RightPeritubularCapillariesToRenalVein);
-    // Reusing 'RightKidneyToVenaCava' to connect the Right Renal Vein To Vena Cava);   
+    // Reusing 'RightKidneyToVenaCava' to connect the Right Renal Vein To Vena Cava);
 
 
     static const std::vector<std::string>& GetValues()
@@ -831,6 +831,585 @@ namespace pulse
   protected:
     static std::vector<std::string> _values;
   };
+
+  class ExpandedVascularCompartment
+  {
+  public:
+    // Cardio
+    DEFINE_STATIC_STRING(Aorta);
+    DEFINE_STATIC_STRING(ArterialBuffer);
+    DEFINE_STATIC_STRING(Heart);
+    /**/DEFINE_STATIC_STRING_EX(Myocardium, MyocardiumVasculature);
+    /**/DEFINE_STATIC_STRING(LeftHeart);
+    /**/DEFINE_STATIC_STRING(RightHeart);
+    /**/DEFINE_STATIC_STRING(Pericardium);
+    DEFINE_STATIC_STRING(VenaCava);
+    DEFINE_STATIC_STRING(VenousBuffer);
+    // Pulmonary
+    DEFINE_STATIC_STRING(PulmonaryArteries);
+    DEFINE_STATIC_STRING(PulmonaryCapillaries);
+    DEFINE_STATIC_STRING(PulmonaryVeins);
+    DEFINE_STATIC_STRING_EX(Lungs, LungsVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLung, LeftLungVasculature);
+    /***/DEFINE_STATIC_STRING(LeftPulmonaryArteries);
+    /***/DEFINE_STATIC_STRING(LeftPulmonaryCapillaries);
+    /***/DEFINE_STATIC_STRING(LeftPulmonaryVeins);
+    /**/DEFINE_STATIC_STRING_EX(RightLung, RightLungVasculature);
+    /***/DEFINE_STATIC_STRING(RightPulmonaryArteries);
+    /***/DEFINE_STATIC_STRING(RightPulmonaryCapillaries);
+    /***/DEFINE_STATIC_STRING(RightPulmonaryVeins);
+    // Renal
+    DEFINE_STATIC_STRING_EX(Kidneys, KidneyVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftKidney, LeftKidneyVasculature);
+    /***/DEFINE_STATIC_STRING(LeftRenalArtery);
+    /***/DEFINE_STATIC_STRING(LeftNephron);
+    /*********/DEFINE_STATIC_STRING(LeftAfferentArteriole);
+    /*********/DEFINE_STATIC_STRING(LeftGlomerularCapillaries);
+    /*********/DEFINE_STATIC_STRING(LeftEfferentArteriole);
+    /*********/DEFINE_STATIC_STRING(LeftPeritubularCapillaries);
+    /*********/DEFINE_STATIC_STRING(LeftBowmansCapsules);
+    /*********/DEFINE_STATIC_STRING(LeftTubules);
+    /***/DEFINE_STATIC_STRING(LeftRenalVein);
+    /**/DEFINE_STATIC_STRING_EX(RightKidney, RightKidneyVasculature);
+    /***/DEFINE_STATIC_STRING(RightRenalArtery);
+    /***/DEFINE_STATIC_STRING(RightNephron);
+    /*********/DEFINE_STATIC_STRING(RightAfferentArteriole);
+    /*********/DEFINE_STATIC_STRING(RightGlomerularCapillaries);
+    /*********/DEFINE_STATIC_STRING(RightEfferentArteriole);
+    /*********/DEFINE_STATIC_STRING(RightPeritubularCapillaries);
+    /*********/DEFINE_STATIC_STRING(RightBowmansCapsules);
+    /*********/DEFINE_STATIC_STRING(RightTubules);
+    /***/DEFINE_STATIC_STRING(RightRenalVein);
+    // General Organs and Periphery
+    DEFINE_STATIC_STRING_EX(Bone, BoneVasculature);
+    DEFINE_STATIC_STRING_EX(Head, HeadVasculature);
+    /**/DEFINE_STATIC_STRING_EX(Extracranial, ExtracranialVasculature);
+    /**/DEFINE_STATIC_STRING_EX(Intracranial, IntracranialVasculature);
+    DEFINE_STATIC_STRING_EX(Fat, FatVasculature);
+    DEFINE_STATIC_STRING_EX(Gut, GutVasculature);
+    /**/DEFINE_STATIC_STRING_EX(Gut1, Gut1Vasculature);
+    /**/DEFINE_STATIC_STRING_EX(Splanchnic, SplanchnicVasculature);
+    /**/DEFINE_STATIC_STRING_EX(SmallIntestine, SmallIntestineVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LargeIntestine, LargeIntestineVasculature);
+    DEFINE_STATIC_STRING_EX(LeftArm, LeftArmVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmArterioles, LeftArmArteriolesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmBone, LeftArmBoneVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmFat, LeftArmFatVasculature);
+    /**/DEFINE_STATIC_STRING(LeftArmMicrovasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmMuscle, LeftArmMuscleVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmSkin, LeftArmSkinVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmVenules, LeftArmVenulesVasculature);
+    DEFINE_STATIC_STRING_EX(LeftLeg, LeftLegVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegArterioles, LeftLegArteriolesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegBone, LeftLegBoneVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegFat, LeftLegFatVasculature);
+    /**/DEFINE_STATIC_STRING(LeftLegMicrovasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegMuscle, LeftLegMuscleVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegSkin, LeftLegSkinVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegVenules, LeftLegVenulesVasculature);
+    DEFINE_STATIC_STRING_EX(Liver, LiverVasculature);
+    DEFINE_STATIC_STRING_EX(Muscle, MuscleVasculature);
+    DEFINE_STATIC_STRING_EX(RightArm, RightArmVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmArterioles, RightArmArteriolesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmBone, RightArmBoneVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmFat, RightArmFatVasculature);
+    /**/DEFINE_STATIC_STRING(RightArmMicrovasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmMuscle, RightArmMuscleVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmSkin, RightArmSkinVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmVenules, RightArmVenulesVasculature);
+    DEFINE_STATIC_STRING_EX(RightLeg, RightLegVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegArterioles, RightLegArteriolesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegBone, RightLegBoneVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegFat, RightLegFatVasculature);
+    /**/DEFINE_STATIC_STRING(RightLegMicrovasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegMuscle, RightLegMuscleVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegSkin, RightLegSkinVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegVenules, RightLegVenulesVasculature);
+    DEFINE_STATIC_STRING_EX(Skin, SkinVasculature);
+    DEFINE_STATIC_STRING_EX(Spleen, SpleenVasculature);
+    DEFINE_STATIC_STRING_EX(Torso, TorsoVasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoArterioles, TorsoArteriolesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoBone, TorsoBoneVasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoFat, TorsoFatVasculature);
+    /**/DEFINE_STATIC_STRING(TorsoMicrovasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoMuscle, TorsoMuscleVasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoSkin, TorsoSkinVasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoVenules, TorsoVenulesVasculature);
+    DEFINE_STATIC_STRING(Abdomen);
+    /**/DEFINE_STATIC_STRING(AbdominalCavity);
+
+    DEFINE_STATIC_STRING(Ground);
+
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(Aorta);
+        _values.push_back(ArterialBuffer);
+        _values.push_back(Abdomen);
+        _values.push_back(Heart);
+        _values.push_back(Myocardium);
+        _values.push_back(LeftHeart);
+        _values.push_back(RightHeart);
+        _values.push_back(Pericardium);
+        _values.push_back(VenaCava);
+        _values.push_back(VenousBuffer);
+        _values.push_back(PulmonaryArteries);
+        _values.push_back(PulmonaryCapillaries);
+        _values.push_back(PulmonaryVeins);
+        _values.push_back(Lungs);
+        _values.push_back(LeftLung);
+        _values.push_back(LeftPulmonaryArteries);
+        _values.push_back(LeftPulmonaryCapillaries);
+        _values.push_back(LeftPulmonaryVeins);
+        _values.push_back(RightLung);
+        _values.push_back(RightPulmonaryArteries);
+        _values.push_back(RightPulmonaryCapillaries);
+        _values.push_back(RightPulmonaryVeins);
+        _values.push_back(Kidneys);
+        _values.push_back(LeftKidney);
+        _values.push_back(LeftRenalArtery);
+        _values.push_back(LeftNephron);
+        _values.push_back(LeftAfferentArteriole);
+        _values.push_back(LeftGlomerularCapillaries);
+        _values.push_back(LeftEfferentArteriole);
+        _values.push_back(LeftPeritubularCapillaries);
+        _values.push_back(LeftBowmansCapsules);
+        _values.push_back(LeftTubules);
+        _values.push_back(LeftRenalVein);
+        _values.push_back(RightKidney);
+        _values.push_back(RightRenalArtery);
+        _values.push_back(RightNephron);
+        _values.push_back(RightAfferentArteriole);
+        _values.push_back(RightGlomerularCapillaries);
+        _values.push_back(RightEfferentArteriole);
+        _values.push_back(RightPeritubularCapillaries);
+        _values.push_back(RightBowmansCapsules);
+        _values.push_back(RightTubules);
+        _values.push_back(RightRenalVein);
+        _values.push_back(Bone);
+        _values.push_back(Head);
+        _values.push_back(Extracranial);
+        _values.push_back(Intracranial);
+        _values.push_back(Fat);
+        _values.push_back(Gut);
+        _values.push_back(Gut1);
+        _values.push_back(Splanchnic);
+        _values.push_back(SmallIntestine);
+        _values.push_back(LargeIntestine);
+        _values.push_back(Liver);
+        _values.push_back(Spleen);
+        _values.push_back(Skin);
+        _values.push_back(Muscle);
+        _values.push_back(LeftArm);
+        _values.push_back(LeftArmArterioles);
+        _values.push_back(LeftArmFat);
+        _values.push_back(LeftArmMuscle);
+        _values.push_back(LeftArmSkin);
+        _values.push_back(LeftArmBone);
+        _values.push_back(LeftArmMicrovasculature);
+        _values.push_back(LeftArmVenules);
+        _values.push_back(LeftLeg);
+        _values.push_back(LeftLegArterioles);
+        _values.push_back(LeftLegFat);
+        _values.push_back(LeftLegMuscle);
+        _values.push_back(LeftLegSkin);
+        _values.push_back(LeftLegBone);
+        _values.push_back(LeftLegMicrovasculature);
+        _values.push_back(LeftLegVenules);
+        _values.push_back(RightArm);
+        _values.push_back(RightArmArterioles);
+        _values.push_back(RightArmFat);
+        _values.push_back(RightArmMuscle);
+        _values.push_back(RightArmSkin);
+        _values.push_back(RightArmBone);
+        _values.push_back(RightArmMicrovasculature);
+        _values.push_back(RightArmVenules);
+        _values.push_back(RightLeg);
+        _values.push_back(RightLegArterioles);
+        _values.push_back(RightLegFat);
+        _values.push_back(RightLegMuscle);
+        _values.push_back(RightLegSkin);
+        _values.push_back(RightLegBone);
+        _values.push_back(RightLegMicrovasculature);
+        _values.push_back(RightLegVenules);
+        _values.push_back(Torso);
+        _values.push_back(TorsoArterioles);
+        _values.push_back(TorsoBone);
+        _values.push_back(TorsoFat);
+        _values.push_back(TorsoMicrovasculature);
+        _values.push_back(TorsoMuscle);
+        _values.push_back(TorsoSkin);
+        _values.push_back(TorsoVenules);
+        //_values.push_back(Ground);
+      }
+      return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class ExpandedVascularLink
+  {
+  public:
+    // Heart and Lungs
+
+    DEFINE_STATIC_STRING(VenousBufferToVenaCava);
+    DEFINE_STATIC_STRING(VenaCavaToRightHeart);
+    DEFINE_STATIC_STRING(RightHeartToLeftPulmonaryArteries);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToCapillaries);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToVeins);
+    DEFINE_STATIC_STRING(LeftPulmonaryCapillariesToVeins);
+    DEFINE_STATIC_STRING(LeftPulmonaryVeinsToLeftHeart);
+    DEFINE_STATIC_STRING(RightHeartToRightPulmonaryArteries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToCapillaries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToVeins);
+    DEFINE_STATIC_STRING(RightPulmonaryCapillariesToVeins);
+    DEFINE_STATIC_STRING(RightPulmonaryVeinsToLeftHeart);
+    DEFINE_STATIC_STRING(LeftHeartToAorta);
+    DEFINE_STATIC_STRING(AortaToArterialBuffer);
+    // Head
+    DEFINE_STATIC_STRING(AortaToIntracranial);
+    DEFINE_STATIC_STRING(IntracranialToVenaCava);
+    DEFINE_STATIC_STRING(AortaToExtracranial);
+    DEFINE_STATIC_STRING(ExtracranialToVenaCava);
+    // Left Arm
+    DEFINE_STATIC_STRING(AortaToLeftArmArterioles);
+    DEFINE_STATIC_STRING(LeftArmArteriolesToLeftArmBone);
+    DEFINE_STATIC_STRING(LeftArmArteriolesToLeftArmFat);
+    DEFINE_STATIC_STRING(LeftArmArteriolesToLeftArmMicrovasculature);
+    DEFINE_STATIC_STRING(LeftArmArteriolesToLeftArmMuscle);
+    DEFINE_STATIC_STRING(LeftArmArteriolesToLeftArmSkin);
+
+    DEFINE_STATIC_STRING(LeftArmBoneToLeftArmVenules);
+    DEFINE_STATIC_STRING(LeftArmFatToLeftArmVenules);
+    DEFINE_STATIC_STRING(LeftArmMicrovasculatureToLeftArmVenules);
+    DEFINE_STATIC_STRING(LeftArmMuscleToLeftArmVenules);
+    DEFINE_STATIC_STRING(LeftArmSkinToLeftArmVenules);
+    DEFINE_STATIC_STRING(LeftArmVenulesToVenaCava);
+
+    // Left Kidney
+    DEFINE_STATIC_STRING(AortaToLeftKidney);
+    DEFINE_STATIC_STRING(LeftKidneyToVenaCava);
+    // Left Leg
+    DEFINE_STATIC_STRING(AortaToLeftLegArterioles);
+    DEFINE_STATIC_STRING(LeftLegArteriolesToLeftLegBone);
+    DEFINE_STATIC_STRING(LeftLegArteriolesToLeftLegFat);
+    DEFINE_STATIC_STRING(LeftLegArteriolesToLeftLegMicrovasculature);
+    DEFINE_STATIC_STRING(LeftLegArteriolesToLeftLegMuscle);
+    DEFINE_STATIC_STRING(LeftLegArteriolesToLeftLegSkin);
+
+    DEFINE_STATIC_STRING(LeftLegBoneToLeftLegVenules);
+    DEFINE_STATIC_STRING(LeftLegFatToLeftLegVenules);
+    DEFINE_STATIC_STRING(LeftLegMicrovasculatureToLeftLegVenules);
+    DEFINE_STATIC_STRING(LeftLegMuscleToLeftLegVenules);
+    DEFINE_STATIC_STRING(LeftLegSkinToLeftLegVenules);
+    DEFINE_STATIC_STRING(LeftLegVenulesToVenaCava);
+    // Gut
+    DEFINE_STATIC_STRING(AortaToGut);
+    //// Large Intestine
+    DEFINE_STATIC_STRING(AortaToLargeIntestine);
+    DEFINE_STATIC_STRING(LargeIntestineToLiver);
+    //// Small Intestine
+    DEFINE_STATIC_STRING(AortaToSmallIntestine);
+    DEFINE_STATIC_STRING(SmallIntestineToLiver);
+    //// Splanchnic
+    DEFINE_STATIC_STRING(AortaToSplanchnic);
+    DEFINE_STATIC_STRING(SplanchnicToLiver);
+    //// Spleen
+    DEFINE_STATIC_STRING(AortaToSpleen);
+    DEFINE_STATIC_STRING(SpleenToLiver);
+    //// Liver
+    DEFINE_STATIC_STRING(AortaToLiver);
+    DEFINE_STATIC_STRING(LiverToVenaCava);
+    // Myocardium
+    DEFINE_STATIC_STRING(AortaToMyocardium);
+    DEFINE_STATIC_STRING(MyocardiumToVenaCava);
+    // Right Arm
+    DEFINE_STATIC_STRING(AortaToRightArmArterioles);
+    DEFINE_STATIC_STRING(RightArmArteriolesToRightArmBone);
+    DEFINE_STATIC_STRING(RightArmArteriolesToRightArmFat);
+    DEFINE_STATIC_STRING(RightArmArteriolesToRightArmMicrovasculature);
+    DEFINE_STATIC_STRING(RightArmArteriolesToRightArmMuscle);
+    DEFINE_STATIC_STRING(RightArmArteriolesToRightArmSkin);
+
+    DEFINE_STATIC_STRING(RightArmBoneToRightArmVenules);
+    DEFINE_STATIC_STRING(RightArmFatToRightArmVenules);
+    DEFINE_STATIC_STRING(RightArmMicrovasculatureToRightArmVenules);
+    DEFINE_STATIC_STRING(RightArmMuscleToRightArmVenules);
+    DEFINE_STATIC_STRING(RightArmSkinToRightArmVenules);
+    DEFINE_STATIC_STRING(RightArmVenulesToVenaCava);
+
+    // Right Kidney
+    DEFINE_STATIC_STRING(AortaToRightKidney);
+    DEFINE_STATIC_STRING(RightKidneyToVenaCava);
+    // Right Leg
+    DEFINE_STATIC_STRING(AortaToRightLegArterioles);
+    DEFINE_STATIC_STRING(RightLegArteriolesToRightLegBone);
+    DEFINE_STATIC_STRING(RightLegArteriolesToRightLegFat);
+    DEFINE_STATIC_STRING(RightLegArteriolesToRightLegMicrovasculature);
+    DEFINE_STATIC_STRING(RightLegArteriolesToRightLegMuscle);
+    DEFINE_STATIC_STRING(RightLegArteriolesToRightLegSkin);
+
+    DEFINE_STATIC_STRING(RightLegBoneToRightLegVenules);
+    DEFINE_STATIC_STRING(RightLegFatToRightLegVenules);
+    DEFINE_STATIC_STRING(RightLegMicrovasculatureToRightLegVenules);
+    DEFINE_STATIC_STRING(RightLegMuscleToRightLegVenules);
+    DEFINE_STATIC_STRING(RightLegSkinToRightLegVenules);
+    DEFINE_STATIC_STRING(RightLegVenulesToVenaCava);
+
+    // Torso
+    DEFINE_STATIC_STRING(AortaToTorsoArterioles);
+    DEFINE_STATIC_STRING(TorsoArteriolesToTorsoBone);
+    DEFINE_STATIC_STRING(TorsoArteriolesToTorsoFat);
+    DEFINE_STATIC_STRING(TorsoArteriolesToTorsoMicrovasculature);
+    DEFINE_STATIC_STRING(TorsoArteriolesToTorsoMuscle);
+    DEFINE_STATIC_STRING(TorsoArteriolesToTorsoSkin);
+
+    DEFINE_STATIC_STRING(TorsoSkinToTorsoVenules);
+    DEFINE_STATIC_STRING(TorsoMuscleToTorsoVenules);
+    DEFINE_STATIC_STRING(TorsoMicrovasculatureToTorsoVenules);
+    DEFINE_STATIC_STRING(TorsoFatToTorsoVenules);
+    DEFINE_STATIC_STRING(TorsoBoneToTorsoVenules);
+    DEFINE_STATIC_STRING(TorsoVenulesToVenaCava);
+    // Hemorrhage and IV
+    DEFINE_STATIC_STRING(VenaCavaIV);
+
+    // Vascular To Tissue Links
+    DEFINE_STATIC_STRING(TorsoBoneVascularToTissue);
+    DEFINE_STATIC_STRING(LeftArmBoneVascularToTissue);
+    DEFINE_STATIC_STRING(LeftLegBoneVascularToTissue);
+    DEFINE_STATIC_STRING(RightArmBoneVascularToTissue);
+    DEFINE_STATIC_STRING(RightLegBoneVascularToTissue);
+    DEFINE_STATIC_STRING(BrainVascularToTissue);
+    DEFINE_STATIC_STRING(TorsoFatVascularToTissue);
+    DEFINE_STATIC_STRING(LeftArmFatVascularToTissue);
+    DEFINE_STATIC_STRING(LeftLegFatVascularToTissue);
+    DEFINE_STATIC_STRING(RightArmFatVascularToTissue);
+    DEFINE_STATIC_STRING(RightLegFatVascularToTissue);
+    DEFINE_STATIC_STRING(SmallIntestineVascularToTissue);
+    DEFINE_STATIC_STRING(LargeIntestineVascularToTissue);
+    DEFINE_STATIC_STRING(SplanchnicVascularToTissue);
+    DEFINE_STATIC_STRING(LeftKidneyVascularToTissue);
+    DEFINE_STATIC_STRING(LeftLungVascularToTissue);
+    DEFINE_STATIC_STRING(LiverVascularToTissue);
+    DEFINE_STATIC_STRING(TorsoMuscleVascularToTissue);
+    DEFINE_STATIC_STRING(LeftArmMuscleVascularToTissue);
+    DEFINE_STATIC_STRING(LeftLegMuscleVascularToTissue);
+    DEFINE_STATIC_STRING(RightArmMuscleVascularToTissue);
+    DEFINE_STATIC_STRING(RightLegMuscleVascularToTissue);
+    DEFINE_STATIC_STRING(MyocardiumVascularToTissue);
+    DEFINE_STATIC_STRING(RightKidneyVascularToTissue);
+    DEFINE_STATIC_STRING(RightLungVascularToTissue);
+    DEFINE_STATIC_STRING(TorsoSkinVascularToTissue);
+    DEFINE_STATIC_STRING(LeftArmSkinVascularToTissue);
+    DEFINE_STATIC_STRING(LeftLegSkinVascularToTissue);
+    DEFINE_STATIC_STRING(RightArmSkinVascularToTissue);
+    DEFINE_STATIC_STRING(RightLegSkinVascularToTissue);
+    DEFINE_STATIC_STRING(SpleenVascularToTissue);
+
+    // Renal Links
+    // Reusing 'AortaToLeftKidney' to connect the Aorta To Left Renal Artery
+    DEFINE_STATIC_STRING(LeftRenalArteryToAfferentArteriole);
+    DEFINE_STATIC_STRING(LeftAfferentArterioleToGlomerularCapillaries);
+    DEFINE_STATIC_STRING(LeftGlomerularCapillariesToEfferentArteriole);
+    DEFINE_STATIC_STRING(LeftGlomerularCapillariesToBowmansCapsules);
+    DEFINE_STATIC_STRING(LeftBowmansCapsulesToTubules);
+    DEFINE_STATIC_STRING(LeftTubulesToPeritubularCapillaries);
+    DEFINE_STATIC_STRING(LeftEfferentArterioleToPeritubularCapillaries);
+    DEFINE_STATIC_STRING(LeftPeritubularCapillariesToRenalVein);
+    // Reusing 'LeftKidneyToVenaCava' to connect the Left Renal Vein To Vena Cava
+
+    // Reusing 'AortaToRightKidney' to connect the Aorta To Right Renal Artery
+    DEFINE_STATIC_STRING(RightRenalArteryToAfferentArteriole);
+    DEFINE_STATIC_STRING(RightAfferentArterioleToGlomerularCapillaries);
+    DEFINE_STATIC_STRING(RightGlomerularCapillariesToEfferentArteriole);
+    DEFINE_STATIC_STRING(RightGlomerularCapillariesToBowmansCapsules);
+    DEFINE_STATIC_STRING(RightBowmansCapsulesToTubules);
+    DEFINE_STATIC_STRING(RightTubulesToPeritubularCapillaries);
+    DEFINE_STATIC_STRING(RightEfferentArterioleToPeritubularCapillaries);
+    DEFINE_STATIC_STRING(RightPeritubularCapillariesToRenalVein);
+    // Reusing 'RightKidneyToVenaCava' to connect the Right Renal Vein To Vena Cava);   
+
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(VenaCavaToRightHeart);
+        _values.push_back(RightHeartToLeftPulmonaryArteries);
+        _values.push_back(LeftPulmonaryArteriesToCapillaries);
+        _values.push_back(LeftPulmonaryArteriesToVeins);
+        _values.push_back(LeftPulmonaryCapillariesToVeins);
+        _values.push_back(LeftPulmonaryVeinsToLeftHeart);
+        _values.push_back(RightHeartToRightPulmonaryArteries);
+        _values.push_back(RightPulmonaryArteriesToCapillaries);
+        _values.push_back(RightPulmonaryArteriesToVeins);
+        _values.push_back(RightPulmonaryCapillariesToVeins);
+        _values.push_back(RightPulmonaryVeinsToLeftHeart);
+        _values.push_back(LeftHeartToAorta);
+        _values.push_back(AortaToIntracranial);
+        _values.push_back(IntracranialToVenaCava);
+        _values.push_back(AortaToExtracranial);
+        _values.push_back(ExtracranialToVenaCava);
+        _values.push_back(AortaToLargeIntestine);
+        _values.push_back(LargeIntestineToLiver);
+        _values.push_back(LeftArmArteriolesToLeftArmBone);
+        _values.push_back(LeftArmArteriolesToLeftArmFat);
+        _values.push_back(LeftArmArteriolesToLeftArmMicrovasculature);
+        _values.push_back(LeftArmArteriolesToLeftArmMuscle);
+        _values.push_back(LeftArmArteriolesToLeftArmSkin);
+
+        _values.push_back(AortaToLeftKidney);
+        _values.push_back(LeftKidneyToVenaCava);
+        _values.push_back(LeftLegArteriolesToLeftLegBone);
+        _values.push_back(LeftLegArteriolesToLeftLegFat);
+        _values.push_back(LeftLegArteriolesToLeftLegMicrovasculature);
+        _values.push_back(LeftLegArteriolesToLeftLegMuscle);
+        _values.push_back(LeftLegArteriolesToLeftLegSkin);
+        _values.push_back(AortaToLiver);
+        _values.push_back(LiverToVenaCava);
+        _values.push_back(AortaToMyocardium);
+        _values.push_back(MyocardiumToVenaCava);
+        _values.push_back(RightArmArteriolesToRightArmBone);
+        _values.push_back(RightArmArteriolesToRightArmFat);
+        _values.push_back(RightArmArteriolesToRightArmMicrovasculature);
+        _values.push_back(RightArmArteriolesToRightArmMuscle);
+        _values.push_back(RightArmArteriolesToRightArmSkin);
+
+        _values.push_back(AortaToRightKidney);
+        _values.push_back(RightKidneyToVenaCava);
+        _values.push_back(RightLegArteriolesToRightLegBone);
+        _values.push_back(RightLegArteriolesToRightLegFat);
+        _values.push_back(RightLegArteriolesToRightLegMicrovasculature);
+        _values.push_back(RightLegArteriolesToRightLegMuscle);
+        _values.push_back(RightLegArteriolesToRightLegSkin);
+
+
+
+        _values.push_back(AortaToSmallIntestine);
+        _values.push_back(SmallIntestineToLiver);
+        _values.push_back(AortaToSplanchnic);
+        _values.push_back(SplanchnicToLiver);
+        _values.push_back(AortaToSpleen);
+        _values.push_back(SpleenToLiver);
+        _values.push_back(AortaToTorsoArterioles);
+        _values.push_back(TorsoArteriolesToTorsoBone);
+        _values.push_back(TorsoArteriolesToTorsoFat);
+        _values.push_back(TorsoArteriolesToTorsoMicrovasculature);
+        _values.push_back(TorsoArteriolesToTorsoMuscle);
+        _values.push_back(TorsoArteriolesToTorsoSkin);
+
+        _values.push_back(RightArmBoneToRightArmVenules);
+        _values.push_back(RightArmFatToRightArmVenules);
+        _values.push_back(RightArmMicrovasculatureToRightArmVenules);
+        _values.push_back(RightArmMuscleToRightArmVenules);
+        _values.push_back(RightArmSkinToRightArmVenules);
+        _values.push_back(RightLegBoneToRightLegVenules);
+        _values.push_back(RightLegFatToRightLegVenules);
+        _values.push_back(RightLegMicrovasculatureToRightLegVenules);
+        _values.push_back(RightLegMuscleToRightLegVenules);
+        _values.push_back(RightLegSkinToRightLegVenules);
+        _values.push_back(LeftArmBoneToLeftArmVenules);
+        _values.push_back(LeftArmFatToLeftArmVenules);
+        _values.push_back(LeftArmMicrovasculatureToLeftArmVenules);
+        _values.push_back(LeftArmMuscleToLeftArmVenules);
+        _values.push_back(LeftArmSkinToLeftArmVenules);
+        _values.push_back(LeftLegBoneToLeftLegVenules);
+        _values.push_back(LeftLegFatToLeftLegVenules);
+        _values.push_back(LeftLegMicrovasculatureToLeftLegVenules);
+        _values.push_back(LeftLegMuscleToLeftLegVenules);
+        _values.push_back(LeftLegSkinToLeftLegVenules);
+        _values.push_back(TorsoSkinToTorsoVenules);
+        _values.push_back(TorsoMuscleToTorsoVenules);
+        _values.push_back(TorsoMicrovasculatureToTorsoVenules);
+        _values.push_back(TorsoFatToTorsoVenules);
+        _values.push_back(TorsoBoneToTorsoVenules);
+        _values.push_back(TorsoVenulesToVenaCava);
+
+
+        _values.push_back(TorsoBoneVascularToTissue);
+        _values.push_back(LeftArmBoneVascularToTissue);
+        _values.push_back(LeftLegBoneVascularToTissue);
+        _values.push_back(RightArmBoneVascularToTissue);
+        _values.push_back(RightLegBoneVascularToTissue);
+        _values.push_back(BrainVascularToTissue);
+        _values.push_back(TorsoFatVascularToTissue);
+        _values.push_back(LeftArmFatVascularToTissue);
+        _values.push_back(LeftLegFatVascularToTissue);
+        _values.push_back(RightArmFatVascularToTissue);
+        _values.push_back(RightLegFatVascularToTissue);
+        _values.push_back(SmallIntestineVascularToTissue);
+        _values.push_back(LargeIntestineVascularToTissue);
+        _values.push_back(SplanchnicVascularToTissue);
+        _values.push_back(LeftKidneyVascularToTissue);
+        _values.push_back(LeftLungVascularToTissue);
+        _values.push_back(LiverVascularToTissue);
+        _values.push_back(TorsoMuscleVascularToTissue);
+        _values.push_back(LeftArmMuscleVascularToTissue);
+        _values.push_back(LeftLegMuscleVascularToTissue);
+        _values.push_back(RightArmMuscleVascularToTissue);
+        _values.push_back(RightLegMuscleVascularToTissue);
+        _values.push_back(MyocardiumVascularToTissue);
+        _values.push_back(RightKidneyVascularToTissue);
+        _values.push_back(RightLungVascularToTissue);
+        _values.push_back(TorsoSkinVascularToTissue);
+        _values.push_back(LeftArmSkinVascularToTissue);
+        _values.push_back(LeftLegSkinVascularToTissue);
+        _values.push_back(RightArmSkinVascularToTissue);
+        _values.push_back(RightLegSkinVascularToTissue);
+        _values.push_back(SpleenVascularToTissue);
+
+        _values.push_back(LeftRenalArteryToAfferentArteriole);
+        _values.push_back(LeftAfferentArterioleToGlomerularCapillaries);
+        _values.push_back(LeftGlomerularCapillariesToEfferentArteriole);
+        _values.push_back(LeftGlomerularCapillariesToBowmansCapsules);
+        _values.push_back(LeftBowmansCapsulesToTubules);
+        _values.push_back(LeftTubulesToPeritubularCapillaries);
+        _values.push_back(LeftEfferentArterioleToPeritubularCapillaries);
+        _values.push_back(LeftPeritubularCapillariesToRenalVein);
+        _values.push_back(RightRenalArteryToAfferentArteriole);
+        _values.push_back(RightAfferentArterioleToGlomerularCapillaries);
+        _values.push_back(RightGlomerularCapillariesToEfferentArteriole);
+        _values.push_back(RightGlomerularCapillariesToBowmansCapsules);
+        _values.push_back(RightBowmansCapsulesToTubules);
+        _values.push_back(RightTubulesToPeritubularCapillaries);
+        _values.push_back(RightEfferentArterioleToPeritubularCapillaries);
+        _values.push_back(RightPeritubularCapillariesToRenalVein);
+      }
+      return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
 
   class UrineCompartment
   {

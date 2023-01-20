@@ -134,6 +134,9 @@ public:
   virtual SEScalar& GetStandardPulmonaryCapillaryCoverage();
   virtual double GetStandardPulmonaryCapillaryCoverage() const;
 
+  virtual eSwitch UseExpandedVasculature() const { return m_UseExpandedVasculature; }
+  virtual void UseExpandedVasculature(eSwitch s);
+  
   virtual eSwitch TuneCardiovascularCircuit() const { return m_TuneCardiovascularCircuit; }
   virtual void TuneCardiovascularCircuit(eSwitch s) { m_TuneCardiovascularCircuit = s; }
 
@@ -147,6 +150,7 @@ protected:
   SEScalarPressurePerVolume* m_RightHeartElastanceMaximum;
   SEScalarPressurePerVolume* m_RightHeartElastanceMinimum;
   SEScalar*                  m_StandardPulmonaryCapillaryCoverage;
+  eSwitch                    m_UseExpandedVasculature;
   eSwitch                    m_TuneCardiovascularCircuit;
   std::string                m_CardiovascularTuningFile;
 

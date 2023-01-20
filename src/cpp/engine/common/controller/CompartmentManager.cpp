@@ -30,6 +30,7 @@ std::vector<std::string> pulse::TissueCompartment::_values;
 std::vector<std::string> pulse::ExtravascularCompartment::_values;
 std::vector<std::string> pulse::TemperatureCompartment::_values;
 //std::vector<std::string> pulse::TissueLink::_values;
+std::vector<std::string> pulse::ExpandedVascularCompartment::_values;
 std::vector<std::string> pulse::VascularCompartment::_values;
 std::vector<std::string> pulse::VascularLink::_values;
 std::vector<std::string> pulse::UrineCompartment::_values;
@@ -143,6 +144,23 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
   if (!cmpt->HasChildren()) \
     m_##bin##LeafCompartments.push_back(cmpt); \
 } 
+
+#define SORT_CMPTS_EXPANDED(bin, type) \
+m_##bin##Compartments.clear(); \
+m_##bin##LeafCompartments.clear(); \
+for (const std::string& name : pulse::Expanded##bin##Compartment::GetValues()) \
+{ \
+  SE##type##Compartment* cmpt = Get##type##Compartment(name); \
+  if (cmpt == nullptr) \
+  { \
+    Warning("Could not find expected " + std::string(#bin) + " compartment, " + name + " in compartment manager"); \
+    continue; \
+  } \
+  m_##bin##Compartments.push_back(cmpt); \
+  if (!cmpt->HasChildren()) \
+    m_##bin##LeafCompartments.push_back(cmpt); \
+}
+
   void CompartmentManager::StateChange()
   {
     SECompartmentManager::StateChange();
@@ -165,7 +183,15 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
     {
       SORT_CMPTS(Urine, Liquid);
     }
-    SORT_CMPTS(Vascular, Liquid);
+    if (m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::On)
+    {
+      SORT_CMPTS_EXPANDED(Vascular, Liquid);
+    }
+    else
+    {
+      SORT_CMPTS(Vascular, Liquid);
+    }
+
     // Equipment
     SORT_CMPTS(AnesthesiaMachine, Gas);
     SORT_CMPTS(BagValveMask, Gas);

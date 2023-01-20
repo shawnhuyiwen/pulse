@@ -98,7 +98,7 @@ void HowToEngineUse()
   pe->GetLogger()->LogToConsole(false);
   // If you want this engine to write a log file,provided a log filename
   // By default, no log file will be created (no default name)
-  pe->GetLogger()->SetLogFile("HowTo_EngineUse.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_EngineUse.log");
   // You can change this at any time, 
   // Use nullptr or empty string to disable writing to a log file
 
@@ -172,7 +172,7 @@ void HowToEngineUse()
   pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Lungs, "Volume");
   pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
 
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToEngineUse.csv");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowToEngineUse.csv");
 
   // We are ready to execute the engine
   // simply tell the engine how long you would like it to execute
@@ -269,7 +269,7 @@ void HowToEngineUse()
 
 
   // Save the state of the engine
-  pe->SerializeToFile("./states/FinalEngineUseState.json");
+  pe->SerializeToFile("./test_results/howto/HowToEngineUse-FinalState.json");
 
   pe->GetLogger()->Info("Finished");
 }

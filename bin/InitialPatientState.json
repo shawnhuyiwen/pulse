@@ -1,4 +1,8 @@
 {
+  "Configuration": {
+    "WritePatientBaselineFile": "On",
+    "CardiovascularConfiguration" : { "UseExpandedVasculature" : "Off" }
+  },
   "Scenario": {
     "Name": "InitialStableState",
     "Description": "Stabilize a patient and save out the engines state at time zero",
@@ -7,9 +11,5 @@
     [{
       "Serialize": { "Type": "Save" }
     }]
-    },
-  "Configuration": 
-  {
-    "WritePatientBaselineFile": "On"
-  }
+    }
 }

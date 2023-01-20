@@ -141,11 +141,8 @@ namespace pulse
     m_InternalHemorrhageToAorta = nullptr;
     m_AortaToBrain = nullptr;
     m_BrainToVenaCava = nullptr;
-    m_AortaToMuscle = nullptr;
-    m_MuscleToVenaCava = nullptr;
     m_AortaToMyocardium = nullptr;
     m_MyocardiumToVenaCava = nullptr;
-    m_AortaToSkin = nullptr;
 
     m_GndToAbdominalCavity = nullptr;
     m_AbdominalCavityToGnd = nullptr;
@@ -183,6 +180,15 @@ namespace pulse
     m_TransitionArrhythmia = false;
     m_MAPCollapse_mmHg = 20;
     m_MinIndividialSystemicResistance_mmHg_s_Per_mL = 0.1;
+
+    m_HeartCompliancePaths.clear();
+    m_AortaCompliancePaths.clear();
+    m_VenaCavaCompliancePaths.clear();
+    m_PulmonaryCompliancePaths.clear();
+    m_SystemicCompliancePaths.clear();
+    m_SystemicResistancePaths.clear();
+    m_MuscleResistancePaths.clear();
+    m_SkinPaths.clear();
 
     m_CardiacCycleArterialPressure_mmHg->Invalidate();
     m_CardiacCycleArterialCO2PartialPressure_mmHg->Invalidate();
@@ -332,7 +338,6 @@ namespace pulse
     //Compartments
     m_Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
     m_AortaCO2 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
-    m_Brain = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
     m_Ground = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Ground);
     m_LeftPulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryArteries);
     m_RightPulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryArteries);
@@ -359,25 +364,15 @@ namespace pulse
     m_GroundNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::Ground);
     m_AbdominalCavityNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::AbdominalCavity1);
     //Paths
-    m_LeftPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteriesToLeftPulmonaryVeins);
-    m_LeftPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteriesToLeftPulmonaryCapillaries);
-    m_RightPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryVeins);
-    m_RightPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryCapillaries);
+    m_LeftPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryVeins1);
+    m_LeftPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1);
+    m_RightPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryVeins1);
+    m_RightPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryCapillaries1);
 
     m_AortaCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToAorta4);
     m_AortaResistancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
-    m_VenaCavaCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
+    m_VenaCavaCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCava1ToGround);
 
-    m_AortaToBrain = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
-    m_BrainToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
-    m_AortaToMuscle = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMuscle1);
-    m_MuscleToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Muscle1ToMuscle2);
-    m_AortaToMyocardium = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMyocardium1);
-    m_MyocardiumToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Myocardium1ToMyocardium2);
-    m_AortaToSkin = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSkin1);
-
-    m_BrainResistanceDownstreamPath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
-    m_BrainResistanceUpstreamPath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
 
     m_InternalHemorrhageToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAorta4);
     m_GndToAbdominalCavity = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAbdominalCavity1);
@@ -390,10 +385,262 @@ namespace pulse
     m_PericardiumToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Pericardium1ToGround);
     m_RightHeartToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightHeart3ToGround);
     m_RightHeartCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightHeart1ToRightHeart3);
-    m_RightHeartResistancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToRightHeart2);
+    m_RightHeartResistancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCava1ToRightHeart2);
     m_LeftHeartToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftHeart3ToGround);
     m_LeftHeartCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftHeart1ToLeftHeart3);
     m_LeftHeartToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftHeart1ToAorta2);
+
+    // Setup Default vs. Expanded Circuit Parameters
+    if (m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::On)
+    {
+      // For Metabolic Tone Response
+      m_AortaToBrain = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Aorta5ToIntracranial1);
+      m_AortaToMyocardium = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Aorta5ToMyocardium1);
+      m_BrainToVenaCava = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial3ToVenaCava2);
+      m_MyocardiumToVenaCava = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium3ToVenaCava2);
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMuscle1ToTorso2));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMuscle1ToRightArm2));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMuscle1ToLeftArm2));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMuscle1ToRightLeg2));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMuscle1ToLeftLeg2));
+
+      m_Brain = m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedVascularCompartment::Intracranial);
+      m_BrainResistanceDownstreamPath = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial2ToIntracranial3);
+      m_BrainResistanceUpstreamPath = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial1ToIntracranial2);
+
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoSkin1));
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmSkin1));
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmSkin1));
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegSkin1));
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegSkin1));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial1ToExtracranial2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial2ToExtracranial3));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial1ToIntracranial2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial2ToIntracranial3));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium1ToMyocardium2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium2ToMyocardium3));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToLiver1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToSplanchnic1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToSpleen1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToSmallIntestine1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToLargeIntestine1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::PortalVein1ToLiver1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Liver1ToLiver2));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmBone1ToRightArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmFat1ToRightArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMuscle1ToRightArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmSkin1ToRightArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmMicrovasculature1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMicrovasculature1ToRightArm2));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmBone1ToLeftArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmFat1ToLeftArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMuscle1ToLeftArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmSkin1ToLeftArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmMicrovasculature1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMicrovasculature1ToLeftArm2));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoBone1ToTorso2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoFat1ToTorso2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMuscle1ToTorso2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoSkin1ToTorso2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoMicrovasculature1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMicrovasculature1ToTorso2));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegBone1ToRightLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegFat1ToRightLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMuscle1ToRightLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegSkin1ToRightLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegMicrovasculature1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMicrovasculature1ToRightLeg2));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegBone1ToLeftLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegFat1ToLeftLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMuscle1ToLeftLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegSkin1ToLeftLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegMicrovasculature1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMicrovasculature1ToLeftLeg2));
+
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial3ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial3ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium2ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium3ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm2ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm2ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso2ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg2ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg2ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Liver1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Liver2ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Splanchnic1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Spleen1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LargeIntestine1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::SmallIntestine1ToGround));
+
+      if (!m_data.GetConfiguration().IsRenalEnabled())
+      {
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftKidney1ToLeftKidney2));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightKidney1ToRightKidney2));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftKidney3ToVenaCava2));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightKidney3ToVenaCava2));
+
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryCompliance));
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryCompliance));
+
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalVeinCompliance));
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalVeinCompliance));
+      }
+    }
+    else
+    {
+      // For Metabolic Tone Response
+      m_AortaToBrain = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
+      m_BrainToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
+      m_AortaToMyocardium = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMyocardium1);
+      m_MyocardiumToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Myocardium1ToMyocardium2);
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Muscle1ToMuscle2));
+
+      m_Brain = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
+      m_BrainResistanceDownstreamPath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
+      m_BrainResistanceUpstreamPath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
+
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSkin1));
+
+      // Arterial Side
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMyocardium1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToRightArm1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLeftArm1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToRightLeg1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLeftLeg1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLiver1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSplanchnic1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSpleen1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLargeIntestine1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSmallIntestine1));
+      // Venous Side
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Myocardium1ToMyocardium2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightArm1ToRightArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftArm1ToLeftArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightLeg1ToRightLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftLeg1ToLeftLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Fat1ToFat2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Muscle1ToMuscle2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Skin1ToSkin2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Bone1ToBone2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Liver1ToLiver2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LargeIntestine1ToPortalVein1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Splanchnic1ToPortalVein1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Spleen1ToPortalVein1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::SmallIntestine1ToPortalVein1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::PortalVein1ToLiver1));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Myocardium1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightArm1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftArm1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightLeg1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftLeg1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Fat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Muscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Skin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Bone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Liver1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Splanchnic1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Spleen1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LargeIntestine1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::SmallIntestine1ToGround));
+
+      if (!m_data.GetConfiguration().IsRenalEnabled())
+      {
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLeftKidney1));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToRightKidney1));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftKidney1ToLeftKidney2));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightKidney1ToRightKidney2));
+
+        //TODO: Aaron: isn't this path removed when the renal system is enabled? Shouldn't you take here the paths RightRenalArteryCompliance, RightGlomerularCapillariesCompliance, etc?
+        // Probably you don't want to optimize/modify these values, but some blood volume are not considered in this way. Right?
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftKidney1ToGround));
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightKidney1ToGround));
+      }
+    }
 
     // Setup our vectors for vascular tone modifiers
     m_AortaCompliancePaths.push_back(m_AortaCompliancePath);
@@ -401,44 +648,17 @@ namespace pulse
     m_HeartCompliancePaths.push_back(m_LeftHeartCompliancePath);
     m_HeartCompliancePaths.push_back(m_RightHeartCompliancePath);
 
-    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteriesToGround));
-    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToGround));
-    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillariesToGround));
-    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryCapillariesToGround));
-    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsToGround));
-    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsToGround));
+    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToGround));
+    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToGround));
+    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillaries1ToGround));
+    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryCapillaries1ToGround));
+    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeins1ToGround));
+    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeins1ToGround));
 
-    std::vector<SEFluidCircuitNode*> venousNodes;
-    SEFluidCircuitNode* aorta = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::Aorta1);
-    for (SEFluidCircuitPath* path : m_CirculatoryCircuit->GetPaths())
-    {
-      if (&path->GetSourceNode() == aorta && path->HasResistanceBaseline())
-      {
-        m_SystemicResistancePaths.push_back(path);
-        venousNodes.push_back(&path->GetTargetNode());
-      }
-    }
-    for (SEFluidCircuitPath* path : m_CirculatoryCircuit->GetPaths())
-    {
-      for (SEFluidCircuitNode* node : venousNodes)
-      {
-        if (&path->GetSourceNode() == node)
-        {
-          if (path->HasResistanceBaseline())
-            m_SystemicResistancePaths.push_back(path);
-          if (path->HasComplianceBaseline())
-            m_SystemicCompliancePaths.push_back(path);
-          break;
-        }
-      }
-    }
-    // Add the portal vein!
-    SEFluidCircuitPath* p;
-    p = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::PortalVeinToLiver1);
-    if (!Contains(m_SystemicResistancePaths, (*p)))
-      m_SystemicResistancePaths.push_back(p);
+    // Add the expanded kidney paths
     if (m_data.GetConfiguration().IsRenalEnabled())
     {
+      SEFluidCircuitPath* p;
       // Add kidney resistance paths
       p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryToAfferentArteriole);
       if (!Contains(m_SystemicResistancePaths, (*p)))
@@ -478,7 +698,6 @@ namespace pulse
       //if (!Contains(m_SystemicResistancePaths, (*p)))
       //  m_SystemicResistancePaths.push_back(p);
     
-    
       // Add Compliance Paths
       p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryCompliance);
       if (!Contains(m_SystemicCompliancePaths, (*p)))
@@ -500,7 +719,6 @@ namespace pulse
       if (!Contains(m_SystemicCompliancePaths, (*p)))
         m_SystemicCompliancePaths.push_back(p);
     }
-
     // Track average flows by cardiac cycle the following compartments and their children
     SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta));
     SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain));
@@ -838,12 +1056,14 @@ namespace pulse
       + m_RightPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
     const double VenaCavaPressure_mmHg = m_VenaCava->GetPressure(PressureUnit::mmHg);
-
-    const double SkinFlow_mL_Per_s = m_AortaToSkin->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
     const double LHeartFlow_mL_Per_s = m_LeftHeartToAorta->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
     const double LHeartVolume_mL = m_LeftHeart->GetVolume(VolumeUnit::mL);
     const double LHeartPressure_mmHg = m_LeftHeart->GetPressure(PressureUnit::mmHg);
     const double RHeartPressure_mmHg = m_RightHeart->GetPressure(PressureUnit::mmHg);
+
+    double SkinFlow_mL_Per_s = 0;
+    for(SEFluidCircuitPath* path : m_SkinPaths)
+      SkinFlow_mL_Per_s += path->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
     m_FullyCompressedHeart = false;
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
@@ -990,19 +1210,28 @@ namespace pulse
 
     // Compute blood volume
     double blood_mL = 0;
+    // Info("Evaluating blood volume -----------------------------------");
     for (SELiquidCompartment* cmpt : m_data.GetCompartments().GetVascularLeafCompartments())
     {
       if (cmpt->HasVolume() && cmpt != m_Pericardium) //Don't include pericardium
       {
-        //Info(cmpt->GetName() + " Has Volume");
-        //for (auto n : cmpt->GetNodeMapping().GetNodes())
-        //  if(n->HasVolume())
-        //    Info("  -"+n->GetName());
+        // Info(cmpt->GetName() + " Has Volume");
+        for (auto n : cmpt->GetNodeMapping().GetNodes())
+         if(n->HasVolume()){
+          //  Info("  - "+n->GetName() + " : " +std::to_string(cmpt->GetVolume(VolumeUnit::mL)) + " [mL]. Total " + std::to_string(blood_mL + cmpt->GetVolume(VolumeUnit::mL)));
+            // m_ss << "Compartment - " << std::setw(30) << cmpt->GetName() <<
+            //   " - " << std::setw(30) << n->GetName() <<
+            //   " Volume(mL):"          << std::setw(10) << cmpt->GetVolume(VolumeUnit::mL) <<
+            //   " Total(mL):"           << std::setw(10) << blood_mL + cmpt->GetVolume(VolumeUnit::mL);
+            // Info(m_ss);
+            }
+
         blood_mL += cmpt->GetVolume(VolumeUnit::mL);
       }
       //else
       //  Info(cmpt->GetName() + " No Volume");
     }
+    // Info("-----------------------------------");
     GetBloodVolume().SetValue(blood_mL, VolumeUnit::mL);
   }
 
@@ -2161,7 +2390,7 @@ namespace pulse
     {
       if (Path->HasResistanceBaseline())
       {
-        if (Path == m_AortaToMuscle || Path == m_MuscleToVenaCava)
+        if (std::find(m_MuscleResistancePaths.begin(), m_MuscleResistancePaths.end(), Path) != m_MuscleResistancePaths.end())
         { // Biggest change in muscle
           resistanceNew__mmHg_s_Per_mL = (1.0 / metabolicModifier) * (1.0 / metabolicModifier) * Path->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
         }
@@ -2766,48 +2995,120 @@ namespace pulse
     bool success = false;
 
     // Copy all the CV pressures to the associated tissue nodes
-
-    std::vector<SEFluidCircuitNode*> tissuePressureCVSources;
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Bone1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Brain1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Fat1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::SmallIntestine1));
-    // Have to pick one of the 3 nodes GI is mapped to for pressure
-    //tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LargeIntestine1));
-    //tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Splanchnic1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Liver1));
-    if (m_data.GetConfiguration().IsRenalEnabled())
-      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::LeftGlomerularCapillaries));
-    else
-      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftKidney1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Muscle1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Myocardium1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightPulmonaryCapillaries));
-    if (m_data.GetConfiguration().IsRenalEnabled())
-      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::RightGlomerularCapillaries));
-    else
-      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightKidney1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Skin1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Spleen1));
-
-    // Get the tissue resistance paths to decrement until we get a flow of at least (TBD)
     std::vector<double> flowMax;
     std::vector<double> flowMin;
     std::vector<SEFluidCircuitPath*> tissueResistancePaths;
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BoneT2ToBoneT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BrainT2ToBrainT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::FatT2ToFatT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::GutT2ToGutT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LiverT2ToLiverT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftKidneyT2ToLeftKidneyT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftLungT2ToLeftLungT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MuscleT2ToMuscleT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MyocardiumT2ToMyocardiumT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightLungT2ToRightLungT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SkinT2ToSkinT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SpleenT2ToSpleenT1));
+    std::vector<SEFluidCircuitNode*> tissuePressureCVSources;
+
+    if (m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::On)
+    {
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::TorsoBone1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::BoneT2ToBoneT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::Intracranial2));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::BrainT2ToBrainT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::TorsoFat1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::FatT2ToFatT1));
+
+      // Have to pick one of the 3 nodes GI is mapped to for pressure (Could use Large Intestine | Splanchnic)
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::SmallIntestine1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::GutT2ToGutT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::Liver1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::LiverT2ToLiverT1));
+
+      if (m_data.GetConfiguration().IsRenalEnabled())
+      {
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::LeftGlomerularCapillaries));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::LeftKidneyT2ToLeftKidneyT1));
+
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::RightGlomerularCapillaries));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::RightKidneyT2ToRightKidneyT1));
+      }
+      else
+      {
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::LeftKidney2));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::LeftKidneyT2ToLeftKidneyT1));
+
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::RightKidney2));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::RightKidneyT2ToRightKidneyT1));
+      }
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::LeftPulmonaryCapillaries1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::LeftLungT2ToLeftLungT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::TorsoMuscle1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::MuscleT2ToMuscleT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::Myocardium2));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::MyocardiumT2ToMyocardiumT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::RightPulmonaryCapillaries1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::RightLungT2ToRightLungT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::TorsoSkin1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::SkinT2ToSkinT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::Spleen1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::SpleenT2ToSpleenT1));
+    }
+    else
+    {
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Bone1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BoneT2ToBoneT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Brain1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BrainT2ToBrainT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Fat1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::FatT2ToFatT1));
+
+      // Have to pick one of the 3 nodes GI is mapped to for pressure (Could use Large Intestine | Splanchnic)
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::SmallIntestine1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::GutT2ToGutT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Liver1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LiverT2ToLiverT1));
+
+      if (m_data.GetConfiguration().IsRenalEnabled())
+      {
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::LeftGlomerularCapillaries));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftKidneyT2ToLeftKidneyT1));
+
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::RightGlomerularCapillaries));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
+      }
+      else
+      {
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftKidney1));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftKidneyT2ToLeftKidneyT1));
+
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightKidney1));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
+      }
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftLungT2ToLeftLungT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Muscle1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MuscleT2ToMuscleT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Myocardium1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MyocardiumT2ToMyocardiumT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightPulmonaryCapillaries1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightLungT2ToRightLungT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Skin1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SkinT2ToSkinT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Spleen1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SpleenT2ToSpleenT1));
+    }
+
+    // Get the tissue resistance paths to decrement until we get a flow of at least (TBD)
+   
     Info("Tuning Tissue resistances at " + cdm::to_string(time_s) + "s");
     for (SEFluidCircuitPath* path : tissueResistancePaths)
     {

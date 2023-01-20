@@ -28,6 +28,7 @@ void HowToCPR();
 void HowToECMO();
 void HowToEnvironmentChange();
 void HowToExercise();
+void HowToExpandedVasculature();
 void HowToHemorrhage();
 void HowToLobarPneumonia();
 void HowToMechanicalVentilation();

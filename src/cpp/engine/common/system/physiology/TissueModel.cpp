@@ -207,11 +207,12 @@ namespace pulse
     m_LeftPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries);
     m_RightPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries);
 
+    std::string BrainCmpt = m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::On ? pulse::ExpandedVascularCompartment::Intracranial : pulse::VascularCompartment::Brain;
     //Store tissue-blood pairs
     m_TissueToVascular.clear();
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Bone)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Bone);
-    m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Brain)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
+    m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Brain)] = m_data.GetCompartments().GetLiquidCompartment(BrainCmpt);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Gut)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Gut);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftKidney)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightKidney)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney);
@@ -237,7 +238,7 @@ namespace pulse
 
     m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat)] = 0;
     m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Bone)] = 0;
-    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(BrainCmpt)] = 0;
     m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Gut)] = 0;
     m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney)] = 0;
     m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney)] = 0;

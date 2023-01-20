@@ -114,7 +114,11 @@ namespace pulse
     m_Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
     m_AortaO2 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     m_AortaCO2 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
-    m_BrainO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    if(m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::Off)
+      m_BrainO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    else
+      m_BrainO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedVascularCompartment::Intracranial)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+
     m_MyocardiumO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     m_RightArm = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightArm);
     m_RightArmO2 = m_RightArm->GetSubstanceQuantity(m_data.GetSubstances().GetO2());

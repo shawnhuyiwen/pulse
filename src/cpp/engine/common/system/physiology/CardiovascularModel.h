@@ -177,9 +177,7 @@ namespace pulse
     SEFluidCircuitNode*              m_AbdominalCavityNode;
     
     SEFluidCircuitPath*              m_AortaToBrain;
-    SEFluidCircuitPath*              m_AortaToMuscle;
     SEFluidCircuitPath*              m_AortaToMyocardium;
-    SEFluidCircuitPath*              m_AortaToSkin;
     SEFluidCircuitPath*              m_AortaCompliancePath;
     SEFluidCircuitPath*              m_AortaResistancePath;
 
@@ -191,7 +189,6 @@ namespace pulse
     SEFluidCircuitPath*              m_RightPulmonaryArteriesToCapillaries;
 
     SEFluidCircuitPath*              m_BrainToVenaCava;
-    SEFluidCircuitPath*              m_MuscleToVenaCava;
     SEFluidCircuitPath*              m_MyocardiumToVenaCava;
 
     SEFluidCircuitPath*              m_GndToPericardium;
@@ -243,5 +240,7 @@ namespace pulse
     std::vector<SEFluidCircuitPath*> m_PulmonaryCompliancePaths;
     std::vector<SEFluidCircuitPath*> m_SystemicCompliancePaths;
     std::vector<SEFluidCircuitPath*> m_SystemicResistancePaths;
+    std::vector<SEFluidCircuitPath*> m_MuscleResistancePaths;
+    std::vector<SEFluidCircuitPath*> m_SkinPaths;
   };
 END_NAMESPACE

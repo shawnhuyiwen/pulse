@@ -48,7 +48,7 @@ public:
   virtual bool IsActive() const;
   virtual void Deactivate();
 
-  virtual eHemorrhage_Type GetType() { return m_Type; }
+  virtual eHemorrhage_Type GetType() const { return m_Type; }
   virtual void SetType(eHemorrhage_Type t) { m_Type = t; }
 
   virtual bool HasCompartment() const;

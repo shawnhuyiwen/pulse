@@ -113,7 +113,7 @@ namespace pulse
       }
       return bb;
     }
-    Error("Currently, Compartments must be linked");
+    Error("Currently, Compartments must be linked. Source = " + srcCmpt->GetName() + ", Target = " + tgtCmpt->GetName());
     return nullptr;
   }
 

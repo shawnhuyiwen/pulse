@@ -119,7 +119,7 @@ namespace pulse
     m_fatTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat);
     m_liverVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver);
     m_liverTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver);
-    m_IVToVenaCava = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::IVToVenaCava);
+    m_IVToVenaCava = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::IVToVenaCava1);
   }
 
   //--------------------------------------------------------------------------------------------------

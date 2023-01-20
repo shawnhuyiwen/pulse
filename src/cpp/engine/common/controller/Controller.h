@@ -268,21 +268,37 @@ namespace pulse
     virtual std::string GetTypeName() const = 0;
     virtual void LogBuildInfo() const;
     // Setup Circuit/Compartments for systems
+
+    // Default/Optimal Cardiovascular
     virtual void SetupCardiovascular();
     virtual void SetupRenal();
     virtual void SetupTissue();
     virtual void SetupCerebrospinalFluid();
-    virtual void SetupECMO();
+
+    // Optional Expanded Cardiovascular Circuit Setup Methods
+    virtual void SetupExpandedCardiovascular();
+    virtual void SetupExpandedCardiovascularRenal();
+    virtual void SetupExpandedCardiovascularTissue();
+    virtual void SetupExpandedCardiovascularCerebrospinalFluid();
+
+    // Default/Optimal Gastrointestinal
     virtual void SetupGastrointestinal();
+
+    // Default/Optimal Respiratory
     virtual void SetupRespiratory();
+
+    // Default/Optimal Equipment
     virtual void SetupAnesthesiaMachine();
     virtual void SetupBagValveMask();
+    virtual void SetupECMO();
     virtual void SetupInhaler();
     virtual void SetupMechanicalVentilation();
     virtual void SetupMechanicalVentilator();
     virtual void SetupNasalCannula();
     virtual void SetupSimpleMask();
     virtual void SetupNonRebreatherMask();
+
+    // Default/Optimal Energy
     virtual void SetupExternalTemperature();
     virtual void SetupInternalTemperature();
 

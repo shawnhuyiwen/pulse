@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToBone1);
     // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToBrain1);
     // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToFat1);
-    modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToLargeIntestine);
+    modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToLargeIntestine1);
     // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToLeftLeg1);
     // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToRightLeg1);
     modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToLiver1);
@@ -52,9 +52,9 @@ int main(int argc, char* argv[])
     // modifiers.emplace_back(pulse::CardiovascularPath::LeftPulmonaryArteriesToLeftPulmonaryCapillaries);
     // modifiers.emplace_back(pulse::CardiovascularPath::LeftPulmonaryCapillariesToLeftPulmonaryVeins);
     // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToSkin1);
-    modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToSmallIntestine);
-    // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToSplanchnic);
-    // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToSpleen);
+    modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToSmallIntestine1);
+    // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToSplanchnic1);
+    // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToSpleen1);
 
     CircuitOptimizer opt(&log);
     if(!opt.ConvergeToHemodynamicsTargets(maxLoops, stepRatio, startModifierSet, drMgr.GetValidationTargets(), modifiers))
