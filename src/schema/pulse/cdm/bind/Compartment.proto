@@ -39,9 +39,13 @@ message FluidCompartmentData
 {
   CompartmentData                        Compartment                              = 1;
   ScalarVolumePerTimeData                InFlow                                   = 2;
-  ScalarVolumePerTimeData                OutFlow                                  = 3;
-  ScalarPressureData                     Pressure                                 = 4;
-  ScalarVolumeData                       Volume                                   = 5;
+  ScalarVolumePerTimeData                AverageInFlow                            = 3;
+  RunningAverageData                     InFlowRunningAverage                     = 4;
+  ScalarVolumePerTimeData                OutFlow                                  = 5;
+  ScalarVolumePerTimeData                AverageOutFlow                           = 6;
+  RunningAverageData                     OutFlowRunningAverage                    = 7;
+  ScalarPressureData                     Pressure                                 = 8;
+  ScalarVolumeData                       Volume                                   = 9;
 }
 message FluidCompartmentLinkData
 {
