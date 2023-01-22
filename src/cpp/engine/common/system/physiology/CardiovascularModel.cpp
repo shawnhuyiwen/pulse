@@ -1410,8 +1410,6 @@ namespace pulse
       if (!h->IsActive())
         continue;
 
-      bool calculateResistanceBaseline = false;
-
       // Allocate the track
       CardiovascularModel::HemorrhageTrack* trk;
       auto t = m_HemorrhageTrack.find(h);
@@ -1526,7 +1524,7 @@ namespace pulse
               completeStateChange = true;
 
               if (h->HasSeverity())
-                calculateResistanceBaseline = true;
+                hemorrhagePath.GetResistanceBaseline().Invalidate();
             }
           }
         }
@@ -1536,8 +1534,11 @@ namespace pulse
       double totalFlow_mL_Per_s = 0;
       for (auto& itr : trk->CmptHemorrhageLinks)
       {
-        totalFlow_mL_Per_s += itr.first->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s);
+        if (itr.first->HasAverageInFlow())
+          totalFlow_mL_Per_s += itr.first->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s);
       }
+      if (totalFlow_mL_Per_s == 0)
+        continue;// Wait until we have average flow
 
       for (auto& itr : trk->CmptHemorrhageLinks)
       {
@@ -1557,11 +1558,11 @@ namespace pulse
             {
               path->GetFlowSource().Invalidate();
               path->GetNextFlowSource().Invalidate();
-              calculateResistanceBaseline = true;
+              path->GetResistanceBaseline().Invalidate();
               completeStateChange = true;
             }
 
-            if (calculateResistanceBaseline)
+            if (!path->HasResistanceBaseline())
             {
               // Compute the baseline resistance
               double flowRate_L_per_min = cmpt->GetAverageInFlow(VolumePerTimeUnit::L_Per_min);
