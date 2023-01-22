@@ -133,12 +133,13 @@ bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::strin
   google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
 
   bool ret = true;
-  if (m == eSerializationFormat::JSON)
+  if (m == eSerializationFormat::JSON || m == eSerializationFormat::VERBOSE_JSON)
   {
     google::protobuf::util::JsonPrintOptions opts;
     opts.add_whitespace = true;
     opts.preserve_proto_field_names = true;
-    //opts.always_print_primitive_fields = true;
+    if (m == eSerializationFormat::VERBOSE_JSON)
+      opts.always_print_primitive_fields = true;
     ret = google::protobuf::util::MessageToJsonString(src, &output, opts).ok();
   }
   else if (m == eSerializationFormat::TEXT)

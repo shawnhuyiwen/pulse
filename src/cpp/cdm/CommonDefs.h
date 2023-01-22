@@ -132,7 +132,7 @@ using namespace stdext;
 #endif
 
 //Utilities
-enum class eSerializationFormat { JSON = 0, BINARY, TEXT };
+enum class eSerializationFormat { JSON = 0, BINARY, VERBOSE_JSON,TEXT };
 
 struct CommonDataModelException : public std::runtime_error
 {

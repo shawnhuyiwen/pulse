@@ -47,6 +47,10 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name)=0;
 
+  static std::string PrettyPrint(const std::string& str);
+
+  virtual std::string ToJSON() const;
+
 protected:
   bool                  m_Active = true;
   std::string           m_Comment;

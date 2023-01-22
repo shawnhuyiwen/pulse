@@ -81,13 +81,38 @@ std::string Replace(const std::string& original, const std::string& replace, con
 {
   size_t idx = 0;
   std::string s = original;
-  idx = s.find(replace);
-  if (idx != std::string::npos)
+  while (true)
   {
-    s.erase(idx, replace.length());
-    s.insert(idx, withThis);
+    idx = s.find(replace);
+    if (idx != std::string::npos)
+    {
+      s.erase(idx, replace.length());
+      s.insert(idx, withThis);
+    }
+    else
+      break;
   }
   return s;
+}
+
+void TrimFront(std::string& s)
+{
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch)
+  {
+    return !std::isspace(ch);
+  }));
+}
+void TrimBack(std::string& s)
+{
+  s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch)
+  {
+    return !std::isspace(ch);
+  }).base(), s.end());
+}
+void Trim(std::string& s)
+{
+  TrimFront(s);
+  TrimBack(s);
 }
 
 bool CreatePath(const std::string& path)
