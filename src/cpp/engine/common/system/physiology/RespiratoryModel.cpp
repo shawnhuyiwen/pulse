@@ -161,7 +161,6 @@ namespace pulse
 
     // Circuits
     m_RespiratoryCircuit = nullptr;
-    m_Calculator = nullptr;
     // Nodes
     m_AirwayNode = nullptr;
     m_LeftAlveoliNode = nullptr;
