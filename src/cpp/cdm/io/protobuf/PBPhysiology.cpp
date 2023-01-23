@@ -497,7 +497,7 @@ void PBPhysiology::Load(const CDM_BIND::HepaticSystemData& src, SEHepaticSystem&
   dst.Clear();
   PBPhysiology::Serialize(src, dst);
 }
-void PBPhysiology::Serialize(const CDM_BIND::HepaticSystemData& src, SEHepaticSystem& dst)
+void PBPhysiology::Serialize(const CDM_BIND::HepaticSystemData& /*src*/, SEHepaticSystem& /*dst*/)
 {
 
 }
@@ -508,7 +508,7 @@ CDM_BIND::HepaticSystemData* PBPhysiology::Unload(const SEHepaticSystem& src)
   PBPhysiology::Serialize(src, *dst);
   return dst;
 }
-void PBPhysiology::Serialize(const SEHepaticSystem& src, CDM_BIND::HepaticSystemData& dst)
+void PBPhysiology::Serialize(const SEHepaticSystem& /*src*/, CDM_BIND::HepaticSystemData& /*dst*/)
 {
 
 }

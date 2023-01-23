@@ -12,7 +12,7 @@ POP_PROTO_WARNINGS
 std::mutex log_mutex;
 Logger* g_logger = nullptr;
 
-void PBUtils::ProtobufLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
+void PBUtils::ProtobufLogHandler(google::protobuf::LogLevel level, const char* /*filename*/, int /*line*/, const std::string& message)
 {
   if (g_logger != nullptr)
   {

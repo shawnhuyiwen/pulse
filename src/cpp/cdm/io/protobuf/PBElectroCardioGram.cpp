@@ -160,6 +160,6 @@ void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveform& src, CDM_
     dst.set_allocated_originaldata(PBProperty::Unload(*src.m_OriginalData));
   if (src.HasActiveCycle())
     dst.set_allocated_activecycle(PBProperty::Unload(*src.m_ActiveCycle));
-  dst.set_activecycleindex(src.m_ActiveIndex);
+  dst.set_activecycleindex((int32_t)src.m_ActiveIndex);
   dst.set_recycling(src.m_Recycling);
 }

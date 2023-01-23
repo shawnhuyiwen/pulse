@@ -16,12 +16,12 @@ POP_PROTO_WARNINGS
 #include "cdm/utils/FileUtils.h"
 
 
-void PBPatientAssessment::Serialize(const CDM_BIND::PatientAssessmentData& src, SEPatientAssessment& dst)
+void PBPatientAssessment::Serialize(const CDM_BIND::PatientAssessmentData& /*src*/, SEPatientAssessment& /*dst*/)
 {
 
 }
 
-void PBPatientAssessment::Serialize(const SEPatientAssessment& src, CDM_BIND::PatientAssessmentData& dst)
+void PBPatientAssessment::Serialize(const SEPatientAssessment& /*src*/, CDM_BIND::PatientAssessmentData& /*dst*/)
 {
 
 }

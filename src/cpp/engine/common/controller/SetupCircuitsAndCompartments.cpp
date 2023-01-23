@@ -283,11 +283,9 @@ namespace pulse
     double bloodVolume_mL = m_InitialPatient->GetBloodVolumeBaseline(VolumeUnit::mL);
 
     double systolicPressureTarget_mmHg = m_InitialPatient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
-    double heartRate_bpm = m_InitialPatient->GetHeartRateBaseline(FrequencyUnit::Per_min);
 
     const double cardiacOutputTarget_mL_Per_min = male ? 5600.0 : 4900.0;
     const double cardiacOutputTarget_mL_Per_s = cardiacOutputTarget_mL_Per_min / 60;
-    const double strokeVolumeTarget_mL = cardiacOutputTarget_mL_Per_min / heartRate_bpm;
 
     const double pulmonaryShuntFractionFactor = 0.009; // Used to set the pulmonary shunt fraction. Actual shunt will be roughly double this value (two lungs).
     // The way this works is we compute resistances and compliances based on the hemodynamic variables above that are either in the patient
@@ -2920,8 +2918,8 @@ namespace pulse
     nOxygenator.GetVolumeBaseline().SetValue(5, VolumeUnit::mL); // User can change
     //Paths
     SEFluidCircuitNode* nGround = m_Circuits->GetActiveCardiovascularCircuit().GetNode(pulse::CardiovascularNode::Ground);
-    SEFluidCircuitPath& pBloodSamplingPortToGround = m_Circuits->CreateFluidPath(nBloodSamplingPort, *nGround, pulse::ECMOPath::BloodSamplingPortToGround);
-    SEFluidCircuitPath& pGroundToOxygenator = m_Circuits->CreateFluidPath(*nGround, nOxygenator, pulse::ECMOPath::GroundToOxygenator);
+    m_Circuits->CreateFluidPath(nBloodSamplingPort, *nGround, pulse::ECMOPath::BloodSamplingPortToGround);
+    m_Circuits->CreateFluidPath(*nGround, nOxygenator, pulse::ECMOPath::GroundToOxygenator);
 
     /////////////////////////
     // LIQUID COMPARTMENTS //
@@ -2930,10 +2928,12 @@ namespace pulse
     SELiquidCompartment& cOxygenator = m_Compartments->CreateLiquidCompartment(pulse::ECMOCompartment::Oxygenator);
     cOxygenator.MapNode(nOxygenator);
     // Setup Links //
-    SELiquidCompartmentLink& lBloodSamplingPortToGround = m_Compartments->CreateLiquidLink(cBloodSamplingPort, cOxygenator, pulse::ECMOLink::BloodSamplingPortToOxygenator);
+    m_Compartments->CreateLiquidLink(cBloodSamplingPort, cOxygenator, pulse::ECMOLink::BloodSamplingPortToOxygenator);
 
     // Will dynamically add/remove nodes/paths and compartments/links to ciruict/graph on ECMOModel::StateChange
     // This will also include creating/deleting paths from vasculature to/from the ECMO machine
+
+    // We intentionally have the circuit going to/from ground to preserve volume, while the link stay in the machine to preserve substance values
   }
 
 

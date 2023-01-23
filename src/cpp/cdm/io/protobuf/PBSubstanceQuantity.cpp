@@ -13,7 +13,7 @@ POP_PROTO_WARNINGS
 #include "cdm/compartment/fluid/SEGasCompartment.h"
 #include "cdm/compartment/fluid/SELiquidCompartment.h"
 
-void PBSubstanceQuantity::Serialize(const CDM_BIND::SubstanceQuantityData& src, SESubstanceQuantity& dst)
+void PBSubstanceQuantity::Serialize(const CDM_BIND::SubstanceQuantityData& /*src*/, SESubstanceQuantity& /*dst*/)
 {
   // Name will be used to get substance for ctor
 }

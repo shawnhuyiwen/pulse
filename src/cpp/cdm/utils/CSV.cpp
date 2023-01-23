@@ -151,9 +151,9 @@ void CSV::SplitCSV(const std::string& originalCSV, const std::map<std::string, s
   std::ifstream origFile(originalCSV);
   std::string line, header;
   std::getline(origFile, line);
-  std::stringstream ss(line);
+  std::stringstream ss1(line);
   std::vector<std::vector<std::string>> headersToFiles;
-  while(std::getline(ss, header, ','))
+  while(std::getline(ss1, header, ','))
   {
     headersToFiles.push_back(std::vector<std::string>());
 
@@ -182,10 +182,10 @@ void CSV::SplitCSV(const std::string& originalCSV, const std::map<std::string, s
       outputFileItr->second << std::endl;
     }
 
-    std::stringstream ss(line);
+    std::stringstream ss2(line);
     int colIdx = 0;
     std::string value;
-    while(std::getline(ss, value, ','))
+    while(std::getline(ss2, value, ','))
     {
       //Put this value in the relevant files
       for(auto file: headersToFiles[colIdx])

@@ -28,7 +28,7 @@ POP_PROTO_WARNINGS
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceManager.h"
 
-void PBCompartment::Serialize(const CDM_BIND::CompartmentData& src, SECompartment& dst)
+void PBCompartment::Serialize(const CDM_BIND::CompartmentData& /*src*/, SECompartment& /*dst*/)
 {
   // Name is set in ctor
 }

@@ -1163,8 +1163,6 @@ namespace pulse
     if (m_CurrentRespiratoryVolume_L <= previousRespiratoryVolume_L)
     {
       //Save for end of exhale
-      double ambientPressure_cmH2O = m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
-      double airwayPressure_cmH2O = ambientPressure_cmH2O;
       if (m_ConnectionNode->HasNextPressure())
       {
         airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
