@@ -143,6 +143,9 @@ namespace pulse
     double m_CardiacCycleRightHeartPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
     double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
     double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
+    double m_CardiacCyclePerfusionVolume_mL; // Total volume through the pulmonary capillaries for the current cardiac cycle
+    double m_LeftCardiacCyclePerfusionVolume_mL;
+    double m_RightCardiacCyclePerfusionVolume_mL;
 
     SERunningAverage* m_CardiacCycleArterialPressure_mmHg;
     SERunningAverage* m_CardiacCycleArterialCO2PartialPressure_mmHg;

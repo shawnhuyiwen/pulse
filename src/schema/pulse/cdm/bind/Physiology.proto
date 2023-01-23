@@ -114,7 +114,7 @@ message CardiovascularSystemData
   ScalarPressureData                  SystolicRightHeartPressure                     = 36;/**<< @brief The maximum pressure in the aorta over the course of a cardiac cycle.*/
   ScalarVolumePerTimeData             TotalHemorrhageRate                            = 37;/**<< @brief The total rate of blood loss due to all active hemorrhages.*/
   ScalarVolumeData                    TotalHemorrhagedVolume                         = 38;/**<< @brief The total amount of blood lost due to all hemorrhages.*/
-  ScalarVolumePerTimeData             TotalPulmonaryPerfusion                        = 39;/**<< @brief The total blood flow that particpates in gas exchange over the course of a cardiac cycle. */
+  ScalarVolumePerTimeData             TotalPulmonaryPerfusion                        = 39;/**<< @brief The total blood flow that participates in gas exchange over the course of a cardiac cycle. */
 }
 
 /** @brief Provides transport of drugs through the blood and air in the cardiovascular and respiratory systems, respectively.

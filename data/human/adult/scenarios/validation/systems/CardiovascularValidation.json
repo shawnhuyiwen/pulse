@@ -41,6 +41,7 @@
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SystolicArterialPressure",                      "Unit": "mmHg"          },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SystolicLeftHeartPressure",                     "Unit": "mmHg"          },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SystolicRightHeartPressure",                    "Unit": "mmHg"          },
+        { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "TotalPulmonaryPerfusion",                       "Unit": "mL/min"        },
         
         { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "SubstanceName": "Oxygen", "PropertyName": "PartialPressure", "Unit": "mmHg" },
         

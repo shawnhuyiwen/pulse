@@ -583,13 +583,7 @@ namespace pulse
   {
     const PulseConfiguration& Configuration = m_data.GetConfiguration();
 
-    double AlveoliSurfaceArea_cm2 = m_data.GetCurrentPatient().GetAlveoliSurfaceArea(AreaUnit::cm2);
-    double PulmonaryCapillaryCoverageFraction = m_data.GetCardiovascular().GetPulmonaryCapillariesCoverageFraction().GetValue();
-    double DiffusionSurfaceArea_cm2 = AlveoliSurfaceArea_cm2 * PulmonaryCapillaryCoverageFraction;
-    double RightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
-
-    double StandardDiffusingCapacityOfOxygen_mLPersPermmHg = (DiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
-    double DiffusingCapacityPerSide_mLPerSPermmHg = StandardDiffusingCapacityOfOxygen_mLPersPermmHg;
+    double pulmonaryCapillaryCoverageFraction = m_data.GetCardiovascular().GetPulmonaryCapillariesCoverageFraction().GetValue();
 
     for (SESubstance* sub : m_data.GetSubstances().GetActiveGases())
     {
@@ -597,12 +591,16 @@ namespace pulse
       sub->GetDiffusingCapacity().SetValue(0, VolumePerTimePressureUnit::mL_Per_s_mmHg);
 
       //Left Side Alveoli Transfer
-      DiffusingCapacityPerSide_mLPerSPermmHg = StandardDiffusingCapacityOfOxygen_mLPersPermmHg * (1 - RightLungRatio);
-      AlveolarPartialPressureGradientDiffusion(*m_LeftAlveoli, *m_LeftPulmonaryCapillaries, *sub, DiffusingCapacityPerSide_mLPerSPermmHg, m_data.GetTimeStep_s());
+      double leftAlveoliSurfaceArea_cm2 = m_LeftAlveoli->GetDiffusionSurfaceArea().GetValue(AreaUnit::cm2);
+      double leftDiffusionSurfaceArea_cm2 = leftAlveoliSurfaceArea_cm2 * pulmonaryCapillaryCoverageFraction;
+      double leftDiffusingCapacityOfOxygen_mL_Per_s_mmHg = (leftDiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
+      AlveolarPartialPressureGradientDiffusion(*m_LeftAlveoli, *m_LeftPulmonaryCapillaries, *sub, leftDiffusingCapacityOfOxygen_mL_Per_s_mmHg, m_data.GetTimeStep_s());
 
       //Right Side Alveoli Transfer
-      DiffusingCapacityPerSide_mLPerSPermmHg = StandardDiffusingCapacityOfOxygen_mLPersPermmHg * RightLungRatio;
-      AlveolarPartialPressureGradientDiffusion(*m_RightAlveoli, *m_RightPulmonaryCapillaries, *sub, DiffusingCapacityPerSide_mLPerSPermmHg, m_data.GetTimeStep_s());
+      double rightAlveoliSurfaceArea_cm2 = m_RightAlveoli->GetDiffusionSurfaceArea().GetValue(AreaUnit::cm2);
+      double rightDiffusionSurfaceArea_cm2 = rightAlveoliSurfaceArea_cm2 * pulmonaryCapillaryCoverageFraction;
+      double rightDiffusingCapacityOfOxygen_mL_Per_s_mmHg = (rightDiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
+      AlveolarPartialPressureGradientDiffusion(*m_RightAlveoli, *m_RightPulmonaryCapillaries, *sub, rightDiffusingCapacityOfOxygen_mL_Per_s_mmHg, m_data.GetTimeStep_s());
 
       if (m_LeftAlveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || m_LeftPulmonaryCapillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0 ||
         m_RightAlveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || m_RightPulmonaryCapillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0)

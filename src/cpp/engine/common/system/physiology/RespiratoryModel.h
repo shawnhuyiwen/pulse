@@ -99,7 +99,7 @@ namespace pulse
 
     // Serializable member variables (Set in Initialize and in schema)
 
-    //   CalculateVitalSigns()
+    // CalculateVitalSigns()
     bool   m_BreathingCycle;
     bool   m_NotBreathing;
     double m_TopBreathTotalVolume_L;
@@ -122,6 +122,8 @@ namespace pulse
     double m_MaximalAlveolarPressure_cmH2O;
     SERunningAverage* m_BloodPHRunningAverage;
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
+    std::vector<double> m_AcinarZoneBottomBreathVolumes; //jbw - Serialize
+    std::vector<double> m_AcinarZoneTopBreathVolumes; //jbw - Serialize
 
     // Respiratory Driver
     double m_ArterialO2PartialPressure_mmHg;
@@ -178,8 +180,26 @@ namespace pulse
 
     // Patient
     SEPatientActionCollection* m_PatientActions;
-    //Compartments
+
+    // Compartments
     SEGasCompartment* m_Environment;
+    SEGasCompartment* m_Lungs;
+    SEGasCompartment* m_PleuralCavity;
+    SEGasCompartment* m_Carina;
+    SEGasCompartment* m_LeftLung;
+    SEGasCompartment* m_RightLung;
+    SEGasCompartment* m_LeftAlveoli;
+    SEGasCompartment* m_RightAlveoli;
+    SEGasSubstanceQuantity* m_CarinaO2;
+    SEGasSubstanceQuantity* m_LeftAlveoliO2;
+    SEGasSubstanceQuantity* m_RightAlveoliO2;
+    // Gas Exchange
+    std::vector<SEGasCompartment*> m_AcinarZoneCompartments;
+    std::vector<SELiquidCompartment*> m_AcinarZoneCapillaryCompartments;
+    // Mechanical Ventilation
+    SEGasCompartment* m_MechanicalVentilationConnection;
+    SELiquidCompartment* m_MechanicalVentilationAerosolConnection;
+    // Aerosol
     SELiquidCompartment* m_AerosolAirway;
     SELiquidCompartment* m_AerosolCarina;
     SELiquidCompartment* m_AerosolLeftAnatomicDeadSpace;
@@ -188,37 +208,32 @@ namespace pulse
     SELiquidCompartment* m_AerosolRightAnatomicDeadSpace;
     SELiquidCompartment* m_AerosolRightAlveolarDeadSpace;
     SELiquidCompartment* m_AerosolRightAlveoli;
+    std::vector<SELiquidCompartment*> m_AerosolEffects;
     SELiquidCompartment* m_LeftLungExtravascular;
     SELiquidCompartment* m_RightLungExtravascular;
-    SEGasCompartment* m_Lungs;
-    SEGasCompartment* m_LeftLung;
-    SEGasCompartment* m_RightLung;
-    SEGasCompartment* m_Carina;
-    SEGasSubstanceQuantity* m_CarinaO2;
+    // Cardiovascular
+    SELiquidCompartment* m_LeftPulmonaryCapillaries;
+    SELiquidCompartment* m_RightPulmonaryCapillaries;
     SELiquidSubstanceQuantity* m_AortaO2;
     SELiquidSubstanceQuantity* m_AortaCO2;
-    SEGasSubstanceQuantity* m_LeftAlveoliO2;
-    SEGasSubstanceQuantity* m_RightAlveoliO2;
-    std::vector<SELiquidCompartment*> m_AerosolEffects;
-    SEGasCompartment* m_MechanicalVentilationConnection;
-    SELiquidCompartment* m_MechanicalVentilationAerosolConnection;
-    SEGasCompartment* m_PleuralCavity;
-    //Circuits
+
+    // Circuits
     SEFluidCircuit* m_RespiratoryCircuit;
-    //Nodes
-    SEFluidCircuitNode* m_Airway;
-    SEFluidCircuitNode* m_LeftAlveoli;
-    SEFluidCircuitNode* m_LeftAnatomicDeadSpace;
-    SEFluidCircuitNode* m_LeftAlveolarDeadSpace;
-    SEFluidCircuitNode* m_LeftPleural;
-    SEFluidCircuitNode* m_RespiratoryMuscle;
-    SEFluidCircuitNode* m_RightAlveoli;
-    SEFluidCircuitNode* m_RightAnatomicDeadSpace;
-    SEFluidCircuitNode* m_RightAlveolarDeadSpace;
-    SEFluidCircuitNode* m_RightPleural;
-    SEFluidCircuitNode* m_Ambient;
-    SEFluidCircuitNode* m_Stomach;
-    //Paths
+    SEFluidCircuitCalculator* m_Calculator;
+    // Nodes
+    SEFluidCircuitNode* m_AirwayNode;
+    SEFluidCircuitNode* m_LeftAlveoliNode;
+    SEFluidCircuitNode* m_LeftAnatomicDeadSpaceNode;
+    SEFluidCircuitNode* m_LeftAlveolarDeadSpaceNode;
+    SEFluidCircuitNode* m_LeftPleuralNode;
+    SEFluidCircuitNode* m_RespiratoryMuscleNode;
+    SEFluidCircuitNode* m_RightAlveoliNode;
+    SEFluidCircuitNode* m_RightAnatomicDeadSpaceNode;
+    SEFluidCircuitNode* m_RightAlveolarDeadSpaceNode;
+    SEFluidCircuitNode* m_RightPleuralNode;
+    SEFluidCircuitNode* m_AmbientNode;
+    SEFluidCircuitNode* m_StomachNode;
+    // Paths
     SEFluidCircuitPath* m_CarinaToLeftAnatomicDeadSpace;
     SEFluidCircuitPath* m_CarinaToRightAnatomicDeadSpace;
     SEFluidCircuitPath* m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace;
@@ -247,11 +262,11 @@ namespace pulse
     SEFluidCircuitPath* m_ConnectionToAirway;
     SEFluidCircuitPath* m_GroundToConnection;
 
-    SEFluidCircuitCalculator* m_Calculator;
+    // Transport
     SEGasTransporter* m_GasTransporter;
     SELiquidTransporter* m_AerosolTransporter;
 
-    //Substance
+    // Substance
     SESubstance* m_Oversedation;
   };
 END_NAMESPACE
