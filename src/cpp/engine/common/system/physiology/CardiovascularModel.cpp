@@ -2646,10 +2646,10 @@ namespace pulse
     //-----------------------------------------------------------------------------------------------------
 
     //Pressure difference causes a mediastinum shift, which also effects the venous return
-    //The left and right pleural pressures are likely to have large differences only due to a pneumothorax
+    //The left and right pleural pressures are likely to have large differences only due to a pneumothorax/hemothorax
     double pleuralCavityPressureDiff_cmH2O = std::abs(m_LeftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_RightPleuralCavity->GetPressure(PressureUnit::cmH2O));
 
-    double maxPressureDiff_cmH2O = 20.0;
+    double maxPressureDiff_cmH2O = 15.0;
     double maxResistanceMultiplier = 10.0;
     pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 

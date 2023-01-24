@@ -263,6 +263,7 @@ namespace pulse
     m_PeakInspiratoryPressure_cmH2O = 0.0;
     m_PeakExpiratoryPressure_cmH2O = 0.0;
     m_PreviousTargetAlveolarVentilation_L_Per_min = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L) * m_VentilationFrequency_Per_min;
+    m_PreviousDyspneaSeverity = 0.0;
 
     m_IERatioScaleFactor = 1.0;
 
@@ -3884,21 +3885,66 @@ namespace pulse
       leftSeverity = MAX(leftSeverity, leftScaledSeverity);
     }
 
-    rightPulmonaryShuntScalingFactor = MIN(rightPulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.02, 1.0, rightSeverity));
-    leftPulmonaryShuntScalingFactor = MIN(leftPulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.02, 1.0, leftSeverity));
-
     //------------------------------------------------------------------------------------------------------
     //COPD - shunting occurs in UpdatePulmonaryCapillary
     //------------------------------------------------------------------------------------------------------
 
-    double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    //------------------------------------------------------------------------------------------------------
+    //Collapsed lung - Pneumothorax and Hemothorax
+    //Causes shunting
+    double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+    double leftLungRatio = 1.0 - rightLungRatio;
+    double functionalResidualCapacity_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L);
+    double residualVolume_L = m_data.GetCurrentPatient().GetResidualVolume(VolumeUnit::L);
 
-    rightPulmonaryShuntResistance *= rightPulmonaryShuntScalingFactor;
-    leftPulmonaryShuntResistance *= leftPulmonaryShuntScalingFactor;
+    double leftLungVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
+    double rightLungVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
+    double leftLungFunctionalResidualCapacity_L = functionalResidualCapacity_L * leftLungRatio;
+    double rightLungFunctionalResidualCapacity_L = functionalResidualCapacity_L * rightLungRatio;
+    double leftLungResidualVolume_L = residualVolume_L * leftLungRatio;
+    double rightLungResidualVolume_L = residualVolume_L * rightLungRatio;
 
-    m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double volumeSensitivity_L = 0.01;
+    if (leftLungVolume_L < leftLungFunctionalResidualCapacity_L - volumeSensitivity_L)
+    {
+      leftLungVolume_L = LIMIT(leftLungVolume_L, leftLungResidualVolume_L, leftLungFunctionalResidualCapacity_L);
+      //Linear function: Min = 0.0, Max = 0.8 (increasing with severity)
+      double leftLocalSeverity = GeneralMath::LinearInterpolator(leftLungResidualVolume_L, leftLungFunctionalResidualCapacity_L, 1.0, 0.0, leftLungVolume_L);
+      leftSeverity = MAX(leftSeverity, leftLocalSeverity);
+    }
+    if (rightLungVolume_L < rightLungFunctionalResidualCapacity_L - volumeSensitivity_L)
+    {
+      rightLungVolume_L = LIMIT(rightLungVolume_L, rightLungResidualVolume_L, rightLungFunctionalResidualCapacity_L);
+      //Linear function: Min = 0.0, Max = 0.8 (increasing with severity)
+      double rightLocalSeverity = GeneralMath::LinearInterpolator(rightLungResidualVolume_L, rightLungFunctionalResidualCapacity_L, 1.0, 0.0, rightLungVolume_L);
+      rightSeverity = MAX(rightSeverity, rightLocalSeverity);
+    }
+
+    //------------------------------------------------------------------------------------------------------
+    rightPulmonaryShuntScalingFactor = MIN(rightPulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.02, 1.0, rightSeverity));
+    leftPulmonaryShuntScalingFactor = MIN(leftPulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.02, 1.0, leftSeverity));
+
+    double previousRightPulmonaryShuntResistance_mmHg_s_Per_mL = m_RightPulmonaryArteriesToVeins->GetResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double previousLeftPulmonaryShuntResistance_mmHg_s_Per_mL = m_LeftPulmonaryArteriesToVeins->GetResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double rightPulmonaryShuntResistance_mmHg_s_Per_mL = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double leftPulmonaryShuntResistance_mmHg_s_Per_mL = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+
+    rightPulmonaryShuntResistance_mmHg_s_Per_mL *= rightPulmonaryShuntScalingFactor;
+    leftPulmonaryShuntResistance_mmHg_s_Per_mL *= leftPulmonaryShuntScalingFactor;
+
+    if (m_data.GetState() == EngineState::Active) //Only dampen response if we're not initializing
+    {
+      //Dampen the change to prevent potential craziness
+      //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
+      double dampenFraction_perSec = 0.001 * 50.0;
+      double rightPulmonaryShuntResistanceChange_mmHg_s_Per_mL = (rightPulmonaryShuntResistance_mmHg_s_Per_mL - previousRightPulmonaryShuntResistance_mmHg_s_Per_mL) * dampenFraction_perSec * m_data.GetTimeStep_s();
+      double leftPulmonaryShuntResistanceChange_mmHg_s_Per_mL = (leftPulmonaryShuntResistance_mmHg_s_Per_mL - previousLeftPulmonaryShuntResistance_mmHg_s_Per_mL) * dampenFraction_perSec * m_data.GetTimeStep_s();
+      rightPulmonaryShuntResistance_mmHg_s_Per_mL = previousRightPulmonaryShuntResistance_mmHg_s_Per_mL + rightPulmonaryShuntResistanceChange_mmHg_s_Per_mL;
+      leftPulmonaryShuntResistance_mmHg_s_Per_mL = previousLeftPulmonaryShuntResistance_mmHg_s_Per_mL + leftPulmonaryShuntResistanceChange_mmHg_s_Per_mL;
+    }
+
+    m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -4040,17 +4086,60 @@ namespace pulse
       dyspneaSeverity = MAX(dyspneaSeverity, thisDyspneaSeverity);
     }
 
+    //------------------------------------------------------------------------------------------------------
+    //Collapsed lung - Pneumothorax and Hemothorax
+    //Causes labored breathing
+    double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+    double leftLungRatio = 1.0 - rightLungRatio;
+    double functionalResidualCapacity_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L);
+    double residualVolume_L = m_data.GetCurrentPatient().GetResidualVolume(VolumeUnit::L);
+
+    double leftLungVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
+    double rightLungVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
+    double leftLungFunctionalResidualCapacity_L = functionalResidualCapacity_L * leftLungRatio;
+    double rightLungFunctionalResidualCapacity_L = functionalResidualCapacity_L * rightLungRatio;
+    double leftLungResidualVolume_L = residualVolume_L * leftLungRatio;
+    double rightLungResidualVolume_L = residualVolume_L * rightLungRatio;
+
+    double volumeSensitivity_L = 0.01;
+    if (leftLungVolume_L < leftLungFunctionalResidualCapacity_L - volumeSensitivity_L)
+    {
+      leftLungVolume_L = LIMIT(leftLungVolume_L, leftLungResidualVolume_L, leftLungFunctionalResidualCapacity_L);
+      //Linear function: Min = 0.0, Max = 0.8 (increasing with severity)
+      double thisDyspneaSeverity = GeneralMath::LinearInterpolator(leftLungResidualVolume_L, leftLungFunctionalResidualCapacity_L, 0.5, 0.0, leftLungVolume_L);
+      dyspneaSeverity = MAX(dyspneaSeverity, thisDyspneaSeverity);
+    }
+    if (rightLungVolume_L < rightLungFunctionalResidualCapacity_L - volumeSensitivity_L)
+    {
+      rightLungVolume_L = LIMIT(rightLungVolume_L, rightLungResidualVolume_L, rightLungFunctionalResidualCapacity_L);
+      //Linear function: Min = 0.0, Max = 0.8 (increasing with severity)
+      double thisDyspneaSeverity = GeneralMath::LinearInterpolator(rightLungResidualVolume_L, rightLungFunctionalResidualCapacity_L, 0.5, 0.0, rightLungVolume_L);
+      dyspneaSeverity = MAX(dyspneaSeverity, thisDyspneaSeverity);
+    }
+
+    //------------------------------------------------------------------------------------------------------
     if (dyspneaSeverity == 1.0)
     {
       m_NotBreathing = true;
     }
+    else if (m_PreviousDyspneaSeverity != dyspneaSeverity &&
+      m_data.GetState() == EngineState::Active) //Only dampen response if we're not initializing
+    {
+      //Dampen the change to prevent potential craziness
+      //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
+      double dampenFraction_perSec = 0.001 * 50.0;
+      double dyspneaSeverityChange = (dyspneaSeverity - m_PreviousDyspneaSeverity) * dampenFraction_perSec * m_data.GetTimeStep_s();
+      dyspneaSeverity = m_PreviousDyspneaSeverity + dyspneaSeverityChange;
+    }
 
-    //Just reduce the tidal volume by the percentage given
+    m_PreviousDyspneaSeverity = dyspneaSeverity;
+
+    //Reduce the tidal volume by the percentage given
     m_DriverPressure_cmH2O = m_DriverPressure_cmH2O * (1 - dyspneaSeverity);
 
   #ifdef DEBUG
     m_data.GetDataTrack().Probe("fatigueFactor", 1 - dyspneaSeverity);
-  #endif  
+  #endif
   }
 
   //--------------------------------------------------------------------------------------------------

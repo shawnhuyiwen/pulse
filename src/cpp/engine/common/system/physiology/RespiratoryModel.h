@@ -149,6 +149,7 @@ namespace pulse
     double m_InspiratoryRiseFraction;
     double m_InspiratoryToExpiratoryPauseFraction;
     double m_ResidueFraction;
+    double m_PreviousDyspneaSeverity; //jbw - Serialize
 
     // Conscious Respiration
     bool m_ActiveConsciousRespirationCommand;
