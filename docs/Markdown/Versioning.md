@@ -12,6 +12,53 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ---
 
+## Pulse v4.2.0 (March 2022)
+
+- Software Architecture Improvements
+  - iOS build support
+  - New utility to translate a log file into a scenario
+  - Added support for expanding ane engine's systems and/or circuits
+    - Provides the ability to define and run a more complex circuit within a common system model
+  - Improved BlackBox support for external model coupling
+  
+- Physiology Model Improvements
+  - Mechanical ventilator model updates:
+    - Improved triggering
+    - Improved error handling
+    - Additional waveform types
+    - Expose more control parameters
+    - More validation
+  - Respiratory model updates:
+    - Corrected respiratory inhale/exhale transition timing
+  - Intubation Updates
+    - Added a severity to control flow
+    - Esophageal intubation can provide air to lungs via a severity
+  - Bag, Valve Mask Updates
+    - Automation Support - Set a frequency and pressure to repeat
+    - Single Squeeze - Set a pressure for a single squeeze
+    - Instantaneous - Set a pressure to apply (Intended for hardware integration)
+  - Cardiovascular model updates:
+    - Improved heart driver and cardiac cycle
+    - More control to adjust vascular tone
+    - Pulmonary capillary coverage adjusts based on Mean Arterial Pressure
+  - Cardiac Arrest Updates
+    - Improved End Tidal Carbon Dioxide Pressure response
+    - Improved SpO2 response
+    - Improved recovery transition model
+  - Hemorrhage Updates
+    - Improved Baroreceptor response
+    - Severity now calculates resitance using compartment inflow average
+  - CPR Updates
+    - Automation Support - Set a frequency and severity or depth to repeat
+    - Single Squeeze - Set a severity or depth for a single squeeze
+    - Instantaneous - Set a severity or depth to apply (Intended for hardware integration)
+  - ECMO Equipment Updates
+    - End user can adjust substance values and flow rates back into Pulse
+  - Removed Pulmonary Function Test Assessment
+
+
+---
+
 ## Pulse v4.1.0 (March 2022)
 
 - Software Architecture Improvements
