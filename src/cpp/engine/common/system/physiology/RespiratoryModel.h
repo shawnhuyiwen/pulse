@@ -122,8 +122,10 @@ namespace pulse
     double m_MaximalAlveolarPressure_cmH2O;
     SERunningAverage* m_BloodPHRunningAverage;
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
-    std::vector<double> m_AcinarZoneBottomBreathVolumes; //jbw - Serialize
-    std::vector<double> m_AcinarZoneTopBreathVolumes; //jbw - Serialize
+    double m_BottomBreathLeftAcinarZoneVolume_L;
+    double m_BottomBreathRightAcinarZoneVolume_L;
+    double m_TopBreathLeftAcinarZoneVolume_L;
+    double m_TopBreathRightAcinarZoneVolume_L;
 
     // Respiratory Driver
     double m_ArterialO2PartialPressure_mmHg;
@@ -149,7 +151,7 @@ namespace pulse
     double m_InspiratoryRiseFraction;
     double m_InspiratoryToExpiratoryPauseFraction;
     double m_ResidueFraction;
-    double m_PreviousDyspneaSeverity; //jbw - Serialize
+    double m_PreviousDyspneaSeverity;
 
     // Conscious Respiration
     bool m_ActiveConsciousRespirationCommand;
@@ -194,9 +196,6 @@ namespace pulse
     SEGasSubstanceQuantity* m_CarinaO2;
     SEGasSubstanceQuantity* m_LeftAlveoliO2;
     SEGasSubstanceQuantity* m_RightAlveoliO2;
-    // Gas Exchange
-    std::vector<SEGasCompartment*> m_AcinarZoneCompartments;
-    std::vector<SELiquidCompartment*> m_AcinarZoneCapillaryCompartments;
     // Mechanical Ventilation
     SEGasCompartment* m_MechanicalVentilationConnection;
     SELiquidCompartment* m_MechanicalVentilationAerosolConnection;

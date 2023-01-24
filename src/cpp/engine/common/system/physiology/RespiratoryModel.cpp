@@ -244,12 +244,10 @@ namespace pulse
     m_BottomBreathDriverPressure_cmH2O = 0.0;
     m_PeakAlveolarPressure_cmH2O = 0.0;
     m_MaximalAlveolarPressure_cmH2O = 0.0;
-    m_AcinarZoneTopBreathVolumes.clear();
-    m_AcinarZoneTopBreathVolumes.push_back(0.0);
-    m_AcinarZoneTopBreathVolumes.push_back(0.0);
-    m_AcinarZoneBottomBreathVolumes.clear();
-    m_AcinarZoneBottomBreathVolumes.push_back(0.0);
-    m_AcinarZoneBottomBreathVolumes.push_back(0.0);
+    m_BottomBreathLeftAcinarZoneVolume_L = 0.0;
+    m_BottomBreathRightAcinarZoneVolume_L = 0.0;
+    m_TopBreathLeftAcinarZoneVolume_L = 0.0;
+    m_TopBreathRightAcinarZoneVolume_L = 0.0;
 
     //Driver
     m_ElapsedBreathingCycleTime_min = 0.0;
@@ -420,10 +418,6 @@ namespace pulse
     m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAlveoli));
     m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAnatomicDeadSpace));
     m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::RightAlveolarDeadSpace));
-    // Compartments for gas exchange
-    m_AcinarZoneCompartments.clear();
-    m_AcinarZoneCompartments.push_back(m_LeftAlveoli);
-    m_AcinarZoneCompartments.push_back(m_RightAlveoli);
     //Circuits
     m_RespiratoryCircuit = &m_data.GetCircuits().GetRespiratoryCircuit();
     //Nodes
@@ -483,10 +477,6 @@ namespace pulse
       SELiquidCompartment* Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
       m_AortaO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
       m_AortaCO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
-
-      m_AcinarZoneCapillaryCompartments.clear();
-      m_AcinarZoneCapillaryCompartments.push_back(m_LeftPulmonaryCapillaries);
-      m_AcinarZoneCapillaryCompartments.push_back(m_RightPulmonaryCapillaries);
     }
 
     //Substance - Overdose
@@ -2074,7 +2064,7 @@ namespace pulse
     // Temporal tolerance to avoid accidental entry in the the inhalation and exhalation code blocks 
     m_ElapsedBreathingCycleTime_min += m_data.GetTimeStep_s() / 60.0;
 
-    if (m_BreathingCycle) //Exhaling
+    if (m_BreathingCycle) //Exhalingm_AcinarZoneCapillaryCompartments
     {
       if (totalLungVolume_L <= m_BottomBreathTotalVolume_L)
       {
@@ -2085,13 +2075,8 @@ namespace pulse
         m_BottomBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
         m_BottomBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
         m_BottomBreathDriverPressure_cmH2O = musclePressure_cmH2O;
-
-        unsigned int iter = 0;
-        for (SEGasCompartment* acinarZoneCompartment : m_AcinarZoneCompartments)
-        {
-          m_AcinarZoneBottomBreathVolumes.at(iter) = acinarZoneCompartment->GetVolume(VolumeUnit::L);
-          iter++;
-        }
+        m_BottomBreathLeftAcinarZoneVolume_L = m_LeftAlveoli->GetVolume(VolumeUnit::L);
+        m_BottomBreathRightAcinarZoneVolume_L = m_RightAlveoli->GetVolume(VolumeUnit::L);
       }
 
       if (totalLungVolume_L - m_BottomBreathTotalVolume_L > m_MinimumAllowableTidalVolume_L //Volume has transitioned sufficiently
@@ -2126,27 +2111,39 @@ namespace pulse
         GetTotalDeadSpaceVentilation().SetValue((AnatomicDeadSpace_L + AlveolarDeadSpace_L) * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
 
         // Calculate Compartment Ventilations
-        unsigned int iter = 0;
-        for (SEGasCompartment* acinarZoneCompartment : m_AcinarZoneCompartments)
+        for (unsigned int iter = 0; iter < 2; iter++)
         {
-          double ventilation_L = abs(m_AcinarZoneTopBreathVolumes.at(iter) - m_AcinarZoneBottomBreathVolumes.at(iter));
-          double ventilation_L_Per_min = ventilation_L * RespirationRate_Per_min;
-          acinarZoneCompartment->GetVentilation().SetValue(ventilation_L_Per_min, VolumePerTimeUnit::L_Per_min);
+          SEGasCompartment* acinarCompartment;
+          SELiquidCompartment* acinarCapillaryCompartment;
+          double ventilation_L = 0.0;
 
+          if (iter == 0) // Left lung
+          {
+            acinarCompartment = m_LeftAlveoli;
+            acinarCapillaryCompartment = m_LeftPulmonaryCapillaries;
+            ventilation_L = abs(m_TopBreathLeftAcinarZoneVolume_L - m_BottomBreathLeftAcinarZoneVolume_L);
+          }
+          else // Right Lung
+          {
+            acinarCompartment = m_RightAlveoli;
+            acinarCapillaryCompartment = m_RightPulmonaryCapillaries;
+            ventilation_L = abs(m_TopBreathRightAcinarZoneVolume_L - m_BottomBreathRightAcinarZoneVolume_L);
+          }
+
+          double ventilation_L_Per_min = ventilation_L * RespirationRate_Per_min;
+          acinarCompartment->GetVentilation().SetValue(ventilation_L_Per_min, VolumePerTimeUnit::L_Per_min);
           if (m_data.HasCardiovascular())
           {
-            double perfusion_L_Per_min = m_AcinarZoneCapillaryCompartments.at(iter)->GetPerfusion(VolumePerTimeUnit::L_Per_min);
+            double perfusion_L_Per_min = acinarCapillaryCompartment->GetPerfusion(VolumePerTimeUnit::L_Per_min);
             if (perfusion_L_Per_min > ZERO_APPROX)
             {
-              acinarZoneCompartment->GetVentilationPerfusionRatio().SetValue(ventilation_L_Per_min / perfusion_L_Per_min);
+              acinarCompartment->GetVentilationPerfusionRatio().SetValue(ventilation_L_Per_min / perfusion_L_Per_min);
             }
             else
             {
-              acinarZoneCompartment->GetVentilationPerfusionRatio().SetValue(0.0);
+              acinarCompartment->GetVentilationPerfusionRatio().SetValue(0.0);
             }
           }
-
-          iter++;
         }
 
         //Calculate Ratios
@@ -2192,13 +2189,8 @@ namespace pulse
         m_TopBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
         m_TopBreathDriverPressure_cmH2O = musclePressure_cmH2O;
         m_TopCarinaO2 = m_CarinaO2->GetVolumeFraction().GetValue();
-
-        unsigned int iter = 0;
-        for (SEGasCompartment* acinarZoneCompartment : m_AcinarZoneCompartments)
-        {
-          m_AcinarZoneTopBreathVolumes.at(iter) = acinarZoneCompartment->GetVolume(VolumeUnit::L);
-          iter++;
-        }
+        m_TopBreathLeftAcinarZoneVolume_L = m_LeftAlveoli->GetVolume(VolumeUnit::L);
+        m_TopBreathRightAcinarZoneVolume_L = m_RightAlveoli->GetVolume(VolumeUnit::L);
       }
 
       m_PeakAlveolarPressure_cmH2O = MAX(m_PeakAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
