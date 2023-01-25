@@ -188,6 +188,8 @@ namespace pulse
     SEGasCompartment* m_Environment;
     SEGasCompartment* m_Lungs;
     SEGasCompartment* m_PleuralCavity;
+    SEGasCompartment* m_LeftPleuralCavity;
+    SEGasCompartment* m_RightPleuralCavity;
     SEGasCompartment* m_Carina;
     SEGasCompartment* m_LeftLung;
     SEGasCompartment* m_RightLung;
@@ -219,7 +221,6 @@ namespace pulse
 
     // Circuits
     SEFluidCircuit* m_RespiratoryCircuit;
-    SEFluidCircuitCalculator* m_Calculator;
     // Nodes
     SEFluidCircuitNode* m_AirwayNode;
     SEFluidCircuitNode* m_LeftAlveoliNode;

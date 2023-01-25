@@ -1816,7 +1816,7 @@ namespace pulse
       if (m_LeftRespirtoryLeak == nullptr)
       {
         //Create the left chest leak in the circuit (no updates to graph needed)
-        m_LeftRespirtoryLeak = &m_RespiratoryCircuit->CreatePath(*m_Ambient, *m_LeftPleural, pulse::RespiratoryPath::EnvironmentToLeftPleural);
+        m_LeftRespirtoryLeak = &m_RespiratoryCircuit->CreatePath(*m_AmbientNode, *m_LeftPleuralNode, pulse::RespiratoryPath::EnvironmentToLeftPleural);
         m_LeftRespirtoryLeak->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         stateChange = true;
       }
@@ -1892,7 +1892,7 @@ namespace pulse
       if (m_RightRespirtoryLeak ==nullptr)
       {
         //Create the right chest leak in the circuit (no updates to graph needed)
-        m_RightRespirtoryLeak = &m_RespiratoryCircuit->CreatePath(*m_Ambient, *m_RightPleural, pulse::RespiratoryPath::EnvironmentToRightPleural);
+        m_RightRespirtoryLeak = &m_RespiratoryCircuit->CreatePath(*m_AmbientNode, *m_RightPleuralNode, pulse::RespiratoryPath::EnvironmentToRightPleural);
         m_RightRespirtoryLeak->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         stateChange = true;
       }
@@ -4001,8 +4001,6 @@ namespace pulse
 
     //Collapsing lung (e.g., pneumothorax and hemothorax)
     newAlveoliDiffusionArea_cm2 = 0.0;
-    double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
-    double leftLungRatio = 1.0 - rightLungRatio;
     double perLungAlveoliDiffusionArea_cm2 = initialDiffusionArea_cm2 / 2.0;
     for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
     {
