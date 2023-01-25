@@ -281,6 +281,9 @@ namespace pulse
     m_CardiacCycleLeftHeartPressureHigh_mmHg = m_CardiacCycleAortaPressureHigh_mmHg;
     m_CardiacCycleLeftHeartPressureLow_mmHg = m_CardiacCycleAortaPressureLow_mmHg;
     m_CardiacCycleStrokeVolume_mL = 0;
+    m_CardiacCyclePerfusionVolume_mL = 0;
+    m_LeftCardiacCyclePerfusionVolume_mL = 0;
+    m_RightCardiacCyclePerfusionVolume_mL = 0;
     m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = 26;
     m_CardiacCyclePulmonaryArteryPressureLow_mmHg = 9;
     m_CardiacCycleRightHeartPressureHigh_mmHg = m_CardiacCycleAortaPressureHigh_mmHg;
@@ -301,6 +304,7 @@ namespace pulse
     GetPulmonaryArterialPressure().SetValue(90, PressureUnit::mmHg);
     GetPulmonaryMeanCapillaryFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
     GetPulmonaryMeanShuntFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
+    GetTotalPulmonaryPerfusion().SetValue(0, VolumePerTimeUnit::mL_Per_s);
     GetPulmonaryCapillariesCoverageFraction().SetValue(m_data.GetConfiguration().GetStandardPulmonaryCapillaryCoverage());
 
     GetMeanSkinFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
@@ -1113,8 +1117,13 @@ namespace pulse
     if (LHeartVolume_mL > m_CardiacCycleDiastolicVolume_mL)
       m_CardiacCycleDiastolicVolume_mL = LHeartVolume_mL;
 
-    // Increment stroke volume. Get samples for running means
+    // Increment stroke volume and pulmonary flows
     m_CardiacCycleStrokeVolume_mL += LHeartFlow_mL_Per_s * m_data.GetTimeStep_s();
+    m_CardiacCyclePerfusionVolume_mL += PulmCapFlow_mL_Per_s * m_data.GetTimeStep_s();
+    m_LeftCardiacCyclePerfusionVolume_mL += m_LeftPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s) * m_data.GetTimeStep_s();
+    m_RightCardiacCyclePerfusionVolume_mL += m_RightPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s) * m_data.GetTimeStep_s();
+
+    //Get samples for running means
     m_CardiacCycleArterialPressure_mmHg->Sample(AortaNodePressure_mmHg);
     m_CardiacCycleArterialCO2PartialPressure_mmHg->Sample(AortaNodeCO2PartialPressure_mmHg);
     m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Sample(PulmVeinNodePressure_mmHg);
@@ -1274,6 +1283,13 @@ namespace pulse
     GetHeartEjectionFraction().SetValue(ejectionFraction);
     GetCardiacOutput().SetValue(m_CardiacCycleStrokeVolume_mL * GetHeartRate().GetValue(FrequencyUnit::Per_min), VolumePerTimeUnit::mL_Per_min);
     GetCardiacIndex().SetValue(GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_min) / m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2), VolumePerTimeAreaUnit::mL_Per_min_m2);
+
+    GetTotalPulmonaryPerfusion().SetValue(m_CardiacCyclePerfusionVolume_mL * GetHeartRate(FrequencyUnit::Per_s), VolumePerTimeUnit::mL_Per_s);
+    m_LeftPulmonaryCapillaries->GetPerfusion().SetValue(m_LeftCardiacCyclePerfusionVolume_mL * GetHeartRate(FrequencyUnit::Per_s), VolumePerTimeUnit::mL_Per_s);
+    m_RightPulmonaryCapillaries->GetPerfusion().SetValue(m_RightCardiacCyclePerfusionVolume_mL * GetHeartRate(FrequencyUnit::Per_s), VolumePerTimeUnit::mL_Per_s);
+    m_CardiacCyclePerfusionVolume_mL = 0.0;
+    m_LeftCardiacCyclePerfusionVolume_mL = 0.0;
+    m_RightCardiacCyclePerfusionVolume_mL = 0.0;
 
     // Running means
     // Mean Arterial Pressure
@@ -2630,10 +2646,10 @@ namespace pulse
     //-----------------------------------------------------------------------------------------------------
 
     //Pressure difference causes a mediastinum shift, which also effects the venous return
-    //The left and right pleural pressures are likely to have large differences only due to a pneumothorax
+    //The left and right pleural pressures are likely to have large differences only due to a pneumothorax/hemothorax
     double pleuralCavityPressureDiff_cmH2O = std::abs(m_LeftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_RightPleuralCavity->GetPressure(PressureUnit::cmH2O));
 
-    double maxPressureDiff_cmH2O = 20.0;
+    double maxPressureDiff_cmH2O = 15.0;
     double maxResistanceMultiplier = 10.0;
     pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 

@@ -60,7 +60,10 @@ message FluidCompartmentGraphData
 message GasCompartmentData
 {
   FluidCompartmentData                   FluidCompartment                         = 1;
-  repeated GasSubstanceQuantityData      SubstanceQuantity                        = 2;
+  ScalarAreaData                         DiffusionSurfaceArea                     = 2;
+  ScalarVolumePerTimeData                Ventilation                              = 3;
+  ScalarData                             VentilationPerfusionRatio                = 4;
+  repeated GasSubstanceQuantityData      SubstanceQuantity                        = 5;
   
 }
 message GasCompartmentLinkData
@@ -75,9 +78,10 @@ message GasCompartmentGraphData
 message LiquidCompartmentData
 {
   FluidCompartmentData                   FluidCompartment                         = 1;
-  ScalarData                             pH                                       = 2;
-  Scalar0To1Data                         WaterVolumeFraction                      = 3;
-  repeated LiquidSubstanceQuantityData   SubstanceQuantity                        = 4;
+  ScalarVolumePerTimeData                Perfusion                                = 2;
+  ScalarData                             pH                                       = 3;
+  Scalar0To1Data                         WaterVolumeFraction                      = 4;
+  repeated LiquidSubstanceQuantityData   SubstanceQuantity                        = 5;
   
 }
 message LiquidCompartmentLinkData

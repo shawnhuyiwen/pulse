@@ -54,6 +54,7 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_SystolicRightHeartPressure = nullptr;
   m_TotalHemorrhageRate = nullptr;
   m_TotalHemorrhagedVolume = nullptr;
+  m_TotalPulmonaryPerfusion = nullptr;
 }
 
 SECardiovascularSystem::~SECardiovascularSystem()
@@ -98,6 +99,7 @@ SECardiovascularSystem::~SECardiovascularSystem()
   SAFE_DELETE(m_SystolicRightHeartPressure);
   SAFE_DELETE(m_TotalHemorrhageRate);
   SAFE_DELETE(m_TotalHemorrhagedVolume);
+  SAFE_DELETE(m_TotalPulmonaryPerfusion);
 }
 
 void SECardiovascularSystem::Clear()
@@ -140,6 +142,7 @@ void SECardiovascularSystem::Clear()
   INVALIDATE_PROPERTY(m_SystolicRightHeartPressure);
   INVALIDATE_PROPERTY(m_TotalHemorrhageRate);
   INVALIDATE_PROPERTY(m_TotalHemorrhagedVolume);
+  INVALIDATE_PROPERTY(m_TotalPulmonaryPerfusion);
 }
 
 const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
@@ -218,6 +221,8 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetTotalHemorrhageRate();
   if (name.compare("TotalHemorrhagedVolume") == 0)
     return &GetTotalHemorrhagedVolume();
+  if (name.compare("TotalPulmonaryPerfusion") == 0)
+    return &GetTotalPulmonaryPerfusion();
   return nullptr;
 }
 
@@ -857,4 +862,21 @@ double SECardiovascularSystem::GetTotalHemorrhagedVolume(const VolumeUnit& unit)
   if (m_TotalHemorrhagedVolume == nullptr)
     return SEScalar::dNaN();
   return m_TotalHemorrhagedVolume->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasTotalPulmonaryPerfusion() const
+{
+  return m_TotalPulmonaryPerfusion == nullptr ? false : m_TotalPulmonaryPerfusion->IsValid();
+}
+SEScalarVolumePerTime& SECardiovascularSystem::GetTotalPulmonaryPerfusion()
+{
+  if (m_TotalPulmonaryPerfusion == nullptr)
+    m_TotalPulmonaryPerfusion = new SEScalarVolumePerTime();
+  return *m_TotalPulmonaryPerfusion;
+}
+double SECardiovascularSystem::GetTotalPulmonaryPerfusion(const VolumePerTimeUnit& unit) const
+{
+  if (m_TotalPulmonaryPerfusion == nullptr)
+    return SEScalar::dNaN();
+  return m_TotalPulmonaryPerfusion->GetValue(unit);
 }
