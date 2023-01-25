@@ -85,7 +85,7 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
   }
   else
   {
-    Warning("Unable to find a starting patient or state file in log.");
+    Error("Unable to find a starting patient or state file in log.");
     Info("To define a patient, you can add this line \"PatientConfiguration\": { \"PatientFile\": \"StandardMale.json\" }, after the Description");
     err = true;
   }

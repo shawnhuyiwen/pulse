@@ -448,6 +448,7 @@ bool SEScenarioExec::ConvertLog()
     Error("Unable to serialize scenario from log file : " + m_ScenarioLogFilename);
     return false;
   }
+  Info("Successfully wrote scenario file: " + outScenarioFilename);
 
   return true;
 }
