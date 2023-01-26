@@ -5,6 +5,7 @@ import os
 import shutil
 import reporting
 import baseline
+import pandas as pd
 
 from pulse.cdm.utils import plotter
 
@@ -28,7 +29,7 @@ def main(param):
             csvFile = csvDir+name+"Results.csv"
             if not os.path.exists(csvFile):
                 raise ValueError("Unable to load csv file: "+csvFile)
-            csvs[name] = plotter.read_csv_into_df(csvFile, replace_slashes=False).loc[500:1250]
+            csvs[name] = pd.read_csv(csvFile).loc[500:1250]
             imgFilename = imgDir+name+".jpg"
             if not os.path.exists(imgFilename):
                 raise ValueError("Unable to find image file: "+imgFilename)
@@ -90,67 +91,38 @@ def main(param):
         # setup the plots
         valPlots[sel]['Ground Truth'] = imgs[sel]
         for plot in param['plots']:
-            # plots use the time column by default - unless
-            # they have a $vs$ in them
-            xLabel = xParam = 'Time(s)'
-            yLabel = '(' + plot.split('(')[-1]
-            yParam = plot.split("$vs$")[0]
             name = sel + sep + plot.split('(')[0]
-            plotX = param['plotSizes']['default']['x']
-            plotY = param['plotSizes']['default']['y']
-            # Setting for filling in the plot
-            fillPlot = True
-            if plot in param['plotNoFill']:
-                fillPlot = False
-            # setting for plots that need to have reversed axes
-            reverseAxes = False
-            if plot in param['plotReverseAxes']:
-                reverseAxes = True
-            # special plots with vs in them
+
             if '$vs$' in plot:
                 splstr = plot.split('$vs$')
-                xParam = xLabel = splstr[0]
-                yParam = yLabel = plot = splstr[1]
+                xLabel = splstr[0]
+                yLabel = plot = splstr[1]
                 name = sel + sep + xLabel.split('(')[0] + \
                     sep + 'vs' + sep + plot.split('(')[0]
-                plotX = param['plotSizes']['vsPlot']['x']
-                plotY = param['plotSizes']['vsPlot']['y']
 
             valPlots[sel][name] = {}
             if plot in csvs[sel].columns:
-                plot_source = plotter.PlotSource()
-                plot_source.df = csvs[sel]
-                plot_source.color = "blue"
-                plot_source.fill = fillPlot
-                if reverseAxes:
-                    xLabel, yLabel = yLabel, xLabel
-                    xParam, yParam = yParam, xParam
-                    tempParam = xParam
+                imgName = name + ".png"
+                valPlots[sel][name]['Pulse'] = imgName
 
-                plot_settings = plotter.PlotSettings()
-                plot_settings.title = name
-                plot_settings.xlabel = xLabel
-                plot_settings.ylabel = yLabel
-                plot_settings.legend = False
-                plot_settings.grid = False
-                plot_settings.right_ticks = False
-                plot_settings.ticklabel_style = "plain"
+    # Create the plots
+    plotListFile = getStudyDir() + "plots.json"
+    plotter.create_plots(plotListFile)
 
-                if plotter.create_plot(xParam, yParam, [plot_source], plot_settings):
-                    imgName = name + ".png"
-                    plotter.save_current_plot("./test_results/ventilator_analysis/"+imgName, plotX, plotY)
-                    valPlots[sel][name]['Pulse'] = imgName
-                    plotter.clear_current_plot()
-
-    # outDF = pd.DataFrame(valTable)
-    # writeHtmlTableDocument('PulseValidation', outDF, valTable.keys())
     priority = param['plotPriorityOrder']
     reporting.writeHtmlPhotoDoc(outputDir+"report", valPlots,
                       expected['patientSettings'],
                       expected['ventilatorSettings'],
                       valPerTable,
                       priority, sep)
-
+def getStudyDir():
+    with open("run.config") as file:
+        for line in file:
+            if line.startswith("root_dir"):
+                line = line.replace('\n','')
+                root = line.split("=")
+                return root[1]+"src/python/pulse/study/ventilator_analysis/"
+    raise ValueError('Could not find study directory.')
 
 def getImgDir():
     with open("run.config") as file:
@@ -172,20 +144,10 @@ if __name__ == "__main__":
     plots["MechanicalVentilator-InspiratoryFlow(L/min)$vs$MechanicalVentilator-TotalLungVolume(mL)"] = "InspiratoryFlow_vs_LungVolume"
     params["plots"] = plots
 
-    params["plotNoFill"] = [
-        "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-AirwayPressure(cmH2O)",
-        "MechanicalVentilator-InspiratoryFlow(L/min)$vs$MechanicalVentilator-TotalLungVolume(mL)"]
-
-    params["plotReverseAxes"] = [
-        "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-AirwayPressure(cmH2O)",
-        "MechanicalVentilator-InspiratoryFlow(L/min)$vs$MechanicalVentilator-TotalLungVolume(mL)"]
-
     # This is used to make these plots show in this order - to match the photo
     params["plotPriorityOrder"] = [
         "MechanicalVentilator-AirwayPressure",
         "MechanicalVentilator-InspiratoryFlow",
         "MechanicalVentilator-TotalLungVolume"]
-
-    params["plotSizes"] = {"default": {"x": 6, "y": 2}, "vsPlot": {"x": 6, "y": 6}}
 
     main(params)
