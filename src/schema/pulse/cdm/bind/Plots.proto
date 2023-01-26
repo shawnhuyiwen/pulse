@@ -141,6 +141,7 @@ message TimeSeriesPlotterData
     optional string           OutputFilename              = 2; /**<< @brief Set the desired filename for the generated plot. Overrides filename defined in PlotSettings. */
     optional string           Title                       = 3; /**<< @brief Specify the title for this plot. Overrides title defined in PlotSettings. */
     optional string           Label                       = 4; /**<< @brief Specify the Y axis label for this plot. Overrides label defined in PlotSettings. */
+    optional BoundsData       Bounds                      = 5; /**<< @brief Specify the desired Y bounds. Overrides bounds defined in PlotSettings. */
   }
 }
 
@@ -154,12 +155,14 @@ message RelationalPlotterData
 
   message RelationData
   {
-    string                    HeaderX                     = 1; /**<< @brief Specify the header for the x-axis. */
-    string                    HeaderY                     = 2; /**<< @brief Specify the header for the y-axis. */
+    string                    XHeader                     = 1; /**<< @brief Specify the header for the x-axis. */
+    string                    YHeader                     = 2; /**<< @brief Specify the header for the y-axis. */
     optional string           OutputFilename              = 3; /**<< @brief Set the desired filename for the generated plot. Overrides filename defined in PlotSettings. */
     optional string           Title                       = 4; /**<< @brief Specify the title for this plot. Overrides title defined in PlotSettings. */
-    optional string           LabelX                      = 5; /**<< @brief Specify the X axis label for this plot. Overrides label defined in PlotSettings. */
-    optional string           LabelY                      = 6; /**<< @brief Specify the Y axis label for this plot. Overrides label defined in PlotSettings. */
+    optional string           XLabel                      = 5; /**<< @brief Specify the X axis label for this plot. Overrides label defined in PlotSettings. */
+    optional string           YLabel                      = 6; /**<< @brief Specify the Y axis label for this plot. Overrides label defined in PlotSettings. */
+    optional BoundsData       XBounds                     = 7; /**<< @brief Specify the desired X bounds. Overrides bounds defined in PlotSettings. */
+    optional BoundsData       YBounds                     = 8; /**<< @brief Specify the desired Y bounds. Overrides bounds defined in PlotSettings. */
   }
 }
 

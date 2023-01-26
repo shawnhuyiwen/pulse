@@ -59,13 +59,13 @@
         "Relationships":
         [
           {
-            "HeaderX": "MechanicalVentilator-AirwayPressure(cmH2O)",
-            "HeaderY": "MechanicalVentilator-TotalLungVolume(mL)",
+            "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)",
+            "YHeader": "MechanicalVentilator-TotalLungVolume(mL)",
             "Title": "Healthy VC AC MechanicalVentilator-TotalLungVolume vs MechanicalVentilator-AirwayPressure"
           },
           {
-            "HeaderX": "MechanicalVentilator-TotalLungVolume(mL)",
-            "HeaderY": "MechanicalVentilator-InspiratoryFlow(L/min)",
+            "XHeader": "MechanicalVentilator-TotalLungVolume(mL)",
+            "YHeader": "MechanicalVentilator-InspiratoryFlow(L/min)",
             "Title": "Healthy VC AC MechanicalVentilator-InspiratoryFlow vs MechanicalVentilator-TotalLungVolume"
           }
         ]
@@ -129,13 +129,13 @@
         "Relationships":
         [
           {
-            "HeaderX": "MechanicalVentilator-AirwayPressure(cmH2O)",
-            "HeaderY": "MechanicalVentilator-TotalLungVolume(mL)",
+            "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)",
+            "YHeader": "MechanicalVentilator-TotalLungVolume(mL)",
             "Title": "Healthy PC AC MechanicalVentilator-TotalLungVolume vs MechanicalVentilator-AirwayPressure"
           },
           {
-            "HeaderX": "MechanicalVentilator-TotalLungVolume(mL)",
-            "HeaderY": "MechanicalVentilator-InspiratoryFlow(L/min)",
+            "XHeader": "MechanicalVentilator-TotalLungVolume(mL)",
+            "YHeader": "MechanicalVentilator-InspiratoryFlow(L/min)",
             "Title": "Healthy PC AC MechanicalVentilator-InspiratoryFlow vs MechanicalVentilator-TotalLungVolume"
           }
         ]
@@ -199,13 +199,13 @@
         "Relationships":
         [
           {
-            "HeaderX": "MechanicalVentilator-AirwayPressure(cmH2O)",
-            "HeaderY": "MechanicalVentilator-TotalLungVolume(mL)",
+            "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)",
+            "YHeader": "MechanicalVentilator-TotalLungVolume(mL)",
             "Title": "Healthy CPAP MechanicalVentilator-TotalLungVolume vs MechanicalVentilator-AirwayPressure"
           },
           {
-            "HeaderX": "MechanicalVentilator-TotalLungVolume(mL)",
-            "HeaderY": "MechanicalVentilator-InspiratoryFlow(L/min)",
+            "XHeader": "MechanicalVentilator-TotalLungVolume(mL)",
+            "YHeader": "MechanicalVentilator-InspiratoryFlow(L/min)",
             "Title": "Healthy CPAP MechanicalVentilator-InspiratoryFlow vs MechanicalVentilator-TotalLungVolume"
           }
         ]
@@ -269,13 +269,13 @@
         "Relationships":
         [
           {
-            "HeaderX": "MechanicalVentilator-AirwayPressure(cmH2O)",
-            "HeaderY": "MechanicalVentilator-TotalLungVolume(mL)",
+            "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)",
+            "YHeader": "MechanicalVentilator-TotalLungVolume(mL)",
             "Title": "Restrictive VC AC MechanicalVentilator-TotalLungVolume vs MechanicalVentilator-AirwayPressure"
           },
           {
-            "HeaderX": "MechanicalVentilator-TotalLungVolume(mL)",
-            "HeaderY": "MechanicalVentilator-InspiratoryFlow(L/min)",
+            "XHeader": "MechanicalVentilator-TotalLungVolume(mL)",
+            "YHeader": "MechanicalVentilator-InspiratoryFlow(L/min)",
             "Title": "Restrictive VC AC MechanicalVentilator-InspiratoryFlow vs MechanicalVentilator-TotalLungVolume"
           }
         ]
@@ -339,13 +339,13 @@
         "Relationships":
         [
           {
-            "HeaderX": "MechanicalVentilator-AirwayPressure(cmH2O)",
-            "HeaderY": "MechanicalVentilator-TotalLungVolume(mL)",
+            "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)",
+            "YHeader": "MechanicalVentilator-TotalLungVolume(mL)",
             "Title": "Restrictive PC AC MechanicalVentilator-TotalLungVolume vs MechanicalVentilator-AirwayPressure"
           },
           {
-            "HeaderX": "MechanicalVentilator-TotalLungVolume(mL)",
-            "HeaderY": "MechanicalVentilator-InspiratoryFlow(L/min)",
+            "XHeader": "MechanicalVentilator-TotalLungVolume(mL)",
+            "YHeader": "MechanicalVentilator-InspiratoryFlow(L/min)",
             "Title": "Restrictive PC AC MechanicalVentilator-InspiratoryFlow vs MechanicalVentilator-TotalLungVolume"
           }
         ]
@@ -409,13 +409,13 @@
         "Relationships":
         [
           {
-            "HeaderX": "MechanicalVentilator-AirwayPressure(cmH2O)",
-            "HeaderY": "MechanicalVentilator-TotalLungVolume(mL)",
+            "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)",
+            "YHeader": "MechanicalVentilator-TotalLungVolume(mL)",
             "Title": "Restrictive CPAP MechanicalVentilator-TotalLungVolume vs MechanicalVentilator-AirwayPressure"
           },
           {
-            "HeaderX": "MechanicalVentilator-TotalLungVolume(mL)",
-            "HeaderY": "MechanicalVentilator-InspiratoryFlow(L/min)",
+            "XHeader": "MechanicalVentilator-TotalLungVolume(mL)",
+            "YHeader": "MechanicalVentilator-InspiratoryFlow(L/min)",
             "Title": "Restrictive CPAP MechanicalVentilator-InspiratoryFlow vs MechanicalVentilator-TotalLungVolume"
           }
         ]
@@ -479,13 +479,13 @@
         "Relationships":
         [
           {
-            "HeaderX": "MechanicalVentilator-AirwayPressure(cmH2O)",
-            "HeaderY": "MechanicalVentilator-TotalLungVolume(mL)",
+            "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)",
+            "YHeader": "MechanicalVentilator-TotalLungVolume(mL)",
             "Title": "Obstructive VC AC MechanicalVentilator-TotalLungVolume vs MechanicalVentilator-AirwayPressure"
           },
           {
-            "HeaderX": "MechanicalVentilator-TotalLungVolume(mL)",
-            "HeaderY": "MechanicalVentilator-InspiratoryFlow(L/min)",
+            "XHeader": "MechanicalVentilator-TotalLungVolume(mL)",
+            "YHeader": "MechanicalVentilator-InspiratoryFlow(L/min)",
             "Title": "Obstructive VC AC MechanicalVentilator-InspiratoryFlow vs MechanicalVentilator-TotalLungVolume"
           }
         ]
@@ -549,13 +549,13 @@
         "Relationships":
         [
           {
-            "HeaderX": "MechanicalVentilator-AirwayPressure(cmH2O)",
-            "HeaderY": "MechanicalVentilator-TotalLungVolume(mL)",
+            "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)",
+            "YHeader": "MechanicalVentilator-TotalLungVolume(mL)",
             "Title": "Obstructive PC AC MechanicalVentilator-TotalLungVolume vs MechanicalVentilator-AirwayPressure"
           },
           {
-            "HeaderX": "MechanicalVentilator-TotalLungVolume(mL)",
-            "HeaderY": "MechanicalVentilator-InspiratoryFlow(L/min)",
+            "XHeader": "MechanicalVentilator-TotalLungVolume(mL)",
+            "YHeader": "MechanicalVentilator-InspiratoryFlow(L/min)",
             "Title": "Obstructive PC AC MechanicalVentilator-InspiratoryFlow vs MechanicalVentilator-TotalLungVolume"
           }
         ]
@@ -619,13 +619,13 @@
         "Relationships":
         [
           {
-            "HeaderX": "MechanicalVentilator-AirwayPressure(cmH2O)",
-            "HeaderY": "MechanicalVentilator-TotalLungVolume(mL)",
+            "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)",
+            "YHeader": "MechanicalVentilator-TotalLungVolume(mL)",
             "Title": "Obstructive CPAP MechanicalVentilator-TotalLungVolume vs MechanicalVentilator-AirwayPressure"
           },
           {
-            "HeaderX": "MechanicalVentilator-TotalLungVolume(mL)",
-            "HeaderY": "MechanicalVentilator-InspiratoryFlow(L/min)",
+            "XHeader": "MechanicalVentilator-TotalLungVolume(mL)",
+            "YHeader": "MechanicalVentilator-InspiratoryFlow(L/min)",
             "Title": "Obstructive CPAP MechanicalVentilator-InspiratoryFlow vs MechanicalVentilator-TotalLungVolume"
           }
         ]

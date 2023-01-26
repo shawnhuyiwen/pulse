@@ -50,11 +50,15 @@ def serialize_image_properties_from_bind(src: ImagePropertyData, dst: SEImagePro
         dst.set_dpi(src.DPI)
 
 def serialize_bounds_to_bind(src: SEBounds, dst: BoundsData):
-    dst.LowerBound = src.get_lower_bound()
-    dst.UpperBound = src.get_upper_bound()
+    if src.has_lower_bound():
+        dst.LowerBound = src.get_lower_bound()
+    if src.has_upper_bound():
+        dst.UpperBound = src.get_upper_bound()
 def serialize_bounds_from_bind(src: ImagePropertyData, dst: SEBounds):
-    dst.set_lower_bound(src.LowerBound)
-    dst.set_upper_bound(src.UpperBound)
+    if src.HasField("LowerBound"):
+        dst.set_lower_bound(src.LowerBound)
+    if src.HasField("UpperBound"):
+        dst.set_upper_bound(src.UpperBound)
 
 def serialize_plot_settings_to_bind(src: SEPlotSettings, dst: PlotSettingsData):
     dst.FontSize = src.get_font_size()
@@ -144,6 +148,8 @@ def serialize_time_series_plotter_to_bind(src: SETimeSeriesPlotter, dst: TimeSer
             seriesData.Title = s.get_title()
         if s.has_label():
             seriesData.Label = s.get_label()
+        if s.has_bounds():
+            serialize_bounds_from_bind(src.Bounds, dst.get_bounds())
 def serialize_time_series_plotter_from_bind(src: TimeSeriesPlotterData, dst: SETimeSeriesPlotter):
     serialize_plot_settings_from_bind(src.PlotSettings, dst.get_plot_settings())
     serialize_plot_source_from_bind(src.PlotSource, dst.get_plot_source())
@@ -156,6 +162,8 @@ def serialize_time_series_plotter_from_bind(src: TimeSeriesPlotterData, dst: SET
             s.set_title(seriesData.Title)
         if seriesData.HasField("Label"):
             s.set_label(seriesData.Label)
+        if seriesData.HasField("Bounds"):
+            s.set_bounds(seriesData.Bounds)
         dst.add_series(s)
 
 def serialize_relational_plotter_to_bind(src: SERelationalPlotter, dst: RelationalPlotterData):
@@ -165,31 +173,39 @@ def serialize_relational_plotter_to_bind(src: SERelationalPlotter, dst: Relation
         serialize_plot_source_to_bind(src.get_plot_source(), dst.PlotSource)
     for r in src.get_relationships():
         relationData = dst.Relationships.add()
-        if r.has_header_x():
-            relationData.HeaderX = r.get_header_x()
-        if r.has_header_y():
-            relationData.HeaderY = r.get_header_y()
+        if r.has_x_header():
+            relationData.XHeader = r.get_x_header()
+        if r.has_y_header():
+            relationData.YHeader = r.get_y_header()
         if r.has_output_filename():
             relationData.OutputFilename = r.get_output_filename()
         if r.has_title():
             relationData.Title = r.get_title()
-        if r.has_label_x():
-            relationData.LabelX = r.get_label_x()
-        if r.has_label_y():
-            relationData.LabelY = r.get_label_y()
+        if r.has_x_label():
+            relationData.XLabel = r.get_x_label()
+        if r.has_y_label():
+            relationData.YLabel = r.get_y_label()
+        if r.has_x_bounds():
+            serialize_bounds_from_bind(src.XBounds, dst.get_x_bounds())
+        if r.has_y_bounds():
+            serialize_bounds_from_bind(src.YBounds, dst.get_y_bounds())
 def serialize_reational_plotter_from_bind(src: RelationalPlotterData, dst: SERelationalPlotter):
     serialize_plot_settings_from_bind(src.PlotSettings, dst.get_plot_settings())
     serialize_plot_source_from_bind(src.PlotSource, dst.get_plot_source())
     for relationData in src.Relationships:
         r = SERelation()
-        r.set_header_x(relationData.HeaderX)
-        r.set_header_y(relationData.HeaderY)
+        r.set_x_header(relationData.XHeader)
+        r.set_y_header(relationData.YHeader)
         if relationData.HasField("OutputFilename"):
             r.set_output_filename(relationData.OutputFilename)
         if relationData.HasField("Title"):
             r.set_title(relationData.Title)
-        if relationData.HasField("LabelX"):
-            r.set_label_x(relationData.LabelX)
-        if relationData.HasField("LabelY"):
-            r.set_label_y(relationData.LabelY)
+        if relationData.HasField("XLabel"):
+            r.set_x_label(relationData.XLabel)
+        if relationData.HasField("YLabel"):
+            r.set_y_label(relationData.LabelY)
+        if relationData.HasField("XBounds"):
+            r.set_x_bounds(relationData.XBounds)
+        if relationData.HasField("YBounds"):
+            r.set_y_bounds(relationData.YBounds)
         dst.add_relation(r)

@@ -45,8 +45,6 @@ class SEBounds():
         self._upper_bound = None
 
     def get_lower_bound(self):
-        if self._lower_bound is None:
-            self._lower_bound = SEScalar()
         return self._lower_bound
     def set_lower_bound(self, bound: float):
         self._lower_bound = bound
@@ -56,8 +54,6 @@ class SEBounds():
         self._lower_bound = None
 
     def get_upper_bound(self):
-        if self._upper_bound is None:
-            self._upper_bound = SEScalar()
         return self._upper_bound
     def set_upper_bound(self, bound: float):
         self._upper_bound = bound
@@ -288,13 +284,14 @@ class SEPlotter():
         return self._plot_settings is not None
 
 class SESeries():
-    __slots__ = ["_header", "_output_filename", "_title", "_label"]
+    __slots__ = ["_header", "_output_filename", "_title", "_label", "_bounds"]
 
     def __init__(self):
         self._header = None
         self._output_filename = None
         self._title = None
         self._label = None
+        self._bounds = SEBounds()
 
     def get_header(self):
         return self._header
@@ -332,6 +329,11 @@ class SESeries():
     def invalidate_label(self):
         self._label = None
 
+    def get_bounds(self):
+        return self._bounds
+    def set_bounds(self, bounds: SEBounds):
+        self._bounds = bounds
+
 class SETimeSeriesPlotter(SEPlotter):
     __slots__ = ["_plot_source", "_series"]
 
@@ -360,34 +362,36 @@ class SETimeSeriesPlotter(SEPlotter):
         self._series = []
 
 class SERelation():
-    __slots__ = ["_header_x", "_header_y", "_output_filename", "_title",
-                 "_label_x", "_label_y"]
+    __slots__ = ["_x_header", "_y_header", "_output_filename", "_title",
+                 "_x_label", "_y_label", "_x_bounds", "_y_bounds"]
 
     def __init__(self):
-        self._header_x = None
-        self._header_y = None
+        self._x_header = None
+        self._y_header = None
         self._output_filename = None
         self._title = None
-        self._label_x = None
-        self._label_y = None
+        self._x_label = None
+        self._y_label = None
+        self._x_bounds = SEBounds()
+        self._y_bounds = SEBounds()
 
-    def get_header_x(self):
-        return self._header_x
-    def set_header_x(self, header: str):
-        self._header_x = header
-    def has_header_x(self):
-        return self._header_x is not None
-    def invalidate_header_x(self):
-        self._header_x = None
+    def get_x_header(self):
+        return self._x_header
+    def set_x_header(self, header: str):
+        self._x_header = header
+    def has_x_header(self):
+        return self._x_header is not None
+    def invalidate_x_header(self):
+        self._x_header = None
 
-    def get_header_y(self):
-        return self._header_y
-    def set_header_y(self, header: str):
-        self._header_y = header
-    def has_header_y(self):
-        return self._header_y is not None
-    def invalidate_header_y(self):
-        self._header_y = None
+    def get_y_header(self):
+        return self._y_header
+    def set_y_header(self, header: str):
+        self._y_header = header
+    def has_y_header(self):
+        return self._y_header is not None
+    def invalidate_y_header(self):
+        self._y_header = None
 
     def get_output_filename(self):
         return self._output_filename
@@ -407,23 +411,33 @@ class SERelation():
     def invalidate_title(self):
         self._title = None
 
-    def get_label_x(self):
-        return self._label_x
-    def set_label_x(self, label: str):
-        self._label_x = label
-    def has_label_x(self):
-        return self._label_x is not None
-    def invalidate_label_x(self):
-        self._label_x = None
+    def get_x_label(self):
+        return self._x_label
+    def set_x_label(self, label: str):
+        self._x_label = label
+    def has_x_label(self):
+        return self._x_label is not None
+    def invalidate_x_label(self):
+        self._x_label = None
 
-    def get_label_y(self):
-        return self._label_y
-    def set_label_y(self, label: str):
-        self._label_y = label
-    def has_label_y(self):
-        return self._label_y is not None
-    def invalidate_label_y(self):
-        self._label_y = None
+    def get_y_label(self):
+        return self._y_label
+    def set_y_label(self, label: str):
+        self._y_label = label
+    def has_y_label(self):
+        return self._y_label is not None
+    def invalidate_y_label(self):
+        self._y_label = None
+
+    def get_x_bounds(self):
+        return self._x_bounds
+    def set_x_bounds(self, bounds: SEBounds):
+        self._x_bounds = bounds
+
+    def get_y_bounds(self):
+        return self._y_bounds
+    def set_y_bounds(self, bounds: SEBounds):
+        self._y_bounds = bounds
 
 class SERelationalPlotter(SEPlotter):
     __slots__ = ["_plot_source", "_relationships"]

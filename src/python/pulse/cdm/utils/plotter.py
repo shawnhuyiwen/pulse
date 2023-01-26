@@ -19,7 +19,7 @@ def create_plots(plots_file: str):
         elif isinstance(p, SETimeSeriesPlotter):
             time_series_plotter(p)
         else:
-            raise Exception("Unkown plotter type")
+            raise Exception("Unknown plotter type")
 
 def relational_plotter(plotter: SERelationalPlotter):
     if not plotter.has_plot_source():
@@ -34,10 +34,12 @@ def relational_plotter(plotter: SERelationalPlotter):
         settings = deepcopy(plotter.get_plot_settings())
         settings.set_output_filename(relation.get_output_filename() if relation.has_output_filename() else "")
         settings.set_title(relation.get_title() if relation.has_title() else None)
-        settings.set_x1_label(relation.get_label_x() if relation.has_label_x() else None)
-        settings.set_y1_label(relation.get_label_y() if relation.has_label_y() else None)
+        settings.set_x1_label(relation.get_x_label() if relation.has_x_label() else None)
+        settings.set_y1_label(relation.get_y_label() if relation.has_y_label() else None)
+        settings.set_x1_bounds(relation.get_x_bounds())
+        settings.set_y1_bounds(relation.get_y_bounds())
         if not settings.has_title():
-            settings.set_title(generate_title(relation.get_header_x(), relation.get_header_y()))
+            settings.set_title(generate_title(relation.get_x_header(), relation.get_y_header()))
         if not settings.get_output_filename():
             settings.set_output_filename(settings.get_title().replace(" ", "_").replace("/", "_Per_"))
 
@@ -46,7 +48,7 @@ def relational_plotter(plotter: SERelationalPlotter):
             output_filename += settings.get_image_properties().get_file_format()
         output_filepath = os.path.join(output_path, output_filename)
 
-        if create_plot(relation.get_header_x(), relation.get_header_y(), [source], settings):
+        if create_plot(relation.get_x_header(), relation.get_y_header(), [source], settings):
             save_current_plot(output_filepath, settings.get_image_properties())
         clear_current_plot()
 
@@ -66,6 +68,7 @@ def time_series_plotter(plotter: SETimeSeriesPlotter):
         settings.set_output_filename(series.get_output_filename() if series.has_output_filename() else "")
         settings.set_title(series.get_title() if series.has_title() else None)
         settings.set_y1_label(series.get_label() if series.has_label() else None)
+        settings.set_y1_bounds(series.get_bounds())
         if not settings.has_title():
             settings.set_title(generate_title(time_col, series.get_header()))
         if not settings.get_output_filename():
@@ -128,8 +131,17 @@ def create_plot(column_x: str, column_y: str, plot_sources: [SEPlotSource], plot
     plt.ticklabel_format(axis="y", style=plot_settings.get_tick_style().name, scilimits=plot_settings.get_sci_limits())
     plt.tight_layout()
 
-    # Set y axis range and data
-    plt.ylim([min_val_y-(abs(min_val_y)*.15), max_val_y+(abs(max_val_y)*.05)])
+    # Set axes range and data
+    x1_bounds = plot_settings.get_x1_bounds()
+    if x1_bounds.has_lower_bound():
+        plt.xlim(left=x1_bounds.get_lower_bound())
+    if x1_bounds.has_upper_bound():
+        plt.xlim(right=x1_bounds.get_upper_bound())
+    y1_bounds = plot_settings.get_y1_bounds()
+    if y1_bounds.has_lower_bound():
+        plt.ylim(bottom=y1_bounds.get_lower_bound())
+    if y1_bounds.has_upper_bound():
+        plt.ylim(top=y1_bounds.get_upper_bound())
     for ps in plot_sources:
         plt.plot(column_x, column_y, ps.get_line_format(), data=ps.get_data_frame(), label=ps.get_label())
         if ps.get_fill_area():
