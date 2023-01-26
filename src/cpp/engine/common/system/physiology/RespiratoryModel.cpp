@@ -1772,7 +1772,8 @@ namespace pulse
 //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::Hemothorax()
   {
-    double factor = 1.0; //Tuned factor to prevent negative volumes in circuit
+    double factor = 1.2; //Tuned factor to balance hemorrhage with lung collapse
+    double maxVolume_L = 1.5;
     bool stateChange = false;
 
     // Left ----------------------------------------------------------------------------------------
@@ -1831,7 +1832,19 @@ namespace pulse
         m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume().SetValue(leftBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
       }
 
-      m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToLeftPleural)->GetNextFlowSource().SetValue(factor * leftBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+      if (m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume(VolumeUnit::L) > maxVolume_L)
+      {
+        Error("Maximum right hemothorax volume exceeded. Removing right hemothorax");
+        m_PatientActions->GetLeftHemothorax().GetFlowRate().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        if (m_PatientActions->GetLeftHemothorax().HasSeverity())
+        {
+          m_PatientActions->GetLeftHemothorax().GetSeverity().SetValue(0.0);
+        }
+      }
+      else
+      {
+        m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToLeftPleural)->GetNextFlowSource().SetValue(factor * leftBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+      }
 
       if (hasLeftTubeThoracostomy &&
           m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume().IsNegative() &&
@@ -1907,7 +1920,19 @@ namespace pulse
         m_PatientActions->GetRightHemothorax().GetTotalBloodVolume().SetValue(rightBloodFlow_L_Per_s * m_data.GetTimeStep_s(), VolumeUnit::L);
       }
 
-      m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRightPleural)->GetNextFlowSource().SetValue(factor * rightBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+      if (m_PatientActions->GetRightHemothorax().GetTotalBloodVolume(VolumeUnit::L) > maxVolume_L)
+      {
+        Error("Maximum right hemothorax volume exceeded. Removing right hemothorax");
+        m_PatientActions->GetRightHemothorax().GetFlowRate().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        if (m_PatientActions->GetRightHemothorax().HasSeverity())
+        {
+          m_PatientActions->GetRightHemothorax().GetSeverity().SetValue(0.0);
+        }
+      }
+      else
+      {
+        m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRightPleural)->GetNextFlowSource().SetValue(factor * rightBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+      }
 
       if (hasRightTubeThoracostomy &&
           m_PatientActions->GetRightHemothorax().GetTotalBloodVolume().IsNegative() &&
@@ -3543,47 +3568,6 @@ namespace pulse
       leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * leftLungFraction);
       rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * rightLungFraction);
     }
-
-    //------------------------------------------------------------------------------------------------------
-    ////Collapsing lung (e.g., pneumothorax and hemothorax)
-    //double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
-    //double leftLungRatio = 1.0 - rightLungRatio;
-    //for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
-    //{
-    //  //0 = right lung, 1 = left lung
-    //  double lungRatio = 0.0;
-    //  double lungVolume_L = 0.0;
-    //  double pleuralVolume_L = 0.0; //We use gas in the pleural space for the model
-
-    //  if (iterLung == 0) //right lung
-    //  {
-    //    lungRatio = rightLungRatio;
-    //    lungVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
-    //    pleuralVolume_L = m_RightPleuralCavity->GetVolume(VolumeUnit::L);
-    //  }
-    //  else //left lung
-    //  {
-    //    lungRatio = leftLungRatio;
-    //    lungVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
-    //    pleuralVolume_L = m_LeftPleuralCavity->GetVolume(VolumeUnit::L);
-    //  }
-
-    //  double volumeRatio = pleuralVolume_L / lungVolume_L;
-    //  if (volumeRatio > 1.01) //0.01 is fudge factor to prevent hitting this when healthy
-    //  {
-    //    double severity = volumeRatio - 1.0;
-    //    severity = LIMIT(severity, 0.0, 1.0);
-    //    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.32, 1.0, severity);
-    //    if (iterLung == 0) //right lung
-    //    {
-    //      rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, complianceScalingFactor);
-    //    }
-    //    else //left lung
-    //    {
-    //      leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, complianceScalingFactor);
-    //    }
-    //  }
-    //}
 
     //------------------------------------------------------------------------------------------------------
     //Set new values
