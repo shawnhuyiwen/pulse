@@ -110,28 +110,22 @@ def create_plot(column_x: str, column_y: str, plot_sources: [SEPlotSource], plot
 
     plot_source0 = plot_sources[0]
     plot_source0_df = plot_source0.get_data_frame()
-
-    # Determine y axis range
-    min_val_y = sys.float_info.max
-    max_val_y = -sys.float_info.max
     for ps in plot_sources:
         ps_df = ps.get_data_frame()
         if ps_df.shape != plot_source0_df.shape or ps_df.size != plot_source0_df.size:
             print("Data frames are not equal for plotting")
             return False
-        d_x = ps_df[column_x]
-        d_y = ps_df[column_y]
-        min_val_y = min(min_val_y, d_y[np.isfinite(d_y)].min())
-        max_val_y = max(max_val_y, d_y[np.isfinite(d_y)].max())
 
     plt.figure()
-    plt.xlabel(plot_settings.get_x1_label() if plot_settings.has_x1_label() else column_x)
-    plt.ylabel(plot_settings.get_y1_label() if plot_settings.has_y1_label() else column_y)
-    plt.title(plot_settings.get_title() if plot_settings.has_title() else generate_title(column_x, column_y))
+    plt.xlabel(plot_settings.get_x1_label() if plot_settings.has_x1_label() else column_x, fontsize=plot_settings.get_font_size())
+    plt.ylabel(plot_settings.get_y1_label() if plot_settings.has_y1_label() else column_y, fontsize=plot_settings.get_font_size())
+    plt.title(plot_settings.get_title() if plot_settings.has_title() else generate_title(column_x, column_y), fontsize=plot_settings.get_font_size())
     plt.ticklabel_format(axis="y", style=plot_settings.get_tick_style().name, scilimits=plot_settings.get_sci_limits())
     plt.tight_layout()
 
-    # Set axes range and data
+    # Set up axes
+    if plot_settings.get_log_axis():
+        plt.yscale("log")
     x1_bounds = plot_settings.get_x1_bounds()
     if x1_bounds.has_lower_bound():
         plt.xlim(left=x1_bounds.get_lower_bound())
@@ -142,6 +136,9 @@ def create_plot(column_x: str, column_y: str, plot_sources: [SEPlotSource], plot
         plt.ylim(bottom=y1_bounds.get_lower_bound())
     if y1_bounds.has_upper_bound():
         plt.ylim(top=y1_bounds.get_upper_bound())
+
+    # Plot data
+    # TODO: Percent of baseline modes
     for ps in plot_sources:
         plt.plot(column_x, column_y, ps.get_line_format(), data=ps.get_data_frame(), label=ps.get_label())
         if ps.get_fill_area():
@@ -149,7 +146,7 @@ def create_plot(column_x: str, column_y: str, plot_sources: [SEPlotSource], plot
 
     # Create legend
     if not plot_settings.get_remove_legends():
-        plt.legend()
+        plt.legend(fontsize=plot_settings.get_legend_font_size())
     plt.grid(plot_settings.get_gridlines())
 
     return True

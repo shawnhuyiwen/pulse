@@ -48,10 +48,10 @@ message PlotSettingsData
     int32                     N                           = 2;
   }
 
-  optional double             FontSize                    = 1;  /**<< @brief Set the font size of axis labels and chart title (FontSize=22 by default). */
+  optional double             FontSize                    = 1;  /**<< @brief Set the font size of axis labels and chart title (FontSize=14 by default). */
   bool                        Gridlines                   = 2;  /**<< @brief Turn gridlines on or off. */
   optional ImagePropertyData  ImageProperties             = 3;  /**<< @brief Specify the image properties. */
-  optional double             LegendFontSize              = 4;  /**<< @brief Set the font size of the legend (LegendFontSize=15 by default). */
+  optional double             LegendFontSize              = 4;  /**<< @brief Set the font size of the legend (LegendFontSize=12 by default). */
   bool                        LogAxis                     = 5;  /**<< @brief Make all Y axes logarithmic. */
   string                      OutputFilename              = 6;  /**<< @brief Set the desired filename for the generated plot (will default to the chart title if nothing is set for this). */
   optional string             OutputPathOverride          = 7;  /**<< @brief Specify the path (relative to bin) to output the plot (../verification/Plots/ by default). */

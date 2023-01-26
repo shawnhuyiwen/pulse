@@ -79,10 +79,10 @@ class SEPlotSettings():
                  "_x1_label", "_x1_bounds", "_y1_label", "_y1_bounds"]
 
     def __init__(self):
-        self._font_size = 22
+        self._font_size = 14
         self._gridlines = False
         self._image_properties = SEImageProperties()
-        self._legend_font_size = 15
+        self._legend_font_size = 12
         self._log_axis = False
         self._output_filename = ""
         self._output_path_override = "../verification/Plots/"
