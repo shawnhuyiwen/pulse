@@ -81,10 +81,21 @@ public:
   virtual double GetVoltageSourceBaseline(const ElectricPotentialUnit& unit) const;
   virtual void RemoveVoltageSource();
 
-  virtual bool HasValveBreakdownVoltage() const;
-  virtual SEScalarElectricPotential& GetValveBreakdownVoltage();
-  virtual double GetValveBreakdownVoltage(const ElectricPotentialUnit& unit) const;
+  virtual bool HasDiodeBreakdownVoltage() const;
+  virtual SEScalarElectricPotential& GetDiodeBreakdownVoltage();
+  virtual double GetDiodeBreakdownVoltage(const ElectricPotentialUnit& unit) const;
 
+  virtual eGate GetDiode() const;
+  virtual void SetDiode(eGate state);
+  virtual void FlipDiode();
+  virtual bool HasDiode() const;
+  virtual void InvalidateDiode();
+  virtual eGate GetNextDiode() const;
+  virtual void SetNextDiode(eGate state);
+  virtual void FlipNextDiode();
+  virtual bool HasNextDiode() const;
+  virtual void InvalidateNextDiode();
+  virtual void RemoveDiode();
 
 protected:
   SEElectricalCircuitNode& m_ElectricalSourceNode;
