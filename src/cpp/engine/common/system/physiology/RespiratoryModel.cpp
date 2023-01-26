@@ -198,6 +198,7 @@ namespace pulse
     m_RightAlveoliLeakToRightPleural = nullptr;
     m_LeftNeedleToLeftPleural = nullptr;
     m_RightNeedleToRightPleural = nullptr;
+    m_LeftAlveoliToLeftPleuralConnection = nullptr;
     m_RightAlveoliToRightPleuralConnection = nullptr;
     m_LeftPulmonaryCapillary = nullptr;
     m_RightPulmonaryCapillary = nullptr;
@@ -1309,7 +1310,7 @@ namespace pulse
           else
           {
             //This keeps it from going crazy with modifiers applied
-            changeFraction = std::abs(m_ArterialCO2PartialPressure_mmHg - targetCO2PP_mmHg) / targetCO2PP_mmHg * 0.2; //0.2 is the modifier to tune
+            changeFraction = std::abs(m_ArterialCO2PartialPressure_mmHg - targetCO2PP_mmHg) / targetCO2PP_mmHg * 0.5;
           }
           changeFraction = MIN(changeFraction, 1.0);
 
@@ -3544,45 +3545,45 @@ namespace pulse
     }
 
     //------------------------------------------------------------------------------------------------------
-    //Collapsing lung (e.g., pneumothorax and hemothorax)
-    double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
-    double leftLungRatio = 1.0 - rightLungRatio;
-    for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
-    {
-      //0 = right lung, 1 = left lung
-      double lungRatio = 0.0;
-      double lungVolume_L = 0.0;
-      double pleuralVolume_L = 0.0; //We use gas in the pleural space for the model
+    ////Collapsing lung (e.g., pneumothorax and hemothorax)
+    //double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+    //double leftLungRatio = 1.0 - rightLungRatio;
+    //for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
+    //{
+    //  //0 = right lung, 1 = left lung
+    //  double lungRatio = 0.0;
+    //  double lungVolume_L = 0.0;
+    //  double pleuralVolume_L = 0.0; //We use gas in the pleural space for the model
 
-      if (iterLung == 0) //right lung
-      {
-        lungRatio = rightLungRatio;
-        lungVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
-        pleuralVolume_L = m_RightPleuralCavity->GetVolume(VolumeUnit::L);
-      }
-      else //left lung
-      {
-        lungRatio = leftLungRatio;
-        lungVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
-        pleuralVolume_L = m_LeftPleuralCavity->GetVolume(VolumeUnit::L);
-      }
+    //  if (iterLung == 0) //right lung
+    //  {
+    //    lungRatio = rightLungRatio;
+    //    lungVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
+    //    pleuralVolume_L = m_RightPleuralCavity->GetVolume(VolumeUnit::L);
+    //  }
+    //  else //left lung
+    //  {
+    //    lungRatio = leftLungRatio;
+    //    lungVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
+    //    pleuralVolume_L = m_LeftPleuralCavity->GetVolume(VolumeUnit::L);
+    //  }
 
-      double volumeRatio = pleuralVolume_L / lungVolume_L;
-      if (volumeRatio > 1.01) //0.01 is fudge factor to prevent hitting this when healthy
-      {
-        double severity = volumeRatio - 1.0;
-        severity = LIMIT(severity, 0.0, 1.0);
-        double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.32, 1.0, severity);
-        if (iterLung == 0) //right lung
-        {
-          rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, complianceScalingFactor);
-        }
-        else //left lung
-        {
-          leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, complianceScalingFactor);
-        }
-      }
-    }
+    //  double volumeRatio = pleuralVolume_L / lungVolume_L;
+    //  if (volumeRatio > 1.01) //0.01 is fudge factor to prevent hitting this when healthy
+    //  {
+    //    double severity = volumeRatio - 1.0;
+    //    severity = LIMIT(severity, 0.0, 1.0);
+    //    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.32, 1.0, severity);
+    //    if (iterLung == 0) //right lung
+    //    {
+    //      rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, complianceScalingFactor);
+    //    }
+    //    else //left lung
+    //    {
+    //      leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, complianceScalingFactor);
+    //    }
+    //  }
+    //}
 
     //------------------------------------------------------------------------------------------------------
     //Set new values
@@ -3754,9 +3755,7 @@ namespace pulse
   void RespiratoryModel::UpdateDiffusion()
   {
     //These fractions all stack
-    double initialDiffusionArea_cm2 = m_data.GetInitialPatient().GetAlveoliSurfaceArea(AreaUnit::cm2);
-    double alveoliDiffusionArea_cm2 = initialDiffusionArea_cm2;
-    double newAlveoliDiffusionArea_cm2 = initialDiffusionArea_cm2;
+    double alveoliDiffusionArea_cm2 = m_data.GetInitialPatient().GetAlveoliSurfaceArea(AreaUnit::cm2);
 
     double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
     double leftLungRatio = 1.0 - rightLungRatio;
@@ -3790,17 +3789,18 @@ namespace pulse
 
         if (iaee.HasImpairedSurfaceArea())
         {
-          newAlveoliDiffusionArea_cm2 = newAlveoliDiffusionArea_cm2 - iaee.GetImpairedSurfaceArea(AreaUnit::cm2);
+          
+          alveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 - iaee.GetImpairedSurfaceArea(AreaUnit::cm2);
         }
         else if (iaee.HasImpairedFraction())
         {
-          newAlveoliDiffusionArea_cm2 = (1.0 - iaee.GetImpairedFraction().GetValue()) * newAlveoliDiffusionArea_cm2;
+          alveoliDiffusionArea_cm2 = (1.0 - iaee.GetImpairedFraction().GetValue()) * alveoliDiffusionArea_cm2;
         }
         else if (iaee.HasSeverity())
         {
           double severity = iaee.GetSeverity().GetValue();
           double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
-          newAlveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
+          alveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
         }
       }
       else
@@ -3821,17 +3821,17 @@ namespace pulse
 
         if (m_data.GetConditions().GetImpairedAlveolarExchange().HasImpairedSurfaceArea())
         {
-          newAlveoliDiffusionArea_cm2 = newAlveoliDiffusionArea_cm2 - m_data.GetConditions().GetImpairedAlveolarExchange().GetImpairedSurfaceArea(AreaUnit::cm2);
+          alveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 - m_data.GetConditions().GetImpairedAlveolarExchange().GetImpairedSurfaceArea(AreaUnit::cm2);
         }
         else if (m_data.GetConditions().GetImpairedAlveolarExchange().HasImpairedFraction())
         {
-          newAlveoliDiffusionArea_cm2 = (1.0 - m_data.GetConditions().GetImpairedAlveolarExchange().GetImpairedFraction().GetValue()) * newAlveoliDiffusionArea_cm2;
+          alveoliDiffusionArea_cm2 = (1.0 - m_data.GetConditions().GetImpairedAlveolarExchange().GetImpairedFraction().GetValue()) * alveoliDiffusionArea_cm2;
         }
         else if (m_data.GetConditions().GetImpairedAlveolarExchange().HasSeverity())
         {
           double severity = m_data.GetConditions().GetImpairedAlveolarExchange().GetSeverity().GetValue();
           double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
-          newAlveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
+          alveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
         }
       }
 
@@ -3842,7 +3842,6 @@ namespace pulse
     //------------------------------------------------------------------------------------------------------
     //COPD
     //Exacerbation will overwrite the condition, even if it means improvement
-    newAlveoliDiffusionArea_cm2 = initialDiffusionArea_cm2;
     if (m_data.GetConditions().HasChronicObstructivePulmonaryDisease() || m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
     {
       double emphysemaSeverity = 0.0;
@@ -3858,8 +3857,7 @@ namespace pulse
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, emphysemaSeverity);
 
       // Calculate the total surface area
-      newAlveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
-      alveoliDiffusionArea_cm2 = MIN(alveoliDiffusionArea_cm2, newAlveoliDiffusionArea_cm2);
+      alveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
 
       rightAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * rightLungRatio;
       leftAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * leftLungRatio;
@@ -3868,7 +3866,6 @@ namespace pulse
     //------------------------------------------------------------------------------------------------------
     //LobarPneumonia
     //Exacerbation will overwrite the condition, even if it means improvement
-    newAlveoliDiffusionArea_cm2 = initialDiffusionArea_cm2;
     if (m_data.GetConditions().HasLobarPneumonia() || m_PatientActions->HasLobarPneumoniaExacerbation())
     {
       double severity = 0.0;
@@ -3887,20 +3884,22 @@ namespace pulse
         rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
       }
 
+      // Get the right and left lung ratios
+      double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+      double leftLungRatio = 1.0 - rightLungRatio;
+
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
 
       // Calculate the surface area contributions for each lung
-      double dRightContribution = rightLungRatio * ((newAlveoliDiffusionArea_cm2 * (1.0 - rightLungFraction)) + (newAlveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * rightLungFraction));
-      double dLeftContribution = leftLungRatio * ((newAlveoliDiffusionArea_cm2 * (1.0 - leftLungFraction)) + (newAlveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * leftLungFraction));
+      rightAlveoliDiffusionArea_cm2 = ((rightAlveoliDiffusionArea_cm2 * (1.0 - rightLungFraction)) + (rightAlveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * rightLungFraction));
+      leftAlveoliDiffusionArea_cm2 = ((leftAlveoliDiffusionArea_cm2 * (1.0 - leftLungFraction)) + (leftAlveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * leftLungFraction));
 
       // Calculate the total surface area
-      newAlveoliDiffusionArea_cm2 = dLeftContribution + dRightContribution;
-      alveoliDiffusionArea_cm2 = MIN(alveoliDiffusionArea_cm2, newAlveoliDiffusionArea_cm2);
+      alveoliDiffusionArea_cm2 = rightAlveoliDiffusionArea_cm2 + leftAlveoliDiffusionArea_cm2;
     }
 
     //------------------------------------------------------------------------------------------------------
     //PulmonaryFibrosis
-    newAlveoliDiffusionArea_cm2 = initialDiffusionArea_cm2;
     if (m_data.GetConditions().HasPulmonaryFibrosis())
     {
       double Severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
@@ -3908,8 +3907,7 @@ namespace pulse
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, Severity);
 
       // Calculate the total surface area
-      newAlveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
-      alveoliDiffusionArea_cm2 = MIN(alveoliDiffusionArea_cm2, newAlveoliDiffusionArea_cm2);
+      alveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
 
       rightAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * rightLungRatio;
       leftAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * leftLungRatio;
@@ -3919,7 +3917,6 @@ namespace pulse
     //ARDS
     //Exacerbation will overwrite the condition, even if it means improvement
     //Same as lobar pneumonia for now
-    newAlveoliDiffusionArea_cm2 = initialDiffusionArea_cm2;
     if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
     {
       double severity = 0.0;
@@ -3938,15 +3935,18 @@ namespace pulse
         rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
       }
 
+      // Get the right and left lung ratios
+      double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+      double leftLungRatio = 1.0 - rightLungRatio;
+
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
 
       // Calculate the surface area contributions for each lung
-      double dRightContribution = rightLungRatio * ((newAlveoliDiffusionArea_cm2 * (1.0 - rightLungFraction)) + (newAlveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * rightLungFraction));
-      double dLeftContribution = leftLungRatio * ((newAlveoliDiffusionArea_cm2 * (1.0 - leftLungFraction)) + (newAlveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * leftLungFraction));
+      rightAlveoliDiffusionArea_cm2 = ((rightAlveoliDiffusionArea_cm2 * (1.0 - rightLungFraction)) + (rightAlveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * rightLungFraction));
+      leftAlveoliDiffusionArea_cm2 = ((leftAlveoliDiffusionArea_cm2 * (1.0 - leftLungFraction)) + (leftAlveoliDiffusionArea_cm2 * gasDiffusionScalingFactor * leftLungFraction));
 
       // Calculate the total surface area
-      newAlveoliDiffusionArea_cm2 = dLeftContribution + dRightContribution;
-      alveoliDiffusionArea_cm2 = MIN(alveoliDiffusionArea_cm2, newAlveoliDiffusionArea_cm2);
+      alveoliDiffusionArea_cm2 = rightAlveoliDiffusionArea_cm2 + leftAlveoliDiffusionArea_cm2;
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -4000,8 +4000,6 @@ namespace pulse
     m_LeftAlveoli->GetDiffusionSurfaceArea().SetValue(leftAlveoliDiffusionArea_cm2, AreaUnit::cm2);
 
     //Collapsing lung (e.g., pneumothorax and hemothorax)
-    newAlveoliDiffusionArea_cm2 = 0.0;
-    double perLungAlveoliDiffusionArea_cm2 = initialDiffusionArea_cm2 / 2.0;
     for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
     {
       //0 = right lung, 1 = left lung
@@ -4028,17 +4026,24 @@ namespace pulse
         severity = 1.0 - (lungVolume_L - residualVolume_L) / (functionalResidualCapacity_L - residualVolume_L);
         severity = LIMIT(severity, 0.0, 1.0);
         double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
-        newAlveoliDiffusionArea_cm2 += gasDiffusionScalingFactor * perLungAlveoliDiffusionArea_cm2; //Per lung
-      }
-      else
-      {
-        newAlveoliDiffusionArea_cm2 += perLungAlveoliDiffusionArea_cm2;
+        if (iterLung == 0) //right lung
+        {
+          rightAlveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
+        }
+        else //left lung
+        {
+          leftAlveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
+        }
       }
     }
-    alveoliDiffusionArea_cm2 = MIN(alveoliDiffusionArea_cm2, newAlveoliDiffusionArea_cm2);
+    // Calculate the total surface area
+    alveoliDiffusionArea_cm2 = rightAlveoliDiffusionArea_cm2 + leftAlveoliDiffusionArea_cm2;
 
     //------------------------------------------------------------------------------------------------------
-    //Set new value
+    //Set new values
+    m_RightAlveoli->GetDiffusionSurfaceArea().SetValue(rightAlveoliDiffusionArea_cm2, AreaUnit::cm2);
+    m_LeftAlveoli->GetDiffusionSurfaceArea().SetValue(leftAlveoliDiffusionArea_cm2, AreaUnit::cm2);
+
     m_data.GetCurrentPatient().GetAlveoliSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
   }
 
