@@ -3513,8 +3513,10 @@ namespace pulse
 
     double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
     double leftLungRatio = 1.0 - rightLungRatio;
-    double rightAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * rightLungRatio;
-    double leftAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * leftLungRatio;
+    double initialRightAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * rightLungRatio;
+    double initialLeftAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * leftLungRatio;
+    double rightAlveoliDiffusionArea_cm2 = initialRightAlveoliDiffusionArea_cm2;
+    double leftAlveoliDiffusionArea_cm2 = initialLeftAlveoliDiffusionArea_cm2;
 
     /// \todo Make these conditions/actions all per lung
 
@@ -3735,11 +3737,15 @@ namespace pulse
         double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
         if (iterLung == 0) //right lung
         {
-          rightAlveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
+          double thisRightAlveoliDiffusionArea_cm2 = initialRightAlveoliDiffusionArea_cm2 * gasDiffusionScalingFactor;
+          //Only update if it's worse, so we don't get double effects for things like ARDS
+          rightAlveoliDiffusionArea_cm2 = MIN(rightAlveoliDiffusionArea_cm2, thisRightAlveoliDiffusionArea_cm2);
         }
         else //left lung
         {
-          leftAlveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
+          double thisLeftAlveoliDiffusionArea_cm2 = initialLeftAlveoliDiffusionArea_cm2 * gasDiffusionScalingFactor;
+          //Only update if it's worse, so we don't get double effects for things like ARDS
+          leftAlveoliDiffusionArea_cm2 = MIN(leftAlveoliDiffusionArea_cm2, thisLeftAlveoliDiffusionArea_cm2);
         }
       }
     }
