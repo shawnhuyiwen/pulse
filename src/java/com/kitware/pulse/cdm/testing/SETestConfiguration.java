@@ -115,10 +115,10 @@ public class SETestConfiguration
           // Parse the value
           String[] values = value.split(",");
           this.sceExec.setLogToConsole(eSwitch.On);
-          this.sceExec.setOutputRootDirectory(values[0]);
-          this.sceExec.setAutoSerializePeriod_s(Double.parseDouble(values[1]));
-          this.sceExec.setTimeStampSerializedStates(eSwitch.valueOf(values[2]));
-          this.sceExec.setAutoSerializeAfterActions(eSwitch.valueOf(values[3]));
+          this.sceExec.setOutputRootDirectory("");
+          this.sceExec.setAutoSerializePeriod_s(Double.parseDouble(values[0]));
+          this.sceExec.setTimeStampSerializedStates(eSwitch.valueOf(values[1]));
+          this.sceExec.setAutoSerializeAfterActions(eSwitch.valueOf(values[2]));
           continue; 
         }
         if(key.equalsIgnoreCase("ExecuteTests"))

@@ -68,7 +68,7 @@ void SEScenarioExec::Clear()
   m_AutoSerializePeriod_s = 0;
   m_AutoSerializeTime_s = 0;
   m_TimeStampSerializedStates = eSwitch::Off;
-  m_ReloadSerializedState = eSwitch::Off;
+  m_ReloadSerializedState = eSwitch::On;
   m_SerializationOutput.str("");
   m_SerializationActions.str("");
 }
@@ -89,20 +89,7 @@ bool SEScenarioExec::SerializeFromString(const std::string& src, eSerializationF
 
 bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
 {
-  // Run the scenario as is
-  if (!Process(pe, sce))
-    return false;
-
-  if (m_AutoSerializeAfterActions==eSwitch::On)
-  {
-    // Run the scenario again, where we load the state after each action
-    m_ReloadSerializedState = eSwitch::On;
-    bool b = Process(pe, sce);
-    m_ReloadSerializedState = eSwitch::Off;
-    return b;
-  }
-
-  return true;
+  return Process(pe, sce);
 }
 bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
 {
@@ -130,20 +117,26 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
     {
       sceRelPath = RelativePathFrom(scenarioDir, m_ScenarioFilename);
       if (!sceRelPath.empty())
-        m_OutputRootDirectory = "./test_results/scenarios" + sceRelPath;
+        m_OutputRootDirectory = "./test_results/scenarios/" + sceRelPath;
     }
   }
   else if (sce.HasName())
   {
-    if(m_OutputRootDirectory.empty())
-      m_OutputRootDirectory = "./";
     m_BaseFilename = sce.GetName();
+    if (sce.GetName().find("./") == 0)
+    {
+      m_BaseFilename = sce.GetName().substr(sce.GetName().find_last_of("/")+1);
+      m_OutputRootDirectory = sce.GetName().substr(0, sce.GetName().find_last_of("/"));
+    }
+    else if (m_OutputRootDirectory.empty())
+    {
+      m_OutputRootDirectory = "./test_results/scenarios/";
+    }
   }
   else
   {
-    if (m_OutputRootDirectory.empty())
-      m_OutputRootDirectory = "./";
     m_BaseFilename = "Pulse";
+    m_OutputRootDirectory = "./test_results/scenarios";
     sce.Warning("Unable to name scenario output, writing log to './Pulse.log'");
   }
 

@@ -7,6 +7,11 @@
 #include "cdm/utils/FileUtils.h"
 
 #define test_serialization false
+#define generate_clean_results false
+// If we are running with serialization
+// and we don't have or want to use a baseline csv
+// set this to true to generate a clean csv file
+// that did not do any serialization
 
 int main(int argc, char* argv[])
 {
@@ -45,13 +50,6 @@ int main(int argc, char* argv[])
   PulseScenarioExec opts(&logger);
   opts.SetModelType(t);
 
-  if (test_serialization)
-  {
-    opts.AutoSerializeAfterActions(eSwitch::On);
-    opts.TimeStampSerializedStates(eSwitch::On);
-    opts.SetAutoSerializePeriod_s(0);
-  }
-
   if (IsDirectory(input))
   {
     opts.LogToConsole(eSwitch::Off);
@@ -76,5 +74,26 @@ int main(int argc, char* argv[])
     else
       opts.SetScenarioFilename(input);
   }
+
+  if (test_serialization)
+  {
+    if (generate_clean_results)
+    {
+      if (!opts.Execute())
+        return false;
+    }
+    opts.AutoSerializeAfterActions(eSwitch::On);
+    opts.TimeStampSerializedStates(eSwitch::On);
+    opts.SetAutoSerializePeriod_s(0);
+
+    // In general, serailization testing should always be reloading, but...
+    // I don't have it exposed, but if you want to serialize,
+    // but not read the results back in, you will need to manually set
+    // m_ReloadSerializedState in the SEScenarioExec class to Off
+    // This is usually for some really hard core debugging if you need it
+    // I would assume you are building the code stepping state loading/unloading
+    // So programatically flipping this switch is no big deal
+  }
+
   return !opts.Execute();
 }
