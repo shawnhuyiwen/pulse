@@ -3642,10 +3642,6 @@ namespace pulse
         rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
       }
 
-      // Get the right and left lung ratios
-      double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
-      double leftLungRatio = 1.0 - rightLungRatio;
-
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
 
       // Calculate the surface area contributions for each lung
@@ -3692,10 +3688,6 @@ namespace pulse
         leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
         rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
       }
-
-      // Get the right and left lung ratios
-      double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
-      double leftLungRatio = 1.0 - rightLungRatio;
 
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
 
