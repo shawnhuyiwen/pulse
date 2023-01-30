@@ -553,7 +553,7 @@ void PBCompartment::Serialize(const CDM_BIND::LiquidCompartmentData& src, SELiqu
     }
   }
   if (src.has_perfusion())
-    PBProperty::Load(src.ph(), dst.GetPerfusion());
+    PBProperty::Load(src.perfusion(), dst.GetPerfusion());
   if (src.has_ph())
     PBProperty::Load(src.ph(), dst.GetPH());
   if (src.has_watervolumefraction())
