@@ -3983,51 +3983,6 @@ namespace pulse
     m_RightAlveoli->GetDiffusionSurfaceArea().SetValue(rightAlveoliDiffusionArea_cm2, AreaUnit::cm2);
     m_LeftAlveoli->GetDiffusionSurfaceArea().SetValue(leftAlveoliDiffusionArea_cm2, AreaUnit::cm2);
 
-    //Collapsing lung (e.g., pneumothorax and hemothorax)
-    for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
-    {
-      //0 = right lung, 1 = left lung
-      double lungRatio = 0.0;
-      double lungVolume_L = 0.0;
-
-      if (iterLung == 0) //right lung
-      {
-        lungRatio = rightLungRatio;
-        lungVolume_L = m_RightLung->GetVolume(VolumeUnit::L);
-      }
-      else //left lung
-      {
-        lungRatio = leftLungRatio;
-        lungVolume_L = m_LeftLung->GetVolume(VolumeUnit::L);
-      }
-
-      double functionalResidualCapacity_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L) * lungRatio;
-      double residualVolume_L = m_data.GetCurrentPatient().GetResidualVolume(VolumeUnit::L) * lungRatio;
-
-      if (lungVolume_L < functionalResidualCapacity_L - 0.01) //0.01 is fudge factor to prevent hitting this when healthy
-      {
-        double severity = 0.0;
-        severity = 1.0 - (lungVolume_L - residualVolume_L) / (functionalResidualCapacity_L - residualVolume_L);
-        severity = LIMIT(severity, 0.0, 1.0);
-        double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
-        if (iterLung == 0) //right lung
-        {
-          rightAlveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
-        }
-        else //left lung
-        {
-          leftAlveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
-        }
-      }
-    }
-    // Calculate the total surface area
-    alveoliDiffusionArea_cm2 = rightAlveoliDiffusionArea_cm2 + leftAlveoliDiffusionArea_cm2;
-
-    //------------------------------------------------------------------------------------------------------
-    //Set new values
-    m_RightAlveoli->GetDiffusionSurfaceArea().SetValue(rightAlveoliDiffusionArea_cm2, AreaUnit::cm2);
-    m_LeftAlveoli->GetDiffusionSurfaceArea().SetValue(leftAlveoliDiffusionArea_cm2, AreaUnit::cm2);
-
     m_data.GetCurrentPatient().GetAlveoliSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
   }
 
