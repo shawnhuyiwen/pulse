@@ -118,7 +118,11 @@ std::string SEAction::PrettyPrint(const std::string& str)
         continue;
       }
 
-      if (buffer.eof()) break;
+      if (buffer.eof())
+      {
+        out << line << "\n";
+        break;
+      }
       std::getline(buffer, peek);
       // Check to see if this line is part of a scalar block
       idx = peek.find("Scalar");
@@ -126,18 +130,20 @@ std::string SEAction::PrettyPrint(const std::string& str)
       {
         std::getline(buffer, peek);// This should be "Value:"
         line += peek.substr(peek.find("Value")+5);
-        if (buffer.eof()) break;
-        std::getline(buffer, peek);
-        unit = peek.find("Unit:");
-        if (unit != std::string::npos)
+        if (!buffer.eof())
         {
-          line += peek.substr(unit+5);
-          out << line << "\n";
-        }
-        else
-        {
-          out << line << "\n";
-          line = peek;
+          std::getline(buffer, peek);
+          unit = peek.find("Unit:");
+          if (unit != std::string::npos)
+          {
+            line += peek.substr(unit + 5);
+            out << line << "\n";
+          }
+          else
+          {
+            out << line << "\n";
+            line = peek;
+          }
         }
       }
       else // Write what we had

@@ -95,7 +95,7 @@ bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Mess
   google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
 
   bool ret = true;
-  if (m == eSerializationFormat::JSON)
+  if (m == eSerializationFormat::JSON || m == eSerializationFormat::VERBOSE_JSON)
   {
     google::protobuf::util::JsonParseOptions opts;
     google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(src, &dst, opts);

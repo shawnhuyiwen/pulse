@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Pulse;
 using Pulse.CDM;
 
@@ -21,7 +22,16 @@ namespace HowTo_UseEngine
   public class MyLogListener : ILogListener
   {
     public void Debug(string msg) { Console.WriteLine("[DEBUG] " + msg); }
-    public void Info(string msg) { Console.WriteLine("[INFO] " + msg); }
+    public void Info(string msg)
+    {
+      if (msg.Contains("[Action]"))
+      {
+        Console.WriteLine("[INFO] " + msg.Substring(0, msg.IndexOf(',')));
+        Console.WriteLine(SEAction.PrettyPrint(msg));
+      }
+      else
+        Console.WriteLine("[INFO] " + msg);
+    }
     public void Warning(string msg) { Console.WriteLine("[WARN] " + msg); }
     public void Error(string msg) { Console.WriteLine("[ERROR] " + msg); }
     public void Fatal(string msg) { Console.WriteLine("[FATAL] " + msg); }

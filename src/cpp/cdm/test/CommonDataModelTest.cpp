@@ -243,6 +243,7 @@ void CommonDataModelTest::FillFunctionMap()
   cdmMap.insert(std::make_pair("BlackBoxComplianceTest", &CommonDataModelTest::BlackBoxComplianceTest));
   cdmMap.insert(std::make_pair("BlackBoxSourcesTest", &CommonDataModelTest::BlackBoxSourcesTest));
 
+  cdmMap.insert(std::make_pair("ActionTest", &CommonDataModelTest::ActionTest));
   cdmMap.insert(std::make_pair("ReadPatientDirectory", &CommonDataModelTest::ReadPatientDirectory));
   cdmMap.insert(std::make_pair("ReadSubstanceDirectory", &CommonDataModelTest::ReadSubstanceDirectory));
   cdmMap.insert(std::make_pair("ConvertScenarioLogs", &CommonDataModelTest::ConvertScenarioLogs));

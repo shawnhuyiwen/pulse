@@ -53,6 +53,7 @@ set(PULSE_CSHARP_HOWTO_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_EngineUse.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Environment.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_ECMO.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Hemorrhage.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_MechanicalVentilator.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_PatientStates.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_RespiratoryMechanics.cs

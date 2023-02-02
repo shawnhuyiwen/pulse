@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
       //hawbTest.SolverSpeedTest(hawbDir);
       //hawbTest.SetupPatientTest(hawbDir);
 
-      hawbTest.CardiovascularCircuitAndTransportTest(hawbDir);
+      //hawbTest.CardiovascularCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndRenalCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndTissueCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(hawbDir);
@@ -138,6 +138,7 @@ int main(int argc, char* argv[])
       //cdmTest.BlackBoxSourcesTest(cdmDir);
 
       // I/O Tests
+      cdmTest.ActionTest(cdmDir);
       //cdmTest.ReadPatientDirectory(cdmDir);
       //cdmTest.ReadSubstanceDirectory(cdmDir);
       //cdmTest.ConvertScenarioLogs(cdmDir);
