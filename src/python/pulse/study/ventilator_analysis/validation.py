@@ -106,7 +106,7 @@ def main(param):
                 valPlots[sel][name]['Pulse'] = imgName
 
     # Create the plots
-    plotListFile = getStudyDir() + "plots.json"
+    plotListFile = getStudyDir() + "PlotRun.json"
     plotter.create_plots(plotListFile)
 
     priority = param['plotPriorityOrder']

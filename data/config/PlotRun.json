@@ -1,0 +1,128 @@
+{
+  "Plotter" :
+  [
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotSettings":
+        {
+          "OutputPathOverride": "./docs/html/plots/Respiratory/",
+          "ImageProperties":
+          {
+            "FileFormat": ".jpg",
+            "Height_inch": 8,
+            "Width_inch": 8
+          },
+          "SciLimits": {}
+        },
+        "PlotSource":
+        [
+          {
+            "CSVData": "./verification/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv",
+            "LineFormat": "-r"
+          }
+        ],
+        "Series":
+        [
+          {
+            "Title": "Engine_Pulmonary_Compliance",
+            "XHeader": "LeftPleuralCavity-Pressure(cmH2O)",
+            "YHeader": "TotalLungVolume(mL)"
+          }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotSettings":
+        {
+          "OutputPathOverride": "./docs/html/plots/Respiratory/",
+          "ImageProperties":
+          {
+            "FileFormat": ".jpg",
+            "Height_inch": 8,
+            "Width_inch": 8
+          },
+          "RemoveLegends": true,
+          "SciLimits": {}
+        },
+        "PlotSource":
+        [
+          {
+            "CSVData": "/home/local/KHQ/emily.veenhuis/Documents/pulse/engine/data/human/adult/validation/Waveforms/PulmonaryCompliance_Guyton.csv",
+            "LineFormat": "-r"
+          }
+        ],
+        "Series":
+        [
+          {
+            "Title": "Guyton_Pulmonary_Compliance",
+            "XHeader": "PleuralPressure(cmH2O)",
+            "YHeader": "LungVolume(L)"
+          }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotSettings":
+        {
+          "OutputPathOverride": "./docs/html/plots/Respiratory/",
+          "ImageProperties":
+          {
+            "FileFormat": ".jpg",
+            "Height_inch": 8,
+            "Width_inch": 8
+          },
+          "SciLimits": {}
+        },
+        "PlotSource":
+        [
+          {
+            "CSVData": "./verification/scenarios/miscellaneous/ComplianceCurveResults.csv",
+            "LineFormat": "-r"
+          }
+        ],
+        "Series":
+        [
+          {
+            "Title": "Experimental_Pulmonary_Compliance",
+            "XHeader": "IntrapulmonaryPressure(cmH2O)",
+            "YHeader": "TotalLungVolume(mL)"
+          }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotSettings":
+        {
+          "OutputPathOverride": "./docs/html/plots/Respiratory/",
+          "ImageProperties":
+          {
+            "FileFormat": ".jpg"
+          },
+          "SciLimits": {}
+        },
+        "PlotSource":
+        [
+          {
+            "CSVData": "./verification/scenarios/miscellaneous/ComplianceCurveResults.csv",
+            "LineFormat": "-r"
+          }
+        ],
+        "Series":
+        [
+          {
+            "Title": "Experimental_Pulmonary_Compliance",
+            "XHeader": "IntrapulmonaryPressure(cmH2O)",
+            "YHeader": "TotalLungVolume(mL)"
+          }
+        ]
+      }
+    }
+  ]
+}

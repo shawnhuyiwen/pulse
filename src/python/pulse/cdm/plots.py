@@ -72,13 +72,15 @@ class eTickStyle(Enum):
     Scientific = 0
     Plain = 1
 class SEPlotSettings():
-    __slots__ = ["_font_size", "_gridlines", "_image_properties",
-                 "_legend_font_size", "_log_axis", "_output_filename",
-                 "_output_path_override", "_percent_of_baseline_mode",
-                 "_remove_legends", "_sci_limits", "_tick_style", "_title",
-                 "_x1_label", "_x1_bounds", "_y1_label", "_y1_bounds"]
+    __slots__ = [ "_fill_area", "_font_size", "_gridlines",
+                  "_image_properties", "_legend_font_size", "_log_axis",
+                  "_output_filename", "_output_path_override",
+                  "_percent_of_baseline_mode", "_remove_legends", "_sci_limits",
+                  "_tick_style", "_title", "_x_label", "_x_bounds", "_y_label",
+                  "_y_bounds", "_y2_label", "_y2_bounds"]
 
     def __init__(self):
+        self._fill_area = False
         self._font_size = 14
         self._gridlines = False
         self._image_properties = SEImageProperties()
@@ -91,10 +93,17 @@ class SEPlotSettings():
         self._sci_limits = None
         self._tick_style = eTickStyle.Scientific
         self._title = None
-        self._x1_label = None
-        self._x1_bounds = SEBounds()
-        self._y1_label = None
-        self._y1_bounds = SEBounds()
+        self._x_label = None
+        self._x_bounds = SEBounds()
+        self._y_label = None
+        self._y_bounds = SEBounds()
+        self._y2_label = None
+        self._y2_bounds = SEBounds()
+
+    def get_fill_area(self):
+        return self._fill_area
+    def set_fill_area(self, fill: bool):
+        self._fill_area = fill
 
     def get_font_size(self):
         return self._font_size
@@ -166,43 +175,56 @@ class SEPlotSettings():
     def invalidate_title(self):
         self._title = None
 
-    def get_x1_label(self):
-        return self._x1_label
-    def set_x1_label(self, label: str):
-        self._x1_label = label
-    def has_x1_label(self):
-        return self._x1_label is not None
-    def invalidate_x1_label(self):
-        self._x1_label = None
+    def get_x_label(self):
+        return self._x_label
+    def set_x_label(self, label: str):
+        self._x_label = label
+    def has_x_label(self):
+        return self._x_label is not None
+    def invalidate_x_label(self):
+        self._x_label = None
 
-    def get_x1_bounds(self):
-        return self._x1_bounds
-    def set_x1_bounds(self, bounds: SEBounds):
-        self._x1_bounds = bounds
+    def get_x_bounds(self):
+        return self._x_bounds
+    def set_x_bounds(self, bounds: SEBounds):
+        self._x_bounds = bounds
 
-    def get_y1_label(self):
-        return self._y1_label
-    def set_y1_label(self, label: str):
-        self._y1_label = label
-    def has_y1_label(self):
-        return self._y1_label is not None
-    def invalidate_y1_label(self):
-        self._y1_label = None
+    def get_y_label(self):
+        return self._y_label
+    def set_y_label(self, label: str):
+        self._y_label = label
+    def has_y_label(self):
+        return self._y_label is not None
+    def invalidate_y_label(self):
+        self._y_label = None
 
-    def get_y1_bounds(self):
-        return self._y1_bounds
-    def set_y1_bounds(self, bounds: SEBounds):
-        self._y1_bounds = bounds
+    def get_y_bounds(self):
+        return self._y_bounds
+    def set_y_bounds(self, bounds: SEBounds):
+        self._y_bounds = bounds
+
+    def get_y2_label(self):
+        return self._y2_label
+    def set_y2_label(self, label: str):
+        self._y2_label = label
+    def has_y2_label(self):
+        return self._y2_label is not None
+    def invalidate_y2_label(self):
+        self._y2_label = None
+
+    def get_y2_bounds(self):
+        return self._y2_bounds
+    def set_y2_bounds(self, bounds: SEBounds):
+        self._y2_bounds = bounds
 
 
 class SEPlotSource():
-    __slots__ = ["_csv_data", "_df", "_fill_area", "_label", "_line_format",
+    __slots__ = ["_csv_data", "_df", "_label", "_line_format",
                  "_begin_row", "_end_row"]
 
     def __init__(self):
         self._csv_data = None
         self._df = None
-        self._fill_area = False
         self._label = None
         self._line_format = "-k"
         self._begin_row = None
@@ -235,11 +257,6 @@ class SEPlotSource():
     def invalidate_data_frame(self):
         self._df = None
 
-    def get_fill_area(self):
-        return self._fill_area
-    def set_fill_area(self, fill: bool):
-        self._fill_area = fill
-
     def get_label(self):
         return self._label
     def set_label(self, label: str):
@@ -268,6 +285,120 @@ class SEPlotSource():
     def has_end_row(self):
         return self._end_row is not None
 
+class SESeries():
+    __slots__ = ["_plot_settings", "_output_filename", "_title",
+                 "_x_header", "_x_label", "_x_bounds", "_y_header",
+                 "_y_label", "_y_bounds", "_y2_header", "_y2_label",
+                 "_y2_bounds"]
+
+    def __init__(self):
+        self._plot_settings = None
+        self._output_filename = ""
+        self._title = None
+        self._x_header = None
+        self._x_label = None
+        self._x_bounds = SEBounds()
+        self._y_header = None
+        self._y_label = None
+        self._y_bounds = SEBounds()
+        self._y2_header = None
+        self._y2_label = None
+        self._y2_bounds = SEBounds()
+
+    def get_plot_settings(self):
+        return self._plot_settings
+    def set_plot_settings(self, settings: SEPlotSettings):
+        self._plot_settings = settings
+    def has_plot_settings(self):
+        return self._plot_settings is not None
+
+    def get_output_filename(self):
+        return self._output_filename
+    def set_output_filename(self, output_filename: str):
+        self._output_filename = output_filename
+    def has_output_filename(self):
+        return self._output_filename is not None and len(self._output_filename) > 0
+    def invalidate_output_filename(self):
+        self._output_filename = ""
+
+    def get_title(self):
+        return self._title
+    def set_title(self, title: str):
+        self._title = title
+    def has_title(self):
+        return self._title is not None
+    def invalidate_title(self):
+        self._title = None
+
+    def get_x_header(self):
+        return self._x_header
+    def set_x_header(self, header: str):
+        self._x_header = header
+    def has_x_header(self):
+        return self._x_header is not None
+    def invalidate_x_header(self):
+        self._x_header = None
+
+    def get_x_label(self):
+        return self._x_label
+    def set_x_label(self, label: str):
+        self._x_label = label
+    def has_x_label(self):
+        return self._x_label is not None
+    def invalidate_x_label(self):
+        self._x_label = None
+
+    def get_x_bounds(self):
+        return self._x_bounds
+    def set_x_bounds(self, bounds: SEBounds):
+        self._x_bounds = bounds
+
+    def get_y_header(self):
+        return self._y_header
+    def set_y_header(self, header: str):
+        self._y_header = header
+    def has_y_header(self):
+        return self._y_header is not None
+    def invalidate_y_header(self):
+        self._y_header = None
+
+    def get_y_label(self):
+        return self._y_label
+    def set_y_label(self, label: str):
+        self._y_label = label
+    def has_y_label(self):
+        return self._y_label is not None
+    def invalidate_y_label(self):
+        self._y_label = None
+
+    def get_y_bounds(self):
+        return self._y_bounds
+    def set_y_bounds(self, bounds: SEBounds):
+        self._y_bounds = bounds
+
+    def get_y2_header(self):
+        return self._y2_header
+    def set_y2_header(self, header: str):
+        self._y2_header = header
+    def has_y2_header(self):
+        return self._y2_header is not None
+    def invalidate_y2_header(self):
+        self._y2_header = None
+
+    def get_y2_label(self):
+        return self._y2_label
+    def set_y2_label(self, label: str):
+        self._y2_label = label
+    def has_y2_label(self):
+        return self._y2_label is not None
+    def invalidate_y2_label(self):
+        self._y2_label = None
+
+    def get_y2_bounds(self):
+        return self._y2_bounds
+    def set_y2_bounds(self, bounds: SEBounds):
+        self._y2_bounds = bounds
+
 class SEPlotter():
     __slots__ = ["_plot_settings"]
 
@@ -283,74 +414,23 @@ class SEPlotter():
     def has_plot_settings(self):
         return self._plot_settings is not None
 
-class SESeries():
-    __slots__ = ["_header", "_output_filename", "_title", "_label", "_bounds"]
-
-    def __init__(self):
-        self._header = None
-        self._output_filename = None
-        self._title = None
-        self._label = None
-        self._bounds = SEBounds()
-
-    def get_header(self):
-        return self._header
-    def set_header(self, header: str):
-        self._header = header
-    def has_header(self):
-        return self._header is not None
-    def invalidate_header(self):
-        self._header = None
-
-    def get_output_filename(self):
-        return self._output_filename
-    def set_output_filename(self, output_filename: str):
-        self._output_filename = output_filename
-    def has_output_filename(self):
-        return self._output_filename is not None
-    def invalidate_output_filename(self):
-        self._output_filename = None
-
-    def get_title(self):
-        return self._title
-    def set_title(self, title: str):
-        self._title = title
-    def has_title(self):
-        return self._title is not None
-    def invalidate_title(self):
-        self._title = None
-
-    def get_label(self):
-        return self._label
-    def set_label(self, label: str):
-        self._label = label
-    def has_label(self):
-        return self._label is not None
-    def invalidate_label(self):
-        self._label = None
-
-    def get_bounds(self):
-        return self._bounds
-    def set_bounds(self, bounds: SEBounds):
-        self._bounds = bounds
-
-class SETimeSeriesPlotter(SEPlotter):
-    __slots__ = ["_plot_source", "_series"]
+class SEMultiHeaderSeriesPlotter(SEPlotter):
+    __slots__ = ["_plot_sources", "_series"]
 
     def __init__(self):
         super().__init__()
 
-        self._plot_source = None
+        self._plot_sources = []
         self._series = []
 
-    def get_plot_source(self):
-        if self._plot_source is None:
-            self._plot_source = SEPlotSource()
-        return self._plot_source
-    def set_plot_source(self, plot_source: SEPlotSource):
-        self._plot_source = plot_source
-    def has_plot_source(self):
-        return self._plot_source is not None
+    def get_plot_sources(self):
+        return self._plot_sources
+    def add_plot_source(self, plot_source: SEPlotSource):
+        self._plot_sources.append(plot_source)
+    def has_plot_sources(self):
+        return len(self._plot_sources) > 0
+    def invalidate_plot_sources(self):
+        self._plot_sources = []
 
     def get_series(self):
         return self._series
@@ -360,108 +440,3 @@ class SETimeSeriesPlotter(SEPlotter):
         return len(self._series) > 0
     def invalidate_series(self):
         self._series = []
-
-class SERelation():
-    __slots__ = ["_x_header", "_y_header", "_output_filename", "_title",
-                 "_x_label", "_y_label", "_x_bounds", "_y_bounds"]
-
-    def __init__(self):
-        self._x_header = None
-        self._y_header = None
-        self._output_filename = None
-        self._title = None
-        self._x_label = None
-        self._y_label = None
-        self._x_bounds = SEBounds()
-        self._y_bounds = SEBounds()
-
-    def get_x_header(self):
-        return self._x_header
-    def set_x_header(self, header: str):
-        self._x_header = header
-    def has_x_header(self):
-        return self._x_header is not None
-    def invalidate_x_header(self):
-        self._x_header = None
-
-    def get_y_header(self):
-        return self._y_header
-    def set_y_header(self, header: str):
-        self._y_header = header
-    def has_y_header(self):
-        return self._y_header is not None
-    def invalidate_y_header(self):
-        self._y_header = None
-
-    def get_output_filename(self):
-        return self._output_filename
-    def set_output_filename(self, output_filename: str):
-        self._output_filename = output_filename
-    def has_output_filename(self):
-        return self._output_filename is not None
-    def invalidate_output_filename(self):
-        self._output_filename = None
-
-    def get_title(self):
-        return self._title
-    def set_title(self, title: str):
-        self._title = title
-    def has_title(self):
-        return self._title is not None
-    def invalidate_title(self):
-        self._title = None
-
-    def get_x_label(self):
-        return self._x_label
-    def set_x_label(self, label: str):
-        self._x_label = label
-    def has_x_label(self):
-        return self._x_label is not None
-    def invalidate_x_label(self):
-        self._x_label = None
-
-    def get_y_label(self):
-        return self._y_label
-    def set_y_label(self, label: str):
-        self._y_label = label
-    def has_y_label(self):
-        return self._y_label is not None
-    def invalidate_y_label(self):
-        self._y_label = None
-
-    def get_x_bounds(self):
-        return self._x_bounds
-    def set_x_bounds(self, bounds: SEBounds):
-        self._x_bounds = bounds
-
-    def get_y_bounds(self):
-        return self._y_bounds
-    def set_y_bounds(self, bounds: SEBounds):
-        self._y_bounds = bounds
-
-class SERelationalPlotter(SEPlotter):
-    __slots__ = ["_plot_source", "_relationships"]
-
-    def __init__(self):
-        super().__init__()
-
-        self._plot_source = None
-        self._relationships = []
-
-    def get_plot_source(self):
-        if self._plot_source is None:
-            self._plot_source = SEPlotSource()
-        return self._plot_source
-    def set_plot_source(self, plot_source: SEPlotSource):
-        self._plot_source = plot_source
-    def has_plot_source(self):
-        return self._plot_source is not None
-
-    def get_relationships(self):
-        return self._relationships
-    def add_relation(self, relation: SERelation):
-        self._relationships.append(relation)
-    def has_relationships(self):
-        return len(self._relationships) > 0
-    def invalidate_relationships(self):
-        self._relationships = []
