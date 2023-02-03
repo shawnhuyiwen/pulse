@@ -322,6 +322,12 @@ std::string CDM_DECL RelativePathFrom(const std::string& dir, const std::string&
   return "";
 }
 
+std::uintmax_t CDM_DECL FileSize(const std::string& filename)
+{
+  std::filesystem::path fp = filename;
+  return std::filesystem::file_size(fp);
+}
+
 void SplitPath(const std::string& filepath, std::string& path)
 {
   std::string filename;

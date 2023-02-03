@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
       //hawbTest.ReadScenarios(hawbDir);
       //hawbTest.ReuseEngine(hawbDir);
-      //hawbTest.SerializationTest(hawbDir);
+      hawbTest.SerializationTest(hawbDir);
       //hawbTest.ConditionCombinations(hawbDir);
       //hawbTest.MultiEngineTest(hawbDir);
       //hawbTest.SolverSpeedTest(hawbDir);
@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
       //cdmTest.BlackBoxSourcesTest(cdmDir);
 
       // I/O Tests
-      cdmTest.ActionTest(cdmDir);
+      //cdmTest.ActionTest(cdmDir);
       //cdmTest.ReadPatientDirectory(cdmDir);
       //cdmTest.ReadSubstanceDirectory(cdmDir);
       //cdmTest.ConvertScenarioLogs(cdmDir);

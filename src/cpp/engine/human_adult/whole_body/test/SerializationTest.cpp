@@ -210,31 +210,35 @@ namespace pulse { namespace human_adult_whole_body
     {
       testCase.AddFailure("Could not advance time");
     }
-    std::string testState = "./test_results/unit_tests/pulse/SerializationTestState.json";
-    if (!pe->SerializeToFile(testState))
+    std::string ext = ".pbb";// ".json";
+    // If things don't match, change back to json and inspect files to see what is different
+
+    size_t numLoads = 10;
+    std::string stateBasename = "./test_results/unit_tests/pulse/SerializationTest/StandardMale@1s_";
+    for (size_t i = 0; i < numLoads; i++)
     {
-      testCase.AddFailure("Could not save state, check the error");
-    }
-    if (!pe->AdvanceModelTime(1, TimeUnit::s))
-    {
-      testCase.AddFailure("Could not advance time");
-    }
-    if (!pe->SerializeFromFile(testState))
-    {
-      testCase.AddFailure("Could not load saved state, check the error");
-    }
-    // Do it again
-    if (!pe->AdvanceModelTime(1, TimeUnit::s))
-    {
-      testCase.AddFailure("Could not advance time");
-    }
-    if (!pe->SerializeFromFile(testState))
-    {
-      testCase.AddFailure("Could not load saved state, check the error");
-    }
-    if (!pe->AdvanceModelTime(1, TimeUnit::s))
-    {
-      testCase.AddFailure("Could not advance time");
+      std::string itrName = stateBasename + std::to_string(i);
+      if (!pe->SerializeToFile(itrName + ext))
+      {
+        testCase.AddFailure("Could not save state, check the error");
+      }
+      if (!pe->SerializeFromFile(itrName + ext))
+      {
+        testCase.AddFailure("Could not load saved state, check the error");
+      }
+      if (!pe->SerializeToFile(itrName + ".reload.pbb"))
+      {
+        testCase.AddFailure("Could not save state, check the error");
+      }
+      auto f1Size = FileSize(itrName + ext);
+      auto f2Size = FileSize(itrName + ".reload" + ext);
+      auto diff = f1Size - f2Size;
+      testCase.Info("File size diff of " + std::to_string(diff) + " bytes");
+      if (f1Size != f2Size)
+      //if (std::fabs(f1Size - f2Size) > 200) // If we do json
+      {// Protobuf does not write out default values to json (not doing VERBOSE_JSON, so things might be a tiny bit different character wise
+        testCase.AddFailure("File sizes not equal : " + itrName + ext);
+      }
     }
 
     testReport.SerializeToFile(sTestDirectory + "/" + testName + "Report.json");
