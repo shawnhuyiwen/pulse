@@ -209,7 +209,7 @@ namespace pulse
       m_data.SetAirwayMode(eAirwayMode::AnesthesiaMachine);
       return;
     }
-    else if (c == eSwitch::Off)
+    else if (c == eSwitch::Off && m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine)
     {
       // Make sure we are active to make sure we go back to free
       m_data.SetAirwayMode(eAirwayMode::Free);

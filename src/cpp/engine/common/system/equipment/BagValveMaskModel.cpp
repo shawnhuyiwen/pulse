@@ -222,7 +222,7 @@ namespace pulse
       m_data.SetAirwayMode(eAirwayMode::BagValveMask);
       return;
     }
-    else if (c == eSwitch::Off)
+    else if (c == eSwitch::Off && m_data.GetAirwayMode() == eAirwayMode::BagValveMask)
     {
       // Make sure we are active to make sure we go back to free
       m_data.SetAirwayMode(eAirwayMode::Free);

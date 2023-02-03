@@ -106,6 +106,7 @@ namespace pulse
 
     m_ConsumptionProdutionTissues.clear();
     m_CardiacArrestVascularFlows_ml_per_min.clear();
+    m_VascularResistances.clear();
   }
 
   //--------------------------------------------------------------------------------------------------
