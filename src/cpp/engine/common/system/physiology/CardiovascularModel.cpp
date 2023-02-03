@@ -1538,9 +1538,6 @@ namespace pulse
               m_CirculatoryGraph->AddLink(hemorrhageLink);
               links.push_back(&hemorrhageLink);
               completeStateChange = true;
-
-              if (h->HasSeverity())
-                hemorrhagePath.GetResistanceBaseline().Invalidate();
             }
           }
         }
@@ -1574,7 +1571,6 @@ namespace pulse
             {
               path->GetFlowSource().Invalidate();
               path->GetNextFlowSource().Invalidate();
-              path->GetResistanceBaseline().Invalidate();
               completeStateChange = true;
             }
 
@@ -1610,6 +1606,8 @@ namespace pulse
               path->GetNextResistance().Invalidate();
               path->GetResistanceBaseline().Invalidate();
               completeStateChange = true;
+              Warning("Switching hemorrhage from severity to flow, severity resistance baseline will be removed");
+              Warning("If you go back to severity, a new resistance will be calculated based on the state of the vasculature");
             }
             double mL_Per_s = h->GetFlowRate(VolumePerTimeUnit::mL_Per_s) * (cmpt->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s) / totalFlow_mL_Per_s);
             path->GetNextFlowSource().SetValue(mL_Per_s, VolumePerTimeUnit::mL_Per_s);
@@ -1654,7 +1652,6 @@ namespace pulse
             p->GetNextFlowSource().Invalidate();
             p->GetResistance().Invalidate();
             p->GetNextResistance().Invalidate();
-            p->GetResistanceBaseline().Invalidate();
 
             m_CirculatoryCircuit->RemovePath(*p);
             m_CirculatoryGraph->RemoveLink(*link);
