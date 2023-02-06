@@ -1772,8 +1772,8 @@ namespace pulse
 //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::Hemothorax()
   {
-    double factor = 1.2; //Tuned factor to balance hemorrhage with lung collapse
-    double maxVolume_L = 1.5;
+    double factor = 2.0; //Tuned factor to balance hemorrhage with lung collapse
+    double maxVolume_L = 2.0;
     bool stateChange = false;
 
     // Left ----------------------------------------------------------------------------------------
@@ -1834,7 +1834,7 @@ namespace pulse
 
       if (m_PatientActions->GetLeftHemothorax().GetTotalBloodVolume(VolumeUnit::L) > maxVolume_L)
       {
-        Error("Maximum right hemothorax volume exceeded. Removing right hemothorax");
+        Error("Maximum left hemothorax volume exceeded. Removing left hemothorax");
         m_PatientActions->GetLeftHemothorax().GetFlowRate().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
         if (m_PatientActions->GetLeftHemothorax().HasSeverity())
         {
@@ -2969,7 +2969,7 @@ namespace pulse
 
       double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
       double leftLungRatio = 1.0 - rightLungRatio;
-      
+
       leftAlveolarDeadSpaceIncrease_L = MAX(leftAlveolarDeadSpaceIncrease_L, alveolarDeadSpace_L * leftLungRatio);
       rightAlveolarDeadSpaceIncrease_L = MAX(rightAlveolarDeadSpaceIncrease_L, alveolarDeadSpace_L * rightLungRatio);
     }
