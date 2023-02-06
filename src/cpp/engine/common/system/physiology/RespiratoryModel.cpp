@@ -1482,7 +1482,7 @@ namespace pulse
 
     if (!m_PatientActions->HasConsciousRespiration())
     {
-      ModifyDriverPressure();
+      UpdateDriverPressure();
 
       if (m_NotBreathing)
       {
@@ -1594,7 +1594,7 @@ namespace pulse
     if (m_PatientActions->HasTensionPneumothorax())
     {
       // Minimum flow resistance for the chest cavity or alveoli leak 
-      double PneumoMinResistance_cmH2O_s_Per_L = 50.0;
+      double PneumoMinResistance_cmH2O_s_Per_L = 100.0;
       // Maximum flow resistance for the chest cavity or alveoli leak
       double PneumoMaxResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
       // Flow resistance for the decompression needle, if used
@@ -3980,14 +3980,14 @@ namespace pulse
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Reduce the driver pressure based on action and conditions.
+  /// Reduce the driver pressure based on actions and conditions.
   ///
   /// \details
   /// This method scales the driver pressure lower than "requested" by the chemoreceptors and other
   /// nervous system / PD effects. This ultamitely caused lower O2 in the blood and higher respiration
   /// rates compared to lower tidal volumes.
   //--------------------------------------------------------------------------------------------------
-  void RespiratoryModel::ModifyDriverPressure()
+  void RespiratoryModel::UpdateDriverPressure()
   {
     double dyspneaSeverity = 0.0;
 

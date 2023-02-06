@@ -85,11 +85,12 @@ namespace pulse
     void SupplementalOxygen();
     // Driver
     void CalculateDriver();
-    void ApplyDriver();  
+    void ApplyDriver();
     /**/void SetBreathCycleFractions();
     /**/void ConsciousRespiration();
     /**/double VolumeToDriverPressure(double TargetVolume);
-    /**/void ModifyDriverPressure();
+    /**/void UpdateDriverPressure();
+    /**/double UpdateDriverPeriod(double totalBreathingCycleTime_s);
     // Aerosol Deposition and various Effects
     void ProcessAerosolSubstances();
 
