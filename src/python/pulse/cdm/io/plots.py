@@ -131,6 +131,12 @@ def serialize_series_to_bind(src: SESeries, dst: MultiHeaderSeriesPlotterData.Se
         dst.XLabel = src.get_x_label()
     if src.has_x_bounds():
         serialize_bounds_to_bind(src.get_x_bounds(), dst.XBounds)
+    if src.has_x2_header():
+        dst.X2Header = src.get_x2_header()
+    if src.has_x2_label():
+        dst.X2Label = src.get_x2_label()
+    if src.has_x2_bounds():
+        serialize_bounds_to_bind(src.get_x2_bounds(), dst.X2Bounds)
     if src.has_y_header():
         dst.YHeader = src.get_y_header()
     if src.has_y_label():
@@ -148,8 +154,7 @@ def serialize_series_from_bind(src: MultiHeaderSeriesPlotterData.SeriesData, dst
         ps = SEPlotSettings()
         serialize_plot_settings_from_bind(src.PlotSettings, ps)
         dst.set_plot_settings(ps)
-    if src.HasField("OutputFilename"):
-        dst.set_output_filename(src.OutputFilename)
+    dst.set_output_filename(src.OutputFilename)
     if src.HasField("Title"):
         dst.set_title(src.Title)
     if src.HasField("XHeader"):
@@ -160,6 +165,14 @@ def serialize_series_from_bind(src: MultiHeaderSeriesPlotterData.SeriesData, dst
         bounds = SEBounds()
         serialize_bounds_from_bind(src.XBounds, bounds)
         dst.set_x_bounds(bounds)
+    if src.HasField("X2Header"):
+        dst.set_x2_header(src.X2Header)
+    if src.HasField("X2Label"):
+        dst.set_x2_label(src.X2Label)
+    if src.HasField("X2Bounds"):
+        bounds = SEBounds()
+        serialize_bounds_from_bind(src.X2Bounds, bounds)
+        dst.set_x2_bounds(bounds)
     dst.set_y_header(src.YHeader)
     if src.HasField("YLabel"):
         dst.set_y_label(src.YLabel)
@@ -185,6 +198,8 @@ def serialize_multi_header_series_plotter_to_bind(src: SEMultiHeaderSeriesPlotte
     for s in src.get_series():
         seriesData = dst.Series.add()
         serialize_series_to_bind(s, seriesData)
+    if src.has_valiation_source():
+        serialize_plot_source_to_bind(src.get_validation_source(), dst.ValidationSource)
 def serialize_multi_header_series_plotter_from_bind(src: MultiHeaderSeriesPlotterData, dst: SEMultiHeaderSeriesPlotter):
     serialize_plot_settings_from_bind(src.PlotSettings, dst.get_plot_settings())
     for sourceData in src.PlotSource:
@@ -195,3 +210,7 @@ def serialize_multi_header_series_plotter_from_bind(src: MultiHeaderSeriesPlotte
         s = SESeries()
         serialize_series_from_bind(seriesData, s)
         dst.add_series(s)
+    if src.HasField("ValidationSource"):
+        val_source = SEPlotSource()
+        serialize_plot_source_from_bind(sr.ValidationSource, val_source)
+        dst.set_validation_source(val_source)

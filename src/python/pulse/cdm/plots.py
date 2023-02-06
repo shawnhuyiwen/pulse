@@ -287,9 +287,9 @@ class SEPlotSource():
 
 class SESeries():
     __slots__ = ["_plot_settings", "_output_filename", "_title",
-                 "_x_header", "_x_label", "_x_bounds", "_y_header",
-                 "_y_label", "_y_bounds", "_y2_header", "_y2_label",
-                 "_y2_bounds"]
+                 "_x_header", "_x_label", "_x_bounds", "_x2_header",
+                 "_x2_label", "_x2_bounds", "_y_header", "_y_label",
+                 "_y_bounds", "_y2_header", "_y2_label", "_y2_bounds"]
 
     def __init__(self):
         self._plot_settings = None
@@ -298,6 +298,9 @@ class SESeries():
         self._x_header = None
         self._x_label = None
         self._x_bounds = SEBounds()
+        self._x2_header = None
+        self._x2_label = None
+        self._x2_bounds = SEBounds()
         self._y_header = None
         self._y_label = None
         self._y_bounds = SEBounds()
@@ -352,6 +355,29 @@ class SESeries():
         return self._x_bounds
     def set_x_bounds(self, bounds: SEBounds):
         self._x_bounds = bounds
+
+    def get_x2_header(self):
+        return self._x2_header
+    def set_x2_header(self, header: str):
+        self._x2_header = header
+    def has_x2_header(self):
+        return self._x2_header is not None
+    def invalidate_x2_header(self):
+        self._x2_header = None
+
+    def get_x2_label(self):
+        return self._x2_label
+    def set_x2_label(self, label: str):
+        self._x2_label = label
+    def has_x2_label(self):
+        return self._x2_label is not None
+    def invalidate_x2_label(self):
+        self._x2_label = None
+
+    def get_x2_bounds(self):
+        return self._x2_bounds
+    def set_x2_bounds(self, bounds: SEBounds):
+        self._x2_bounds = bounds
 
     def get_y_header(self):
         return self._y_header
@@ -415,13 +441,14 @@ class SEPlotter():
         return self._plot_settings is not None
 
 class SEMultiHeaderSeriesPlotter(SEPlotter):
-    __slots__ = ["_plot_sources", "_series"]
+    __slots__ = ["_plot_sources", "_series", "_validation_source"]
 
     def __init__(self):
         super().__init__()
 
         self._plot_sources = []
         self._series = []
+        self._validation_source = None
 
     def get_plot_sources(self):
         return self._plot_sources
@@ -440,3 +467,12 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
         return len(self._series) > 0
     def invalidate_series(self):
         self._series = []
+
+    def get_validation_source(self):
+        return self._validation_source
+    def set_validation_source(self, validation_source: SEPlotSource):
+        self._validation_source = validation_source
+    def has_valiation_source(self):
+        return self._validation_source is not None
+    def invalidate_validation_source(self):
+        self._validation_source = None

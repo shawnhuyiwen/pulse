@@ -122,16 +122,34 @@ def create_plot(plot_sources: [SEPlotSource],
             ax2.set_ylim(top=y2_bounds.get_upper_bound())
 
     # Plot data
-    # TODO: Percent of baseline modes
     for ps in plot_sources:
-        ax1.plot(x_header, y_header, ps.get_line_format(), data=ps.get_data_frame(), label=ps.get_label())
+        baseline_mode = plot_settings.get_percent_of_baseline_mode()
+        if baseline_mode == ePercentageOfBaselineMode.Off:
+            cols = []
+        elif baseline_mode == ePercentageOfBaselineMode.All:
+            cols = [x_header, y_header]
+            if y2_header:
+                cols.append(y2_header)
+        elif baseline_mode == ePercentageOfBaselineMode.OnlyX:
+            cols = [x_header]
+        elif baseline_mode == ePercentageOfBaselineMode.OnlyY:
+            cols = [y_header]
+            if y2_header:
+                cols.append(y2_header)
+        else:
+            print(f"Unknown percentage of baseline mode: {baseline_mode}")
+            return False
+        df = ps.get_data_frame()
+        df[cols] = df[cols].apply(lambda x: x / x[0] * 100.0)
+
+        ax1.plot(x_header, y_header, ps.get_line_format(), data=df, label=ps.get_label())
         if plot_settings.get_fill_area():
-            ax1.fill_between(x_header, y_header, data=ps.get_data_frame(), facecolor=ps.get_line_format()[-1])
+            ax1.fill_between(x_header, y_header, data=df, facecolor=ps.get_line_format()[-1])
 
         if y2_header:
-            ax2.plot(x_header, y2_header, ps.get_line_format(), data=ps.get_data_frame(), label=ps.get_label())
+            ax2.plot(x_header, y2_header, ps.get_line_format(), data=df, label=ps.get_label())
             if plot_settings.get_fill_area():
-                ax1.fill_between(x_header, y2_header, data=ps.get_data_frame(), facecolor=ps.get_line_format()[-1])
+                ax1.fill_between(x_header, y2_header, data=df, facecolor=ps.get_line_format()[-1])
 
     # Create legend
     if not plot_settings.get_remove_legends():

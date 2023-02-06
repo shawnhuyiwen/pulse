@@ -113,12 +113,15 @@ message MultiHeaderSeriesPlotterData
     optional string               XHeader                   = 4;  /**<< @brief Specify the header for the x-axis. Assumed to be time if not provided. */
     optional string               XLabel                    = 5;  /**<< @brief Specify the x-axis label for this plot. */
     optional BoundsData           XBounds                   = 6;  /**<< @brief Specify the desired x-axis bounds. */
-    string                        YHeader                   = 7;  /**<< @brief Specify the header for the y-axis. */
-    optional string               YLabel                    = 8;  /**<< @brief Specify the y-axis label for this plot. */
-    optional BoundsData           YBounds                   = 9;  /**<< @brief Specify the desired y-axis bounds.  */
-    optional string               Y2Header                  = 10; /**<< @bried Specify a header for a secondary y-axis. */
-    optional string               Y2Label                   = 11; /**<< @brief Specify the secondary y-axis label for this plot. */
-    optional BoundsData           Y2Bounds                  = 12; /**<< @brief Specify the desired secondary y-axis bounds. */
+    optional string               X2Header                  = 7;  /**<< @brief Specify the header for the secondary x-axis. */
+    optional string               X2Label                   = 8;  /**<< @brief Specify the secondary x-axis label for this plot. */
+    optional BoundsData           X2Bounds                  = 9;  /**<< @brief Specify the desired secondary x-axis bounds. */
+    string                        YHeader                   = 10; /**<< @brief Specify the header for the y-axis. */
+    optional string               YLabel                    = 11; /**<< @brief Specify the y-axis label for this plot. */
+    optional BoundsData           YBounds                   = 12; /**<< @brief Specify the desired y-axis bounds.  */
+    optional string               Y2Header                  = 13; /**<< @bried Specify a header for a secondary y-axis. */
+    optional string               Y2Label                   = 14; /**<< @brief Specify the secondary y-axis label for this plot. */
+    optional BoundsData           Y2Bounds                  = 15; /**<< @brief Specify the desired secondary y-axis bounds. */
   }
 }
 
