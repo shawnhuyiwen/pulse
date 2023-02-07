@@ -259,7 +259,7 @@ Externally available data is defined within the engine in three major ways:
 	-	Data collected and packaged to resemble a report or analysis that might be ordered by a physician
 	-	Intended to give general patient overviews
 	-	Calculated on demand
-	-	Example: pulmonary function test
+	-	Example: Complete Blood Count
 
 The engine modeling approach takes the human body and conceptually divides it into various fluid compartments that represents a real division in terms of how portions of the body's water, solutes, and suspended elements are segregated @cite rhoades2012medical.  Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In the engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts.
 	
