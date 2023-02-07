@@ -4598,7 +4598,7 @@ void CommonDataModelTest::MultiphysicsElectricalCircuitTest(const std::string& o
   SEElectricalCircuitPath& Path4 = electricalCircuit->CreatePath(Node3, Ground, "Path4");
   Path4.GetCapacitanceBaseline().SetValue(5, ElectricCapacitanceUnit::F);
   SEElectricalCircuitPath& Path5 = electricalCircuit->CreatePath(Node2, Node4, "Path5");
-  Path5.SetNextSwitch(eGate::Closed);
+  Path5.SetNextDiode(eGate::Closed);
   SEElectricalCircuitPath& Path6 = electricalCircuit->CreatePath(Ground, Node4, "Path6");
   Path6.SetNextValve(eGate::Open);
 
@@ -4614,10 +4614,10 @@ void CommonDataModelTest::MultiphysicsElectricalCircuitTest(const std::string& o
     double potential = 25 * sin(currentTime_s);
     Path1.GetNextVoltageSource().SetValue(potential, ElectricPotentialUnit::V);
 
-    //Flip the switch at the right time
+    //Flip the diode at the right time
     if (currentTime_s > 15)
     {
-      Path5.SetNextSwitch(eGate::Open);
+      Path5.SetNextDiode(eGate::Open);
     }
 
     //Process - Solve the circuit
