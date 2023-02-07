@@ -116,5 +116,7 @@ namespace pulse
     SEFluidCircuitPath*  m_ConnectionToAirway;
     double               m_MachineClosedResistance_cmH2O_s_Per_L;
     double               m_MachineOpenResistance_cmH2O_s_Per_L;
+    // Piecewise linear function points
+    std::vector<std::pair<double, double>> m_leakPoints;
   };
 END_NAMESPACE

@@ -1931,6 +1931,9 @@ namespace pulse
           dampingFactor = 0.005;
         }
 
+        //Time-step independent
+        dampingFactor *= m_data.GetTimeStep_s() / 0.02;
+
         nextAfferentResistance_mmHg_s_Per_mL *= currentAfferentResistance_mmHg_s_Per_mL / nextAfferentResistance_mmHg_s_Per_mL + dampingFactor * sodiumChangeNormal;
         BLIM(nextAfferentResistance_mmHg_s_Per_mL, minAfferentResistance_mmHg_s_Per_mL, maxAfferentResistance_mmHg_s_Per_mL);
         if (kidney == 0)

@@ -627,7 +627,7 @@ namespace pulse
       double currentBicarbCO2Percent = HCO3_mM / InputAmountTotalCO2_mM;
       double currentBoundCO2Percent = ((HbCO2_mM + HbO2CO2_mM) * 4.0) / InputAmountTotalCO2_mM;
       // Move towards the above listed percents
-      double dampingFactor = 0.1;
+      double dampingFactor = 0.1 * m_data.GetTimeStep_s() / 0.02; //Time-step independent
       double targetDissolvedO2Percent = MAX(currentDissolvedO2Percent + dampingFactor * (0.01 - currentDissolvedO2Percent), 0.0);
       double targetBoundO2Percent = MAX(currentBoundO2Percent + dampingFactor * (0.99 - currentBoundO2Percent), 0.0);
       double targetDissolvedCO2Percent = MAX(currentDissolvedCO2Percent + dampingFactor * (0.05 - currentDissolvedCO2Percent), 0.0);
