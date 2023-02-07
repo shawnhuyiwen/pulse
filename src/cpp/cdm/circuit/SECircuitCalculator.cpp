@@ -97,9 +97,9 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
 
   //When we parse everything into our Ax=b matrices/vectors for the linear solver,
   //the address (row,column) is based on indexes.
-  // The circuit has a method for getting a Jacobian index for all nodes except the reference node
+  // The circuit has a method for getting the A matrix index for all nodes except the reference node
   //We'll solve circuits with switches using Assumed Valve (i.e. Diode) States model by thinking of them as switches
-  //and checking the resulting Flow and Pressure difference.
+  //and checking the resulting Flux and Potential difference.
   //We'll keep looping until we've either found a solution or determined that it cannot be solved in the current configuration.
 #ifdef VERBOSE
   int i = 0;
@@ -111,9 +111,9 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
     i++;
 #endif
     //We solve for the unknown circuit values this time-step by using Modified Nodal Analysis and linear algebra.
-    //All of the source (i.e. Pressure and Flow) values are known, as well as all element (i.e. Resistance, Compliance, Inertance, Switch on/off, Valve direction) values.
-    //We'll solve for all of the circuit's node pressures and Pressure Source Flows simultaneously using an error minimization numerical solver.
-    //Then we calculate the flows and voltages based on those Pressures and Element values.    
+    //All of the source (i.e. Potential and Flux) values are known, as well as all element (i.e. Resistance, Compliance, Inertance, Switch on/off, Valve direction) values.
+    //We'll solve for all of the circuit's node potentials and Potential Source Fluxes simultaneously using an error minimization numerical solver.
+    //Then we calculate the fluxes and voltages based on those Potentials and Element values.    
     ParseIn();
     success = Solve();
     if (success)
@@ -147,10 +147,10 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
 /// Set up the equations to solve the circuit
 ///
 /// \details
-/// Define the state-space system, by creating the A Jacobian matrix and b solution vector (Ax=b).
+/// Define the state-space system, by creating the A matrix and b solution vector (Ax=b).
 /// We do all of the Modified Nodal Analysis setup steps all at once below. There are (using electrical terminology):
 /// 1) Select a reference node
-/// 2) Assign a name to the current through each voltage source.  We will use the convention that the current flows from the positive node to the negative node of the source.
+/// 2) Assign a name to the current through each voltage source.  We will use the convention that the current fluxes from the positive node to the negative node of the source.
 /// 3) Apply Kirchoff's current law to each node.  We will take currents out of the node to be positive.
 /// 4) Write an equation for the voltage each voltage source.
 /// 5) Solve the system of n-1 unknowns.
@@ -169,12 +169,12 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   int numVars = 0;
   for (NodeType* n : m_circuit->GetNodes())
   {
-    //There should never be a next pressure value set on a node
-    //  //Initializing a compliance "charge" is done on the current pressure value
-    //  //Pressure sources are defined on a path
+    //There should never be a next potential value set on a node
+    //  //Initializing a compliance "charge" is done on the current potential value
+    //  //Potential sources are defined on a path
     //  if (n->HasNextPotential() && n!=GetReferenceNode())
     //  {
-    //    m_ss << "You cannot set a pressure value without using a path pressure source.  The NextPressure value will be ignored and overwritten for Node " << n->GetName();
+    //    m_ss << "You cannot set a potential value without using a path potential source.  The NextPotential value will be ignored and overwritten for Node " << n->GetName();
     //    Warning(m_ss);
     //  }
     if (!n->IsReferenceNode())
@@ -201,8 +201,8 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
 
       if (!ref->HasPotential() && !ref->HasNextPotential())
       {
-        ///\error Warning: Reference pressure is not defined - setting it to 0.
-        Warning("Reference pressure is not defined - setting it to 0.");
+        ///\error Warning: Reference potential is not defined - setting it to 0.
+        Warning("Reference potential is not defined - setting it to 0.");
         ValueOverride<PotentialUnit>(ref->GetNextPotential(), 0, m_PotentialUnit);
         Override<PotentialUnit>(ref->GetNextPotential(), ref->GetPotential());
       }
@@ -223,7 +223,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   m_potentialSources.clear();
   for (PathType* p : m_circuit->GetPaths())
   { 
-    //Set aside the pressure sources, since the Flow through them will be directly solved by adding them to the bottom of the matrix.
+    //Set aside the potential sources, since the Flux through them will be directly solved by adding them to the bottom of the matrix.
     //We have to do this outside of the KCL loop below because we only want to account for each one once.
     if (p->HasNextPotentialSource() ||
       (p->NumberOfNextElements() < 1 && !p->IsPartOfBlackBox()) ||
@@ -248,7 +248,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   }
 
   //Set the size of the matrix and initialize all elements to zero - we'll populate it later.
-  //subtract the known reference - we don't need to solve for that pressure
+  //subtract the known reference - we don't need to solve for that potential
   //(and it has to be known or we'll have too many unknowns).  
   _eigen->AMatrix = Eigen::MatrixXd::Zero(numVars, numVars);
   //Set the right side b vector
@@ -263,7 +263,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   double dStartingCompliance = 0.0;
   for (NodeType* n : m_circuit->GetNodes())
   {
-    //Sum of the flows at each node is 0
+    //Sum of the fluxes at each node is 0
 
     //Skip known reference node
     if (n->IsReferenceNode())
@@ -297,7 +297,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         }
       }
 
-      //Phantom path to ground needed to determine flow into/out of the black box
+      //Phantom path to ground needed to determine flux into/out of the black box
       //Out of node is positive
       NodeType* sourceNode = n->GetBlackBoxSourceNode();
       NodeType* targetNode = n->GetBlackBoxTargetNode();
@@ -349,7 +349,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       if (p->HasNextPolarizedState() && p->GetNextPolarizedState() == eGate::Open)
       { 
         //Polarized elements that are open are done exactly the same as a open switch.
-        //We'll check to see if the resulting pressure difference is valid later.
+        //We'll check to see if the resulting potential difference is valid later.
         //Model as an open switch
         double dMultiplier = 1.0 / OPEN_RESISTANCE;
         PopulateAMatrix(*n, *p, dMultiplier);
@@ -358,7 +358,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       }
 
       //Each Path has only one Element (or none at all) and each type is handled differently.
-      //The variables in the x vector are the unknown Node Pressures and Flows for Pressure Sources.
+      //The variables in the x vector are the unknown Node Potentials and Fluxes for Potential Sources.
       if (p->IsPartOfBlackBox())
       {
         //Currents out of the node are assumed positive and the sign is switched when moving from the left side of the equation to the right.
@@ -380,7 +380,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         }
         else
         {
-          //Model as a zero pressure source
+          //Model as a zero potential source
           PopulateAMatrix(*n, *p, 1, true);
         }
       }
@@ -400,17 +400,17 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         //Capacitors use initial voltage
         if (!nSrc->HasPotential())
         {
-          //Initial source pressure is not defined, assume it's the same as the reference
+          //Initial source potential is not defined, assume it's the same as the reference
           ValueOverride<PotentialUnit>(nSrc->GetPotential(), 0.0, m_PotentialUnit);
-          ///\error Warning: Initial compliance source pressure is not defined, assuming it is the reference pressure.
+          ///\error Warning: Initial compliance source potential is not defined, assuming it is the reference potential.
           Warning("Initial capacitance source potential is not defined for " + nSrc->GetName() + ", assuming it is the reference potential.");
         }
 
         if (!nTgt->HasPotential())
         {
-          //Initial target pressure is not defined, assume it's the same as the reference
+          //Initial target potential is not defined, assume it's the same as the reference
           ValueOverride<PotentialUnit>(nTgt->GetPotential(), 0.0, m_PotentialUnit);
-          ///\error Warning: Initial compliance target pressure is not defined, assuming it is the reference pressure.
+          ///\error Warning: Initial compliance target potential is not defined, assuming it is the reference potential.
           Warning("Initial capacitance target potential is not defined for " + nTgt->GetName() + ", assuming it is the reference potential.");
         }
 
@@ -437,20 +437,20 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         //C(0)/dt*(dV(0))
         dMultiplier = dStartingCompliance / m_dT_s;
 
-        double dLastPressureDiff = 0;
+        double dLastPotentialDiff = 0;
         if (n == nSrc)
-          dLastPressureDiff = nSrc->GetPotential().GetValue(m_PotentialUnit) - nTgt->GetPotential().GetValue(m_PotentialUnit);
+          dLastPotentialDiff = nSrc->GetPotential().GetValue(m_PotentialUnit) - nTgt->GetPotential().GetValue(m_PotentialUnit);
         else if (n == nTgt)
-          dLastPressureDiff = nTgt->GetPotential().GetValue(m_PotentialUnit) - nSrc->GetPotential().GetValue(m_PotentialUnit);
+          dLastPotentialDiff = nTgt->GetPotential().GetValue(m_PotentialUnit) - nSrc->GetPotential().GetValue(m_PotentialUnit);
 
-        _eigen->bVector(n->GetCalculatorIndex()) += (dMultiplier * dLastPressureDiff);
+        _eigen->bVector(n->GetCalculatorIndex()) += (dMultiplier * dLastPotentialDiff);
       }
       else if (p->HasNextInductance())
       {
         //Inductors use initial current
         if (!p->HasFlux())
         {
-          //Initial flow is not defined, assume it's 0
+          //Initial flux is not defined, assume it's 0
           ValueOverride<FluxUnit>(p->GetFlux(), 0.0, m_FluxUnit);
           ///\error Warning: Initial inductance is not defined, assuming it is 0.
           Warning("Initial inductance is not defined for " + p->GetName() + ", assuming it is 0.");
@@ -458,17 +458,17 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
 
         if (!nSrc->HasPotential())
         {
-          //Initial source pressure is not defined, assume it's the same as the reference
+          //Initial source potential is not defined, assume it's the same as the reference
           ValueOverride<PotentialUnit>(nSrc->GetPotential(), 0.0, m_PotentialUnit);
-          ///\error Warning: Initial inductance source pressure is not defined, assuming it is the reference pressure.
-          Warning("Initial inductance source pressure is not defined " + nSrc->GetName() + ", assuming it is the reference pressure.");
+          ///\error Warning: Initial inductance source potential is not defined, assuming it is the reference potential.
+          Warning("Initial inductance source potential is not defined " + nSrc->GetName() + ", assuming it is the reference potential.");
         }
         if (!nTgt->HasPotential())
         {
-          //Initial source pressure is not defined, assume it's the same as the reference
+          //Initial source potential is not defined, assume it's the same as the reference
           ValueOverride<PotentialUnit>(nTgt->GetPotential(), 0.0, m_PotentialUnit);
-          ///\error Warning: Initial inductance target pressure is not defined, assuming it is the reference pressure.
-          Warning("Initial inductance target pressure is not defined " + nTgt->GetName() + ", assuming it is the reference pressure.");
+          ///\error Warning: Initial inductance target potential is not defined, assuming it is the reference potential.
+          Warning("Initial inductance target potential is not defined " + nTgt->GetName() + ", assuming it is the reference potential.");
         }
 
         double pInductance = p->GetNextInductance().GetValue(m_InductanceUnit);
@@ -481,24 +481,24 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         double dMultiplier = m_dT_s / (2 * pInductance);
         PopulateAMatrix(*n, *p, dMultiplier);
 
-        double dLastFlow = 0.0;
-        double dLastPressureDiff = 0.0;
+        double dLastFlux = 0.0;
+        double dLastPotentialDiff = 0.0;
         if (n == nSrc)
         {
-          dLastFlow = -1.0 * p->GetFlux().GetValue(m_FluxUnit);
-          dLastPressureDiff = n->GetPotential().GetValue(m_PotentialUnit) - nTgt->GetPotential().GetValue(m_PotentialUnit);
+          dLastFlux = -1.0 * p->GetFlux().GetValue(m_FluxUnit);
+          dLastPotentialDiff = n->GetPotential().GetValue(m_PotentialUnit) - nTgt->GetPotential().GetValue(m_PotentialUnit);
         }
         else if (n == nTgt)
         {
-          dLastFlow = p->GetFlux().GetValue(m_FluxUnit);
-          dLastPressureDiff = n->GetPotential().GetValue(m_PotentialUnit) - nSrc->GetPotential().GetValue(m_PotentialUnit);
+          dLastFlux = p->GetFlux().GetValue(m_FluxUnit);
+          dLastPotentialDiff = n->GetPotential().GetValue(m_PotentialUnit) - nSrc->GetPotential().GetValue(m_PotentialUnit);
         }
-        _eigen->bVector(n->GetCalculatorIndex()) += dLastFlow - (dMultiplier * dLastPressureDiff);
+        _eigen->bVector(n->GetCalculatorIndex()) += dLastFlux - (dMultiplier * dLastPotentialDiff);
       }
       else if (p->HasNextValve())
       {
         //Valves are done exactly the same as switches.
-        //We'll check to see if the resulting flow and pressure difference is valid later.
+        //We'll check to see if the resulting flux and potential difference is valid later.
         if (p->GetNextValve() == eGate::Open)
         {
           //Model as a resistor with a ridiculously high resistance (basically an open circuit)
@@ -507,7 +507,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         }
         else
         {
-          //Model as a zero pressure source
+          //Model as a zero potential source
           PopulateAMatrix(*n, *p, 1, true);
         }
       }
@@ -516,8 +516,8 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         //Currents out of the node are assumed positive and the sign is switched when moving from the left side of the equation to the right.
         //Therefore, out of the Node we're current analyzing (i.e. Source) reverses the sign when it goes into the right side vector.
         double sign = (n == nSrc) ? -1 : 1;
-        double dFlow = p->GetNextFluxSource().GetValue(m_FluxUnit);
-        _eigen->bVector(n->GetCalculatorIndex()) += (sign * dFlow);
+        double dFlux = p->GetNextFluxSource().GetValue(m_FluxUnit);
+        _eigen->bVector(n->GetCalculatorIndex()) += (sign * dFlux);
       }
       else if (p->HasNextPotentialSource())
       {
@@ -741,8 +741,8 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
 /// Assign the Solver solution vector values to the appropriate places.
 ///
 /// \details
-/// Set all Node Pressures.
-/// Set Pressure Source Flows.
+/// Set all Node Potentials.
+/// Set Potential Source Fluxes.
 //--------------------------------------------------------------------------------------------------
 template<CIRCUIT_CALCULATOR_TEMPLATE>
 void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
@@ -752,7 +752,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
   {
     if (n->IsReferenceNode())
     {
-      //jbw - Shouldn't this be NextPotential? Make sure that works with Environment ambient pressure changes.
+      //jbw - Shouldn't this be NextPotential? Make sure that works with Environment ambient potential changes.
       m_refPotential = n->GetPotential().GetValue(m_PotentialUnit);
       refNodeExists = true;
       break;
@@ -778,17 +778,17 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
 
   for (auto itr : m_potentialSources)
   {
-    //The potential source fluxes are all in order after the Node Pressures.
+    //The potential source fluxes are all in order after the Node Potentials.
     double flux = _eigen->xVector(itr.second);
-    //We define pressure sources as the difference in pressure from source to target.
-    //Therefore, a positive value means the target pressure is greater than the source (and reverse for negative values).
-    //This means flow would go Target to Source (high to low pressure), and we need to reverse the sign.
+    //We define potential sources as the difference in potential from source to target.
+    //Therefore, a positive value means the target potential is greater than the source (and reverse for negative values).
+    //This means flux would go Target to Source (high to low potential), and we need to reverse the sign.
     ValueOverride<FluxUnit>(itr.first->GetNextFlux(), -flux, m_FluxUnit);
   }
 
   for (auto itr : m_blackBoxPotentialSources)
   {
-    //The potential source fluxes are all in order after the Node Pressures.
+    //The potential source fluxes are all in order after the Node Potentials.
     double flux = _eigen->xVector(itr.second);
     NodeType* n = itr.first;
 
@@ -817,18 +817,18 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Calculate and set all Path Flow values.
+/// Calculate and set all Path Flux values.
 ///
 /// \details
-/// Set flows that were given for Flow Sources.
-/// Set flows that were directly solved for Pressure Sources.
-/// Calculate and set Flows for Paths with other Elements.
+/// Set fluxes that were given for Flux Sources.
+/// Set fluxes that were directly solved for Potential Sources.
+/// Calculate and set Fluxes for Paths with other Elements.
 //--------------------------------------------------------------------------------------------------
 template<CIRCUIT_CALCULATOR_TEMPLATE>
 void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateFluxes()
 {
-  //Calculate flows (currents)
-  //Note: flows use source->target convention for positive flow, so the source pressure needs to be larger than the target pressure for positive flow
+  //Calculate fluxes (currents)
+  //Note: fluxes use source->target convention for positive flux, so the source potential needs to be larger than the target potential for positive flux
   for (PathType* p : m_circuit->GetPaths())
   {
     if (p->HasNextFluxSource())
@@ -842,7 +842,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateFluxes()
     }
     else if (p->HasNextCapacitance())
     {
-      //Positive flow is from source to target (i.e. SourcePressure > TargetPressure = Positive Flow)
+      //Positive flux is from source to target (i.e. SourcePotential > TargetPotential = Positive Flux)
       //dStartingCompliance is at time = T
       double dStartingCompliance = 0.0;
       if (p->HasCapacitance())
@@ -851,27 +851,27 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateFluxes()
         dStartingCompliance = p->GetNextCapacitance().GetValue(m_CapacitanceUnit);
       //dEndingCompliance is at time = T + deltaT  
       double dEndingCompliance = p->GetNextCapacitance().GetValue(m_CapacitanceUnit);
-      //dStartingPressDiff is at time = T
-      double dStartingPressDiff = p->GetSourceNode().GetPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetPotential().GetValue(m_PotentialUnit);
-      //dStartingPressDiff is at time = T + deltaT  
-      double dEndingPressDiff = p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit);
+      //dStartingPotentialDiff is at time = T
+      double dStartingPotentialDiff = p->GetSourceNode().GetPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetPotential().GetValue(m_PotentialUnit);
+      //dStartingPotentialDiff is at time = T + deltaT  
+      double dEndingPotentialDiff = p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit);
 
       if (p->HasPolarizedState() && p->GetPolarizedState() == eGate::Open)
       {
         //If this was a shorted polarized element last time-step, we need to make the starting difference zero
         //Otherwise, it will possibly think it was already charged to a certain point
-        dStartingPressDiff = 0.0;
+        dStartingPotentialDiff = 0.0;
       }
       if (p->HasNextPolarizedState() && p->GetNextPolarizedState() == eGate::Open)
       {
         //If it is currently a shorted polarized element, we need to make the ending difference zero
-        //This will make it go to the non-charged volume
-        dEndingPressDiff = 0.0;
+        //This will make it go to the non-charged quantity
+        dEndingPotentialDiff = 0.0;
       }
 
-      double dVolumeIncrement = dEndingCompliance * dEndingPressDiff - dStartingCompliance * dStartingPressDiff;
-      double dFlow = dVolumeIncrement / m_dT_s;
-      ValueOverride<FluxUnit>(p->GetNextFlux(), dFlow, m_FluxUnit);
+      double dQuantityIncrement = dEndingCompliance * dEndingPotentialDiff - dStartingCompliance * dStartingPotentialDiff;
+      double dFlux = dQuantityIncrement / m_dT_s;
+      ValueOverride<FluxUnit>(p->GetNextFlux(), dFlux, m_FluxUnit);
     }
     else if (p->HasNextPolarizedState() && p->GetNextPolarizedState() == eGate::Open)
     {
@@ -883,56 +883,56 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateFluxes()
       //I = V/R
       double dResistance;
       dResistance = p->GetNextResistance().GetValue(m_ResistanceUnit);
-      double dPressDiff = p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit);
-      double dFlow = dPressDiff / dResistance;
-      ValueOverride<FluxUnit>(p->GetNextFlux(), dFlow, m_FluxUnit);
+      double dPotentialDiff = p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit) - p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit);
+      double dFlux = dPotentialDiff / dResistance;
+      ValueOverride<FluxUnit>(p->GetNextFlux(), dFlux, m_FluxUnit);
     }
 
     else if (p->HasNextInductance())
     {
       //V = L*dI/dt
       //I = dt/L*V+I(0)
-      double dPressDiff = p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit) - p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit);
-      double dInitialPressDiff = p->GetTargetNode().GetPotential().GetValue(m_PotentialUnit) - p->GetSourceNode().GetPotential().GetValue(m_PotentialUnit);
-      double dInitialFlow = -1.0 * p->GetFlux().GetValue(m_FluxUnit);
-      double dFlow = m_dT_s / (2 * p->GetNextInductance().GetValue(m_InductanceUnit)) * (dPressDiff + dInitialPressDiff) + dInitialFlow;
-      ValueOverride<FluxUnit>(p->GetNextFlux(), -dFlow, m_FluxUnit);
+      double dPotentialDiff = p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit) - p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit);
+      double dInitialPotentialDiff = p->GetTargetNode().GetPotential().GetValue(m_PotentialUnit) - p->GetSourceNode().GetPotential().GetValue(m_PotentialUnit);
+      double dInitialFlux = -1.0 * p->GetFlux().GetValue(m_FluxUnit);
+      double dFlux = m_dT_s / (2 * p->GetNextInductance().GetValue(m_InductanceUnit)) * (dPotentialDiff + dInitialPotentialDiff) + dInitialFlux;
+      ValueOverride<FluxUnit>(p->GetNextFlux(), -dFlux, m_FluxUnit);
     }
   }
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Calculate and set all Path Volumes.
+/// Calculate and set all Path Quantities.
 ///
 /// \details
-/// Calculate and set the Volumes for all Paths with Compliance Elements.
-/// You need a compliance because volume can't change in a rigid pipe.
+/// Calculate and set the Quantitys for all Paths with Compliance Elements.
+/// You need a compliance because quantity can't change in a rigid pipe.
 //--------------------------------------------------------------------------------------------------
 template<CIRCUIT_CALCULATOR_TEMPLATE>
 void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateQuantities()
 {
-  //Calculate volume changes due to compliance.
-  //You need a compliance because volume can't change in a rigid pipe.
+  //Calculate quantity changes due to compliance.
+  //You need a compliance because quantity can't change in a rigid pipe.
 
-  //Volumes are only calculated for paths with a compliance, and each model is responsible for populating node volumes based on those values.
+  //Quantities are only calculated for paths with a compliance, and each model is responsible for populating node quantities based on those values.
   for (PathType* p : m_circuit->GetPaths())
   {
     // Calculate Quantities
     if (p->HasNextCapacitance())
     {
-      //Charge is analogues to volume
+      //Charge is analogues to quantity
       double flux = p->GetNextFlux().GetValue(m_FluxUnit);
-      double dVolumeIncrement = flux * m_dT_s;
+      double dQuantityIncrement = flux * m_dT_s;
 
       if (p->GetSourceNode().HasNextQuantity() && !p->GetSourceNode().GetNextQuantity().IsInfinity())
       {
-        IncrementOverride<QuantityUnit>(p->GetSourceNode().GetNextQuantity(), dVolumeIncrement, m_QuantityUnit);
+        IncrementOverride<QuantityUnit>(p->GetSourceNode().GetNextQuantity(), dQuantityIncrement, m_QuantityUnit);
       }
 
       if (p->GetTargetNode().HasNextQuantity() && !p->GetTargetNode().GetNextQuantity().IsInfinity())
       {
-        IncrementOverride<QuantityUnit>(p->GetTargetNode().GetNextQuantity(), -dVolumeIncrement, m_QuantityUnit);
+        IncrementOverride<QuantityUnit>(p->GetTargetNode().GetNextQuantity(), -dQuantityIncrement, m_QuantityUnit);
       }
     }
   }
@@ -946,10 +946,10 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateQuantities()
 ///
 /// \details
 /// The solution passes if:
-/// 1) There is a path with a valve and flow in the wrong direction.
+/// 1) There is a path with a valve and flux in the wrong direction.
 /// 2) Check reverse bias (i.e. voltage must be positive at the cathode).
-/// Look at the pressures to ensure flow would be going against the diode if the "switch" (ideal diode is modeled as a switch) was closed.
-/// Since flow goes from low to high pressure, the pressure at the Target must be higher or equal to the Source for negative flow (against valve).
+/// Look at the potentials to ensure flux would be going against the diode if the "switch" (ideal diode is modeled as a switch) was closed.
+/// Since flux goes from low to high potential, the potential at the Target must be higher or equal to the Source for negative flux (against valve).
 /// 
 /// If it does not pass, change the state (Open/Close) of the first Valve that fails.
 /// The circuit will be re-solved with the new Valve state, and will iterate until a solution is found.
@@ -1046,12 +1046,12 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::IsCurrentValveStateUnique()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Add a value to the appropriate location in the Jacobian matrix.
+/// Add a value to the appropriate location in the A matrix.
 ///
 /// \param  n                 The Node that is currently being analyzed.
 /// \param  p                 The Path that is currently being analyzed.
-/// \param  dMultiplier       The value to insert in the Jacobian matrix.
-/// \param  hasPressureSource True if the path has a Pressure Source.
+/// \param  dMultiplier       The value to insert in the A matrix.
+/// \param  hasPotentialSource True if the path has a Potential Source.
 ///
 /// \details
 /// Each row in the square A matrix is for the KCL analysis of a single Node.
@@ -1074,8 +1074,8 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PopulateAMatrix(NodeType& n,
 
   if (hasPotentialSource)
   {
-    //Handle Pressure Sources here.
-    //The Jacobian Matrix uses their Flow as a variable.
+    //Handle Potential Sources here.
+    //The A Matrix uses their Flux as a variable.
     double sign = (&n == &nSrc) ? -1 : 1;
     _eigen->AMatrix(n.GetCalculatorIndex(), m_potentialSources[&p]) += sign;
   }
@@ -1131,11 +1131,11 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PopulateAMatrix(NodeType& n,
 template<CIRCUIT_CALCULATOR_TEMPLATE>
 void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PostProcess(CircuitType& circuit)
 {
-  // 1) Push Next pressures, flows, and modified path elements (the only elements that will have a value in Next are those that are modified since the last time step) to Current
+  // 1) Push Next potentials, fluxes, and modified path elements (the only elements that will have a value in Next are those that are modified since the last time step) to Current
   for (NodeType* n : circuit.GetNodes())
   {
     Override<PotentialUnit>(n->GetNextPotential(), n->GetPotential());
-    //Volume is only incremented, not overwritten by the circuit math.
+    //Quantity is only incremented, not overwritten by the circuit math.
     Override<QuantityUnit>(n->GetNextQuantity(), n->GetQuantity());
   }
   //The current values stay the same, unless there's a next value to modify it
@@ -1169,9 +1169,9 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PostProcess(CircuitType& cir
 template<CIRCUIT_CALCULATOR_TEMPLATE>
 void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseInPotentialSources()
 {
-  //Deal with pressure sources
-  //We also model closed Switches, "closed" Valves (those allowing flow), and shorts (paths without an element) as 0Pa Pressure Sources.
-  //All pressure sources will have their Flow directly solved by adding equations for known Node pressure differences caused by them.
+  //Deal with potential sources
+  //We also model closed Switches, "closed" Valves (those allowing flux), and shorts (paths without an element) as 0Pa Potential Sources.
+  //All potential sources will have their Flux directly solved by adding equations for known Node potential differences caused by them.
   //We add rows for these equations after the KCL equations (hence the iNodeSize+i).
   for (auto itr : m_potentialSources)
   {
