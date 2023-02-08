@@ -315,7 +315,7 @@ Black box elements have been designed in the circuit solver to allow for interfa
 
 Internally, black box element imposed properties are applied in the circuit solver as potential or flux sources. A phantom path to ground is used for imposed potentials to determine the flow into/out of the black box. The internal/middle node is either explicitly set with an externally imposed potential value or calculated as the average of the source and target boundary potentials. Note that while the quantity value for black box can be imposed, it does not currently updated for source and target flux mismatches. Record keeping must be done externally if mass that is stored in the black box should be conserved. Optionally, mass can be added or removed from the circuit by changing the quantity on the internal/middle node.
 
-Black box compartments and links can be added to transport graphs for substance calculations the same as with any other circuit elements (see @ref TransporterMethodology).
+Black box compartments and links can be added to transport graphs for substance calculations the same as with any other circuit elements (see @ref SubstanceTransportMethodology).
 
 ### Data Model Implementation
 
@@ -340,7 +340,7 @@ and the convention of positive current going from source node to target
 node is used.
 
 This sound foundation for defining and calculating circuit parameters, allows
-the engine to transport substances in a similarly generic fashion (see @ref TransporterMethodology).
+the engine to transport substances in a similarly generic fashion (see @ref SubstanceTransportMethodology).
 
 @anchor circuit-assumptions
 ## Assumptions
