@@ -358,7 +358,7 @@ double GeneralMath::PiecewiseLinearInterpolator(const std::vector<std::pair<doub
   {
     if (x <= points[i].first)
     {
-      if (i = 0)
+      if (i == 0)
       {
         return SEScalar::dNaN(); // return NaN if x is less than all x values in the points
       }
