@@ -2617,7 +2617,6 @@ namespace pulse
 
     ////Lung volume/pressure has a direct effect on cardiac output ///\cite verhoeff2017cardiopulmonary
     ////Decreased venous return occurs in disease states and with mechanical ventilation through an increased PEEP ///\cite luecke2005clinical
-
     ////Get the current pleural cavity pressure (reletive to ambient)
     //double baselineIntrapleuralPressure_cmH2O = -5.0; /// \cite Levitzky2013pulmonary
     //double pleuralCavityPressureBaselineDiff_cmH2O = m_PleuralCavity->GetPressure(PressureUnit::cmH2O) - m_Ambient->GetPressure(PressureUnit::cmH2O) - baselineIntrapleuralPressure_cmH2O;
@@ -2631,11 +2630,9 @@ namespace pulse
     //  pleuralCavityPressureBaselineDiff_cmH2O = MIN(pleuralCavityPressureBaselineDiff_cmH2O, maxPressure_cmH2O);
 
     //  //Interpolate into a parabola to effect things much more at larger differences
-    //  double min = 1.0;
-    //  double max = maxResistanceMultiplier;
-    //  double a = max - min;
+    //  //Interpolate into a parabola to effect things much more at larger differences
     //  double factor = pleuralCavityPressureBaselineDiff_cmH2O / maxPressure_cmH2O;
-    //  double resistanceMultiplier = a * factor * factor + min;
+    //  double resistanceMultiplier = GeneralMath::ParbolicInterpolator(1.0, maxResistanceMultiplier, factor);
 
     //  rightHeartResistance_mmHg_s_Per_mL *= resistanceMultiplier;
     //}
@@ -2651,11 +2648,8 @@ namespace pulse
     pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 
     //Interpolate into a parabola to effect things much more at larger differences
-    double min = 1.0;
-    double max = maxResistanceMultiplier;
-    double a = max - min;
     double factor = pleuralCavityPressureDiff_cmH2O / maxPressureDiff_cmH2O;
-    double resistanceMultiplier = a * factor * factor + min;
+    double resistanceMultiplier = GeneralMath::ParbolicInterpolator(1.0, maxResistanceMultiplier, factor);
 
     rightHeartResistance_mmHg_s_Per_mL *= resistanceMultiplier;
 
@@ -2664,11 +2658,8 @@ namespace pulse
     //Dampen the change to prevent potential craziness
     //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
     double dampenFraction_perSec = 0.001 * 50.0;
-
     double previousRightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistancePath->GetResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double resistanceChange_L_Per_mmHg_s_Per_mL = (rightHeartResistance_mmHg_s_Per_mL - previousRightHeartResistance_mmHg_s_Per_mL) * dampenFraction_perSec * m_data.GetTimeStep_s();
-
-    rightHeartResistance_mmHg_s_Per_mL = previousRightHeartResistance_mmHg_s_Per_mL + resistanceChange_L_Per_mmHg_s_Per_mL;
+    rightHeartResistance_mmHg_s_Per_mL = GeneralMath::Damper(rightHeartResistance_mmHg_s_Per_mL, previousRightHeartResistance_mmHg_s_Per_mL, dampenFraction_perSec, m_data.GetTimeStep_s());
 
     m_RightHeartResistancePath->GetNextResistance().SetValue(rightHeartResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 

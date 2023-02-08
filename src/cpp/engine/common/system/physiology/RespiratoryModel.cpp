@@ -877,9 +877,9 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::MechanicalVentilation()
   {
-    if (m_data.GetActions().GetPatientActions().HasMechanicalVentilation())
+    if (m_PatientActions->HasMechanicalVentilation())
     {
-      SEMechanicalVentilation& mv = m_data.GetActions().GetPatientActions().GetMechanicalVentilation();
+      SEMechanicalVentilation& mv = m_PatientActions->GetMechanicalVentilation();
       // You only get here if action is On
       m_data.SetAirwayMode(eAirwayMode::MechanicalVentilation);
 
@@ -1001,9 +1001,9 @@ namespace pulse
   {
     ///\todo - Maybe this and mechanical ventilation should be broken out to their own class, like anesthesia machine?
 
-    if (!m_data.GetActions().GetPatientActions().HasSupplementalOxygen())
+    if (!m_PatientActions->HasSupplementalOxygen())
       return;
-    SESupplementalOxygen& so = m_data.GetActions().GetPatientActions().GetSupplementalOxygen();
+    SESupplementalOxygen& so = m_PatientActions->GetSupplementalOxygen();
 
     // Get flow
     double flow_L_Per_min = 0;
@@ -1018,7 +1018,7 @@ namespace pulse
       case eSupplementalOxygen_Device::None:
       {
         m_data.SetAirwayMode(eAirwayMode::Free);
-        m_data.GetActions().GetPatientActions().RemoveSupplementalOxygen();
+        m_PatientActions->RemoveSupplementalOxygen();
         return;
       }
       case eSupplementalOxygen_Device::NasalCannula:
@@ -2600,18 +2600,15 @@ namespace pulse
         chestWallCompliance_L_Per_cmH2O = 1.0 / (1.0 / sideCompliance_L_Per_cmH2O - 1.0 / healthyLungCompliance_L_Per_cmH2O);
       }
 
-      //Dampen the change to prevent potential craziness
-      //It will only change half as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
-      double dampenFraction_perSec = 0.5 * 50.0; //Default timestep = 20ms = 50Hz, ensuring any timestep will work the same here
-
-      double previousChestWallCompliance_L_Per_cmH2O = chestWallPath->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-      double complianceChange_L_Per_cmH2O = chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O;
       if (!hasRespiratoryMechanicsCompliance)
       {
-        complianceChange_L_Per_cmH2O *= dampenFraction_perSec * m_data.GetTimeStep_s();
+        //Dampen the change to prevent potential craziness
+        //It will only change half as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
+        double dampenFraction_perSec = 0.5 * 50.0; //Default timestep = 20ms = 50Hz, ensuring any timestep will work the same here
+        double previousChestWallCompliance_L_Per_cmH2O = chestWallPath->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+        chestWallCompliance_L_Per_cmH2O = GeneralMath::Damper(chestWallCompliance_L_Per_cmH2O, previousChestWallCompliance_L_Per_cmH2O, dampenFraction_perSec, m_data.GetTimeStep_s());
       }
 
-      chestWallCompliance_L_Per_cmH2O = previousChestWallCompliance_L_Per_cmH2O + complianceChange_L_Per_cmH2O;
       chestWallPath->GetNextCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
     }
   }
@@ -3968,10 +3965,8 @@ namespace pulse
       //Dampen the change to prevent potential craziness
       //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
       double dampenFraction_perSec = 0.001 * 50.0;
-      double rightPulmonaryShuntResistanceChange_mmHg_s_Per_mL = (rightPulmonaryShuntResistance_mmHg_s_Per_mL - previousRightPulmonaryShuntResistance_mmHg_s_Per_mL) * dampenFraction_perSec * m_data.GetTimeStep_s();
-      double leftPulmonaryShuntResistanceChange_mmHg_s_Per_mL = (leftPulmonaryShuntResistance_mmHg_s_Per_mL - previousLeftPulmonaryShuntResistance_mmHg_s_Per_mL) * dampenFraction_perSec * m_data.GetTimeStep_s();
-      rightPulmonaryShuntResistance_mmHg_s_Per_mL = previousRightPulmonaryShuntResistance_mmHg_s_Per_mL + rightPulmonaryShuntResistanceChange_mmHg_s_Per_mL;
-      leftPulmonaryShuntResistance_mmHg_s_Per_mL = previousLeftPulmonaryShuntResistance_mmHg_s_Per_mL + leftPulmonaryShuntResistanceChange_mmHg_s_Per_mL;
+      rightPulmonaryShuntResistance_mmHg_s_Per_mL = GeneralMath::Damper(rightPulmonaryShuntResistance_mmHg_s_Per_mL, previousRightPulmonaryShuntResistance_mmHg_s_Per_mL, dampenFraction_perSec, m_data.GetTimeStep_s());
+      leftPulmonaryShuntResistance_mmHg_s_Per_mL = GeneralMath::Damper(leftPulmonaryShuntResistance_mmHg_s_Per_mL, previousLeftPulmonaryShuntResistance_mmHg_s_Per_mL, dampenFraction_perSec, m_data.GetTimeStep_s());
     }
 
     m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -4159,17 +4154,15 @@ namespace pulse
       //Dampen the change to prevent potential craziness
       //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
       double dampenFraction_perSec = 0.001 * 50.0;
-      double dyspneaSeverityChange = (dyspneaSeverity - m_PreviousDyspneaSeverity) * dampenFraction_perSec * m_data.GetTimeStep_s();
-      dyspneaSeverity = m_PreviousDyspneaSeverity + dyspneaSeverityChange;
+      dyspneaSeverity = GeneralMath::Damper(dyspneaSeverity, m_PreviousDyspneaSeverity, dampenFraction_perSec, m_data.GetTimeStep_s());
     }
-
     m_PreviousDyspneaSeverity = dyspneaSeverity;
 
     //Reduce the tidal volume by the percentage given
     m_DriverPressure_cmH2O = m_DriverPressure_cmH2O * (1 - dyspneaSeverity);
 
   #ifdef DEBUG
-    m_data.GetDataTrack().Probe("fatigueFactor", 1 - dyspneaSeverity);
+    m_data.GetDataTrack().Probe("dyspneaSeverity", dyspneaSeverity);
   #endif
   }
 

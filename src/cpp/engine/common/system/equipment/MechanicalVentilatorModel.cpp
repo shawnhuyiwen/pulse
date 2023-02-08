@@ -189,6 +189,16 @@ namespace pulse
     // Configuration
     m_MachineClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineClosedResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     m_MachineOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+    // Piecewise points
+    double openResistance = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_leakPoints =
+    { {0, openResistance},
+      {0.1, 1000.0},
+      {0.3, 500.0},
+      {0.6, 100.0},
+      {0.9, 50.0},
+      {1.0, 1.0} };
   }
 
   void MechanicalVentilatorModel::StateChange()
@@ -449,8 +459,7 @@ namespace pulse
         previousDriverPressure_cmH2O = m_PreviousDriverPressure_cmH2O;
       }
 
-      double difference_cmH2O = driverPressure_cmH2O - previousDriverPressure_cmH2O;
-      driverPressure_cmH2O = previousDriverPressure_cmH2O + difference_cmH2O * driverDampingParameter_Per_s * m_data.GetTimeStep_s();
+      driverPressure_cmH2O = GeneralMath::Damper(driverPressure_cmH2O, previousDriverPressure_cmH2O, driverDampingParameter_Per_s, m_data.GetTimeStep_s());
       if (m_DriverPressure_cmH2O > previousDriverPressure_cmH2O)
       {
         driverPressure_cmH2O = LIMIT(driverPressure_cmH2O, previousDriverPressure_cmH2O, m_DriverPressure_cmH2O);
@@ -476,8 +485,7 @@ namespace pulse
         previousDriverFlow_L_Per_s = m_PreviousDriverFlow_L_Per_s;
       }
 
-      double difference_L_Per_s = driverFlow_L_Per_s - previousDriverFlow_L_Per_s;
-      driverFlow_L_Per_s = previousDriverFlow_L_Per_s + difference_L_Per_s * driverDampingParameter_Per_s * m_data.GetTimeStep_s();
+      driverFlow_L_Per_s = GeneralMath::Damper(driverFlow_L_Per_s, previousDriverFlow_L_Per_s, driverDampingParameter_Per_s, m_data.GetTimeStep_s());
       if (m_DriverFlow_L_Per_s > previousDriverFlow_L_Per_s)
       {
         driverFlow_L_Per_s = LIMIT(driverFlow_L_Per_s, previousDriverFlow_L_Per_s, m_DriverFlow_L_Per_s);
@@ -933,28 +941,7 @@ namespace pulse
     if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorLeak())
     {
       double severity = m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorLeak().GetSeverity().GetValue();
-      double resistance_cmH2O_s_Per_L = m_LeakConnectionToEnvironment->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      //Piecewise linear
-      if (severity > 0.9)
-      {
-        resistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.9, 1.0, 50.0, 1.0, severity);
-      }
-      else if (severity > 0.6)
-      {
-        resistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.6, 0.9, 100.0, 50.0, severity);
-      }
-      else if (severity > 0.3)
-      {
-        resistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.3, 0.6, 500.0, 100.0, severity);
-      }
-      else if (severity > 0.1)
-      {
-        resistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.1, 0.3, 1000.0, 500.0, severity);
-      }
-      else
-      {
-        resistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.0, 0.1, resistance_cmH2O_s_Per_L, 1000.0, severity);
-      }
+      double resistance_cmH2O_s_Per_L = GeneralMath::PiecewiseLinearInterpolator(m_leakPoints, severity);
 
       m_LeakConnectionToEnvironment->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }

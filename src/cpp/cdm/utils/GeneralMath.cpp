@@ -352,6 +352,29 @@ double GeneralMath::LinearInterpolator(double x1, double x2, double y1, double y
   return yPrime;
 }
 
+double GeneralMath::PiecewiseLinearInterpolator(const std::vector<std::pair<double, double>>& points, double x)
+{
+  for (unsigned int i = 1; i < points.size(); ++i) 
+  {
+    if (x <= points[i].first)
+    {
+      if (i == 0)
+      {
+        return SEScalar::dNaN(); // return NaN if x is less than all x values in the points
+      }
+
+      double x1 = points.at(i - 1).first;
+      double y1 = points.at(i - 1).second;
+      double x2 = points[i].first;
+      double y2 = points[i].second;
+      return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+    }
+  }
+
+  return SEScalar::dNaN(); // return NaN if x is greater than all x values in the points
+}
+
+
 // --------------------------------------------------------------------------------------------------
 /// \brief
 /// Returns y value for the specified logarithmic function given a normalized x value (0.0 to 1.0).
@@ -641,4 +664,17 @@ void GeneralMath::SplineInterpolater(std::vector<double>& v, size_t newSize)
     auto point = spline((double)i / (newSize - 1));
     v.push_back(point.coeffRef(0));
   }
+}
+
+double GeneralMath::Damper(double targetValue, double previousValue, double dampenFraction_perSec, double timeStep_s)
+{
+  double change = targetValue - previousValue;
+  change *= dampenFraction_perSec * timeStep_s;
+  return previousValue + change;
+}
+
+double GeneralMath::ParbolicInterpolator(double min, double max, double factor)
+{
+  double a = max - min;
+  return a * factor * factor + min;
 }
