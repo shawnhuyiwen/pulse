@@ -226,7 +226,7 @@ class SEPlotSource():
         self._csv_data = None
         self._df = None
         self._label = None
-        self._line_format = "-k"
+        self._line_format = ""
         self._begin_row = None
         self._end_row = None
 
@@ -270,6 +270,10 @@ class SEPlotSource():
         return self._line_format
     def set_line_format(self, fmt: str):
         self._line_format = fmt
+    def has_line_format(self):
+        return len(self._line_format) > 0
+    def invalidate_line_format(self):
+        self._line_format = ""
 
     def get_begin_row(self):
         return self._begin_row
@@ -288,8 +292,8 @@ class SEPlotSource():
 class SESeries():
     __slots__ = ["_plot_settings", "_output_filename", "_title",
                  "_x_header", "_x_label", "_x_bounds", "_x2_header",
-                 "_x2_label", "_x2_bounds", "_y_header", "_y_label",
-                 "_y_bounds", "_y2_header", "_y2_label", "_y2_bounds"]
+                 "_x2_label", "_x2_bounds", "_y_headers", "_y_label",
+                 "_y_bounds", "_y2_headers", "_y2_label", "_y2_bounds"]
 
     def __init__(self):
         self._plot_settings = None
@@ -301,10 +305,10 @@ class SESeries():
         self._x2_header = None
         self._x2_label = None
         self._x2_bounds = SEBounds()
-        self._y_header = None
+        self._y_headers = []
         self._y_label = None
         self._y_bounds = SEBounds()
-        self._y2_header = None
+        self._y2_headers = []
         self._y2_label = None
         self._y2_bounds = SEBounds()
 
@@ -379,14 +383,14 @@ class SESeries():
     def set_x2_bounds(self, bounds: SEBounds):
         self._x2_bounds = bounds
 
-    def get_y_header(self):
-        return self._y_header
-    def set_y_header(self, header: str):
-        self._y_header = header
-    def has_y_header(self):
-        return self._y_header is not None
-    def invalidate_y_header(self):
-        self._y_header = None
+    def get_y_headers(self):
+        return self._y_headers
+    def add_y_header(self, header: str):
+        self._y_headers.append(header)
+    def has_y_headers(self):
+        return len(self._y_headers) > 0
+    def invalidate_y_headers(self):
+        self._y_headers = []
 
     def get_y_label(self):
         return self._y_label
@@ -402,14 +406,14 @@ class SESeries():
     def set_y_bounds(self, bounds: SEBounds):
         self._y_bounds = bounds
 
-    def get_y2_header(self):
-        return self._y2_header
-    def set_y2_header(self, header: str):
-        self._y2_header = header
-    def has_y2_header(self):
-        return self._y2_header is not None
-    def invalidate_y2_header(self):
-        self._y2_header = None
+    def get_y2_headers(self):
+        return self._y2_headers
+    def add_y2_header(self, header: str):
+        self._y2_headers.append(header)
+    def has_y2_headers(self):
+        return len(self._y2_headers) > 0
+    def invalidate_y2_headers(self):
+        self._y2_headers = []
 
     def get_y2_label(self):
         return self._y2_label

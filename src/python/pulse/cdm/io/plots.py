@@ -100,7 +100,8 @@ def serialize_plot_settings_from_bind(src: PlotSettingsData, dst: SEPlotSettings
 def serialize_plot_source_to_bind(src: SEPlotSource, dst: PlotSourceData):
     if src.has_csv_data():
         dst.CSVData = src.get_csv_data()
-    dst.LineFormat = src.get_line_format()
+    if src.has_line_format():
+        dst.LineFormat = src.get_line_format()
     if src.has_label():
         dst.Label = src.get_label()
     if src.has_begin_row():
@@ -137,14 +138,16 @@ def serialize_series_to_bind(src: SESeries, dst: MultiHeaderSeriesPlotterData.Se
         dst.X2Label = src.get_x2_label()
     if src.has_x2_bounds():
         serialize_bounds_to_bind(src.get_x2_bounds(), dst.X2Bounds)
-    if src.has_y_header():
-        dst.YHeader = src.get_y_header()
+    for y in src.get_y_headers():
+        headerData = dst.YHeader.add()
+        headerData = y
     if src.has_y_label():
         dst.YLabel = src.get_y_label()
     if src.has_y_bounds():
         serialize_bounds_to_bind(src.get_y_bounds(), dst.YBounds)
-    if src.has_y2_header():
-        dst.Y2Header = src.get_y2_header()
+    for y2 in src.get_y2_headers():
+        headerData = dst.Y2Header.add()
+        headerData = y2
     if src.has_y2_label():
         dst.Y2Label = src.get_y2_label()
     if src.has_y2_bounds():
@@ -173,15 +176,16 @@ def serialize_series_from_bind(src: MultiHeaderSeriesPlotterData.SeriesData, dst
         bounds = SEBounds()
         serialize_bounds_from_bind(src.X2Bounds, bounds)
         dst.set_x2_bounds(bounds)
-    dst.set_y_header(src.YHeader)
+    for headerData in src.YHeader:
+        dst.add_y_header(headerData)
     if src.HasField("YLabel"):
         dst.set_y_label(src.YLabel)
     if src.HasField("YBounds"):
         bounds = SEBounds()
         serialize_bounds_from_bind(src.YBounds, bounds)
         dst.set_y_bounds(bounds)
-    if src.HasField("Y2Header"):
-        dst.set_y2_header(src.Y2Header)
+    for headerData in src.Y2Header:
+        dst.add_y2_header(headerData)
     if src.HasField("Y2Label"):
         dst.set_y2_label(src.Y2Label)
     if src.HasField("Y2Bounds"):
@@ -212,5 +216,5 @@ def serialize_multi_header_series_plotter_from_bind(src: MultiHeaderSeriesPlotte
         dst.add_series(s)
     if src.HasField("ValidationSource"):
         val_source = SEPlotSource()
-        serialize_plot_source_from_bind(sr.ValidationSource, val_source)
+        serialize_plot_source_from_bind(src.ValidationSource, val_source)
         dst.set_validation_source(val_source)

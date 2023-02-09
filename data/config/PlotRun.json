@@ -27,7 +27,10 @@
           {
             "Title": "Engine_Pulmonary_Compliance",
             "XHeader": "LeftPleuralCavity-Pressure(cmH2O)",
-            "YHeader": "TotalLungVolume(mL)"
+            "YHeader":
+            [
+              "TotalLungVolume(mL)"
+            ]
           }
         ]
       }
@@ -59,7 +62,10 @@
           {
             "Title": "Guyton_Pulmonary_Compliance",
             "XHeader": "PleuralPressure(cmH2O)",
-            "YHeader": "LungVolume(L)"
+            "YHeader":
+            [
+              "LungVolume(L)"
+            ]
           }
         ]
       }
@@ -90,7 +96,10 @@
           {
             "Title": "Experimental_Pulmonary_Compliance",
             "XHeader": "IntrapulmonaryPressure(cmH2O)",
-            "YHeader": "TotalLungVolume(mL)"
+            "YHeader":
+            [
+              "TotalLungVolume(mL)"
+            ]
           }
         ]
       }
@@ -119,6 +128,11 @@
             "LineFormat": "-r"
           }
         ],
+        "ValidationSource":
+        {
+          "CSVData": "/home/local/KHQ/emily.veenhuis/Documents/pulse/engine/data/human/adult/validation/Cardiovascular/HemorrhagicCardiacOutputShockValidation.csv",
+          "LineFormat": "-b"
+        },
         "Series":
         [
           {
@@ -129,10 +143,134 @@
             "XBounds":
             {
               "LowerBound": 100,
-              "UpperBound": 50
+              "UpperBound": 0
             },
-            "YHeader": "CardiacOutput(L/min)",
-            "YLabel": "Pulse Normalized Cardiac Output"
+            "YHeader":
+            [
+              "CardiacOutput(L/min)"
+            ],
+            "YBounds":
+            {
+              "LowerBound": 0,
+              "UpperBound": 105
+            },
+            "YLabel": "Pulse Normalized Cardiac Output",
+            "X2Header": "BloodVolumeLost(%)",
+            "Y2Header":
+            [
+              "NormalizedCardiacOutput"
+            ],
+            "Y2Label": "Validation Normalized Cardiac Output",
+            "Y2Bounds":
+            {
+              "LowerBound": 0,
+              "UpperBound": 105
+            }
+          }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotSettings":
+        {
+          "Gridlines": true,
+          "OutputPathOverride": "./docs/html/plots/Cardiovascular",
+          "PercentOfBaselineMode": "OnlyY",
+          "ImageProperties":
+          {
+            "FileFormat": ".jpg",
+            "Height_inch": 8,
+            "Width_inch": 16
+          },
+          "TickStyle": "Plain"
+        },
+        "PlotSource":
+        [
+          {
+            "CSVData": "./verification/scenarios/patient/HemorrhageGroup1Results.csv",
+            "Label": "Group 1"
+          },
+          {
+            "CSVData": "./verification/scenarios/patient/HemorrhageGroup2Results.csv",
+            "Label": "Group 2"
+          },
+          {
+            "CSVData": "./verification/scenarios/patient/HemorrhageGroup3Results.csv",
+            "Label": "Group 3"
+          },
+          {
+            "CSVData": "./verification/scenarios/patient/HemorrhageGroup4Results.csv",
+            "Label": "Group 4"
+          },
+          {
+            "CSVData": "./verification/scenarios/patient/HemorrhageGroup5Results.csv",
+            "Label": "Group 5"
+          },
+          {
+            "CSVData": "./verification/scenarios/patient/HemorrhageGroup6Results.csv",
+            "Label": "Group 6"
+          }
+        ],
+        "Series":
+        [
+          {
+            "Title": "",
+            "OutputFilename": "HemorrhageGroups_partial",
+            "XHeader": "Time(s)",
+            "YHeader":
+            [
+              "MeanArterialPressure(mmHg)"
+            ],
+            "YLabel": "Mean Arterial Pressure Delta",
+            "YBounds":
+            {
+              "LowerBound": 0,
+              "UpperBound": 105
+            }
+          }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotSettings":
+        {
+          "OutputPathOverride": "./docs/html/plots/Cardiovascular/",
+          "ImageProperties":
+          {
+            "FileFormat": ".jpg",
+            "Height_inch": 8,
+            "Width_inch": 16
+          },
+          "TickStyle": "Plain"
+        },
+        "PlotSource":
+        [
+          {
+            "CSVData": "./verification/unit_tests/pulse/CardiovascularCircuitOutput.csv"
+          }
+        ],
+        "Series":
+        [
+          {
+            "Title": "",
+            "OutputFilename": "ComplianceVsElastance_partial",
+            "XBounds":
+            {
+              "LowerBound": 30,
+              "UpperBound": 35
+            },
+            "YHeader":
+            [
+              "LeftHeartCompliance_mL_Per_mmHg"
+            ],
+            "Y2Header":
+            [
+              "LeftHeartElastance_mmHg_Per_mL"
+            ]
           }
         ]
       }
