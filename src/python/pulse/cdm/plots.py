@@ -4,6 +4,7 @@ import pandas as pd
 
 from enum import Enum
 from typing import Tuple
+from copy import deepcopy
 
 from pulse.cdm.scalars import SEScalar, SEScalarLength
 
@@ -11,9 +12,9 @@ class SEImageProperties():
     __slots__ = ["_file_format", "_height_inch", "_width_inch", "_dpi"]
 
     def __init__(self):
-        self._file_format = ".png"
-        self._height_inch = 2
-        self._width_inch = 6
+        self._file_format = ".jpg"
+        self._height_inch = 8
+        self._width_inch = 16
         self._dpi = 100
 
     def get_file_format(self):
@@ -71,7 +72,7 @@ class ePercentageOfBaselineMode(Enum):
 class eTickStyle(Enum):
     Scientific = 0
     Plain = 1
-class SEPlotSettings():
+class SEPlotConfig():
     __slots__ = [ "_fill_area", "_font_size", "_gridlines",
                   "_image_properties", "_legend_font_size", "_log_axis",
                   "_output_filename", "_output_path_override",
@@ -80,60 +81,166 @@ class SEPlotSettings():
                   "_y_bounds", "_y2_label", "_y2_bounds"]
 
     def __init__(self):
-        self._fill_area = False
-        self._font_size = 14
-        self._gridlines = False
-        self._image_properties = SEImageProperties()
-        self._legend_font_size = 12
-        self._log_axis = False
-        self._output_filename = ""
-        self._output_path_override = "../verification/Plots/"
-        self._percent_of_baseline_mode = ePercentageOfBaselineMode.Off
-        self._remove_legends = False
+        self.clear()
+
+    def clear(self):
+        self._fill_area = None
+        self._font_size = None
+        self._gridlines = None
+        self._image_properties = None
+        self._legend_font_size = None
+        self._log_axis = None
+        self._output_path_override = None
+        self._percent_of_baseline_mode = None
+        self._remove_legends = None
         self._sci_limits = None
-        self._tick_style = eTickStyle.Scientific
+        self._tick_style = None
+
+        # Internal
+        self._output_filename = None
         self._title = None
         self._x_label = None
-        self._x_bounds = SEBounds()
+        self._x_bounds = None
         self._y_label = None
-        self._y_bounds = SEBounds()
+        self._y_bounds = None
         self._y2_label = None
-        self._y2_bounds = SEBounds()
+        self._y2_bounds = None
+
+    def set_defaults(self):
+        if self._fill_area is None:
+            self._fill_area = False
+        if self._font_size is None:
+            self._font_size = 14
+        if self._gridlines is None:
+            self._gridlines = False
+        if self._image_properties is None:
+            self._image_properties = SEImageProperties()
+        if self._legend_font_size is None:
+            self._legend_font_size = 12
+        if self._log_axis is None:
+            self._log_axis = False
+        if self._output_path_override is None:
+            self._output_path_override = "./verification/Plots/"
+        if self._percent_of_baseline_mode is None:
+            self._percent_of_baseline_mode = ePercentageOfBaselineMode.Off
+        if self._remove_legends is None:
+            self._remove_legends = False
+        if self._tick_style is None:
+            self._tick_style = eTickStyle.Scientific
+
+        # Internal
+        if self._x_bounds is None:
+            self._x_bounds = SEBounds()
+        if self._y_bounds is None:
+            self._y_bounds = SEBounds()
+        if self._y2_bounds is None:
+            self._y2_bounds = SEBounds()
+
+    def merge_configs(self, src):
+        src = deepcopy(src)
+        if src._fill_area is not None:
+            self._fill_area = src._fill_area
+        if src._font_size is not None:
+            self._font_size = src._font_size
+        if src._gridlines is not None:
+            self._gridlines = src._gridlines
+        if src._image_properties is not None:
+            self._image_properties = src._image_properties
+        if src._legend_font_size is not None:
+            self._legend_font_size = src._legend_font_size
+        if src._log_axis is not None:
+            self._log_axis = src._log_axis
+        if src._output_path_override is not None:
+            self._output_path_override = src._output_path_override
+        if src._percent_of_baseline_mode is not None:
+            self._percent_of_baseline_mode = src._percent_of_baseline_mode
+        if src._remove_legends is not None:
+            self._remove_legends = src._remove_legends
+        if src._sci_limits is not None:
+            self._sci_limits = src._sci_limits
+        if src._tick_style is not None:
+            self._tick_style = src._tick_style
+
+        # Internal
+        if src._output_filename is not None:
+            self._output_filename = src._output_filename
+        if src._title is not None:
+            self._title = src._title
+        if src._x_label is not None:
+            self._x_label = src._x_label
+        if src._x_bounds is not None:
+            self._x_bounds = src._x_bounds
+        if src._y_label is not None:
+            self._y_label = src._y_label
+        if src._y_bounds is not None:
+            self._y_bounds = src._y_bounds
+        if src._y2_label is not None:
+            self._y2_label = src._y2_label
+        if src._y2_bounds is not None:
+            self._y2_bounds = src._y2_bounds
 
     def get_fill_area(self):
         return self._fill_area
     def set_fill_area(self, fill: bool):
         self._fill_area = fill
+    def has_fill_area_setting(self):
+        return self._fill_area is not None
+    def invalidate_fill_area_setting(self):
+        self._fill_area = None
 
     def get_font_size(self):
         return self._font_size
     def set_font_size(self, font_size: float):
         self._font_size = font_size
+    def has_font_size(self):
+        return self._font_size is not None
+    def invalidate_font_size(self):
+        self._font_size = None
 
     def get_gridlines(self):
         return self._gridlines
     def set_gridlines(self, gridlines: bool):
         self._gridlines = gridlines
+    def has_gridlines_setting(self):
+        return self._gridlines is not None
+    def invalidate_gridlines_setting(self):
+        self._gridlines = None
 
     def get_image_properties(self):
         return self._image_properties
     def set_image_properties(self, image_props: SEImageProperties):
-        self._image_properties = image_props
+        self._image_properties = deepcopy(image_props)
+    def has_image_properties(self):
+        return self._image_properties is not None
+    def invalidate_image_properties(self):
+        self._image_properties = None
 
     def get_legend_font_size(self):
         return self._legend_font_size
     def set_legend_font_size(self, font_size: float):
         self._legend_font_size = font_size
+    def has_legend_font_size(self):
+        return self._legend_font_size is not None
+    def invalidate_legend_font_size(self):
+        self._legend_font_size = None
 
     def get_log_axis(self):
         return self._log_axis
     def set_log_axis(self, log_axis: bool):
         self._log_axis = log_axis
+    def has_log_axis_setting(self):
+        return self._log_axis is not None
+    def invalidate_log_axis_setting(self):
+        self._log_axis = None
 
     def get_output_filename(self):
         return self._output_filename
     def set_output_filename(self, output_filename: str):
         self._output_filename = output_filename
+    def has_output_filename(self):
+        return self._output_filename is not None and len(self._output_filename) > 0
+    def invalidate_output_filename(self):
+        self._output_filename = None
 
     def get_output_path_override(self):
         return self._output_path_override
@@ -148,11 +255,19 @@ class SEPlotSettings():
         return self._percent_of_baseline_mode
     def set_percent_of_baseline_mode(self, mode: ePercentageOfBaselineMode):
         self._percent_of_baseline_mode = mode
+    def has_percent_of_baseline_mode(self):
+        return self._percent_of_baseline_mode is not None
+    def invalidate_percent_of_baseline_mode(self):
+        self._percent_of_baseline_mode = None
 
     def get_remove_legends(self):
         return self._remove_legends
     def set_remove_legends(self, remove_legends: bool):
         self._remove_legends = remove_legends
+    def has_remove_legends_setting(self):
+        return self._remove_legends is not None
+    def invalidate_remove_legends_setting(self):
+        self._remove_legends = None
 
     def get_sci_limits(self):
         return self._sci_limits
@@ -160,11 +275,17 @@ class SEPlotSettings():
         self._sci_limits = limits
     def has_sci_limits(self):
         return self._sci_limits is not None
+    def invalidate_sci_limits(self):
+        self._sci_limis = None
 
     def get_tick_style(self):
         return self._tick_style
     def set_tick_style(self, style: eTickStyle):
         self._tick_style = style
+    def has_tick_style(self):
+        return self._tick_style is not None
+    def invalidate_tick_style(self):
+        self._tick_style = None
 
     def get_title(self):
         return self._title
@@ -187,7 +308,11 @@ class SEPlotSettings():
     def get_x_bounds(self):
         return self._x_bounds
     def set_x_bounds(self, bounds: SEBounds):
-        self._x_bounds = bounds
+        self._x_bounds = deepcopy(bounds)
+    def has_x_bounds(self):
+        return self._x_bounds is not None
+    def invalidate_x_bounds(self):
+        self._x_bounds = None
 
     def get_y_label(self):
         return self._y_label
@@ -201,7 +326,11 @@ class SEPlotSettings():
     def get_y_bounds(self):
         return self._y_bounds
     def set_y_bounds(self, bounds: SEBounds):
-        self._y_bounds = bounds
+        self._y_bounds = deepcopy(bounds)
+    def has_y_bounds(self):
+        return self._y_bounds is not None
+    def invalidate_y_bounds(self):
+        self._y_bounds = None
 
     def get_y2_label(self):
         return self._y2_label
@@ -215,7 +344,11 @@ class SEPlotSettings():
     def get_y2_bounds(self):
         return self._y2_bounds
     def set_y2_bounds(self, bounds: SEBounds):
-        self._y2_bounds = bounds
+        self._y2_bounds = deepcopy(bounds)
+    def has_y2_bounds(self):
+        return self._y2_bounds is not None
+    def invalidate_y2_bounds(self):
+        self._y2_bounds = None
 
 
 class SEPlotSource():
@@ -290,21 +423,19 @@ class SEPlotSource():
         return self._end_row is not None
 
 class SESeries():
-    __slots__ = ["_plot_settings", "_output_filename", "_title",
+    __slots__ = ["_plot_config", "_output_filename", "_title",
                  "_x_header", "_x_label", "_x_bounds", "_x2_header",
-                 "_x2_label", "_x2_bounds", "_y_headers", "_y_label",
-                 "_y_bounds", "_y2_headers", "_y2_label", "_y2_bounds"]
+                 "_y_headers", "_y_label", "_y_bounds", "_y2_headers",
+                 "_y2_label", "_y2_bounds"]
 
     def __init__(self):
-        self._plot_settings = None
+        self._plot_config = None
         self._output_filename = ""
         self._title = None
         self._x_header = None
         self._x_label = None
         self._x_bounds = SEBounds()
         self._x2_header = None
-        self._x2_label = None
-        self._x2_bounds = SEBounds()
         self._y_headers = []
         self._y_label = None
         self._y_bounds = SEBounds()
@@ -312,12 +443,14 @@ class SESeries():
         self._y2_label = None
         self._y2_bounds = SEBounds()
 
-    def get_plot_settings(self):
-        return self._plot_settings
-    def set_plot_settings(self, settings: SEPlotSettings):
-        self._plot_settings = settings
-    def has_plot_settings(self):
-        return self._plot_settings is not None
+    def get_plot_config(self):
+        if self._plot_config is None:
+            self._plot_config = SEPlotConfig()
+        return self._plot_config
+    def set_plot_config(self, config: SEPlotConfig):
+        self._plot_config = deepcopy(config)
+    def has_plot_config(self):
+        return self._plot_config is not None
 
     def get_output_filename(self):
         return self._output_filename
@@ -358,7 +491,7 @@ class SESeries():
     def get_x_bounds(self):
         return self._x_bounds
     def set_x_bounds(self, bounds: SEBounds):
-        self._x_bounds = bounds
+        self._x_bounds = deepcopy(bounds)
 
     def get_x2_header(self):
         return self._x2_header
@@ -368,20 +501,6 @@ class SESeries():
         return self._x2_header is not None
     def invalidate_x2_header(self):
         self._x2_header = None
-
-    def get_x2_label(self):
-        return self._x2_label
-    def set_x2_label(self, label: str):
-        self._x2_label = label
-    def has_x2_label(self):
-        return self._x2_label is not None
-    def invalidate_x2_label(self):
-        self._x2_label = None
-
-    def get_x2_bounds(self):
-        return self._x2_bounds
-    def set_x2_bounds(self, bounds: SEBounds):
-        self._x2_bounds = bounds
 
     def get_y_headers(self):
         return self._y_headers
@@ -404,7 +523,7 @@ class SESeries():
     def get_y_bounds(self):
         return self._y_bounds
     def set_y_bounds(self, bounds: SEBounds):
-        self._y_bounds = bounds
+        self._y_bounds = deepcopy(bounds)
 
     def get_y2_headers(self):
         return self._y2_headers
@@ -427,22 +546,22 @@ class SESeries():
     def get_y2_bounds(self):
         return self._y2_bounds
     def set_y2_bounds(self, bounds: SEBounds):
-        self._y2_bounds = bounds
+        self._y2_bounds = deepcopy(bounds)
 
 class SEPlotter():
-    __slots__ = ["_plot_settings"]
+    __slots__ = ["_plot_config"]
 
     def __init__(self):
-        self._plot_settings = None
+        self._plot_config = None
 
-    def get_plot_settings(self):
-        if self._plot_settings is None:
-            self._plot_settings = SEPlotSettings()
-        return self._plot_settings
-    def set_plot_settings(self, settings: SEPlotSettings):
-        self._plot_settings = settings
-    def has_plot_settings(self):
-        return self._plot_settings is not None
+    def get_plot_config(self):
+        if self._plot_config is None:
+            self._plot_config = SEPlotConfig()
+        return self._plot_config
+    def set_plot_config(self, config: SEPlotConfig):
+        self._plot_config = deepcopy(config)
+    def has_plot_config(self):
+        return self._plot_config is not None
 
 class SEMultiHeaderSeriesPlotter(SEPlotter):
     __slots__ = ["_plot_sources", "_series", "_validation_source"]
@@ -457,7 +576,7 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
     def get_plot_sources(self):
         return self._plot_sources
     def add_plot_source(self, plot_source: SEPlotSource):
-        self._plot_sources.append(plot_source)
+        self._plot_sources.append(deepcopy(plot_source))
     def has_plot_sources(self):
         return len(self._plot_sources) > 0
     def invalidate_plot_sources(self):
@@ -475,7 +594,7 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
     def get_validation_source(self):
         return self._validation_source
     def set_validation_source(self, validation_source: SEPlotSource):
-        self._validation_source = validation_source
+        self._validation_source = deepcopy(validation_source)
     def has_valiation_source(self):
         return self._validation_source is not None
     def invalidate_validation_source(self):

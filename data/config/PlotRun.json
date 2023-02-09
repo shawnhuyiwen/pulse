@@ -4,13 +4,11 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
+        "PlotConfig":
         {
           "OutputPathOverride": "./docs/html/plots/Respiratory/",
           "ImageProperties":
           {
-            "FileFormat": ".jpg",
-            "Height_inch": 8,
             "Width_inch": 8
           },
           "SciLimits": {}
@@ -38,13 +36,11 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
+        "PlotConfig":
         {
           "OutputPathOverride": "./docs/html/plots/Respiratory/",
           "ImageProperties":
           {
-            "FileFormat": ".jpg",
-            "Height_inch": 8,
             "Width_inch": 8
           },
           "RemoveLegends": true,
@@ -73,13 +69,11 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
+        "PlotConfig":
         {
           "OutputPathOverride": "./docs/html/plots/Respiratory/",
           "ImageProperties":
           {
-            "FileFormat": ".jpg",
-            "Height_inch": 8,
             "Width_inch": 8
           },
           "SciLimits": {}
@@ -107,17 +101,11 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
+        "PlotConfig":
         {
           "Gridlines": true,
           "OutputPathOverride": "./docs/html/plots/Cardiovascular",
           "PercentOfBaselineMode": "All",
-          "ImageProperties":
-          {
-            "FileFormat": ".jpg",
-            "Height_inch": 8,
-            "Width_inch": 16
-          },
           "TickStyle": "Plain"
         },
         "PlotSource":
@@ -172,17 +160,11 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
+        "PlotConfig":
         {
           "Gridlines": true,
           "OutputPathOverride": "./docs/html/plots/Cardiovascular",
           "PercentOfBaselineMode": "OnlyY",
-          "ImageProperties":
-          {
-            "FileFormat": ".jpg",
-            "Height_inch": 8,
-            "Width_inch": 16
-          },
           "TickStyle": "Plain"
         },
         "PlotSource":
@@ -235,15 +217,10 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
+        "PlotConfig":
         {
+          "Gridlines": true,
           "OutputPathOverride": "./docs/html/plots/Cardiovascular/",
-          "ImageProperties":
-          {
-            "FileFormat": ".jpg",
-            "Height_inch": 8,
-            "Width_inch": 16
-          },
           "TickStyle": "Plain"
         },
         "PlotSource":

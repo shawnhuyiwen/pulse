@@ -7,7 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors as mcolors
 from cycler import cycler
-from copy import deepcopy
 
 from pulse.cdm.plots import *
 from pulse.cdm.io.plots import serialize_plotter_list_from_file
@@ -28,12 +27,12 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter):
     validation_source = plotter.get_validation_source()
 
     # Create output directory if it does not exist
-    output_path = plotter.get_plot_settings().get_output_path_override()
+    output_path = plotter.get_plot_config().get_output_path_override()
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
     for series in plotter.get_series():
-        settings = deepcopy(series.get_plot_settings()) if series.has_plot_settings() else deepcopy(plotter.get_plot_settings())
+        config = series.get_plot_config()
 
         # Default x header is time (first column)
         x_header = series.get_x_header() if series.has_x_header() else sources[0].get_data_frame().columns[0]
@@ -43,45 +42,45 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter):
         elif series.has_y2_headers():
             x2_header = x_header
 
-        settings.set_output_filename(series.get_output_filename())
-        settings.set_x_bounds(series.get_x_bounds())
-        settings.set_y_bounds(series.get_y_bounds())
-        settings.set_y2_bounds(series.get_y2_bounds())
+        config.set_output_filename(series.get_output_filename())
+        config.set_x_bounds(series.get_x_bounds())
+        config.set_y_bounds(series.get_y_bounds())
+        config.set_y2_bounds(series.get_y2_bounds())
         if series.has_title():
-            settings.set_title(series.get_title())
+            config.set_title(series.get_title())
         else:
-            settings.invalidate_title()
+            config.invalidate_title()
         if series.has_x_label():
-            settings.set_x_label(series.get_x_label())
+            config.set_x_label(series.get_x_label())
         else:
-            settings.invalidate_x_label()
+            config.invalidate_x_label()
         if series.has_y_label():
-            settings.set_y_label(series.get_y_label())
+            config.set_y_label(series.get_y_label())
         else:
-            settings.invalidate_y_label()
+            config.invalidate_y_label()
         if series.has_y2_label():
-            settings.set_y2_label(series.get_y2_label())
+            config.set_y2_label(series.get_y2_label())
         else:
-            settings.invalidate_y2_label()
+            config.invalidate_y2_label()
 
-        if not settings.has_title():
-            settings.set_title(generate_title(x_header, series.get_y_headers()[0]))
-        if not settings.get_output_filename():
-            settings.set_output_filename(settings.get_title().replace(" ", "_").replace("/", "_Per_"))
+        if not config.has_title():
+            config.set_title(generate_title(x_header, series.get_y_headers()[0]))
+        if not config.get_output_filename():
+            config.set_output_filename(config.get_title().replace(" ", "_").replace("/", "_Per_"))
 
-        output_filename = settings.get_output_filename()
+        output_filename = config.get_output_filename()
         if not os.path.splitext(output_filename)[1]:
-            output_filename += settings.get_image_properties().get_file_format()
+            output_filename += config.get_image_properties().get_file_format()
         output_filepath = os.path.join(output_path, output_filename)
 
         if create_plot(sources,
-                       settings,
+                       config,
                        x_header,
                        series.get_y_headers(),
                        x2_header,
                        series.get_y2_headers(),
                        validation_source):
-            save_current_plot(output_filepath, settings.get_image_properties())
+            save_current_plot(output_filepath, config.get_image_properties())
         clear_current_plot()
 
 def generate_title(x_header, y_header):
@@ -113,7 +112,7 @@ def percentage_of_baseline(baseline_mode, df, x_header, y_headers, x2_header, y2
     return True
 
 def create_plot(plot_sources: [SEPlotSource],
-                plot_settings : SEPlotSettings,
+                plot_config : SEPlotConfig,
                 x_header: str,
                 y_headers: [str],
                 x2_header: str = None,
@@ -121,39 +120,41 @@ def create_plot(plot_sources: [SEPlotSource],
                 validation_source: SEPlotSource = None):
 
     # To line formats across axes
-    setup_fmt_cycler = cycler(color=mcolors.TABLEAU_COLORS) * cycler(linestyle=['-'])
+    setup_fmt_cycler = cycler(linestyle=['-', '--', '-.', ':']) * cycler(color=mcolors.TABLEAU_COLORS)
     fmt_cycler = setup_fmt_cycler()
 
     # To support legend across axes
     lns = []
 
+    # Labels and title
     fig, ax1 = plt.subplots()
-    ax1.set_xlabel(plot_settings.get_x_label() if plot_settings.has_x_label() else x_header, fontsize=plot_settings.get_font_size())
-    ax1.set_ylabel(plot_settings.get_y_label() if plot_settings.has_y_label() else y_headers[0], fontsize=plot_settings.get_font_size())
-    ax1.set_title(plot_settings.get_title() if plot_settings.has_title() else generate_title(x_header, y_headers[0]), fontsize=plot_settings.get_font_size())
-    ax1.ticklabel_format(axis="y", style=plot_settings.get_tick_style().name, scilimits=plot_settings.get_sci_limits())
+    ax1.set_xlabel(plot_config.get_x_label() if plot_config.has_x_label() else x_header, fontsize=plot_config.get_font_size())
+    ax1.set_ylabel(plot_config.get_y_label() if plot_config.has_y_label() else y_headers[0], fontsize=plot_config.get_font_size())
+    ax1.set_title(plot_config.get_title() if plot_config.has_title() else generate_title(x_header, y_headers[0]), fontsize=plot_config.get_font_size())
+    ax1.ticklabel_format(axis="y", style=plot_config.get_tick_style().name, scilimits=plot_config.get_sci_limits())
 
-    # Set up axes
-    if plot_settings.get_log_axis():
+    # Main axes
+    if plot_config.get_log_axis():
         ax1.set_yscale("log")
-    x_bounds = plot_settings.get_x_bounds()
+    x_bounds = plot_config.get_x_bounds()
     if x_bounds.has_lower_bound():
         ax1.set_xlim(left=x_bounds.get_lower_bound())
     if x_bounds.has_upper_bound():
         ax1.set_xlim(right=x_bounds.get_upper_bound())
-    y_bounds = plot_settings.get_y_bounds()
+    y_bounds = plot_config.get_y_bounds()
     if y_bounds.has_lower_bound():
         ax1.set_ylim(bottom=y_bounds.get_lower_bound())
     if y_bounds.has_upper_bound():
         ax1.set_ylim(top=y_bounds.get_upper_bound())
 
+    # Secondary y axis
     if y2_headers:
         ax2 = ax1.twinx()
-        ax2.set_ylabel(plot_settings.get_y2_label() if plot_settings.has_y2_label() else y2_headers[0], fontsize=plot_settings.get_font_size())
-        ax2.ticklabel_format(axis="y", style=plot_settings.get_tick_style().name, scilimits=plot_settings.get_sci_limits())
-        if plot_settings.get_log_axis():
+        ax2.set_ylabel(plot_config.get_y2_label() if plot_config.has_y2_label() else y2_headers[0], fontsize=plot_config.get_font_size())
+        ax2.ticklabel_format(axis="y", style=plot_config.get_tick_style().name, scilimits=plot_config.get_sci_limits())
+        if plot_config.get_log_axis():
             ax2.set_yscale("log")
-        y2_bounds = plot_settings.get_y2_bounds()
+        y2_bounds = plot_config.get_y2_bounds()
         if y2_bounds.has_lower_bound():
             ax2.set_ylim(bottom=y2_bounds.get_lower_bound())
         if y2_bounds.has_upper_bound():
@@ -161,7 +162,7 @@ def create_plot(plot_sources: [SEPlotSource],
 
     # Plot data
     for ps in plot_sources:
-        baseline_mode = plot_settings.get_percent_of_baseline_mode()
+        baseline_mode = plot_config.get_percent_of_baseline_mode()
         df = ps.get_data_frame()
         if not percentage_of_baseline(baseline_mode,
                                       df,
@@ -173,46 +174,48 @@ def create_plot(plot_sources: [SEPlotSource],
 
         for y_header in y_headers:
             if ps.has_line_format():
-                lns.extend(ax1.plot(x_header, y_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y_label()))
+                lns.extend(ax1.plot(x_header, y_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_config.get_y_label()))
                 color = ps.get_line_format()[-1]
             else:
                 c = next(fmt_cycler)
                 color = c['color']
-                lns.extend(ax1.plot(x_header, y_header, **c, data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y_label()))
+                lns.extend(ax1.plot(x_header, y_header, **c, data=df, label=ps.get_label() if ps.has_label() else plot_config.get_y_label()))
 
-            if plot_settings.get_fill_area():
+            if plot_config.get_fill_area():
                 ax1.fill_between(x_header, y_header, data=df, facecolor=color)
 
+        # Secondary axis, not from validation data
         if not validation_source:
             for y2_header in y2_headers:
                 if ps.has_line_format():
-                    lns.extend(ax2.plot(x2_header, y2_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y2_label()))
+                    lns.extend(ax2.plot(x2_header, y2_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_config.get_y2_label()))
                     color = ps.get_line_format()[-1]
                 else:
                     c = next(fmt_cycler)
                     color = c['color']
-                    lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y2_label()))
-                if plot_settings.get_fill_area():
+                    lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=ps.get_label() if ps.has_label() else plot_config.get_y2_label()))
+                if plot_config.get_fill_area():
                     ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
 
+    # Plot validation data if needed
     if validation_source:
         df = validation_source.get_data_frame()
         for y2_header in y2_headers:
             if validation_source.has_line_format():
-                lns.extend(ax2.plot(x2_header, y2_header, validation_source.get_line_format(), data=df, label=validation_source.get_label() if validation_source.has_label() else plot_settings.get_y2_label()))
+                lns.extend(ax2.plot(x2_header, y2_header, validation_source.get_line_format(), data=df, label=validation_source.get_label() if validation_source.has_label() else plot_config.get_y2_label()))
                 color = validation_source.get_line_format()[-1]
             else:
                 c = next(fmt_cycler)
                 color = c['color']
-                lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=validation_source.get_label() if validation_source.has_label() else plot_settings.get_y2_label()))
-            if plot_settings.get_fill_area():
+                lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=validation_source.get_label() if validation_source.has_label() else plot_config.get_y2_label()))
+            if plot_config.get_fill_area():
                 ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
 
-    # Create legend
-    if not plot_settings.get_remove_legends():
+    # Legend and gridline settings
+    if not plot_config.get_remove_legends():
         lbls = [l.get_label() for l in lns]
-        plt.legend(lns, lbls, fontsize=plot_settings.get_legend_font_size())
-    plt.grid(plot_settings.get_gridlines())
+        plt.legend(lns, lbls, fontsize=plot_config.get_legend_font_size())
+    plt.grid(plot_config.get_gridlines())
 
     fig.tight_layout()
 

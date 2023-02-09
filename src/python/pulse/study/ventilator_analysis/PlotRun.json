@@ -1,15 +1,21 @@
 {
+  "PlotConfig":
+  {
+    "ImageProperties":
+    {
+      "FileFormat": ".png",
+      "Height_inch": 2,
+      "Width_inch": 6
+    },
+    "OutputPathOverride": "./test_results/ventilator_analysis/",
+    "RemoveLegends": true,
+    "FillArea": true
+  },
   "Plotter" :
   [
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
-        {
-          "OutputPathOverride": "./test_results/ventilator_analysis/",
-          "RemoveLegends": true,
-          "FillArea": true
-        },
         "PlotSource":
         [
           {
@@ -46,10 +52,9 @@
             "YLabel": "mL"
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -63,10 +68,9 @@
             ]
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -85,12 +89,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
-        {
-          "OutputPathOverride": "./test_results/ventilator_analysis/",
-          "RemoveLegends": true,
-          "FillArea": true
-        },
         "PlotSource":
         [
           {
@@ -127,10 +125,9 @@
             "YLabel": "mL"
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -144,10 +141,9 @@
             ]
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -166,12 +162,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
-        {
-          "OutputPathOverride": "./test_results/ventilator_analysis/",
-          "RemoveLegends": true,
-          "FillArea": true
-        },
         "PlotSource":
         [
           {
@@ -208,10 +198,9 @@
             "YLabel": "mL"
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -225,10 +214,9 @@
             ]
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -247,12 +235,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
-        {
-          "OutputPathOverride": "./test_results/ventilator_analysis/",
-          "RemoveLegends": true,
-          "FillArea": true
-        },
         "PlotSource":
         [
           {
@@ -289,10 +271,9 @@
             "YLabel": "mL"
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -306,10 +287,9 @@
             ]
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -328,12 +308,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
-        {
-          "OutputPathOverride": "./test_results/ventilator_analysis/",
-          "RemoveLegends": true,
-          "FillArea": true
-        },
         "PlotSource":
         [
           {
@@ -370,10 +344,9 @@
             "YLabel": "mL"
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -387,10 +360,9 @@
             ]
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -409,12 +381,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
-        {
-          "OutputPathOverride": "./test_results/ventilator_analysis/",
-          "RemoveLegends": true,
-          "FillArea": true
-        },
         "PlotSource":
         [
           {
@@ -451,10 +417,9 @@
             "YLabel": "mL"
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -468,10 +433,9 @@
             ]
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -490,12 +454,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
-        {
-          "OutputPathOverride": "./test_results/ventilator_analysis/",
-          "RemoveLegends": true,
-          "FillArea": true
-        },
         "PlotSource":
         [
           {
@@ -532,10 +490,9 @@
             "YLabel": "mL"
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -549,10 +506,9 @@
             ]
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -571,12 +527,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
-        {
-          "OutputPathOverride": "./test_results/ventilator_analysis/",
-          "RemoveLegends": true,
-          "FillArea": true
-        },
         "PlotSource":
         [
           {
@@ -613,10 +563,9 @@
             "YLabel": "mL"
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -630,10 +579,9 @@
             ]
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -652,12 +600,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotSettings":
-        {
-          "OutputPathOverride": "./test_results/ventilator_analysis/",
-          "RemoveLegends": true,
-          "FillArea": true
-        },
         "PlotSource":
         [
           {
@@ -694,10 +636,9 @@
             "YLabel": "mL"
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6
@@ -711,10 +652,9 @@
             ]
           },
           {
-            "PlotSettings":
+            "PlotConfig":
             {
-              "OutputPathOverride": "./test_results/ventilator_analysis/",
-              "RemoveLegends": true,
+              "FillArea": false,
               "ImageProperties":
               {
                 "Height_inch": 6

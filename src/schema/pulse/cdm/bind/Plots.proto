@@ -8,135 +8,131 @@ message AnyPlotterData
 {
   oneof Plotter
   {
-    ActionEventPlotterData        ActionEventPlotter        = 1;
-    MultiHeaderSeriesPlotterData  MultiHeaderSeriesPlotter  = 2;
+    ActionEventPlotterData            ActionEventPlotter        = 1;
+    MultiHeaderSeriesPlotterData      MultiHeaderSeriesPlotter  = 2;
   }
 }
 
 message PlotterListData
 {
-  repeated AnyPlotterData         Plotter                   = 1;
+  string                              Comment                   = 1;
+
+  optional PlotConfigData             PlotConfig                = 2;
+  repeated AnyPlotterData             Plotter                   = 3;
 }
 
 /** @brief Data used to configure plots. */
-message PlotSettingsData
+message PlotConfigData
 {
   /** @brief Enumeration for percentage of baseline modes. */
   enum ePercentageOfBaselineMode
   {
-    Off                                                     = 0;  /**<< @brief No modification of values will occur. */
-    All                                                     = 1;  /**<< @brief All values will be set to Value@TimeX / Values@Time0 */
-    OnlyX                                                   = 2;  /**<< @brief Only X values will be set to Value@TimeX / Values@Time0 */
-    OnlyY                                                   = 3;  /**<< @brief Only Y values will be set to Value@TimeX / Values@Time0 */
+    Off                                                         = 0;  /**<< @brief No modification of values will occur. */
+    All                                                         = 1;  /**<< @brief All values will be set to Value@TimeX / Values@Time0 */
+    OnlyX                                                       = 2;  /**<< @brief Only X values will be set to Value@TimeX / Values@Time0 */
+    OnlyY                                                       = 3;  /**<< @brief Only Y values will be set to Value@TimeX / Values@Time0 */
   }
 
   /** @brief Enumeration for tick style. */
   enum eTickStyle
   {
-    Scientific                                              = 0; /**<< @brief Scientific notation will be used on the y-axis. */
-    Plain                                                   = 1; /**<< @brief "Plain" values will be used on the y-axis. */
+    Scientific                                                  = 0; /**<< @brief Scientific notation will be used on the y-axis. */
+    Plain                                                       = 1; /**<< @brief "Plain" values will be used on the y-axis. */
   }
 
   /** @brief If scientific tick style is used, only apply scientific notation outside of the range 10^M to 10^N.*/
   message SciLimitsData
   {
-    int32                         M                         = 1;
-    int32                         N                         = 2;
+    int32                             M                         = 1;
+    int32                             N                         = 2;
   }
 
-  // Inputs
-  bool                            FillArea                  = 1;  /**<< @brief Fill the area under the curve. */
-  optional double                 FontSize                  = 2;  /**<< @brief Set the font size of axis labels and chart title (FontSize=14 by default). */
-  bool                            Gridlines                 = 3;  /**<< @brief Turn gridlines on or off. */
-  optional ImagePropertyData      ImageProperties           = 4;  /**<< @brief Specify the image properties. */
-  optional double                 LegendFontSize            = 5;  /**<< @brief Set the font size of the legend (LegendFontSize=12 by default). */
-  bool                            LogAxis                   = 6;  /**<< @brief Make all Y axes logarithmic. */
-  optional string                 OutputPathOverride        = 7;  /**<< @brief Specify the path (relative to bin) to output the plot (../verification/Plots/ by default). */
-  ePercentageOfBaselineMode       PercentOfBaselineMode     = 8;
-  bool                            RemoveLegends             = 9;  /**<< @brief Removes all legends from the generated plot. */
-  optional SciLimitsData          SciLimits                 = 10;
-  eTickStyle                      TickStyle                 = 11;
-
-  // System variables
-  string                          OutputFilename            = 12;
-  string                          Title                     = 13;
-  string                          XLabel                    = 14;
-  BoundsData                      XBounds                   = 15;
-  string                          YLabel                    = 16;
-  BoundsData                      YBounds                   = 17;
-  string                          Y2Label                   = 18;
-  BoundsData                      Y2Bounds                  = 19;
+  optional bool                       FillArea                  = 1;  /**<< @brief Fill the area under the curve. */
+  optional double                     FontSize                  = 2;  /**<< @brief Set the font size of axis labels and chart title. */
+  optional bool                       Gridlines                 = 3;  /**<< @brief Turn gridlines on or off. */
+  optional ImagePropertyData          ImageProperties           = 4;  /**<< @brief Specify the image properties. */
+  optional double                     LegendFontSize            = 5;  /**<< @brief Set the font size of the legend. */
+  optional bool                       LogAxis                   = 6;  /**<< @brief Make all Y axes logarithmic. */
+  optional string                     OutputPathOverride        = 7;  /**<< @brief Specify the path (relative to bin) to output the plot. */
+  optional ePercentageOfBaselineMode  PercentOfBaselineMode     = 8;
+  optional bool                       RemoveLegends             = 9;  /**<< @brief Removes all legends from the generated plot. */
+  optional SciLimitsData              SciLimits                 = 10;
+  optional eTickStyle                 TickStyle                 = 11;
 }
 
 /** @brief Data used to configure a plot source. */
 message PlotSourceData
 {
-  string                          CSVData                   = 1;  /**<< @brief The path and filename of the data file. */
+  string                              CSVData                   = 1;  /**<< @brief The path and filename of the data file. */
 
-  optional string                 Label                     = 4;  /**<< @brief If provided, label to be used in legend. */
-  optional string                 LineFormat                = 5;  /**<< @brief Plot this source with this format. Default is black solid.*/
-  optional int32                  BeginRow                  = 6;
-  optional int32                  EndRow                    = 7;
+  optional string                     Label                     = 4;  /**<< @brief If provided, label to be used in legend. */
+  optional string                     LineFormat                = 5;  /**<< @brief Plot this source with this format. */
+  optional int32                      BeginRow                  = 6;
+  optional int32                      EndRow                    = 7;
 }
 
 /** @brief Data used to configure action event plots. */
 message ActionEventPlotterData
 {
-  PlotSettingsData                PlotSettings              = 1;
-  PlotSourceData                  PlotSource                = 2;
+  string                              Comment                   = 1;
 
-  repeated string                 Header                    = 3;  /**<< @brief Specify the header(s) that you want to plot on the Y axis. */
-  bool                            HideActionEventLegend     = 4;  /**<< @brief Will hide the legend for actions and events, leaving the legend for data and the action and event lines on the plot. */
-  bool                            LegendOnly                = 5;  /**<< @brief Generate an image with ONLY the legend, no plot included. */
-  bool                            NoActions                 = 6;  /**<< @brief Actions will not be included on the plot or legend. */
-  bool                            NoEvents                  = 7;  /**<< @brief Events will not be included on the plot or legend. */
-  repeated string                 OmitEventsWith            = 8;  /**<< @brief Will attempt to omit from the plot events that contain any of the specified case-sensitive words, i.e. OmitEventsWith=Tachycardia */
-  repeated string                 OmitActionsWith           = 9;  /**<< @brief Will attempt to omit from the plot actions that contain any of the specified case-sensitive words, i.e. OmitActionsWith=Hemorrhage,Infusion */
-  string                          ValidationData            = 10; /**<< @brief Specify the relative path and filename for validation results to be plotted as scatter points. */
-  bool                            ZeroAxis                  = 11; /**<< @brief Will ensure that zero is included on the Y axis rather than zooming away from it based on the plot's min/max Y values. */
+  PlotConfigData                      PlotConfig                = 2;
+  PlotSourceData                      PlotSource                = 3;
+
+  repeated string                     Header                    = 4;  /**<< @brief Specify the header(s) that you want to plot on the Y axis. */
+  bool                                HideActionEventLegend     = 5;  /**<< @brief Will hide the legend for actions and events, leaving the legend for data and the action and event lines on the plot. */
+  bool                                LegendOnly                = 6;  /**<< @brief Generate an image with ONLY the legend, no plot included. */
+  bool                                NoActions                 = 7;  /**<< @brief Actions will not be included on the plot or legend. */
+  bool                                NoEvents                  = 8;  /**<< @brief Events will not be included on the plot or legend. */
+  repeated string                     OmitEventsWith            = 9;  /**<< @brief Will attempt to omit from the plot events that contain any of the specified case-sensitive words, i.e. OmitEventsWith=Tachycardia */
+  repeated string                     OmitActionsWith           = 10; /**<< @brief Will attempt to omit from the plot actions that contain any of the specified case-sensitive words, i.e. OmitActionsWith=Hemorrhage,Infusion */
+  string                              ValidationData            = 11; /**<< @brief Specify the relative path and filename for validation results to be plotted as scatter points. */
+  bool                                ZeroAxis                  = 12; /**<< @brief Will ensure that zero is included on the Y axis rather than zooming away from it based on the plot's min/max Y values. */
 }
 
 /** @brief Data used to configure x vs y plots. */
 message MultiHeaderSeriesPlotterData
 {
-  PlotSettingsData                PlotSettings              = 1;
-  repeated PlotSourceData         PlotSource                = 2;
-  optional PlotSourceData         ValidationSource          = 3;
+  string                              Comment                   = 1;
 
-  repeated SeriesData             Series                    = 4;  /**<< @brief Specify the series that you want to plot (separate plots). */
+  optional PlotConfigData             PlotConfig                = 2;  /**<< @brief Provided settings take precedence over PlotConfig settings defined in plotter list. */
+  repeated PlotSourceData             PlotSource                = 3;
+  optional PlotSourceData             ValidationSource          = 4;  /**<< @brief If validation source provided, will plot additional data using X2 and Y2 headers. */
+
+  repeated SeriesData                 Series                    = 5;  /**<< @brief Specify the series that you want to plot (separate plots). */
 
   message SeriesData
   {
-    optional PlotSettingsData     PlotSettings              = 1;  /**<< @brief Overrides plotter plot settings if provided */
-    string                        OutputFilename            = 2;  /**<< @brief Set the desired filename for the generated plot. Defaults to plot title. */
-    optional string               Title                     = 3;  /**<< @brief Specify the title for this plot. */
-    optional string               XHeader                   = 4;  /**<< @brief Specify the header for the x-axis. Assumed to be time if not provided. */
-    optional string               XLabel                    = 5;  /**<< @brief Specify the x-axis label for this plot. */
-    optional BoundsData           XBounds                   = 6;  /**<< @brief Specify the desired x-axis bounds. */
-    optional string               X2Header                  = 7;  /**<< @brief Specify the header for the secondary x-axis. */
-    optional string               X2Label                   = 8;  /**<< @brief Specify the secondary x-axis label for this plot. */
-    optional BoundsData           X2Bounds                  = 9;  /**<< @brief Specify the desired secondary x-axis bounds. */
-    repeated string               YHeader                   = 10; /**<< @brief Specify the header(s) for the y-axis. */
-    optional string               YLabel                    = 11; /**<< @brief Specify the y-axis label for this plot. */
-    optional BoundsData           YBounds                   = 12; /**<< @brief Specify the desired y-axis bounds.  */
-    repeated string               Y2Header                  = 13; /**<< @bried Specify the header(s) for the secondary y-axis. */
-    optional string               Y2Label                   = 14; /**<< @brief Specify the secondary y-axis label for this plot. */
-    optional BoundsData           Y2Bounds                  = 15; /**<< @brief Specify the desired secondary y-axis bounds. */
+    string                            Comment                   = 1;
+
+    optional PlotConfigData           PlotConfig                = 2;  /**<< @brief Provided settings take precedence over PlotConfig settings defined in main plotter.*/
+    optional string                   OutputFilename            = 3;  /**<< @brief Set the desired filename for the generated plot. */
+    optional string                   Title                     = 4;  /**<< @brief Specify the title for this plot. */
+    optional string                   XHeader                   = 5;  /**<< @brief Specify the header for the x-axis. Assumed to be time if not provided. */
+    optional string                   XLabel                    = 6;  /**<< @brief Specify the x-axis label for this plot. */
+    optional BoundsData               XBounds                   = 7;  /**<< @brief Specify the desired x-axis bounds. */
+    optional string                   X2Header                  = 8;  /**<< @brief Specify the header for x-data corresponding to the secondary y-axis. Assumed to be the same as XHeader if not provided. */
+    repeated string                   YHeader                   = 9;  /**<< @brief Specify the header(s) for the y-axis. */
+    optional string                   YLabel                    = 10; /**<< @brief Specify the y-axis label for this plot. */
+    optional BoundsData               YBounds                   = 11; /**<< @brief Specify the desired y-axis bounds.  */
+    repeated string                   Y2Header                  = 12; /**<< @bried Specify the header(s) for the secondary y-axis. Data pulled from PlotSources unless ValidationSource provided. */
+    optional string                   Y2Label                   = 13; /**<< @brief Specify the secondary y-axis label for this plot. */
+    optional BoundsData               Y2Bounds                  = 14; /**<< @brief Specify the desired secondary y-axis bounds. */
   }
 }
 
 /** @brief Data used to specify bounds. */
 message BoundsData
 {
-  optional double                 LowerBound                = 1;  /**<< @brief  Specify the desired lower bound. */
-  optional double                 UpperBound                = 2;  /**<< @brief  Specify the desired upper bound. */
+  optional double                     LowerBound                = 1;  /**<< @brief  Specify the desired lower bound. */
+  optional double                     UpperBound                = 2;  /**<< @brief  Specify the desired upper bound. */
 }
 
 /** @brief Data used to specify image property data. */
 message ImagePropertyData
 {
-  optional string                 FileFormat                = 1;  /**<< @brief  Specify the desired image file format. Default is png. */
-  optional double                 Height_inch               = 2;  /**<< @brief  Specify the desired image height in inches. Default is 2 inches. */
-  optional double                 Width_inch                = 3;  /**<< @brief  Specify the desired image width in inches. Default is 6 inches*/
-  optional double                 DPI                       = 4;  /**<< @brief  Specify the desired image DPI. Default is 100. */
+  optional string                     FileFormat                = 1;  /**<< @brief  Specify the desired image file format. */
+  optional double                     Height_inch               = 2;  /**<< @brief  Specify the desired image height in inches. */
+  optional double                     Width_inch                = 3;  /**<< @brief  Specify the desired image width in inches. */
+  optional double                     DPI                       = 4;  /**<< @brief  Specify the desired image DPI. */
 }
