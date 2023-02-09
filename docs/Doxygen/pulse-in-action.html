@@ -43,6 +43,7 @@
                 <li>Performing in silico experiments to reduce the need for expensive lab work and clinical trials</li>
                 <li>Integrating a single-system model into the engine to understand full-body physiologic response</li>
                 <li>Providing synthetic patient inputs and outputs for sensor systems</li>
+                <li>Providing synthetic data for Machine Learning algorithm development</li>
                 <li>Enabling hardware-in-the-loop (HIL) simulated patients testing solutions</li>
                 <li>Teaching and education interactive content</li>
                 <li>Pairing with virtual surgery planning/rehearsal</li>
@@ -194,7 +195,7 @@
                   <h6>Links</h6>
                   <hr>
                   <ul>
-                    <li><a href="https://traumasimulator.com/" target="_blank">Trauma Simulator</a></li>
+                    <li><a href="https://www.exonicus.com/exonicus-trauma-simulator/" target="_blank">Trauma Simulator</a></li>
                     <li><a href="https://www.halldale.com/articles/15405-exonicus-kitware-develop-trauma-simulator?v=preview" target="_blank">Military Training & Simulation Article</a></li>
                     <li><a href="https://blog.kitware.com/exonicus-and-kitware-collaborate-to-develop-a-trauma-simulator-using-the-pulse-physiology-engine/" target="_blank">From Our Blog</a></li>
                     <li><a href="https://www.cureus.com/articles/25475-immersive-virtual-reality-medical-simulation-autonomous-trauma-training-simulator" target="_blank">"Immersive Virtual Reality Medical Simulation: Autonomous Trauma Training Simulator"</a></li>
@@ -314,6 +315,35 @@
             </div>
           </div>
           <!-- END .application -->
+          
+          <div class="feat-application row-content col-sm-4">
+            <div class="feat-application-wrap w-sidebar">
+              <div class="app-col">
+                <div class="app-img">
+                  <a href="Images/Features/OBOGS.png" ><img src="Images/Features/OBOGS.png"/></a>
+                </div>
+                <div class="app-content">
+                  <h4>Flight Simulator Coupling</h4>
+                  <p>A coupled FlightGear flight simulator and Pulse physiology engine to recreate and understand hypoxic events, related to a combination of high FiO2 and high g-forces. Global data is shared between the FlightGear and Pulse by creating interdependency between the two applications known as coupling. By coupling interactive simulations based on FlightGear and Pulse, hypoxic events were recreated from two scenarios: simulated acceleration atelectasis, achieved by using high g-forces output from FlightGear with a modified Pulse tension pneumothorax scenario, and the combination of high g-forces and high FiO2, based on a prototype OBOGS simulation.</p>
+                </div>
+              </div>
+              <div class="app-col sidebar">
+                <div class="links">
+                  <h6>Links</h6>
+                  <hr>
+                  <ul>
+                    <li><a href="https://doi.org/10.23919/ANNSIM55834.2022.9859358" target="_blank">Integrative Physiology-Coupled Pilot-Centered Flight Simulation.</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="collaborators">
+                <div class="row">
+                  <a href="https://www.odu.edu/" class="col-sm-4" target="_blank"><img src="Images/Features/ODULogo.png" alt=""></a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END .application -->
         
           <div class="feat-application row-content col-sm-4">
             <div class="feat-application-wrap w-sidebar">
@@ -347,38 +377,6 @@
           </div>
           <!-- END .application -->
           
-          <div class="feat-application row-content col-sm-4">
-            <div class="feat-application-wrap w-sidebar">
-              <div class="app-col">
-                <div class="app-img">
-                  <a href="Images/Features/vpe_pharmacy.png" ><img src="Images/Features/vpe_pharmacy.png"/></a>
-                </div>
-                <div style="padding-bottom: 124px;" class="app-content">
-                  <h4>The BioMojo Virtual Patient Experience (VPE)</h4>
-                  <p>An interactive, multiplayer 3D healthcare and medicine themed, STEM education product. BioMojo VPE is designed to inspire and educate youth towards careers in healthcare, clinical research and biomedical engineering through fun, challenging virtual role play, teamwork, and problem-solving. Themes include emergency medicine, preventable chronic diseases, physiology, anatomy, genomics, and pharmacotherapy.</p>
-                  <p>Players will perform (virtual) diagnostic procedures and other interactions with virtual patient avatars. Virtual patient physiology is provided by Pulse.</p>
-                </div>
-              </div>
-              <div class="app-col sidebar">
-                <div class="links">
-                  <h6>Links</h6>
-                  <hr>
-                  <ul>
-                    <li><a href="https://biomojo.com/" target="_blank">BioMojo</a></li>
-                  </ul>
-                </div>
-              </div>
-              <div class="collaborators">
-                <div class="row">
-                  <a href="https://www.biomojo.com/" class="col-sm-4" target="_blank"><img src="Images/Features/BioMojoLogo.png" alt=""></a>
-                  <a href="https://www.nih.gov/" class="col-sm-4" target="_blank"><img src="Images/Features/NIHLogo.jpg" alt=""></a>
-                  <div class="col-sm-4"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- END .application -->
-
         </div>
         
         <div class="row">
@@ -485,7 +483,40 @@
           <!-- END .application -->
     
        </div>
+       
         <div class="row">
+        
+        <div class="feat-application row-content col-sm-4">
+          <div class="feat-application-wrap w-sidebar">
+            <div class="app-col">
+              <div class="app-img">
+                <a href="Images/Features/vpe_pharmacy.png" ><img src="Images/Features/vpe_pharmacy.png"/></a>
+              </div>
+              <div style="padding-bottom: 124px;" class="app-content">
+                <h4>The BioMojo Virtual Patient Experience (VPE)</h4>
+                <p>An interactive, multiplayer 3D healthcare and medicine themed, STEM education product. BioMojo VPE is designed to inspire and educate youth towards careers in healthcare, clinical research and biomedical engineering through fun, challenging virtual role play, teamwork, and problem-solving. Themes include emergency medicine, preventable chronic diseases, physiology, anatomy, genomics, and pharmacotherapy.</p>
+                <p>Players will perform (virtual) diagnostic procedures and other interactions with virtual patient avatars. Virtual patient physiology is provided by Pulse.</p>
+              </div>
+            </div>
+            <div class="app-col sidebar">
+              <div class="links">
+                <h6>Links</h6>
+                <hr>
+                <ul>
+                  <li><a href="https://biomojo.com/" target="_blank">BioMojo</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="collaborators">
+              <div class="row">
+                <a href="https://www.biomojo.com/" class="col-sm-4" target="_blank"><img src="Images/Features/BioMojoLogo.png" alt=""></a>
+                <a href="https://www.nih.gov/" class="col-sm-4" target="_blank"><img src="Images/Features/NIHLogo.jpg" alt=""></a>
+                <div class="col-sm-4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END .application -->
           
           <div class="feat-application row-content col-sm-4">
               <div class="feat-application-wrap w-sidebar">
@@ -516,34 +547,6 @@
                   <div class="row">
                     <a href="https://illinois.edu/" class="col-sm-4" target="_blank"><img src="Images/Features/UIUCLogo.png" alt=""></a>
                     <a href="https://www.jumpsimulation.org/research-innovation/research/jump-arches" class="col-sm-4"><img src="Images/Features/JumpARCHESLogo.jpg" alt=""></a>
-                    <div class="col-sm-4"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          <!-- END .application -->
-          
-          <div class="feat-application row-content col-sm-4">
-              <div class="feat-application-wrap w-sidebar">
-                <div class="app-col">
-                  <div style="padding-bottom: 308px;" class="app-content">
-                    <h4>Ventriculoperitoneal Shunt Performance</h4>
-                    <p>A high-fidelity computational surrogate head model focused on the ventricular system to optimize the performance of ventriculoperitoneal shunts. The cerebrospinal fluid model is being coupled with the cerebrovascular system using the Pulse physiology engine. In addition to globally quantifying the essential cerebrovascular parameters for the local high-fidelity analysis of shunt function, Pulse also provides an invaluable training capability to teach students about the effects of elevated ICP due to hydro-cephalus on the entire body.</p>
-                  </div>
-                </div>
-                <div class="app-col sidebar">
-                  <div class="links">
-                    <h6>Links</h6>
-                    <hr>
-                    <ul>
-                      <li><a href="https://rdcu.be/btrMf" target="_blank">"Pulse Physiology Engine: an Open-Source Software Platform for Computational Modeling of Human Medical Simulation"</a></li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="collaborators">
-                  <div class="row">
-                    <a href="https://www.utk.edu/" class="col-sm-4" target="_blank"><img src="Images/Features/UTLogo.png" alt=""></a>
-                    <a href="https://www.nih.gov/" class="col-sm-4" target="_blank"><img src="Images/Features/NIHLogo.jpg" alt=""></a>
                     <div class="col-sm-4"></div>
                   </div>
                 </div>
@@ -586,19 +589,13 @@
         </div>
         
         <div class="row">
-          
-          <div class="feat-application row-content col-sm-4">
+        
+        <div class="feat-application row-content col-sm-4">
             <div class="feat-application-wrap w-sidebar">
               <div class="app-col">
-                <div class="app-img">
-                  <a href="Images/Features/VPAW.png" ><img src="Images/Features/VPAW.png"/></a>
-                </div>
-                <div class="app-content">
-                  <h4>Virtual Pediatric Airway Workbench (VPAW)</h4>
-                  <p>A surgical planning tool for subglottic stenosis that incorporates three major components.</p>
-                  <p>VPAW initiates with a CT scan of the patient and obtains a geometrical model through segmentation and surface reconstruction.</p>
-                  <p>It then employs a computational fluid dynamics (CFD) engine based on a Lattice-Boltzmann formulation to provide airflow parameters for Pulse. Pulse then provides the physiologic response due to the airflow.</p>
-                  <p>A real-time geometric authoring tool allows surgeons to edit the tracheal geometry using a haptic device as part of a surgical planning. VPAW calculates the physiologic results of each plan to be assessed by surgeons to identify the best course of action.</p>
+                <div style="padding-bottom: 308px;" class="app-content">
+                  <h4>Ventriculoperitoneal Shunt Performance</h4>
+                  <p>A high-fidelity computational surrogate head model focused on the ventricular system to optimize the performance of ventriculoperitoneal shunts. The cerebrospinal fluid model is being coupled with the cerebrovascular system using the Pulse physiology engine. In addition to globally quantifying the essential cerebrovascular parameters for the local high-fidelity analysis of shunt function, Pulse also provides an invaluable training capability to teach students about the effects of elevated ICP due to hydro-cephalus on the entire body.</p>
                 </div>
               </div>
               <div class="app-col sidebar">
@@ -606,76 +603,114 @@
                   <h6>Links</h6>
                   <hr>
                   <ul>
-                    <li><a href="https://blog.kitware.com/toward-patient-specific-surgical-planning-including-individualized-physiology-modeling/" target="_blank">From Our Blog</a></li>
-                    <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/10135/101351T/Physiology-informed-virtual-surgical-planning--a-case-study-with/10.1117/12.2252510.short" target="_blank">"Physiology informed virtual surgical planning: a case study with a virtual airway surgical planner and BioGears"</a></li>
+                    <li><a href="https://rdcu.be/btrMf" target="_blank">"Pulse Physiology Engine: an Open-Source Software Platform for Computational Modeling of Human Medical Simulation"</a></li>
                   </ul>
                 </div>
               </div>
               <div class="collaborators">
                 <div class="row">
-                  <a href="https://www.unc.edu/" class="col-sm-4" target="_blank"><img src="Images/Features/UNCLogo.jpg" alt=""></a>
+                  <a href="https://www.utk.edu/" class="col-sm-4" target="_blank"><img src="Images/Features/UTLogo.png" alt=""></a>
                   <a href="https://www.nih.gov/" class="col-sm-4" target="_blank"><img src="Images/Features/NIHLogo.jpg" alt=""></a>
                   <div class="col-sm-4"></div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- END .application -->
+        <!-- END .application -->
         
-          <div class="feat-application row-content col-sm-4">
-              <div class="feat-application-wrap w-sidebar">
-                <div class="app-col">
-                  <div class="app-img">
-                    <img src="Images/Features/GSoC.png" alt="">
-                  </div>
-                  <div style="padding-bottom: 287px;" class="app-content">
-                    <h4>SOFA Integration</h4>
-                    <p>Created an interface plugin within the SOFA multi-physics simulation framework to link with the Pulse physiology engine.</p>
-                  </div>
+        <div class="feat-application row-content col-sm-4">
+          <div class="feat-application-wrap w-sidebar">
+            <div class="app-col">
+              <div class="app-img">
+                <a href="Images/Features/VPAW.png" ><img src="Images/Features/VPAW.png"/></a>
+              </div>
+              <div class="app-content">
+                <h4>Virtual Pediatric Airway Workbench (VPAW)</h4>
+                <p>A surgical planning tool for subglottic stenosis that incorporates three major components.</p>
+                <p>VPAW initiates with a CT scan of the patient and obtains a geometrical model through segmentation and surface reconstruction.</p>
+                <p>It then employs a computational fluid dynamics (CFD) engine based on a Lattice-Boltzmann formulation to provide airflow parameters for Pulse. Pulse then provides the physiologic response due to the airflow.</p>
+                <p>A real-time geometric authoring tool allows surgeons to edit the tracheal geometry using a haptic device as part of a surgical planning. VPAW calculates the physiologic results of each plan to be assessed by surgeons to identify the best course of action.</p>
+              </div>
+            </div>
+            <div class="app-col sidebar">
+              <div class="links">
+                <h6>Links</h6>
+                <hr>
+                <ul>
+                  <li><a href="https://blog.kitware.com/toward-patient-specific-surgical-planning-including-individualized-physiology-modeling/" target="_blank">From Our Blog</a></li>
+                  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/10135/101351T/Physiology-informed-virtual-surgical-planning--a-case-study-with/10.1117/12.2252510.short" target="_blank">"Physiology informed virtual surgical planning: a case study with a virtual airway surgical planner and BioGears"</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="collaborators">
+              <div class="row">
+                <a href="https://www.unc.edu/" class="col-sm-4" target="_blank"><img src="Images/Features/UNCLogo.jpg" alt=""></a>
+                <a href="https://www.nih.gov/" class="col-sm-4" target="_blank"><img src="Images/Features/NIHLogo.jpg" alt=""></a>
+                <div class="col-sm-4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END .application -->
+        
+        <div class="feat-application row-content col-sm-4">
+            <div class="feat-application-wrap w-sidebar">
+              <div class="app-col">
+                <div class="app-img">
+                  <img src="Images/Features/GSoC.png" alt="">
                 </div>
-                <div class="app-col sidebar">
-                  <div class="links">
-                    <h6>Links</h6>
-                    <hr>
-                    <ul>
-                      <li><a href="https://github.com/sofa-framework/PulsePhysiology/commits/master" target="_blank">Github Repository</a></li>
-                      <li><a href="https://blog.kitware.com/kitware-and-inria-collaborate-on-open-source-surgical-simulation-and-computational-physiology-integration/" target="_blank">From Our Blog</a></li>
-                      <li><a href="https://medium.com/@jn.manan25/developer-at-google-summer-of-code-18-with-inria-foundation-sofa-and-pulse-da09100504d1" target="_blank">Developer Blog</a></li>
-                    </ul>
-                  </div>
+                <div style="padding-bottom: 287px;" class="app-content">
+                  <h4>SOFA Integration</h4>
+                  <p>Created an interface plugin within the SOFA multi-physics simulation framework to link with the Pulse physiology engine.</p>
                 </div>
-                <div class="collaborators">
-                  <div class="row">
-                    <a href="https://www.sofa-framework.org/" class="col-sm-5" target="_blank"><img src="Images/Features/SOFALogo.png" alt=""></a>
-                  </div>
+              </div>
+              <div class="app-col sidebar">
+                <div class="links">
+                  <h6>Links</h6>
+                  <hr>
+                  <ul>
+                    <li><a href="https://github.com/sofa-framework/PulsePhysiology/commits/master" target="_blank">Github Repository</a></li>
+                    <li><a href="https://blog.kitware.com/kitware-and-inria-collaborate-on-open-source-surgical-simulation-and-computational-physiology-integration/" target="_blank">From Our Blog</a></li>
+                    <li><a href="https://medium.com/@jn.manan25/developer-at-google-summer-of-code-18-with-inria-foundation-sofa-and-pulse-da09100504d1" target="_blank">Developer Blog</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="collaborators">
+                <div class="row">
+                  <a href="https://www.sofa-framework.org/" class="col-sm-5" target="_blank"><img src="Images/Features/SOFALogo.png" alt=""></a>
                 </div>
               </div>
             </div>
-          <!-- END .application -->
-          
-          <div class="feat-application row-content col-sm-4">
-              <div class="feat-application-wrap w-sidebar">
-                <div class="app-col">
-                  <div class="app-img">
-                    <a href="Images/Features/SingleBoard.png" ><img src="Images/Features/SingleBoard.png"/></a>
-                  </div>
-                  <div class="app-content">
-                    <h4>Modular Deployment</h4>
-                    <p>Pulse is deployable on low size, weight, power, and cost (SWaP-C) systems, and has been shown to run faster than real-time on several single-board computers.</p>
-                  </div>
+          </div>
+        <!-- END .application -->
+        
+        </div>
+        
+        <div class="row">
+        
+        <div class="feat-application row-content col-sm-4">
+            <div class="feat-application-wrap w-sidebar">
+              <div class="app-col">
+                <div class="app-img">
+                  <a href="Images/Features/SingleBoard.png" ><img src="Images/Features/SingleBoard.png"/></a>
                 </div>
-                <div class="app-col sidebar">
-                  <div class="links">
-                    <h6>Links</h6>
-                    <hr>
-                    <ul>
-                      <li><a href="https://blog.kitware.com/benchmarking-the-pulse-physiology-engine-on-various-single-board-computing-platforms/" target="_blank">From Our Blog</a></li>
-                    </ul>
-                  </div>
+                <div class="app-content">
+                  <h4>Modular Deployment</h4>
+                  <p>Pulse is deployable on low size, weight, power, and cost (SWaP-C) systems, and has been shown to run faster than real-time on several single-board computers.</p>
+                </div>
+              </div>
+              <div class="app-col sidebar">
+                <div class="links">
+                  <h6>Links</h6>
+                  <hr>
+                  <ul>
+                    <li><a href="https://blog.kitware.com/benchmarking-the-pulse-physiology-engine-on-various-single-board-computing-platforms/" target="_blank">From Our Blog</a></li>
+                  </ul>
                 </div>
               </div>
             </div>
-          <!-- END .application -->
+          </div>
+        <!-- END .application -->
 
         </div>
       </section>

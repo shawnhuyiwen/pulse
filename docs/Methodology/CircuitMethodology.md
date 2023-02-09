@@ -475,22 +475,22 @@ correlated.  The sign of the current through voltage sources are reversed
 because of differing conventions for those elements.</i>
 </center><br>
 
-The engine has been shown to successfully conserve mass, energy, and momentum within all defined closed-loop systems. The successful conservation of mass provided by the solver is shown in Figure 11. The volume (quantity/charge) within cardiovascular circuit nodes through approximately 2.5 full heart beat cycles.  The total volume of all compartments remains at a constant value of 5L throughout the entire process.
-
-@htmlonly
-<a href="./Images/Circuit/CardiovascularCompartmentVolumes.png"><img src="./Images/Circuit/CardiovascularCompartmentVolumes.png" style="width:60%;"></a>
-@endhtmlonly
-<center>
-<i>Figure 11.  The blood volume within each compartment continuously varies in the cardiovascular circuit.   The sum of these volumes does not change at any time step, and system mass is successfully conserved.</i>
-</center><br>
-
-Figure 12 shows transient analysis results and the circuit diagram used for three sets of equivalent code blocks to illustrate the templated approach in setting up electrical, fluid, and thermal circuits.
+Figure 11 shows transient analysis results and the circuit diagram used for three sets of equivalent code blocks to illustrate the templated approach in setting up electrical, fluid, and thermal circuits.
 
 @htmlonly
 <a href="./Images/Circuit/CircuitWaveforms.png"><img src="./Images/Circuit/CircuitWaveforms.png" style="width:75%;"></a>
 @endhtmlonly
 <center>
-<i>Figure 12. The circuit and simulation outputs from a validation test of the multiphysics framework. The potential source for all three circuits is driven by a sinusoidal function and the switch is closed 15 seconds into the simulation. All three circuit types give the same values for potential, fluxes, and quantities with different native units. Labels for each plot from left to right are electrical, fluid, and thermal.</i>
+<i>Figure 11. The circuit and simulation outputs from a validation test of the multiphysics framework. The potential source for all three circuits is driven by a sinusoidal function and the switch is closed 15 seconds into the simulation. All three circuit types give the same values for potential, fluxes, and quantities with different native units. Labels for each plot from left to right are electrical, fluid, and thermal.</i>
+</center><br>
+
+The engine has been shown to successfully conserve mass, energy, and momentum within all defined closed-loop systems. The successful conservation of mass provided by the solver is shown in Figure 12. The volume (quantity/charge) within cardiovascular circuit nodes through approximately 2.5 full heart beat cycles.  The total volume of all compartments remains at a constant value of 5L throughout the entire process.
+
+@htmlonly
+<a href="./Images/Circuit/CardiovascularCompartmentVolumes.png"><img src="./Images/Circuit/CardiovascularCompartmentVolumes.png" style="width:60%;"></a>
+@endhtmlonly
+<center>
+<i>Figure 12.  The blood volume within each compartment continuously varies in the cardiovascular circuit.   The sum of these volumes does not change at any time step, and system mass is successfully conserved.</i>
 </center><br>
 
 All basic Circuit Solver functionality is further validated and verified with specific unit tests that target individual methods.  The following functionality has been successfully validated by individual tests:
@@ -503,6 +503,7 @@ All basic Circuit Solver functionality is further validated and verified with sp
 -   Non-zero reference node voltage
 -   Polarized elements
 -   Dynamically modifying capacitor charge
+-   Black boxes
 
 @anchor circuit-conclusion
 ## Conclusion
