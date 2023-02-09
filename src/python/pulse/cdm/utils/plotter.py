@@ -228,4 +228,8 @@ def get_config_dir():
     raise ValueError('Could not find study directory.')
 
 if __name__ == "__main__":
-    create_plots(get_config_dir() + "PlotRun.json")
+    if len(sys.argv) > 1:
+        plot_config = sys.argv[1]
+    else:
+        plot_config = get_config_dir() + "PlotRun.json"
+    create_plots(plot_config)
