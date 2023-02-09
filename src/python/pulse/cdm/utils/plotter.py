@@ -149,8 +149,7 @@ def create_plot(plot_sources: [SEPlotSource],
 
     if y2_headers:
         ax2 = ax1.twinx()
-        if plot_settings.has_y2_label():
-            ax2.set_ylabel(plot_settings.get_y2_label(), fontsize=plot_settings.get_font_size())
+        ax2.set_ylabel(plot_settings.get_y2_label() if plot_settings.has_y2_label() else y2_headers[0], fontsize=plot_settings.get_font_size())
         ax2.ticklabel_format(axis="y", style=plot_settings.get_tick_style().name, scilimits=plot_settings.get_sci_limits())
         if plot_settings.get_log_axis():
             ax2.set_yscale("log")
@@ -174,9 +173,9 @@ def create_plot(plot_sources: [SEPlotSource],
 
         for y_header in y_headers:
             if ps.has_line_format():
-                lns.extend(ax1.plot(x_header, y_header, ps.get_line_format(), data=df, label=ps.get_label()))
+                lns.extend(ax1.plot(x_header, y_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y_label()))
             else:
-                lns.extend(ax1.plot(x_header, y_header, **next(my_cycler), data=df, label=ps.get_label()))
+                lns.extend(ax1.plot(x_header, y_header, **next(my_cycler), data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y_label()))
 
             if plot_settings.get_fill_area():
                 ax1.fill_between(x_header, y_header, data=df, facecolor=c['color'])
@@ -184,9 +183,9 @@ def create_plot(plot_sources: [SEPlotSource],
         if not validation_source:
             for y2_header in y2_headers:
                 if ps.has_line_format():
-                    lns.extend(ax2.plot(x2_header, y2_header, ps.get_line_format(), data=df, label=ps.get_label()))
+                    lns.extend(ax2.plot(x2_header, y2_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y2_label()))
                 else:
-                    lns.extend(ax2.plot(x2_header, y2_header, **next(my_cycler), data=df, label=ps.get_label()))
+                    lns.extend(ax2.plot(x2_header, y2_header, **next(my_cycler), data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y2_label()))
                 if plot_settings.get_fill_area():
                     ax2.fill_between(x2_header, y2_header, data=df, facecolor=c['color'])
 
@@ -194,9 +193,9 @@ def create_plot(plot_sources: [SEPlotSource],
         df = validation_source.get_data_frame()
         for y2_header in y2_headers:
             if validation_source.has_line_format():
-                lns.extend(ax2.plot(x2_header, y2_header, validation_source.get_line_format(), data=df, label=validation_source.get_label()))
+                lns.extend(ax2.plot(x2_header, y2_header, validation_source.get_line_format(), data=df, label=validation_source.get_label() if validation_source.has_label() else plot_settings.get_y2_label()))
             else:
-                lns.extend(ax2.plot(x2_header, y2_header, **next(my_cycler), data=df, label=validation_source.get_label()))
+                lns.extend(ax2.plot(x2_header, y2_header, **next(my_cycler), data=df, label=validation_source.get_label() if validation_source.has_label() else plot_settings.get_y2_label()))
             if plot_settings.get_fill_area():
                 ax2.fill_between(x2_header, y2_header, data=df, facecolor=c['color'])
 
