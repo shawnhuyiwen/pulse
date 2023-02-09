@@ -121,8 +121,8 @@ def create_plot(plot_sources: [SEPlotSource],
                 validation_source: SEPlotSource = None):
 
     # To line formats across axes
-    fmt_cycler = cycler(color=mcolors.TABLEAU_COLORS) * cycler(linestyle=['-'])
-    my_cycler = fmt_cycler()
+    setup_fmt_cycler = cycler(color=mcolors.TABLEAU_COLORS) * cycler(linestyle=['-'])
+    fmt_cycler = setup_fmt_cycler()
 
     # To support legend across axes
     lns = []
@@ -174,30 +174,39 @@ def create_plot(plot_sources: [SEPlotSource],
         for y_header in y_headers:
             if ps.has_line_format():
                 lns.extend(ax1.plot(x_header, y_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y_label()))
+                color = ps.get_line_format()[-1]
             else:
-                lns.extend(ax1.plot(x_header, y_header, **next(my_cycler), data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y_label()))
+                c = next(fmt_cycler)
+                color = c['color']
+                lns.extend(ax1.plot(x_header, y_header, **c, data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y_label()))
 
             if plot_settings.get_fill_area():
-                ax1.fill_between(x_header, y_header, data=df, facecolor=c['color'])
+                ax1.fill_between(x_header, y_header, data=df, facecolor=color)
 
         if not validation_source:
             for y2_header in y2_headers:
                 if ps.has_line_format():
                     lns.extend(ax2.plot(x2_header, y2_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y2_label()))
+                    color = ps.get_line_format()[-1]
                 else:
-                    lns.extend(ax2.plot(x2_header, y2_header, **next(my_cycler), data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y2_label()))
+                    c = next(fmt_cycler)
+                    color = c['color']
+                    lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=ps.get_label() if ps.has_label() else plot_settings.get_y2_label()))
                 if plot_settings.get_fill_area():
-                    ax2.fill_between(x2_header, y2_header, data=df, facecolor=c['color'])
+                    ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
 
     if validation_source:
         df = validation_source.get_data_frame()
         for y2_header in y2_headers:
             if validation_source.has_line_format():
                 lns.extend(ax2.plot(x2_header, y2_header, validation_source.get_line_format(), data=df, label=validation_source.get_label() if validation_source.has_label() else plot_settings.get_y2_label()))
+                color = validation_source.get_line_format()[-1]
             else:
-                lns.extend(ax2.plot(x2_header, y2_header, **next(my_cycler), data=df, label=validation_source.get_label() if validation_source.has_label() else plot_settings.get_y2_label()))
+                c = next(fmt_cycler)
+                color = c['color']
+                lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=validation_source.get_label() if validation_source.has_label() else plot_settings.get_y2_label()))
             if plot_settings.get_fill_area():
-                ax2.fill_between(x2_header, y2_header, data=df, facecolor=c['color'])
+                ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
 
     # Create legend
     if not plot_settings.get_remove_legends():
