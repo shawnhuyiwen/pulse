@@ -118,7 +118,6 @@
             "Height_inch": 8,
             "Width_inch": 16
           },
-          "RemoveLegends": true,
           "TickStyle": "Plain"
         },
         "PlotSource":
@@ -142,8 +141,8 @@
             "XLabel": "Percent Of Blood Loss",
             "XBounds":
             {
-              "LowerBound": 100,
-              "UpperBound": 0
+              "LowerBound": 0,
+              "UpperBound": 50
             },
             "YHeader":
             [

@@ -88,27 +88,28 @@ def generate_title(x_header, y_header):
     return y_header + " vs "+ x_header
 
 def percentage_of_baseline(baseline_mode, df, x_header, y_headers, x2_header, y2_headers):
-    if baseline_mode == ePercentageOfBaselineMode.Off:
-        cols = []
-    elif baseline_mode == ePercentageOfBaselineMode.All:
-        cols = list(y_headers)
-        cols.append(x_header)
+    xcols = []
+    ycols = []
+    if baseline_mode == ePercentageOfBaselineMode.All:
+        xcols = [x_header]
         if x2_header:
-            cols.append(x2_header)
+            xcols.append(x2_header)
+        ycols = list(y_headers)
         if y2_headers:
-            cols.extend(y2_headers)
+            ycols.extend(y2_headers)
     elif baseline_mode == ePercentageOfBaselineMode.OnlyX:
-        cols = [x_header]
+        xcols = [x_header]
         if x2_header:
-            cols.append(x2_header)
+            xcols.append(x2_header)
     elif baseline_mode == ePercentageOfBaselineMode.OnlyY:
-        cols = list(y_headers)
+        ycols = list(y_headers)
         if y2_headers:
-            cols.extend(y2_headers)
-    else:
+            ycols.extend(y2_headers)
+    elif baseline_mode != ePercentageOfBaselineMode.Off:
         print(f"Unknown percentage of baseline mode: {baseline_mode}")
         return False
-    df[cols] = df[cols].apply(lambda x: x / x[0] * 100.0)
+    df[xcols] = df[xcols].apply(lambda x: (1-(x / x[0])) * 100.0)
+    df[ycols] = df[ycols].apply(lambda x: x * 100.0 / x[0])
     return True
 
 def create_plot(plot_sources: [SEPlotSource],
