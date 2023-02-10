@@ -7,6 +7,7 @@ from typing import Tuple
 from copy import deepcopy
 
 from pulse.cdm.scalars import SEScalar, SEScalarLength
+from pulse.cdm.utils.file_utils import *
 
 class SEImageProperties():
     __slots__ = ["_file_format", "_height_inch", "_width_inch", "_dpi"]
@@ -376,6 +377,13 @@ class SEPlotSource():
     def _read_csv_into_df(self, replace_slashes=True):
         if not self.has_csv_data():
             raise Exception("No CSV data provided")
+
+        # Perform replacement if needed
+        keys = ['$ROOT_DIR', '$DATA_DIR', '$SCENARIO_DIR','$VALIDATION_DIR', '$VERIFICATION_DIR']
+        for key in keys:
+            if key in self._csv_data:
+                self._csv_data = self._csv_data.replace(key, get_dir_from_run_config(key[1:]))
+
         self._df = pd.read_csv(self._csv_data)
         for column in self._df.columns[1:]:
             # Convert any strings to NaN

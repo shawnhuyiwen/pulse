@@ -6,30 +6,16 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/Respiratory/",
-          "ImageProperties":
-          {
-            "Width_inch": 8
-          },
+          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "Width_inch": 8 },
           "SciLimits": {}
         },
         "PlotSource":
         [
-          {
-            "CSVData": "./verification/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv",
-            "LineFormat": "-r"
-          }
+          { "CSVData": "./verification/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv", "LineFormat": "-r" }
         ],
         "Series":
         [
-          {
-            "Title": "Engine_Pulmonary_Compliance",
-            "XHeader": "LeftPleuralCavity-Pressure(cmH2O)",
-            "YHeader":
-            [
-              "TotalLungVolume(mL)"
-            ]
-          }
+          { "Title": "Engine Pulmonary Compliance", "XHeader": "LeftPleuralCavity-Pressure(cmH2O)", "YHeader": [ "TotalLungVolume(mL)" ] }
         ]
       }
     },
@@ -38,31 +24,19 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/Respiratory/",
-          "ImageProperties":
-          {
-            "Width_inch": 8
-          },
-          "RemoveLegends": true,
-          "SciLimits": {}
+          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "Width_inch": 8 },
+          "RemoveLegends": true, "SciLimits": {}
         },
         "PlotSource":
         [
           {
-            "CSVData": "/home/local/KHQ/emily.veenhuis/Documents/pulse/engine/data/human/adult/validation/Waveforms/PulmonaryCompliance_Guyton.csv",
+            "CSVData": "$VALIDATION_DIR/Waveforms/PulmonaryCompliance_Guyton.csv",
             "LineFormat": "-r"
           }
         ],
         "Series":
         [
-          {
-            "Title": "Guyton_Pulmonary_Compliance",
-            "XHeader": "PleuralPressure(cmH2O)",
-            "YHeader":
-            [
-              "LungVolume(L)"
-            ]
-          }
+          { "Title": "Guyton Pulmonary Compliance", "XHeader": "PleuralPressure(cmH2O)", "YHeader": [ "LungVolume(L)" ] }
         ]
       }
     },
@@ -71,30 +45,16 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/Respiratory/",
-          "ImageProperties":
-          {
-            "Width_inch": 8
-          },
+          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "Width_inch": 8 },
           "SciLimits": {}
         },
         "PlotSource":
         [
-          {
-            "CSVData": "./verification/scenarios/miscellaneous/ComplianceCurveResults.csv",
-            "LineFormat": "-r"
-          }
+          { "CSVData": "./verification/scenarios/miscellaneous/ComplianceCurveResults.csv", "LineFormat": "-r" }
         ],
         "Series":
         [
-          {
-            "Title": "Experimental_Pulmonary_Compliance",
-            "XHeader": "IntrapulmonaryPressure(cmH2O)",
-            "YHeader":
-            [
-              "TotalLungVolume(mL)"
-            ]
-          }
+          { "Title": "Experimental Pulmonary Compliance", "XHeader": "IntrapulmonaryPressure(cmH2O)", "YHeader": [ "TotalLungVolume(mL)" ] }
         ]
       }
     },
@@ -103,57 +63,25 @@
       {
         "PlotConfig":
         {
-          "Gridlines": true,
-          "OutputPathOverride": "./docs/html/plots/Cardiovascular",
-          "PercentOfBaselineMode": "All",
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All",
           "TickStyle": "Plain"
         },
         "PlotSource":
         [
-          {
-            "CSVData": "./verification/scenarios/patient/HemorrhageClass4NoFluidResults.csv",
-            "LineFormat": "-r"
-          }
+          { "CSVData": "./verification/scenarios/patient/HemorrhageClass4NoFluidResults.csv", "LineFormat": "-r" }
         ],
         "ValidationSource":
         {
-          "CSVData": "/home/local/KHQ/emily.veenhuis/Documents/pulse/engine/data/human/adult/validation/Cardiovascular/HemorrhagicCardiacOutputShockValidation.csv",
+          "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicCardiacOutputShockValidation.csv",
           "LineFormat": "-b"
         },
         "Series":
         [
-          {
-            "Title": "",
-            "OutputFilename": "CardiacOutputShock_partial",
-            "XHeader": "BloodVolume(L)",
-            "XLabel": "Percent Of Blood Loss",
-            "XBounds":
-            {
-              "LowerBound": 0,
-              "UpperBound": 50
-            },
-            "YHeader":
-            [
-              "CardiacOutput(L/min)"
-            ],
-            "YBounds":
-            {
-              "LowerBound": 0,
-              "UpperBound": 105
-            },
-            "YLabel": "Pulse Normalized Cardiac Output",
-            "X2Header": "BloodVolumeLost(%)",
-            "Y2Header":
-            [
-              "NormalizedCardiacOutput"
-            ],
-            "Y2Label": "Validation Normalized Cardiac Output",
-            "Y2Bounds":
-            {
-              "LowerBound": 0,
-              "UpperBound": 105
-            }
-          }
+          { "Title": "", "OutputFilename": "CardiacOutputShock_partial",
+              "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss", "XBounds": { "LowerBound": 0, "UpperBound": 50 },
+              "YHeader": [ "CardiacOutput(L/min)" ], "YBounds": { "LowerBound": 0, "UpperBound": 105 }, "YLabel": "Pulse Normalized Cardiac Output",
+              "X2Header": "BloodVolumeLost(%)", "Y2Header": [ "NormalizedCardiacOutput" ], "Y2Label": "Validation Normalized Cardiac Output",
+              "Y2Bounds": { "LowerBound": 0, "UpperBound": 105 }}
         ]
       }
     },
@@ -162,55 +90,23 @@
       {
         "PlotConfig":
         {
-          "Gridlines": true,
-          "OutputPathOverride": "./docs/html/plots/Cardiovascular",
-          "PercentOfBaselineMode": "OnlyY",
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "OnlyY",
           "TickStyle": "Plain"
         },
         "PlotSource":
         [
-          {
-            "CSVData": "./verification/scenarios/patient/HemorrhageGroup1Results.csv",
-            "Label": "Group 1"
-          },
-          {
-            "CSVData": "./verification/scenarios/patient/HemorrhageGroup2Results.csv",
-            "Label": "Group 2"
-          },
-          {
-            "CSVData": "./verification/scenarios/patient/HemorrhageGroup3Results.csv",
-            "Label": "Group 3"
-          },
-          {
-            "CSVData": "./verification/scenarios/patient/HemorrhageGroup4Results.csv",
-            "Label": "Group 4"
-          },
-          {
-            "CSVData": "./verification/scenarios/patient/HemorrhageGroup5Results.csv",
-            "Label": "Group 5"
-          },
-          {
-            "CSVData": "./verification/scenarios/patient/HemorrhageGroup6Results.csv",
-            "Label": "Group 6"
-          }
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup1Results.csv", "Label": "Group 1" },
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup2Results.csv", "Label": "Group 2" },
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup3Results.csv", "Label": "Group 3" },
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup4Results.csv", "Label": "Group 4" },
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup5Results.csv", "Label": "Group 5" },
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup6Results.csv", "Label": "Group 6" }
         ],
         "Series":
         [
-          {
-            "Title": "",
-            "OutputFilename": "HemorrhageGroups_partial",
-            "XHeader": "Time(s)",
-            "YHeader":
-            [
-              "MeanArterialPressure(mmHg)"
-            ],
-            "YLabel": "Mean Arterial Pressure Delta",
-            "YBounds":
-            {
-              "LowerBound": 0,
-              "UpperBound": 105
-            }
-          }
+          { "Title": "", "OutputFilename": "HemorrhageGroups_partial", "XHeader": "Time(s)",
+              "YHeader": [ "MeanArterialPressure(mmHg)" ], "YLabel": "Mean Arterial Pressure Delta",
+              "YBounds": { "LowerBound": 0, "UpperBound": 105 }}
         ]
       }
     },
@@ -219,35 +115,16 @@
       {
         "PlotConfig":
         {
-          "Gridlines": true,
-          "OutputPathOverride": "./docs/html/plots/Cardiovascular/",
-          "TickStyle": "Plain"
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "TickStyle": "Plain"
         },
         "PlotSource":
         [
-          {
-            "CSVData": "./verification/unit_tests/pulse/CardiovascularCircuitOutput.csv"
-          }
+          { "CSVData": "./verification/unit_tests/pulse/CardiovascularCircuitOutput.csv" }
         ],
         "Series":
         [
-          {
-            "Title": "",
-            "OutputFilename": "ComplianceVsElastance_partial",
-            "XBounds":
-            {
-              "LowerBound": 30,
-              "UpperBound": 35
-            },
-            "YHeader":
-            [
-              "LeftHeartCompliance_mL_Per_mmHg"
-            ],
-            "Y2Header":
-            [
-              "LeftHeartElastance_mmHg_Per_mL"
-            ]
-          }
+          { "Title": "", "OutputFilename": "ComplianceVsElastance_partial", "XBounds": { "LowerBound": 30, "UpperBound": 35 },
+              "YHeader": [ "LeftHeartCompliance_mL_Per_mmHg" ], "Y2Header": [ "LeftHeartElastance_mmHg_Per_mL" ] }
         ]
       }
     }

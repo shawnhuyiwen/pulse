@@ -7,20 +7,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors as mcolors
 from cycler import cycler
+from timeit import default_timer as timer
+from datetime import timedelta
 
 from pulse.cdm.plots import *
 from pulse.cdm.io.plots import serialize_plotter_list_from_file
+from pulse.cdm.utils.file_utils import get_config_dir
 
-def create_plots(plots_file: str):
+def create_plots(plots_file: str, benchmark: bool = False):
     plotters = []
     serialize_plotter_list_from_file(plots_file, plotters)
     for p in plotters:
         if isinstance(p, SEMultiHeaderSeriesPlotter):
-            multi_header_series_plotter(p)
+            multi_header_series_plotter(p, benchmark)
         else:
             raise Exception("Unknown plotter type")
 
-def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter):
+def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: bool = False):
+    if benchmark:
+        start = timer()
+
     if not plotter.has_plot_sources():
         raise Exception("No plot source provided")
     sources = plotter.get_plot_sources()
@@ -32,6 +38,9 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter):
         os.makedirs(output_path)
 
     for series in plotter.get_series():
+        if benchmark:
+            start_series = timer()
+
         config = series.get_plot_config()
 
         # Default x header is time (first column)
@@ -82,6 +91,14 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter):
                        validation_source):
             save_current_plot(output_filepath, config.get_image_properties())
         clear_current_plot()
+
+        if benchmark:
+            end_series = timer()
+            print(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
+
+    if benchmark:
+        end = timer()
+        print(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 def generate_title(x_header, y_header):
     return y_header + " vs "+ x_header
@@ -231,23 +248,26 @@ def clear_current_plot():
     plt.close()
     plt.clf()
 
-def get_config_dir():
-    with open("run.config") as file:
-        for line in file:
-            if line.startswith("root_dir"):
-                line = line.replace('\n','')
-                root = line.split("=")
-                return root[1]+"data/config/"
-    raise ValueError('Could not find study directory.')
-
 if __name__ == "__main__":
+    benchmark = False
     plot_config = None
+
     if len(sys.argv) > 1:
         if os.path.isfile(sys.argv[1]):
           plot_config = sys.argv[1]
         elif os.path.isfile(get_config_dir()+sys.argv[1]):
           plot_config = get_config_dir()+sys.argv[1]
+    if len(sys.argv) > 2 and (sys.argv[2] == '--benchmark' or sys.argv[2] == '-b'):
+        benchmark = True
+
     if plot_config is None:
         print("Please provide a valid json configuration")
     else:
-        create_plots(plot_config)
+        if benchmark:
+            start = timer()
+
+        create_plots(plot_config, benchmark)
+
+        if benchmark:
+            end = timer()
+            print(f'Total Execution Time: {timedelta(seconds=end - start)}')
