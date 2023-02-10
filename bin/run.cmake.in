@@ -1,7 +1,6 @@
 # Scripts to assist developers
 # Mostly these are calling the test suite driver and validator classes in Java
 
-
 find_package(Java REQUIRED)
 include(UseJava)
 if(_JAVA_HOME)
@@ -117,6 +116,10 @@ elseif(cmd STREQUAL "updatebaselines")
   execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@" --target UpdateVerification)
 elseif(cmd STREQUAL "jar")
   execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@/src/java" --target PulseJava)
+elseif(${cmd} MATCHES "setup.py")
+  file(COPY @CMAKE_BINARY_DIR@/src/python/pulse DESTINATION @CMAKE_INSTALL_PREFIX@/python)
+  file(COPY @CMAKE_BINARY_DIR@/src/python/google DESTINATION @CMAKE_INSTALL_PREFIX@/python)
+  file(COPY @CMAKE_SOURCE_DIR@/src/python/pulse DESTINATION @CMAKE_INSTALL_PREFIX@/python)
 elseif(cmd STREQUAL "rebase")
   # find Git and if available set GIT_HASH variable
   find_package(Git QUIET)
@@ -154,7 +157,10 @@ elseif(${cmd} MATCHES "compare")
   endif()
 else()
   if(${cmd} MATCHES "plot")
-    execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.utilities.csv.plots.PlotDriver ${TYPE}.config)
+    find_package(Python)
+    set(ENV{PYTHONPATH} "@CMAKE_INSTALL_PREFIX@/python/")
+    execute_process(COMMAND ${Python_EXECUTABLE} "../python/pulse/cdm/utils/plotter.py" ${TYPE}.json RESULT_VARIABLE py_result)
+    #execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.utilities.csv.plots.PlotDriver ${TYPE}.config)
   else()
     execute_process(COMMAND "${Java_JAVA_EXECUTABLE}" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SETestDriver ${TYPE}.config)
   endif()

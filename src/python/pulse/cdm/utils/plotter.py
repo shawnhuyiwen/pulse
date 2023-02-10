@@ -222,6 +222,7 @@ def create_plot(plot_sources: [SEPlotSource],
     return True
 
 def save_current_plot(filename: str, image_props: SEImageProperties):
+    print("Creating plot "+filename)
     figure = plt.gcf()
     figure.set_size_inches(image_props.get_width_inch(), image_props.get_height_inch())
     figure.savefig(filename, bbox_inches='tight', dpi=image_props.get_dpi())
@@ -240,8 +241,13 @@ def get_config_dir():
     raise ValueError('Could not find study directory.')
 
 if __name__ == "__main__":
+    plot_config = None
     if len(sys.argv) > 1:
-        plot_config = sys.argv[1]
+        if os.path.isfile(sys.argv[1]):
+          plot_config = sys.argv[1]
+        elif os.path.isfile(get_config_dir()+sys.argv[1]):
+          plot_config = get_config_dir()+sys.argv[1]
+    if plot_config is None:
+        print("Please provide a valid json configuration")
     else:
-        plot_config = get_config_dir() + "PlotRun.json"
-    create_plots(plot_config)
+        create_plots(plot_config)
