@@ -3,6 +3,7 @@
 
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.csv_utils import compute_means
+from pulse.cdm.utils.math_utils import generate_percent_difference_span
 
 def write_patient_table(patient_map):
     for patient,values in patient_map.items():
@@ -36,20 +37,21 @@ def write_ventilator_settings_table(settings_map):
 
 def write_validation_table(validation_map):
     for key, values in validation_map.items():
-        headings = ["Ventilator Parameter", "Ground Truth", "Pulse"]
+        headings = ["Property Name", "Expected Value", "Engine Value", "Percent Error"]
 
         means = compute_means("./verification/scenarios/miscellaneous/ventilation_mechanics/"+key+"Results.csv",
                               list(values.keys()), 500, 1250)
 
-        i = 0
         data = []
-        for header, value in values.items():
-            data.append([header + " (" + value[1] + ")", value[0], means[i]])
-            i = i + 1
+        for i, (header, value) in enumerate(values.items()):
+            data.append([header + " (" + value[1] + ")",
+                         value[0],
+                         f"Mean of {means[i]:.3f}",
+                         generate_percent_difference_span(value[0], means[i], epsilon=1e-10, precision=1)])
 
-        fields = [0, 1, 2]
+        fields = [0, 1, 2, 3]
 
-        align = [('^', '<'), ('^', '^'), ('^', '<')]
+        align = [('<', '<')] * len(headings)
 
         f = open("./test_results/tables/MechanicalVentilator-" + key + "-Validation" + ".md", "w")
         table(f, data, fields, headings, align)

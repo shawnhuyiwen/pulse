@@ -1,3 +1,6 @@
+# Distributed under the Apache License, Version 2.0.
+# See accompanying NOTICE file for details.
+
 def get_root_dir():
     return get_dir_from_run_config("root_dir")
 

@@ -120,8 +120,8 @@ def serialize_plot_source_to_bind(src: SEPlotSource, dst: PlotSourceData):
         dst.LineFormat = src.get_line_format()
     if src.has_label():
         dst.Label = src.get_label()
-    if src.has_begin_row():
-        dst.BeginRow = src.get_begin_row()
+    if src.has_start_row():
+        dst.StartRow = src.get_start_row()
     if src.has_end_row():
         dst.EndRow = src.get_end_row()
 def serialize_plot_source_from_bind(src: PlotSourceData, dst: SEPlotSource):
@@ -130,8 +130,8 @@ def serialize_plot_source_from_bind(src: PlotSourceData, dst: SEPlotSource):
         dst.set_line_format(src.LineFormat)
     if src.HasField("Label"):
         dst.set_label(src.Label)
-    if src.HasField("BeginRow"):
-        dst.set_begin_row(src.BeginRow)
+    if src.HasField("StartRow"):
+        dst.set_start_row(src.StartRow)
     if src.HasField("EndRow"):
         dst.set_end_row(src.EndRow)
 

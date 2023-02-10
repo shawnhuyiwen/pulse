@@ -13,7 +13,7 @@
         [
           {
             "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Healthy_VC_ACResults.csv",
-            "LineFormat": "-b", "BeginRow": 500, "EndRow": 1250
+            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
           }
         ],
         "Series":
@@ -39,7 +39,7 @@
         [
           {
             "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Healthy_PC_ACResults.csv",
-            "LineFormat": "-b", "BeginRow": 500, "EndRow": 1250
+            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
           }
         ],
         "Series":
@@ -65,7 +65,7 @@
         [
           {
             "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Healthy_CPAPResults.csv",
-            "LineFormat": "-b", "BeginRow": 500, "EndRow": 1250
+            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
           }
         ],
         "Series":
@@ -91,7 +91,7 @@
         [
           {
             "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Restrictive_VC_ACResults.csv",
-            "LineFormat": "-b", "BeginRow": 500, "EndRow": 1250
+            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
           }
         ],
         "Series":
@@ -117,7 +117,7 @@
         [
           {
             "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Restrictive_PC_ACResults.csv",
-            "LineFormat": "-b", "BeginRow": 500, "EndRow": 1250
+            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
           }
         ],
         "Series":
@@ -143,7 +143,7 @@
         [
           {
             "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Restrictive_CPAPResults.csv",
-            "LineFormat": "-b", "BeginRow": 500, "EndRow": 1250
+            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
           }
         ],
         "Series":
@@ -169,7 +169,7 @@
         [
           {
             "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Obstructive_VC_ACResults.csv",
-            "LineFormat": "-b", "BeginRow": 500, "EndRow": 1250
+            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
           }
         ],
         "Series":
@@ -195,7 +195,7 @@
         [
           {
             "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Obstructive_PC_ACResults.csv",
-            "LineFormat": "-b", "BeginRow": 500, "EndRow": 1250
+            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
           }
         ],
         "Series":
@@ -221,7 +221,7 @@
         [
           {
             "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Obstructive_CPAPResults.csv",
-            "LineFormat": "-b", "BeginRow": 500, "EndRow": 1250
+            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
           }
         ],
         "Series":

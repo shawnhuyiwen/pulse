@@ -59,8 +59,8 @@ def table(file, records, fields, headings, alignment = None):
     if len(extended_align) > num_columns:
         extended_align = extended_align[0:num_columns]
     elif len(extended_align) < num_columns:
-        extended_align += [('^', '<')
-                           for i in range[num_columns-len(extended_align)]]
+        extended_align += [('^', '<') \
+                           for i in range(num_columns-len(extended_align))]
 
     heading_align, cell_align = [x for x in zip(*extended_align)]
 

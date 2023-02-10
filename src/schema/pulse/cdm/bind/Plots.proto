@@ -67,7 +67,7 @@ message PlotSourceData
 
   optional string                     Label                     = 4;  /**<< @brief If provided, label to be used in legend. */
   optional string                     LineFormat                = 5;  /**<< @brief Plot this source with this format. */
-  optional int32                      BeginRow                  = 6;
+  optional int32                      StartRow                  = 6;
   optional int32                      EndRow                    = 7;
 }
 

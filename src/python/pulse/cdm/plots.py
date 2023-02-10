@@ -1,13 +1,12 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
-import pandas as pd
-
 from enum import Enum
 from typing import Tuple
 from copy import deepcopy
 
 from pulse.cdm.scalars import SEScalar, SEScalarLength
-from pulse.cdm.utils.file_utils import *
+from pulse.cdm.utils.file_utils import get_dir_from_run_config
+from pulse.cdm.utils.csv_utils import read_csv_into_df
 
 class SEImageProperties():
     __slots__ = ["_file_format", "_height_inch", "_width_inch", "_dpi"]
@@ -354,14 +353,14 @@ class SEPlotConfig():
 
 class SEPlotSource():
     __slots__ = ["_csv_data", "_df", "_label", "_line_format",
-                 "_begin_row", "_end_row"]
+                 "_start_row", "_end_row"]
 
     def __init__(self):
         self._csv_data = None
         self._df = None
         self._label = None
         self._line_format = ""
-        self._begin_row = None
+        self._start_row = None
         self._end_row = None
 
     def get_csv_data(self):
@@ -374,7 +373,7 @@ class SEPlotSource():
         self._csv_data = None
         self._df = None
 
-    def _read_csv_into_df(self, replace_slashes=True):
+    def _read_csv_into_df(self):
         if not self.has_csv_data():
             raise Exception("No CSV data provided")
 
@@ -384,17 +383,11 @@ class SEPlotSource():
             if key in self._csv_data:
                 self._csv_data = self._csv_data.replace(key, get_dir_from_run_config(key[1:]))
 
-        self._df = pd.read_csv(self._csv_data)
-        for column in self._df.columns[1:]:
-            # Convert any strings to NaN
-            self._df[column] = pd.to_numeric(self._df[column], errors='coerce')
-            # Replace slashes in units string
-            if replace_slashes:
-                self._df.rename(columns={column: column.replace("/", "_Per_")}, inplace=True)
+        self._df = read_csv_into_df(self._csv_data, replace_slashes=False)
     def get_data_frame(self):
         if self._df is None:
-            self._read_csv_into_df(replace_slashes=False)
-        return self._df.loc[self._begin_row:self._end_row]
+            self._read_csv_into_df()
+        return self._df.loc[self._start_row:self._end_row]
     def invalidate_data_frame(self):
         self._df = None
 
@@ -416,12 +409,12 @@ class SEPlotSource():
     def invalidate_line_format(self):
         self._line_format = ""
 
-    def get_begin_row(self):
-        return self._begin_row
-    def set_begin_row(self, row: int):
-        self._begin_row = row
-    def has_begin_row(self):
-        return self._begin_row is not None
+    def get_start_row(self):
+        return self._start_row
+    def set_start_row(self, row: int):
+        self._start_row = row
+    def has_start_row(self):
+        return self._start_row is not None
 
     def get_end_row(self):
         return self._end_row
