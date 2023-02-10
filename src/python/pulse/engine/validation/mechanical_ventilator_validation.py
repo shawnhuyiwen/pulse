@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.utils.markdown import table
-from pulse.cdm.utils.csv import compute_means
+from pulse.cdm.utils.csv_utils import compute_means
 
 def write_patient_table(patient_map):
     for patient,values in patient_map.items():
