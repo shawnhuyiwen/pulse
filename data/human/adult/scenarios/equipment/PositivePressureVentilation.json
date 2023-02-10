@@ -1,6 +1,6 @@
 {
-  "Name": "MechanicalVentilation",
-  "Description": "Mimic a patient with generic impaired alveolar exchange and apnea, then ventilated by simulating inputs as if they are from external sensors.",
+  "Name": "PositivePressureVentilation",
+  "Description": "Test respiratory parameter changes due to positive pressure ventilation.",
   "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{

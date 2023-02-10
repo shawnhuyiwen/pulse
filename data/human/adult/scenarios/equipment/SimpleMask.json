@@ -1,6 +1,6 @@
 {
-  "Name": "BasicStandard",
-  "Description": "Basic scenario measuring standard male patient vitals with no conditions, insults, or interventions.",
+  "Name": "SimpleMask",
+  "Description": "Apply supplemental oxygen via a simple mask.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
     "StandardDataRequests.json",

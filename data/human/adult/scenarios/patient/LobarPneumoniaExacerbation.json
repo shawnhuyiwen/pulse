@@ -1,6 +1,6 @@
 {
-  "Name": "Lobar Pneumonia Exacerbation",
-  "Description": "",
+  "Name": "LobarPneumoniaExacerbation",
+  "Description": "Increasing severities of lobar pneumonia.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
     "StandardDataRequests.json",

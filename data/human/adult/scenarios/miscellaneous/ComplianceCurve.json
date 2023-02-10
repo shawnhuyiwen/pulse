@@ -1,5 +1,5 @@
 {
-  "Name": "Spirometry",
+  "Name": "ComplianceCurve",
   "Description": "Perform a spirometry breath.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [

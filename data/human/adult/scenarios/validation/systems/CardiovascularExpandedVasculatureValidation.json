@@ -1,6 +1,6 @@
 {"Scenario":
   {
-    "Name": "CardiovascularValidation",
+    "Name": "CardiovascularExpandedVasculatureValidation",
     "Description": "Validation of Cardiovascular data.",
     "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager":

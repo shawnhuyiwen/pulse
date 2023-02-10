@@ -1,6 +1,6 @@
 {
-  "Name": "ARDS Exacerbation",
-  "Description": "",
+  "Name": "ARDSExacerbation",
+  "Description": "Increasing severities of ARDS.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
     "StandardDataRequests.json",

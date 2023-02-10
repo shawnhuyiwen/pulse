@@ -1,6 +1,6 @@
 {
   "Scenario": {
-  "Name":"BasicStandard",
+  "Name":"EngineState",
   "Description":"Basic scenario measuring patient vitals with no insults or interventions",
   "EngineStateFile":"./states/StandardMale@0s.json",
   "DataRequestFile": [

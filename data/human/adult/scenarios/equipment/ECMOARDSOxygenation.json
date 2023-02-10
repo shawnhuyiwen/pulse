@@ -1,5 +1,5 @@
 {
-  "Name": "ECMO",
+  "Name": "ECMOARDSOxygenation",
   "Description": "Connect the ECMO machine to a patient.",
   "PatientConfiguration": {
     "PatientFile": "StandardMale.json",

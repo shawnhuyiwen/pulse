@@ -1,5 +1,5 @@
 {
-  "Name": "ColdWaterSubmersionScenario",
+  "Name": "ColdWaterSubmersion",
   "Description": "Patient is submerged in freezing water for five minutes.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [

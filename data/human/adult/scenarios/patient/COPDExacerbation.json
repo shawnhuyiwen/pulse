@@ -1,6 +1,6 @@
 {
-  "Name": "COPD Exacerbation",
-  "Description": "",
+  "Name": "COPDExacerbation",
+  "Description": "Increasing severities of COPD.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
     "StandardDataRequests.json",
