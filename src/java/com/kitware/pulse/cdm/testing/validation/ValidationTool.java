@@ -394,7 +394,7 @@ public abstract class ValidationTool
               Row row = xlSheet.getRow(r);
               if (row == null) 
                 continue;
-              int cells = 13;//row.getPhysicalNumberOfCells();
+              int cells = 14;//row.getPhysicalNumberOfCells();
               Cell cell = row.getCell(0);
               if(cell==null)
                 continue;
