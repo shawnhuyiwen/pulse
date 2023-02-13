@@ -88,137 +88,101 @@ def data():
                 "InspiratoryTime": [1.0, "s"],
                 "RespirationRate" : [12, "bpm"],
                 "PositiveEndExpiredPressure": [5, "cmH2O"],
-                "Flow": [60, "L/min"],
-                "LeakSeverity": [0.49, "fraction"]
+                "Flow": [60, "L/min"]
             },
             "Healthy_PC_AC": {
                 "InspiratoryTime": [1.0, "s"],
                 "RespirationRate": [12, "bpm"],
                 "PositiveEndExpiredPressure": [5, "cmH2O"],
-                "PeakInspiratoryPressure": [19, "cmH2O"],
-                "LeakSeverity": [0.47, "fraction"]
+                "PeakInspiratoryPressure": [19, "cmH2O"]
             },
             "Healthy_CPAP": {
                 "DeltaPressureSupport": [10, "cmH2O"],
                 "PositiveEndExpiredPressure": [5, "cmH2O"],
-                "Slope": [0.2, "s"],
-                "LeakSeverity": [0.42, "fraction"]
+                "Slope": [0.2, "s"]
             },
             "Restrictive_VC_AC": {
                 "TidalVolume": [550, "mL"],
                 "InspiratoryTime": [1.1, "s"],
                 "RespirationRate": [12, "bpm"],
                 "PositiveEndExpiredPressure": [5, "cmH2O"],
-                "Flow": [40, "L/min"],
-                "LeakSeverity": [0.38, "fraction"]
+                "Flow": [40, "L/min"]
             },
             "Restrictive_PC_AC": {
                 "InspiratoryTime": [1.1, "s"],
                 "RespirationRate": [12, "bpm"],
                 "PositiveEndExpiredPressure": [5, "cmH2O"],
-                "PeakInspiratoryPressure": [23, "cmH2O"],
-                "LeakSeverity": [0.32, "fraction"]
+                "PeakInspiratoryPressure": [23, "cmH2O"]
             },
             "Restrictive_CPAP": {
                 "DeltaPressureSupport": [10, "cmH2O"],
                 "PositiveEndExpiredPressure": [5, "cmH2O"],
-                "Slope": [0.2, "s"],
-                "LeakSeverity": [0.26, "fraction"]
+                "Slope": [0.2, "s"]
             },
             "Obstructive_VC_AC": {
                 "TidalVolume": [500,"mL"],
                 "InspiratoryTime": [1.1,"s"],
                 "RespirationRate": [12,"/min"],
                 "PositiveEndExpiredPressure": [5,"cmH2O"],
-                "Flow": [40,"L/min"],
-                "LeakSeverity": [0.37,"fraction"]
+                "Flow": [40,"L/min"]
             },
             "Obstructive_PC_AC": {
                 "InspiratoryTime": [1.2,"s"],
                 "RespirationRate": [12,"bpm"],
                 "PositiveEndExpiredPressure": [5,"cmH2O"],
-                "PeakInspiratoryPressure": [12,"cmH2O"],
-                "LeakSeverity": [0.36,"fraction"]
+                "PeakInspiratoryPressure": [12,"cmH2O"]
             },
             "Obstructive_CPAP": {
                 "DeltaPressureSupport": [10,"cmH2O"],
                 "PositiveEndExpiredPressure": [5,"cmH2O"],
-                "Slope": [0.2,"s"],
-                "LeakSeverity": [0.45,"fraction"]
+                "Slope": [0.2,"s"]
             }
         },
         "validationData" : {
             "Healthy_VC_AC": {
                 "MechanicalVentilator-RespirationRate(1/min)" : [15, "bpm"],
                 "MechanicalVentilator-MeanAirwayPressure(cmH2O)": [7.9, "cmH2O"],
-                "MechanicalVentilator-TidalVolume(mL)" : [900, "mL"],
-                "MechanicalVentilator-InspiratoryTidalVolume(mL)": [960, "mL"],
-                "MechanicalVentilator-ExpiratoryTidalVolume(mL)": [829, "mL"],
-                "MechanicalVentilator-LeakFraction": [0.13, "fraction"]
+                "MechanicalVentilator-TidalVolume(mL)" : [900, "mL"]
             },
             "Healthy_PC_AC": {
                 "MechanicalVentilator-RespirationRate(1/min)": [15, "bpm"],
                 "MechanicalVentilator-MeanAirwayPressure(cmH2O)": [8.6, "cmH2O"],
-                "MechanicalVentilator-TidalVolume(mL)": [1047, "mL"],
-                "MechanicalVentilator-InspiratoryTidalVolume(mL)": [1116, "mL"],
-                "MechanicalVentilator-ExpiratoryTidalVolume(mL)": [985, "mL"],
-                "MechanicalVentilator-LeakFraction": [0.12, "fraction"]
+                "MechanicalVentilator-TidalVolume(mL)": [1047, "mL"]
             },
             "Healthy_CPAP": {
                 "MechanicalVentilator-RespirationRate(1/min)": [15, "bpm"],
                 "MechanicalVentilator-MeanAirwayPressure(cmH2O)": [6.9, "cmH2O"],
-                "MechanicalVentilator-TidalVolume(mL)": [905, "mL"],
-                "MechanicalVentilator-InspiratoryTidalVolume(mL)": [941, "mL"],
-                "MechanicalVentilator-ExpiratoryTidalVolume(mL)": [827, "mL"],
-                "MechanicalVentilator-LeakFraction": [0.11, "fraction"]
+                "MechanicalVentilator-TidalVolume(mL)": [905, "mL"]
             },
             "Restrictive_VC_AC": {
                 "MechanicalVentilator-RespirationRate(1/min)": [25, "bpm"],
                 "MechanicalVentilator-MeanAirwayPressure(cmH2O)": [13, "cmH2O"],
-                "MechanicalVentilator-TidalVolume(mL)": [550, "mL"],
-                "MechanicalVentilator-InspiratoryTidalVolume(mL)": [596, "mL"],
-                "MechanicalVentilator-ExpiratoryTidalVolume(mL)": [526, "mL"],
-                "MechanicalVentilator-LeakFraction": [0.11, "fraction"]
+                "MechanicalVentilator-TidalVolume(mL)": [550, "mL"]
             },
             "Restrictive_PC_AC": {
                 "MechanicalVentilator-RespirationRate(1/min)": [25, "bpm"],
                 "MechanicalVentilator-MeanAirwayPressure(cmH2O)": [12, "cmH2O"],
-                "MechanicalVentilator-TidalVolume(mL)": [528, "mL"],
-                "MechanicalVentilator-InspiratoryTidalVolume(mL)": [579, "mL"],
-                "MechanicalVentilator-ExpiratoryTidalVolume(mL)": [509, "mL"],
-                "MechanicalVentilator-LeakFraction": [0.13, "fraction"]
+                "MechanicalVentilator-TidalVolume(mL)": [528, "mL"]
             },
             "Restrictive_CPAP": {
                 "MechanicalVentilator-RespirationRate(1/min)": [25, "bpm"],
                 "MechanicalVentilator-MeanAirwayPressure(cmH2O)": [10, "cmH2O"],
-                "MechanicalVentilator-TidalVolume(mL)": [387, "mL"],
-                "MechanicalVentilator-InspiratoryTidalVolume(mL)": [410, "mL"],
-                "MechanicalVentilator-ExpiratoryTidalVolume(mL)": [365, "mL"],
-                "MechanicalVentilator-LeakFraction": [0.08, "fraction"]
+                "MechanicalVentilator-TidalVolume(mL)": [387, "mL"]
             },
             "Obstructive_VC_AC": {
                 "MechanicalVentilator-RespirationRate(1/min)": [18, "bpm"],
                 "MechanicalVentilator-MeanAirwayPressure(cmH2O)": [7.3, "cmH2O"],
-                "MechanicalVentilator-TidalVolume(mL)": [493, "mL"],
-                "MechanicalVentilator-InspiratoryTidalVolume(mL)": [518, "mL"],
-                "MechanicalVentilator-ExpiratoryTidalVolume(mL)": [462, "mL"],
-                "MechanicalVentilator-LeakFraction": [0.11, "fraction"]
+                "MechanicalVentilator-TidalVolume(mL)": [493, "mL"]
             },
             "Obstructive_PC_AC": {
                 "MechanicalVentilator-RespirationRate(1/min)": [18, "bpm"],
                 "MechanicalVentilator-MeanAirwayPressure(cmH2O)": [7.8, "cmH2O"],
-                "MechanicalVentilator-TidalVolume(mL)": [571, "mL"],
-                "MechanicalVentilator-InspiratoryTidalVolume(mL)": [604, "mL"],
-                "MechanicalVentilator-ExpiratoryTidalVolume(mL)": [543, "mL"],
-                "MechanicalVentilator-LeakFraction": [0.11, "fraction"]
+                "MechanicalVentilator-TidalVolume(mL)": [571, "mL"]
             },
             "Obstructive_CPAP": {
                 "MechanicalVentilator-RespirationRate(1/min)": [18, "bpm"],
                 "MechanicalVentilator-MeanAirwayPressure(cmH2O)": [8.5, "cmH2O"],
-                "MechanicalVentilator-TidalVolume(mL)": [657, "mL"],
-                "MechanicalVentilator-InspiratoryTidalVolume(mL)": [714, "mL"],
-                "MechanicalVentilator-ExpiratoryTidalVolume(mL)": [635, "mL"],
-                "MechanicalVentilator-LeakFraction": [0.15, "fraction"]
+                "MechanicalVentilator-TidalVolume(mL)": [657, "mL"]
             }
         }
     }
