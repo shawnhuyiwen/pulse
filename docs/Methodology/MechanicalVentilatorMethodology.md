@@ -250,13 +250,13 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
           <td rowspan="3"><a href="./Images/MechanicalVentilator/Healthy_VC_AC.jpg"><img src="./Images/MechanicalVentilator/Healthy_VC_AC.jpg"></a></td>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_AirwayPressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_AirwayPressure.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_AirwayPressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_AirwayPressure.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_InspiratoryFlow.png.jpg"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_InspiratoryFlow.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_InspiratoryFlow.png.jpg"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_InspiratoryFlow.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -270,8 +270,8 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
         <td><a href="./Images/MechanicalVentilator/Healthy_VC_AC_Loops.jpg"><img src="./Images/MechanicalVentilator/Healthy_VC_AC_Loops.jpg"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -303,13 +303,13 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
           <td rowspan="3"><a href="./Images/MechanicalVentilator/Healthy_PC_AC.jpg"><img src="./Images/MechanicalVentilator/Healthy_PC_AC.jpg"></a></td>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_AirwayPressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_AirwayPressure.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_AirwayPressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_AirwayPressure.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_InspiratoryFlow.png.jpg"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_InspiratoryFlow.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_InspiratoryFlow.png.jpg"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_InspiratoryFlow.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -323,8 +323,8 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
         <td><a href="./Images/MechanicalVentilator/Healthy_PC_AC_Loops.jpg"><img src="./Images/MechanicalVentilator/Healthy_PC_AC_Loops.jpg"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -356,13 +356,13 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
           <td rowspan="3"><a href="./Images/MechanicalVentilator/Healthy_CPAP.jpg"><img src="./Images/MechanicalVentilator/Healthy_CPAP.jpg"></a></td>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_AirwayPressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_AirwayPressure.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_AirwayPressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_AirwayPressure.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_InspiratoryFlow.png.jpg"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_InspiratoryFlow.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_InspiratoryFlow.png.jpg"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_InspiratoryFlow.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -376,8 +376,8 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
         <td><a href="./Images/MechanicalVentilator/NoImage.png"><img src="./Images/MechanicalVentilator/NoImage.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Healthy_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -417,13 +417,13 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
           <td rowspan="3"><a href="./Images/MechanicalVentilator/Restrictive_VC_AC.jpg"><img src="./Images/MechanicalVentilator/Restrictive_VC_AC.jpg"></a></td>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_AirwayPressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_AirwayPressure.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_AirwayPressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_AirwayPressure.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_InspiratoryFlow.png.jpg"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_InspiratoryFlow.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_InspiratoryFlow.png.jpg"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_InspiratoryFlow.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -437,8 +437,8 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
         <td><a href="./Images/MechanicalVentilator/Restrictive_VC_AC_Loops.jpg"><img src="./Images/MechanicalVentilator/Restrictive_VC_AC_Loops.jpg"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -470,13 +470,13 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
           <td rowspan="3"><a href="./Images/MechanicalVentilator/Restrictive_PC_AC.jpg"><img src="./Images/MechanicalVentilator/Restrictive_PC_AC.jpg"></a></td>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_AirwayPressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_AirwayPressure.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_AirwayPressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_AirwayPressure.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_InspiratoryFlow.png.jpg"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_InspiratoryFlow.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_InspiratoryFlow.png.jpg"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_InspiratoryFlow.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -490,8 +490,8 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
         <td><a href="./Images/MechanicalVentilator/Restrictive_PC_AC_Loops.jpg"><img src="./Images/MechanicalVentilator/Restrictive_PC_AC_Loops.jpg"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -523,13 +523,13 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
           <td rowspan="3"><a href="./Images/MechanicalVentilator/Restrictive_CPAP.jpg"><img src="./Images/MechanicalVentilator/Restrictive_CPAP.jpg"></a></td>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_AirwayPressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_AirwayPressure.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_AirwayPressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_AirwayPressure.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_InspiratoryFlow.png.jpg"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_InspiratoryFlow.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_InspiratoryFlow.png.jpg"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_InspiratoryFlow.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -543,8 +543,8 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
         <td><a href="./Images/MechanicalVentilator/NoImage.png"><img src="./Images/MechanicalVentilator/NoImage.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Restrictive_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -584,13 +584,13 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
           <td rowspan="3"><a href="./Images/MechanicalVentilator/Obstructive_VC_AC.jpg"><img src="./Images/MechanicalVentilator/Obstructive_VC_AC.jpg"></a></td>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_AirwayPressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_AirwayPressure.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_AirwayPressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_AirwayPressure.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_InspiratoryFlow.png.jpg"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_InspiratoryFlow.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_InspiratoryFlow.png.jpg"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_InspiratoryFlow.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -604,8 +604,8 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
         <td><a href="./Images/MechanicalVentilator/Obstructive_VC_AC_Loops.jpg"><img src="./Images/MechanicalVentilator/Obstructive_VC_AC_Loops.jpg"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_VC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -637,13 +637,13 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
           <td rowspan="3"><a href="./Images/MechanicalVentilator/Obstructive_PC_AC.jpg"><img src="./Images/MechanicalVentilator/Obstructive_PC_AC.jpg"></a></td>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_AirwayPressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_AirwayPressure.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_AirwayPressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_AirwayPressure.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_InspiratoryFlow.png.jpg"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_InspiratoryFlow.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_InspiratoryFlow.png.jpg"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_InspiratoryFlow.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -657,8 +657,8 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
         <td><a href="./Images/MechanicalVentilator/Obstructive_PC_AC_Loops.jpg"><img src="./Images/MechanicalVentilator/Obstructive_PC_AC_Loops.jpg"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_PC-AC_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -690,13 +690,13 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
           <td rowspan="3"><a href="./Images/MechanicalVentilator/Obstructive_CPAP.jpg"><img src="./Images/MechanicalVentilator/Obstructive_CPAP.jpg"></a></td>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_AirwayPressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_AirwayPressure.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_AirwayPressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_AirwayPressure.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_InspiratoryFlow.png.jpg"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_InspiratoryFlow.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_InspiratoryFlow.png.jpg"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_InspiratoryFlow.png"></a></td>
         </tr>
         <tr>
-          <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume.png"></a></td>
+          <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume.png"></a></td>
         </tr>
     </tbody>
 </table>
@@ -710,8 +710,8 @@ The waveforms created by the virtual ventilator match well with the displayed ph
     <tbody>
         <tr>
         <td><a href="./Images/MechanicalVentilator/NoImage.png"><img src="./Images/MechanicalVentilator/NoImage.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
-        <td><a href="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./Images/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume_vs_Airway_Pressure.png"></a></td>
+        <td><a href="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"><img src="./plots/MechanicalVentilator/ventilator_analysis/Obstructive_CPAP_Total_Lung_Volume_vs_Inspiratory_Flow.png"></a></td>
         </tr>
     </tbody>
 </table>

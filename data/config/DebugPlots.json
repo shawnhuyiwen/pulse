@@ -1,242 +1,130 @@
 {
-  "PlotConfig":
-  {
-    "OutputPathOverride": "./test_results/ventilator_analysis/", "RemoveLegends": true, "FillArea": true,
-    "ImageProperties": { "FileFormat": ".png", "Height_inch": 2, "Width_inch": 6 }
-  },
   "Plotter" :
   [
     {
       "MultiHeaderSeriesPlotter":
       {
+        "PlotConfig":
+        {
+          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "Width_inch": 8 },
+          "SciLimits": {}
+        },
         "PlotSource":
         [
-          {
-            "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Healthy_VC_ACResults.csv",
-            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
-          }
+          { "CSVData": "./verification/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv", "LineFormat": "-r" }
         ],
         "Series":
         [
-          { "Title": "Healthy VC-AC AirwayPressure", "YHeader": [ "MechanicalVentilator-AirwayPressure(cmH2O)" ], "YLabel": "cmH2O" },
-          { "Title": "Healthy VC-AC InspiratoryFlow", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ], "YLabel": "L/min" },
-          { "Title": "Healthy VC-AC Total Lung Volume", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ], "YLabel": "mL" },
-          { "Title": "Healthy VC-AC Total Lung Volume vs Airway Pressure",
-              "XLabel": "AirwayPressure(cmH2O)", "YLabel": "TotalLungVolume(mL)",
-              "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}},
-          { "Title": "Healthy VC-AC Total Lung Volume vs Inspiratory Flow",
-              "XLabel": "TotalLungVolume(mL)", "YLabel": "InspiratoryFlow(L/min)",
-              "XHeader": "MechanicalVentilator-TotalLungVolume(mL)", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}}
+          { "Title": "Engine Pulmonary Compliance", "XHeader": "LeftPleuralCavity-Pressure(cmH2O)", "YHeader": [ "TotalLungVolume(mL)" ] }
         ]
       }
     },
     {
       "MultiHeaderSeriesPlotter":
       {
+        "PlotConfig":
+        {
+          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "Width_inch": 8 },
+          "RemoveLegends": true, "SciLimits": {}
+        },
         "PlotSource":
         [
           {
-            "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Healthy_PC_ACResults.csv",
-            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
+            "CSVData": "$VALIDATION_DIR/Waveforms/PulmonaryCompliance_Guyton.csv",
+            "LineFormat": "-r"
           }
         ],
         "Series":
         [
-          { "Title": "Healthy PC-AC AirwayPressure", "YHeader": [ "MechanicalVentilator-AirwayPressure(cmH2O)" ], "YLabel": "cmH2O" },
-          { "Title": "Healthy PC-AC InspiratoryFlow", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ], "YLabel": "L/min" },
-          { "Title": "Healthy PC-AC Total Lung Volume", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ], "YLabel": "mL" },
-          { "Title": "Healthy PC-AC Total Lung Volume vs Airway Pressure",
-              "XLabel": "AirwayPressure(cmH2O)", "YLabel": "TotalLungVolume(mL)",
-              "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}},
-          { "Title": "Healthy PC-AC Total Lung Volume vs Inspiratory Flow",
-              "XLabel": "TotalLungVolume(mL)", "YLabel": "InspiratoryFlow(L/min)",
-              "XHeader": "MechanicalVentilator-TotalLungVolume(mL)", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}}
+          { "Title": "Guyton Pulmonary Compliance", "XHeader": "PleuralPressure(cmH2O)", "YHeader": [ "LungVolume(L)" ] }
         ]
       }
     },
     {
       "MultiHeaderSeriesPlotter":
       {
+        "PlotConfig":
+        {
+          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "Width_inch": 8 },
+          "SciLimits": {}
+        },
         "PlotSource":
         [
-          {
-            "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Healthy_CPAPResults.csv",
-            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
-          }
+          { "CSVData": "./verification/scenarios/miscellaneous/ComplianceCurveResults.csv", "LineFormat": "-r" }
         ],
         "Series":
         [
-          { "Title": "Healthy CPAP AirwayPressure", "YHeader": [ "MechanicalVentilator-AirwayPressure(cmH2O)" ], "YLabel": "cmH2O" },
-          { "Title": "Healthy CPAP InspiratoryFlow", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ], "YLabel": "L/min" },
-          { "Title": "Healthy CPAP Total Lung Volume", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ], "YLabel": "mL" },
-          { "Title": "Healthy CPAP Total Lung Volume vs Airway Pressure",
-              "XLabel": "AirwayPressure(cmH2O)", "YLabel": "TotalLungVolume(mL)",
-              "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}},
-          { "Title": "Healthy CPAP Total Lung Volume vs Inspiratory Flow",
-              "XLabel": "TotalLungVolume(mL)", "YLabel": "InspiratoryFlow(L/min)",
-              "XHeader": "MechanicalVentilator-TotalLungVolume(mL)", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}}
+          { "Title": "Experimental Pulmonary Compliance", "XHeader": "IntrapulmonaryPressure(cmH2O)", "YHeader": [ "TotalLungVolume(mL)" ] }
         ]
       }
     },
     {
       "MultiHeaderSeriesPlotter":
       {
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All",
+          "TickStyle": "Plain"
+        },
         "PlotSource":
         [
-          {
-            "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Restrictive_VC_ACResults.csv",
-            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
-          }
+          { "CSVData": "./verification/scenarios/patient/HemorrhageClass4NoFluidResults.csv", "LineFormat": "-r" }
         ],
+        "ValidationSource":
+        {
+          "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicCardiacOutputShockValidation.csv",
+          "LineFormat": "-b"
+        },
         "Series":
         [
-          { "Title": "Restrictive VC-AC AirwayPressure", "YHeader": [ "MechanicalVentilator-AirwayPressure(cmH2O)" ], "YLabel": "cmH2O" },
-          { "Title": "Restrictive VC-AC InspiratoryFlow", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ], "YLabel": "L/min" },
-          { "Title": "Restrictive VC-AC Total Lung Volume", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ], "YLabel": "mL" },
-          { "Title": "Restrictive VC-AC Total Lung Volume vs Airway Pressure",
-              "XLabel": "AirwayPressure(cmH2O)", "YLabel": "TotalLungVolume(mL)",
-              "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}},
-          { "Title": "Restrictive VC-AC Total Lung Volume vs Inspiratory Flow",
-              "XLabel": "TotalLungVolume(mL)", "YLabel": "InspiratoryFlow(L/min)",
-              "XHeader": "MechanicalVentilator-TotalLungVolume(mL)", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}}
+          { "Title": "", "OutputFilename": "CardiacOutputShock_partial",
+              "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss", "XBounds": { "LowerBound": 0, "UpperBound": 50 },
+              "YHeader": [ "CardiacOutput(L/min)" ], "YBounds": { "LowerBound": 0, "UpperBound": 105 }, "YLabel": "Pulse Normalized Cardiac Output",
+              "X2Header": "BloodVolumeLost(%)", "Y2Header": [ "NormalizedCardiacOutput" ], "Y2Label": "Validation Normalized Cardiac Output",
+              "Y2Bounds": { "LowerBound": 0, "UpperBound": 105 }}
         ]
       }
     },
     {
       "MultiHeaderSeriesPlotter":
       {
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "OnlyY",
+          "TickStyle": "Plain"
+        },
         "PlotSource":
         [
-          {
-            "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Restrictive_PC_ACResults.csv",
-            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
-          }
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup1Results.csv", "Label": "Group 1" },
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup2Results.csv", "Label": "Group 2" },
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup3Results.csv", "Label": "Group 3" },
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup4Results.csv", "Label": "Group 4" },
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup5Results.csv", "Label": "Group 5" },
+          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup6Results.csv", "Label": "Group 6" }
         ],
         "Series":
         [
-          { "Title": "Restrictive PC-AC AirwayPressure", "YHeader": [ "MechanicalVentilator-AirwayPressure(cmH2O)" ], "YLabel": "cmH2O" },
-          { "Title": "Restrictive PC-AC InspiratoryFlow", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ], "YLabel": "L/min" },
-          { "Title": "Restrictive PC-AC Total Lung Volume", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ], "YLabel": "mL" },
-          { "Title": "Restrictive PC-AC Total Lung Volume vs Airway Pressure",
-              "XLabel": "AirwayPressure(cmH2O)", "YLabel": "TotalLungVolume(mL)",
-              "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}},
-          { "Title": "Restrictive PC-AC Total Lung Volume vs Inspiratory Flow",
-              "XLabel": "TotalLungVolume(mL)", "YLabel": "InspiratoryFlow(L/min)",
-              "XHeader": "MechanicalVentilator-TotalLungVolume(mL)", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}}
+          { "Title": "", "OutputFilename": "HemorrhageGroups_partial", "XHeader": "Time(s)",
+              "YHeader": [ "MeanArterialPressure(mmHg)" ], "YLabel": "Mean Arterial Pressure Delta",
+              "YBounds": { "LowerBound": 0, "UpperBound": 105 }}
         ]
       }
     },
     {
       "MultiHeaderSeriesPlotter":
       {
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "TickStyle": "Plain"
+        },
         "PlotSource":
         [
-          {
-            "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Restrictive_CPAPResults.csv",
-            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
-          }
+          { "CSVData": "./verification/unit_tests/pulse/CardiovascularCircuitOutput.csv" }
         ],
         "Series":
         [
-          { "Title": "Restrictive CPAP AirwayPressure", "YHeader": [ "MechanicalVentilator-AirwayPressure(cmH2O)" ], "YLabel": "cmH2O" },
-          { "Title": "Restrictive CPAP InspiratoryFlow", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ], "YLabel": "L/min" },
-          { "Title": "Restrictive CPAP Total Lung Volume", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ], "YLabel": "mL" },
-          { "Title": "Restrictive CPAP Total Lung Volume vs Airway Pressure",
-              "XLabel": "AirwayPressure(cmH2O)", "YLabel": "TotalLungVolume(mL)",
-              "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}},
-          { "Title": "Restrictive CPAP Total Lung Volume vs Inspiratory Flow",
-              "XLabel": "TotalLungVolume(mL)", "YLabel": "InspiratoryFlow(L/min)",
-              "XHeader": "MechanicalVentilator-TotalLungVolume(mL)", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}}
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "PlotSource":
-        [
-          {
-            "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Obstructive_VC_ACResults.csv",
-            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
-          }
-        ],
-        "Series":
-        [
-          { "Title": "Obstructive VC-AC AirwayPressure", "YHeader": [ "MechanicalVentilator-AirwayPressure(cmH2O)" ], "YLabel": "cmH2O" },
-          { "Title": "Obstructive VC-AC InspiratoryFlow", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ], "YLabel": "L/min" },
-          { "Title": "Obstructive VC-AC Total Lung Volume", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ], "YLabel": "mL" },
-          { "Title": "Obstructive VC-AC Total Lung Volume vs Airway Pressure",
-              "XLabel": "AirwayPressure(cmH2O)", "YLabel": "TotalLungVolume(mL)",
-              "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}},
-          { "Title": "Obstructive VC-AC Total Lung Volume vs Inspiratory Flow",
-              "XLabel": "TotalLungVolume(mL)", "YLabel": "InspiratoryFlow(L/min)",
-              "XHeader": "MechanicalVentilator-TotalLungVolume(mL)", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}}
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "PlotSource":
-        [
-          {
-            "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Obstructive_PC_ACResults.csv",
-            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
-          }
-        ],
-        "Series":
-        [
-          { "Title": "Obstructive PC-AC AirwayPressure", "YHeader": [ "MechanicalVentilator-AirwayPressure(cmH2O)" ], "YLabel": "cmH2O" },
-          { "Title": "Obstructive PC-AC InspiratoryFlow", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ], "YLabel": "L/min" },
-          { "Title": "Obstructive PC-AC Total Lung Volume", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ], "YLabel": "mL" },
-          { "Title": "Obstructive PC-AC Total Lung Volume vs Airway Pressure",
-              "XLabel": "AirwayPressure(cmH2O)", "YLabel": "TotalLungVolume(mL)",
-              "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}},
-          { "Title": "Obstructive PC-AC Total Lung Volume vs Inspiratory Flow",
-              "XLabel": "TotalLungVolume(mL)", "YLabel": "InspiratoryFlow(L/min)",
-              "XHeader": "MechanicalVentilator-TotalLungVolume(mL)", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}}
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "PlotSource":
-        [
-          {
-            "CSVData": "./verification/scenarios/miscellaneous/ventilation_mechanics/Obstructive_CPAPResults.csv",
-            "LineFormat": "-b", "StartRow": 500, "EndRow": 1250
-          }
-        ],
-        "Series":
-        [
-          { "Title": "Obstructive CPAP AirwayPressure", "YHeader": [ "MechanicalVentilator-AirwayPressure(cmH2O)" ], "YLabel": "cmH2O" },
-          { "Title": "Obstructive CPAP InspiratoryFlow", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ], "YLabel": "L/min" },
-          { "Title": "Obstructive CPAP Total Lung Volume", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ], "YLabel": "mL" },
-          { "Title": "Obstructive CPAP Total Lung Volume vs Airway Pressure",
-              "XLabel": "AirwayPressure(cmH2O)", "YLabel": "TotalLungVolume(mL)",
-              "XHeader": "MechanicalVentilator-AirwayPressure(cmH2O)", "YHeader": [ "MechanicalVentilator-TotalLungVolume(mL)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}},
-          { "Title": "Obstructive CPAP Total Lung Volume vs Inspiratory Flow",
-              "XLabel": "TotalLungVolume(mL)", "YLabel": "InspiratoryFlow(L/min)",
-              "XHeader": "MechanicalVentilator-TotalLungVolume(mL)", "YHeader": [ "MechanicalVentilator-InspiratoryFlow(L/min)" ],
-              "PlotConfig": { "FillArea": false, "ImageProperties": { "Height_inch": 6 }}}
+          { "Title": "", "OutputFilename": "ComplianceVsElastance_partial", "XBounds": { "LowerBound": 30, "UpperBound": 35 },
+              "YHeader": [ "LeftHeartCompliance_mL_Per_mmHg" ], "Y2Header": [ "LeftHeartElastance_mmHg_Per_mL" ] }
         ]
       }
     }
