@@ -239,14 +239,14 @@ e
 After the MNA linear equations are solved, all node potentials and fluxes for paths with no components or source components are parsed out of the <i>x</i> vector. Path fluxes that are not directly determined at this stage are then calculated using the equations shown in Table 3.
 
 <center><br>
-<i>Table 3. The flux equation on each path is dependent on what component is present. Some component types have their flux solved as direct variables using linear algebra. Some components are calculated differently depending on their state at that time. <i>P_s</i> and <i>P_t</i> are the source and target potentials respectively, <i>dt</i> is the time-step, and <i>F_0</i> is the previous time-step flux. Flux into a node is defined as positive and out is negative.</i>
+<i>Table 3. The flux equation on each path is dependent on what component is present. Some component types have their flux solved as direct variables using linear algebra. Some components are calculated differently depending on their state at that time. <i>P<sub>s</sub></i> and <i>P<sub>t</sub></i> are the source and target potentials respectively, <i>dt</i> is the time-step, and <i>F<sub>0</sub></i> is the previous time-step flux. Flux into a node is defined as positive and out is negative.</i>
 </center>
 @htmlonly
 <center><a href="./Images/Circuit/FlowEquationTable.png"><img src="./Images/Circuit/FlowEquationTable.png" style="width:40%;"></a></center>
 @endhtmlonly
 <br>
 
-Quantity values (<i>Q</i>) on nodes that are connected to paths with capacitances are incremented by Equation 2, where <i>Q_0</i> is the previous quantity value. Figure 4 further illustrates this general circuit solver logic. The MNA matrices are rebuilt each time-step by parsing each node and iteratively populating the <i>A</i> matrix and <i>x</i> vector.
+Quantity values (<i>Q</i>) on nodes that are connected to paths with capacitances are incremented by Equation 2, where <i>Q<sub>0</sub></i> is the previous quantity value. Figure 4 further illustrates this general circuit solver logic. The MNA matrices are rebuilt each time-step by parsing each node and iteratively populating the <i>A</i> matrix and <i>x</i> vector.
 
 \f[Q = {Q_0} + F \cdot dt\f]
 
