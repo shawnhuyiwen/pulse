@@ -63,7 +63,7 @@ The Mechanical Ventilator configuration parameters were defined to allow for set
 
 - 1. Connection: Connection type to the respiratory system (Off, Mask, Tube)
 - 2. Inspiration Phase
-    -(a) Cycle: Transition to pause/expiration
+    - (a) Cycle: Transition to pause/expiration
         - i. Machine Cycle: Control cycles
             - A. Time: Total length of inspiration phase to trigger expiration phase
         - ii. Patient Cycle: Assisted cycles
