@@ -2832,7 +2832,7 @@ namespace pulse
     double pleuralCavityPressureDiff_cmH2O = std::abs(m_LeftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_RightPleuralCavity->GetPressure(PressureUnit::cmH2O));
 
     double maxPressureDiff_cmH2O = 8.0;
-    double maxResistanceMultiplier = 8.0;
+    double maxResistanceMultiplier = 2.0;
     pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 
     //Interpolate into a parabola to effect things much more at larger differences
