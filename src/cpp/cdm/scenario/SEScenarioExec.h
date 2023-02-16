@@ -27,7 +27,7 @@ public:
   void SetDataRootDirectory(const std::string& fn) { m_DataRootDirectory = fn; }
 
   std::string GetOutputRootDirectory() const { return m_OutputRootDirectory; }
-  void SetOutputRootDirectory(const std::string& d) { m_OutputRootDirectory = d; }
+  void SetOutputRootDirectory(const std::string& d);
 
   eSwitch OrganizeOutputDirectory() const { return m_OrganizeOutputDirectory; }
   void OrganizeOutputDirectory(eSwitch s) { m_OrganizeOutputDirectory = s; }
@@ -79,8 +79,8 @@ public:
     m_ScenarioDirectory = "";
   }
 
-  std::string GetDataRequestFilesSearch() const { return m_DataRequestFilesSearch; }
-  void SetDataRequestFilesSearch(const std::string& path) { m_DataRequestFilesSearch = path; }
+  std::set<std::string>& GetDataRequestFilesSearch() { return m_DataRequestFilesSearch; }
+  const std::set<std::string>& GetDataRequestFilesSearch() const { return m_DataRequestFilesSearch; }
 
   eSerializationFormat GetContentFormat() const { return m_ContentFormat; }
   void SetContentFormat(eSerializationFormat s) { m_ContentFormat = s; }
@@ -163,7 +163,7 @@ protected:
   std::string m_ScenarioLogFilename;
   std::string m_ScenarioLogDirectory;
 
-  std::string m_DataRequestFilesSearch;
+  std::set<std::string> m_DataRequestFilesSearch;
 
   // For both the EC and Scenrio Content
   eSerializationFormat m_ContentFormat;

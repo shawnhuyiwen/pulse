@@ -262,6 +262,8 @@ bool FileExists(const std::string& filename)
 bool FindFileInFilePath(const std::string& filepath, const std::string& find, std::string& found)
 {
   std::string filepathf = filepath;
+  if (filepathf.back() != '/')
+    filepathf += "/";
 
   // Treat empty string as current working directory
   if (filepathf.empty())
@@ -378,7 +380,7 @@ void SplitPathFilenameExt(const std::string& filepath, std::string& path, std::s
 
   // Get the path
   if (slash == 0)
-    path = "";
+    path = "./";
   else
     path = filepathf.substr(0, slash);
 }

@@ -145,47 +145,32 @@ const std::vector<const SEAction*> SEScenario::GetActions() const
   return std::vector<const SEAction*>(m_Actions.begin(), m_Actions.end());
 }
 
-void SEScenario::MakeAbsoluteDataRequestFiles(const std::string& search)
-{
-  for (std::string& drFile : m_DataRequestFiles)
-  {
-    std::string found;
-    if (FindFileInFilePath(search, drFile, found))
-      drFile = found;
-    else
-    {
-      Error("Unable to locate file: " + drFile);
-    }
-  }
-}
-
-void SEScenario::MakeRelativeDataRequestFiles(const std::string& rootDir)
-{
-  for (std::string& drFile : m_DataRequestFiles)
-  {
-    std::string drFilename;
-    SplitFilename(drFile, drFilename);
-    drFile = rootDir + drFilename;
-  }
-}
-
-bool SEScenario::ProcessDataRequestFiles(const std::string& search)
+bool SEScenario::ProcessDataRequestFiles(const std::set<std::string>& search)
 {
   bool err=false;
-  MakeAbsoluteDataRequestFiles(search);
-  auto itr = m_DataRequestFiles.begin();
-  while (itr != m_DataRequestFiles.end())
+  std::string found;
+  for (std::string drFile : m_DataRequestFiles)
   {
-    std::string drFile = *itr;
-    Info("Merging DataRequest File: " + drFile);
-    if (!m_DataRequestMgr->MergeDataRequestFile(drFile))
+    found = "";
+    for (std::string s : search)
     {
-      err=true;
-      Error("Unable to merge file: " + drFile);
-      itr++;
+      if (FindFileInFilePath(s, drFile, found))
+        break;
+    }
+    if(!found.empty())
+    {
+      Info("Merging DataRequest File: " + found);
+      if (!m_DataRequestMgr->MergeDataRequestFile(found))
+      {
+        err = true;
+        Error("Unable to merge file: " + found);
+      }
     }
     else
-      itr = m_DataRequestFiles.erase(itr);
+    {
+      Error("Unable to find file: " + drFile);
+      err = true;
+    }
   }
   return !err;
 }

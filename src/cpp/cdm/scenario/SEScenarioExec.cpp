@@ -56,7 +56,7 @@ void SEScenarioExec::Clear()
   m_ScenarioLogFilename = "";
   m_ScenarioLogDirectory = "";
 
-  m_DataRequestFilesSearch = "";
+  m_DataRequestFilesSearch.clear();
 
   m_ThreadCount = -1;// One less that number of threads the system supports
 
@@ -87,6 +87,14 @@ bool SEScenarioExec::SerializeFromString(const std::string& src, eSerializationF
   return PBScenario::SerializeFromString(src, *this, m, logger);
 }
 
+void SEScenarioExec::SetOutputRootDirectory(const std::string& d)
+{
+  m_OutputRootDirectory = d;
+  std::replace(m_OutputRootDirectory.begin(), m_OutputRootDirectory.end(), '\\', '/');
+  if (m_OutputRootDirectory.back() != '/')
+    m_OutputRootDirectory += "/";
+}
+
 bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
 {
   return Process(pe, sce);
@@ -99,7 +107,10 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
   // Try to read our config file to identify scenario directory path
   ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
   if (config->HasKey("scenario_dir"))
+  {
     scenarioDir = config->GetValue("scenario_dir");
+    m_DataRequestFilesSearch.insert(scenarioDir);
+  }
   delete config;
 
   if (!m_ScenarioFilename.empty())
@@ -183,9 +194,22 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
     // Initialize the engine with a state or initial parameters
     if (sce.HasEngineStateFile())
     {
-      if (!pe.SerializeFromFile(sce.GetEngineStateFile()))
+      // Check and see if the state file is relative
+      std::string state = sce.GetEngineStateFile();
+      if (IsRelativePath(state))
       {
-        pe.GetLogger()->Error("Unable to load state file: "+ sce.GetEngineStateFile());
+        // If it is not relative from the working directory
+        // Is it relative from the m_OutputRootDirectory
+        if (!FileExists(state))
+        {
+          if (state.rfind("./", 0) == 0)
+            state = state.substr(2);
+          state = m_OutputRootDirectory + state;
+        }
+      }
+      if (!pe.SerializeFromFile(state))
+      {
+        pe.GetLogger()->Error("Unable to load state file: "+ state);
         return false;
       }
       // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
@@ -345,8 +369,13 @@ bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
     else
     {
       // If its relative, we add the serialization directory
-      if(IsRelativePath(ss->GetFilename()))
-        ss->SetFilename(m_OutputRootDirectory + "/" + ss->GetFilename());
+      if (IsRelativePath(ss->GetFilename()))
+      {
+        std::string fp = ss->GetFilename();
+        if (ss->GetFilename().rfind("./", 0) == 0)
+          fp = fp.substr(2);
+        ss->SetFilename(m_OutputRootDirectory + fp);
+      }
     }
   }
   return pe.ProcessAction(action);
@@ -421,7 +450,9 @@ bool SEScenarioExec::ConvertLog()
       relativePath = RelativePathFrom(m_ScenarioLogDirectory, m_ScenarioLogFilename);
     }
     // Append it to our m_OutputRootDirectory
-    m_OutputRootDirectory += "/" + relativePath + "/";
+    m_OutputRootDirectory += relativePath;
+    if (m_OutputRootDirectory.back() != '/')
+      m_OutputRootDirectory += "/";
   }
 
   Info("Converting : " + m_ScenarioLogFilename);

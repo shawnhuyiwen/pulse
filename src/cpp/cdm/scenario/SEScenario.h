@@ -56,9 +56,7 @@ public:
   virtual SESubstanceManager& GetSubstanceManager() { return *m_SubMgr; }
   virtual const SESubstanceManager& GetSubstanceManager() const { return *m_SubMgr; }
 
-  virtual void MakeAbsoluteDataRequestFiles(const std::string& search);
-  virtual void MakeRelativeDataRequestFiles(const std::string& rootDir="");
-  virtual bool ProcessDataRequestFiles(const std::string& search);
+  virtual bool ProcessDataRequestFiles(const std::set<std::string>& search);
 
 protected:
   SESubstanceManager*                         m_SubMgr;

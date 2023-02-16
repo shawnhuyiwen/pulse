@@ -176,10 +176,11 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioExecData& src, SEScenarioExec
   }
   }
 
-  dst.SetDataRequestFilesSearch(src.datarequestfilessearch());
-
   dst.SetContentFormat((eSerializationFormat)src.contentformat());
   dst.SetThreadCount(src.threadcount());
+
+  for (int i = 0; i < src.datarequestfilessearch_size(); i++)
+    dst.GetDataRequestFilesSearch().insert(src.datarequestfilessearch(i));
 }
 
 CDM_BIND::ScenarioExecData* PBScenario::Unload(const SEScenarioExec& src)
@@ -215,10 +216,11 @@ void PBScenario::Serialize(const SEScenarioExec& src, CDM_BIND::ScenarioExecData
   else if (!src.GetScenarioLogDirectory().empty())
     dst.set_scenariologdirectory(src.GetScenarioLogDirectory());
 
-  dst.set_datarequestfilessearch(src.GetDataRequestFilesSearch());
-
   dst.set_contentformat((CDM_BIND::eSerializationFormat)src.GetContentFormat());
   dst.set_threadcount(src.GetThreadCount());
+
+  for (std::string f : src.GetDataRequestFilesSearch())
+    dst.mutable_datarequestfilessearch()->AddAllocated(&f);
 }
 
 bool PBScenario::SerializeToString(const SEScenarioExec& src, std::string& output, eSerializationFormat m, Logger* logger)

@@ -62,6 +62,7 @@ bool ExecuteOpts(PulseScenarioExec* opts, PulseScenario* sce)
 }
 bool PulseScenarioExec::Execute()
 {
+  std::string scenarioPath, scenarioFilename;
   if (!GetScenarioContent().empty())
   {
     PulseScenario sce(GetLogger(), GetDataRootDirectory());
@@ -72,7 +73,8 @@ bool PulseScenarioExec::Execute()
   else if (!GetScenarioFilename().empty())
   {
     PulseScenario sce(GetLogger(), GetDataRootDirectory());
-    SetDataRequestFilesSearch(GetScenarioFilename());
+    SplitPathFilename(GetScenarioFilename(), scenarioPath, scenarioFilename);
+    GetDataRequestFilesSearch().insert(scenarioPath);
     if (!sce.SerializeFromFile(GetScenarioFilename()))
       return false;
     return Execute(sce);
@@ -108,7 +110,9 @@ bool PulseScenarioExec::Execute()
       PulseScenarioExec* opts = new PulseScenarioExec(GetLogger());
       opts->Copy(*this);
       opts->m_ScenarioFilename = filename;
-      opts->SetDataRequestFilesSearch(filename);
+      SplitPathFilename(GetScenarioFilename(), scenarioPath, scenarioFilename);
+      opts->GetDataRequestFilesSearch().insert(scenarioPath);
+
       // Always have sceanrios create their own logger when threaded
       PulseScenario* sce = new PulseScenario(GetDataRootDirectory());
       sce->SerializeFromFile(filename);
