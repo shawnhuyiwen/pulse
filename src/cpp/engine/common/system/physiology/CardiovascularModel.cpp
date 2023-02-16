@@ -2777,6 +2777,7 @@ namespace pulse
 
     if (stateChange)
     {
+      m_data.GetCompartments().StateChange();
       m_CirculatoryCircuit->StateChange();
       m_CirculatoryGraph->StateChange();
     }
