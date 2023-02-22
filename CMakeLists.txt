@@ -202,21 +202,36 @@ endif()
 if(protobuf_DIR AND NOT EXISTS ${protobuf_DIR})
   # Linux systems can build libs to a variety of directories...
   message(STATUS "Provided protobuf_DIR, does not exist, looking for alternatives...")
-  message(STATUS "  protobuf_DIR : ${protobuf_DIR}")
-  string(FIND ${protobuf_DIR} "/lib/" _idx)
+  message(STATUS "  Original protobuf_DIR : ${protobuf_DIR}")
+  
+  # We could be cross compiling for windows on linux, change to a linux path
+  string(FIND ${protobuf_DIR} "install/cmake" _idx)
   if(_idx GREATER_EQUAL 0)
-    # Depending on linux flavor, this could be in a lib64 dir
-    # So, replace /lib/ with /lib64/ and see if that exists
-    string(REPLACE "/lib/" "/lib64/" _lib64 ${protobuf_DIR})
-    message(STATUS "  Checking if this alternative exists : ${_lib64}")
-    if(EXISTS ${_lib64})
-      set(protobuf_DIR ${_lib64})
+    string(REPLACE "install/cmake" "/install/${CMAKE_INSTALL_LIBDIR}/cmake/protobuf" protobuf_DIR ${protobuf_DIR})
+    message(STATUS "  Checking if this alternative exists : ${protobuf_DIR}")
+    if(EXISTS ${protobuf_DIR})
       message(STATUS "It does! New protobuf_DIR is ${protobuf_DIR}")
+    else()
+      message(STATUS "Nope, that was not it")
+    endif()
+  endif()
+  
+  if(NOT EXISTS ${protobuf_DIR})
+    string(FIND ${protobuf_DIR} "/lib/" _idx)
+    if(_idx GREATER_EQUAL 0)
+      # Depending on linux flavor, this could be in a lib64 dir
+      # So, replace /lib/ with /lib64/ and see if that exists
+      string(REPLACE "/lib/" "/lib64/" _lib64 ${protobuf_DIR})
+      message(STATUS "  Checking if this alternative exists : ${_lib64}")
+      if(EXISTS ${_lib64})
+        set(protobuf_DIR ${_lib64})
+        message(STATUS "It does! New protobuf_DIR is ${protobuf_DIR}")
+      else()
+        message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
+      endif()
     else()
       message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
     endif()
-  else()
-    message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
   endif()
 endif()
 # Try to use the config written by protobuf
