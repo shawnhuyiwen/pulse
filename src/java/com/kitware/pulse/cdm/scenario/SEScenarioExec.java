@@ -3,6 +3,9 @@
 
 package com.kitware.pulse.cdm.scenario;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
@@ -28,7 +31,7 @@ public class SEScenarioExec
   protected String  scenarioFilename;
   protected String  scenarioDirectory;
 
-  protected String  dataRequestFilesSearch;
+  protected List<String>  dataRequestFilesSearch = new ArrayList<String>();
 
   protected eSerializationFormat  contentFormat;
   protected int threadCount;
@@ -56,7 +59,7 @@ public class SEScenarioExec
     scenarioFilename = "";
     scenarioDirectory = "";
 
-    dataRequestFilesSearch = "";
+    dataRequestFilesSearch.clear();
 
     contentFormat = eSerializationFormat.JSON;
     threadCount = -1;
@@ -93,7 +96,8 @@ public class SEScenarioExec
     else if(src.getScenarioDirectory()!=null)
       dst.scenarioDirectory = src.getScenarioDirectory();
 
-    dst.dataRequestFilesSearch = src.getDataRequestFilesSearch();
+    for(String s : src.getDataRequestFilesSearchList())
+      dst.dataRequestFilesSearch.add(s);
 
     dst.contentFormat = src.getContentFormat();
     dst.threadCount = src.getThreadCount();
@@ -129,7 +133,8 @@ public class SEScenarioExec
     else if (!src.scenarioDirectory.isEmpty())
       dst.setScenarioDirectory(src.scenarioDirectory);
 
-    dst.setDataRequestFilesSearch(src.dataRequestFilesSearch);
+    for(String s : src.dataRequestFilesSearch)
+      dst.addDataRequestFilesSearch(s);
 
     dst.setContentFormat(src.contentFormat);
     dst.setThreadCount(src.threadCount);
@@ -186,8 +191,7 @@ public class SEScenarioExec
   public String getScenarioDirectory() { return scenarioDirectory; }
   public void setScenarioDirectory(String s) { scenarioDirectory=s; }
 
-  public String getDataRequestFilesSearch() { return dataRequestFilesSearch; }
-  public void setDataRequestFilesSearch(String s) { dataRequestFilesSearch=s; }
+  public List<String> getDataRequestFilesSearch() { return dataRequestFilesSearch; }
 
   public eSerializationFormat getContentFormat() { return contentFormat; }
   public void setContentFormat(eSerializationFormat s) { contentFormat=s; }
