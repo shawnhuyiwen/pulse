@@ -21,7 +21,7 @@ Options:
 
   pulse-soure-directory The relative directory of the pulse source code
 
-  build-directory       The relative directory to build pulse             
+  build-directory       The relative directory to build pulse
 END
 )
 
@@ -35,7 +35,7 @@ container=$1
 echo "Using container: $container"
 
 pulseDir=$2
-if [ -d "$pulseDir" ] 
+if [ -d "$pulseDir" ]
 then
     echo "Using Pulse source code directory: $pulseDir"
 else
@@ -43,18 +43,18 @@ else
     exit 1
 fi
 
-rootBuildDir=$3
-buildDir="$rootBuildDir/pulse-engine-$container"
-if [ -d "$rootBuildDir" ] 
+rootBldDir=$3
+bldDir="$rootBldDir/pulse-engine-$container"
+if [ -d "$rootBldDir" ]
 then
     echo "Building pulse in: $pulseDir"
-    if [ -d "$buildDir" ] 
+    if [ -d "$bldDir" ]
     then
-      echo "Deleting existing $buildDir directory..."
-      rm -r "$buildDir"
+      echo "Deleting existing $bldDir directory..."
+      rm -r "$bldDir"
     fi
-    echo "Creating build directory: $buildDir"
-    mkdir "$buildDir"
+    echo "Creating build directory: $bldDir"
+    mkdir "$bldDir"
 else
     echo "$USAGE"
     exit 1
@@ -71,14 +71,14 @@ then
     exit 1
   fi
 
-  echo "Copying pregenerated protobuf files from $4 to $buildDir"
-  if [ ! -d "$buildDir/Innerbuild/src/cpp/pulse" ] 
+  echo "Copying pregenerated protobuf files from $4 to $bldDir"
+  if [ ! -d "$bldDir/Innerbuild/src/cpp/pulse" ]
   then
-    mkdir -p "$buildDir/Innerbuild/src/cpp/pulse"
+    mkdir -p "$bldDir/Innerbuild/src/cpp/pulse"
   fi
-  cp -r "$4/Innerbuild/src/cpp/pulse" "$buildDir/Innerbuild/src/cpp"
+  cp -r "$4/Innerbuild/src/cpp/pulse" "$bldDir/Innerbuild/src/cpp"
   # Get touch file so we don't run protoc
-  cp "$4/Innerbuild/src/schema_last_built" "$buildDir/Innerbuild/src/"
+  cp "$4/Innerbuild/src/schema_last_built" "$bldDir/Innerbuild/src/"
 fi
 
 # Run this command from a directory that contains both your source and build directories
@@ -89,7 +89,7 @@ chmod +x "./$container"
 # Run CMake
 # -B is the relative path to my build directory
 # -H is the relative path to my Pulse source directory
-./$container cmake -DPulse_JAVA_API:BOOL=OFF -B$buildDir -H$pulseDir -GNinja
+./$container cmake -DPulse_JAVA_API:BOOL=OFF -B$bldDir -H$pulseDir -GNinja
 # Use ninja to build (provided in the docker)
-./$container ninja -C$buildDir
-# The PulseC.so for the target platform will be in the $buildDir/install/bin directory
+./$container ninja -C$bldDir
+# The PulseC.so for the target platform will be in the $bldDir/install/bin directory

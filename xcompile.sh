@@ -10,17 +10,23 @@
 
 
 cwd=$PWD
-srcDir=${PWD##*/}  
+srcDir=${PWD##*/}
+rootBldDir="dockcross-builds"
 
 cd ..
-if [ ! -d $buildDir ]
+if [ ! -d $rootBldDir ]
 then
-  mkdir dockcross-builds
+  mkdir "$rootBldDir"
 fi
 
-$cwd/dockcross.sh manylinux2010-x64 ./$srcDir ./dockcross-builds
-$cwd/dockcross.sh android-arm ./$srcDir ./dockcross-builds ./dockcross-builds/pulse-engine-manylinux2010-x64
-$cwd/dockcross.sh android-arm64 ./$srcDir ./dockcross-builds ./dockcross-builds/pulse-engine-manylinux2010-x64
-$cwd/dockcross.sh linux-x64-clang ./$srcDir ./dockcross-builds
+$cwd/dockcross.sh manylinux2014-x64 ./$srcDir ./$rootBldDir
+$cwd/dockcross.sh android-arm ./$srcDir ./$rootBldDir ./$rootBldDir/pulse-engine-manylinux2014-x64
+$cwd/android-arm cp /usr/arm-linux-androideabi/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so /work/$rootBldDir/pulse-engine-android-arm/install/bin
+$cwd/dockcross.sh android-arm64 ./$srcDir ./$rootBldDir ./$rootBldDir/pulse-engine-manylinux2014-x64
+$cwd/android-arm64 cp /usr/aarch64-linux-android/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so /work/$rootBldDir/pulse-engine-android-arm64/install/bin
+$cwd/dockcross.sh windows-arm64 ./$srcDir ./$rootBldDir ./$rootBldDir/pulse-engine-manylinux2014-x64
+$cwd/dockcross.sh windows-static-x64 ./$srcDir ./$rootBldDir ./$rootBldDir/pulse-engine-manylinux2014-x64
+$cwd/dockcross.sh windows-static-x86 ./$srcDir ./$rootBldDir ./$rootBldDir/pulse-engine-manylinux2014-x64
+#$cwd/dockcross.sh linux-x64-clang ./$srcDir ./$rootBldDir
 
 cd $cwd
