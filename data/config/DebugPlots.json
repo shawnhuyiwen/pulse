@@ -127,6 +127,63 @@
               "YHeader": [ "LeftHeartCompliance_mL_Per_mmHg" ], "Y2Header": [ "LeftHeartElastance_mmHg_Per_mL" ] }
         ]
       }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotConfig":
+        {
+          "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotEvents": true, "TickStyle": "Plain"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "./verification/scenarios/patient/VentricularSystolicDysfunctionResults.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "", "OutputFilename": "HeartFailure_partial", "YHeader": [ "BloodVolume(L)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Endocrine/", "PlotActions": true, "PlotEvents": true,
+          "RemoveLegends": true, "TickStyle": "Plain"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "./verification/scenarios/patient/AcuteStressResults.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "Epinephrine Blood Concentration", "OutputFilename": "AcuteStressBloodEpi_partial",
+              "YHeader": [ "Aorta-Epinephrine-Concentration(ug/L)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Drugs/", "TickStyle": "Plain"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "./verification/scenarios/validation/drugs/AlbuterolValidationResults.csv", "LineFormat": "-b" }
+        ],
+        "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Albuterol.csv", "LineFormat": "Dr" },
+        "Series":
+        [
+          { "Title": "Albuterol", "OutputFilename": "Albuterol_partial",
+              "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ], "YBounds": { "UpperBound": 2.6 },
+              "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Bounds": { "UpperBound": 2.6 },
+              "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
+        ]
+      }
     }
   ]
 }

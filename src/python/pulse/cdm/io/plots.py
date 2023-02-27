@@ -64,16 +64,30 @@ def serialize_plot_config_to_bind(src: SEPlotConfig, dst: PlotConfigData):
         dst.FontSize = src.get_font_size()
     if src.has_gridlines_setting():
         dst.Gridlines = src.get_gridlines()
+    if src.has_hide_action_event_legend_setting():
+        dst.HideActionEventLegend = src.get_hide_action_event_legend()
     if src.has_image_properties():
         dst.ImageProperties = src.get_image_properties()
     if src.has_legend_font_size():
         dst.LegendFontSize = src.get_legend_font_size()
     if src.has_log_axis_setting():
         dst.LogAxis = src.get_log_axis()
+    if src.has_omit_actions_with():
+        for o in src.get_omit_actions_with()():
+            omitData = dst.OmitActionsWith.add()
+            omitData = o
+    if src.has_omit_events_with():
+        for o in src.get_omit_events_with()():
+            omitData = dst.OmitEventsWith.add()
+            omitData = o
     if src.has_output_path_override():
         dst.OutputPathOverride = src.get_output_path_override()
     if src.has_percent_of_baseline_mode():
         dst.PercentOfBaselineMode = src.get_percent_of_baseline_mode().value
+    if src.has_plot_actions_setting():
+        dst.PlotActions = src.get_plot_actions()
+    if src.has_plot_events_setting():
+        dst.PlotEvents = src.get_plot_events()
     if src.has_remove_legends_setting():
         dst.RemoveLegends = src.get_remove_legends()
     if src.has_sci_limits():
@@ -96,16 +110,26 @@ def serialize_plot_config_from_bind(src: PlotConfigData,
         dst.set_font_size(src.FontSize)
     if src.HasField("Gridlines"):
         dst.set_gridlines(src.Gridlines)
+    if src.HasField("HideActionEventLegend"):
+        dst.set_hide_action_event_legend(src.HideActionEventLegend)
     if src.HasField("ImageProperties"):
         serialize_image_properties_from_bind(src.ImageProperties, dst.get_image_properties())
     if src.HasField("LegendFontSize"):
         dst.set_legend_font_size(src.LegendFontSize)
     if src.HasField("LogAxis"):
         dst.set_log_axis(src.LogAxis)
+    for omitData in src.OmitActionsWith:
+        dst.add_omit_actions_with(omitData)
+    for omitData in src.OmitEventsWith:
+        dst.add_omit_events_with(omitData)
     if src.HasField("OutputPathOverride"):
         dst.set_output_path_override(src.OutputPathOverride)
     if src.HasField("PercentOfBaselineMode"):
         dst.set_percent_of_baseline_mode(ePercentageOfBaselineMode(src.PercentOfBaselineMode))
+    if src.HasField("PlotActions"):
+        dst.set_plot_actions(src.PlotActions)
+    if src.HasField("PlotEvents"):
+        dst.set_plot_events(src.PlotEvents)
     if src.HasField("RemoveLegends"):
         dst.set_remove_legends(src.RemoveLegends)
     if src.HasField("SciLimits"):
@@ -124,6 +148,8 @@ def serialize_plot_source_to_bind(src: SEPlotSource, dst: PlotSourceData):
         dst.StartRow = src.get_start_row()
     if src.has_end_row():
         dst.EndRow = src.get_end_row()
+    if src.has_log_file():
+        dst.LogFile = src.get_log_file()
 def serialize_plot_source_from_bind(src: PlotSourceData, dst: SEPlotSource):
     dst.set_csv_data(src.CSVData)
     if src.HasField("LineFormat"):
@@ -134,6 +160,8 @@ def serialize_plot_source_from_bind(src: PlotSourceData, dst: SEPlotSource):
         dst.set_start_row(src.StartRow)
     if src.HasField("EndRow"):
         dst.set_end_row(src.EndRow)
+    if src.HasField("LogFile"):
+        dst.set_log_file(src.LogFile)
 
 def serialize_series_to_bind(src: SESeries, dst: MultiHeaderSeriesPlotterData.SeriesData):
     if src.has_plot_config():

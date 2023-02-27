@@ -50,14 +50,19 @@ message PlotConfigData
   optional bool                       FillArea                  = 1;  /**<< @brief Fill the area under the curve. */
   optional double                     FontSize                  = 2;  /**<< @brief Set the font size of axis labels and chart title. */
   optional bool                       Gridlines                 = 3;  /**<< @brief Turn gridlines on or off. */
-  optional ImagePropertyData          ImageProperties           = 4;  /**<< @brief Specify the image properties. */
-  optional double                     LegendFontSize            = 5;  /**<< @brief Set the font size of the legend. */
-  optional bool                       LogAxis                   = 6;  /**<< @brief Make all Y axes logarithmic. */
-  optional string                     OutputPathOverride        = 7;  /**<< @brief Specify the path (relative to bin) to output the plot. */
-  optional ePercentageOfBaselineMode  PercentOfBaselineMode     = 8;
-  optional bool                       RemoveLegends             = 9;  /**<< @brief Removes all legends from the generated plot. */
-  optional SciLimitsData              SciLimits                 = 10;
-  optional eTickStyle                 TickStyle                 = 11;
+  optional bool                       HideActionEventLegend     = 4;  /**<< @brief Will hide the legend for actions and events, leaving the legend for data and the action and event lines on the plot. */
+  optional ImagePropertyData          ImageProperties           = 5;  /**<< @brief Specify the image properties. */
+  optional double                     LegendFontSize            = 6;  /**<< @brief Set the font size of the legend. */
+  optional bool                       LogAxis                   = 7;  /**<< @brief Make all Y axes logarithmic. */
+  repeated string                     OmitActionsWith           = 8;  /**<< @brief Will attempt to omit from the plot actions that contain any of the specified case-sensitive words, i.e. OmitActionsWith=Hemorrhage,Infusion */
+  repeated string                     OmitEventsWith            = 9;  /**<< @brief Will attempt to omit from the plot events that contain any of the specified case-sensitive words, i.e. OmitEventsWith=Tachycardia */
+  optional string                     OutputPathOverride        = 10; /**<< @brief Specify the path (relative to bin) to output the plot. */
+  optional ePercentageOfBaselineMode  PercentOfBaselineMode     = 11;
+  optional bool                       PlotActions               = 12;
+  optional bool                       PlotEvents                = 13;
+  optional bool                       RemoveLegends             = 14;  /**<< @brief Removes all legends from the generated plot. */
+  optional SciLimitsData              SciLimits                 = 15;
+  optional eTickStyle                 TickStyle                 = 16;
 }
 
 /** @brief Data used to configure a plot source. */
@@ -69,6 +74,7 @@ message PlotSourceData
   optional string                     LineFormat                = 5;  /**<< @brief Plot this source with this format. */
   optional int32                      StartRow                  = 6;
   optional int32                      EndRow                    = 7;
+  optional string                     LogFile                   = 8;
 }
 
 /** @brief Data used to configure action event plots. */

@@ -73,11 +73,11 @@ class eTickStyle(Enum):
     Scientific = 0
     Plain = 1
 class SEPlotConfig():
-    __slots__ = [ "_fill_area", "_font_size", "_gridlines",
-                  "_image_properties", "_legend_font_size", "_log_axis",
-                  "_output_filename", "_output_path_override",
-                  "_percent_of_baseline_mode", "_remove_legends", "_sci_limits",
-                  "_tick_style", "_title", "_x_label", "_x_bounds", "_y_label",
+    __slots__ = [ "_fill_area", "_font_size", "_gridlines", "_hide_action_event_legend",
+                  "_image_properties", "_legend_font_size", "_log_axis", "_omit_actions_with",
+                  "_omit_events_with", "_output_filename", "_output_path_override",
+                  "_percent_of_baseline_mode", "_plot_actions", "_plot_events", "_remove_legends",
+                  "_sci_limits", "_tick_style", "_title", "_x_label", "_x_bounds", "_y_label",
                   "_y_bounds", "_y2_label", "_y2_bounds"]
 
     def __init__(self):
@@ -87,11 +87,16 @@ class SEPlotConfig():
         self._fill_area = None
         self._font_size = None
         self._gridlines = None
+        self._hide_action_event_legend = None
         self._image_properties = None
         self._legend_font_size = None
         self._log_axis = None
+        self._omit_actions_with = None
+        self._omit_events_with = None
         self._output_path_override = None
         self._percent_of_baseline_mode = None
+        self._plot_actions = None
+        self._plot_events = None
         self._remove_legends = None
         self._sci_limits = None
         self._tick_style = None
@@ -113,16 +118,26 @@ class SEPlotConfig():
             self._font_size = 14
         if self._gridlines is None:
             self._gridlines = False
+        if self._hide_action_event_legend is None:
+            self._hide_action_event_legend = False
         if self._image_properties is None:
             self._image_properties = SEImageProperties()
         if self._legend_font_size is None:
             self._legend_font_size = 12
         if self._log_axis is None:
             self._log_axis = False
+        if self._omit_actions_with is None:
+            self._omit_actions_with = []
+        if self._omit_events_with is None:
+            self._omit_events_with = []
         if self._output_path_override is None:
             self._output_path_override = "./verification/Plots/"
         if self._percent_of_baseline_mode is None:
             self._percent_of_baseline_mode = ePercentageOfBaselineMode.Off
+        if self._plot_actions is None:
+            self._plot_actions = False
+        if self._plot_events is None:
+            self._plot_events = False
         if self._remove_legends is None:
             self._remove_legends = False
         if self._tick_style is None:
@@ -144,16 +159,26 @@ class SEPlotConfig():
             self._font_size = src._font_size
         if src._gridlines is not None:
             self._gridlines = src._gridlines
+        if src._hide_action_event_legend is not None:
+            self._hide_action_event_legend = src._hide_action_event_legend
         if src._image_properties is not None:
             self._image_properties = src._image_properties
         if src._legend_font_size is not None:
             self._legend_font_size = src._legend_font_size
         if src._log_axis is not None:
             self._log_axis = src._log_axis
+        if src._omit_actions_with is not None:
+            self._omit_actions_with = src._omit_actions_with
+        if src._omit_events_with is not None:
+            self._omit_events_with = src._omit_events_with
         if src._output_path_override is not None:
             self._output_path_override = src._output_path_override
         if src._percent_of_baseline_mode is not None:
             self._percent_of_baseline_mode = src._percent_of_baseline_mode
+        if self._plot_actions is not None:
+            self._plot_actions = src._plot_actions
+        if self._plot_events is not None:
+            self._plot_events = src._plot_events
         if src._remove_legends is not None:
             self._remove_legends = src._remove_legends
         if src._sci_limits is not None:
@@ -206,6 +231,15 @@ class SEPlotConfig():
     def invalidate_gridlines_setting(self):
         self._gridlines = None
 
+    def get_hide_action_event_legend(self):
+        return self._hide_action_event_legend
+    def set_hide_action_event_legend(self, hide_action_event_legend: bool):
+        self._hide_action_event_legend = hide_action_event_legend
+    def has_hide_action_event_legend_setting(self):
+        return self._hide_action_event_legend is not None
+    def invalidate_hide_action_event_legend_setting(self):
+        self._hide_action_event_legend = None
+
     def get_image_properties(self):
         return self._image_properties
     def set_image_properties(self, image_props: SEImageProperties):
@@ -233,6 +267,28 @@ class SEPlotConfig():
     def invalidate_log_axis_setting(self):
         self._log_axis = None
 
+    def get_omit_actions_with(self):
+        return self._omit_actions_with
+    def add_omit_actions_with(self, string: str):
+        if self._omit_actions_with is None:
+            self._omit_actions_with = []
+        self._omit_actions_with.append(string)
+    def has_omit_actions_with(self):
+        return len(self._omit_actions_with) > 0
+    def invalidate_omit_actions_with(self):
+        self._omit_actions_with = []
+
+    def get_omit_events_with(self):
+        return self._omit_events_with
+    def add_omit_events_with(self, string: str):
+        if self._omit_events_with is None:
+            self._omit_events_with = []
+        self._omit_events_with.append(string)
+    def has_omit_events_with(self):
+        return len(self._omit_events_with) > 0
+    def invalidate_omit_events_with(self):
+        self._omit_events_with = []
+
     def get_output_filename(self):
         return self._output_filename
     def set_output_filename(self, output_filename: str):
@@ -259,6 +315,24 @@ class SEPlotConfig():
         return self._percent_of_baseline_mode is not None
     def invalidate_percent_of_baseline_mode(self):
         self._percent_of_baseline_mode = None
+
+    def get_plot_actions(self):
+        return self._plot_actions
+    def set_plot_actions(self, plot_actions: bool):
+        self._plot_actions = plot_actions
+    def has_plot_actions_setting(self):
+        return self._plot_actions is not None
+    def invalidate_plot_actions_setting(self):
+        self._plot_actions = None
+
+    def get_plot_events(self):
+        return self._plot_events
+    def set_plot_events(self, plot_events: bool):
+        self._plot_events = plot_events
+    def has_plot_events_setting(self):
+        return self._plot_events is not None
+    def invalidate_plot_events_setting(self):
+        self._plot_events = None
 
     def get_remove_legends(self):
         return self._remove_legends
@@ -352,11 +426,12 @@ class SEPlotConfig():
 
 
 class SEPlotSource():
-    __slots__ = ["_csv_data", "_df", "_label", "_line_format",
+    __slots__ = ["_csv_data", "_log_file", "_df", "_label", "_line_format",
                  "_start_row", "_end_row"]
 
     def __init__(self):
         self._csv_data = None
+        self._log_file = None
         self._df = None
         self._label = None
         self._line_format = ""
@@ -373,17 +448,15 @@ class SEPlotSource():
         self._csv_data = None
         self._df = None
 
-    def _read_csv_into_df(self):
-        if not self.has_csv_data():
-            raise Exception("No CSV data provided")
+    def get_log_file(self):
+        return self._log_file
+    def set_log_file(self, log_file: str):
+        self._log_file = self._filepath_replacement(log_file)
+    def has_log_file(self):
+        return self._log_file is not None
+    def invalidate_log_file(self):
+        self._log_file = None
 
-        # Perform replacement if needed
-        keys = ['$ROOT_DIR', '$DATA_DIR', '$SCENARIO_DIR','$VALIDATION_DIR', '$VERIFICATION_DIR']
-        for key in keys:
-            if key in self._csv_data:
-                self._csv_data = self._csv_data.replace(key, get_dir_from_run_config(key[1:]))
-
-        self._df = read_csv_into_df(self._csv_data, replace_slashes=False)
     def get_data_frame(self):
         if self._df is None:
             self._read_csv_into_df()
@@ -422,6 +495,21 @@ class SEPlotSource():
         self._end_row = row
     def has_end_row(self):
         return self._end_row is not None
+
+    def _filepath_replacement(self, filepath: str):
+        keys = ['$ROOT_DIR', '$DATA_DIR', '$SCENARIO_DIR','$VALIDATION_DIR', '$VERIFICATION_DIR']
+        for key in keys:
+            if key in filepath:
+               filepath = filepath.replace(key, get_dir_from_run_config(key[1:]))
+        return filepath
+    def _read_csv_into_df(self):
+        if not self.has_csv_data():
+            raise Exception("No CSV data provided")
+
+        # Perform replacement if needed
+        self._csv_data = self._filepath_replacement(self._csv_data)
+
+        self._df = read_csv_into_df(self._csv_data, replace_slashes=False)
 
 class SESeries():
     __slots__ = ["_plot_config", "_output_filename", "_title",
@@ -506,6 +594,8 @@ class SESeries():
     def get_y_headers(self):
         return self._y_headers
     def add_y_header(self, header: str):
+        if self._y_headers is None:
+            self._y_headers = []
         self._y_headers.append(header)
     def has_y_headers(self):
         return len(self._y_headers) > 0
@@ -529,6 +619,8 @@ class SESeries():
     def get_y2_headers(self):
         return self._y2_headers
     def add_y2_header(self, header: str):
+        if self._y2_headers is None:
+            self._y2_headers = []
         self._y2_headers.append(header)
     def has_y2_headers(self):
         return len(self._y2_headers) > 0
@@ -577,6 +669,8 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
     def get_plot_sources(self):
         return self._plot_sources
     def add_plot_source(self, plot_source: SEPlotSource):
+        if self._plot_sources is None:
+            self._plot_sources = []
         self._plot_sources.append(deepcopy(plot_source))
     def has_plot_sources(self):
         return len(self._plot_sources) > 0
@@ -586,6 +680,8 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
     def get_series(self):
         return self._series
     def add_series(self, series: SESeries):
+        if self._series is None:
+            self._series = []
         self._series.append(series)
     def has_series(self):
         return len(self._series) > 0

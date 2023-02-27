@@ -9,10 +9,16 @@ from matplotlib import colors as mcolors
 from cycler import cycler
 from timeit import default_timer as timer
 from datetime import timedelta
+from typing import NamedTuple
+from textwrap import TextWrapper
+from operator import attrgetter
 
 from pulse.cdm.plots import *
 from pulse.cdm.io.plots import serialize_plotter_list_from_file
 from pulse.cdm.utils.file_utils import get_config_dir
+from pulse.cdm.scenario import SEScenario
+from pulse.cdm.io.scenario import serialize_scenario_from_file
+from pulse.cdm.engine import SEAction
 
 def create_plots(plots_file: str, benchmark: bool = False):
     plotters = []
@@ -48,7 +54,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         x2_header = None
         if series.has_x2_header():
             x2_header = series.get_x2_header()
-        elif series.has_y2_headers():
+        elif series.has_y2_headers() or validation_source:
             x2_header = x_header
 
         config.set_output_filename(series.get_output_filename())
@@ -72,6 +78,10 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         else:
             config.invalidate_y2_label()
 
+        y2_headers = series.get_y2_headers()
+        if validation_source and not y2_headers:
+            y2_headers = series.get_y_headers()
+
         if not config.has_title():
             config.set_title(generate_title(x_header, series.get_y_headers()[0]))
         if not config.get_output_filename():
@@ -87,7 +97,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
                        x_header,
                        series.get_y_headers(),
                        x2_header,
-                       series.get_y2_headers(),
+                       y2_headers,
                        validation_source):
             save_current_plot(output_filepath, config.get_image_properties())
         clear_current_plot()
@@ -128,6 +138,103 @@ def percentage_of_baseline(baseline_mode, df, x_header, y_headers, x2_header, y2
     df[ycols] = df[ycols].apply(lambda x: x * 100.0 / x[0])
     return True
 
+class LogActionEvent(NamedTuple):
+    time: float
+    text: str
+    category: str
+
+def parse_events(log_file: str, omit: [str] = []):
+    event_tag = "[Event]"
+    events = []
+    with open(log_file) as f:
+        lines = f.readlines()
+        for line in lines:
+            if len(line) == 0:
+                continue
+            event_idx = line.find(event_tag)
+            if event_idx == -1:
+                continue
+            else:
+                event_text = line[(event_idx+len(event_tag)):].strip()
+                end_time_idx = event_text.find("(s)")
+                if end_time_idx == -1:
+                    end_time_idx = event_text.find(",")
+                event_time = float(event_text[:end_time_idx].strip())
+                event_text = event_text[(event_text.find(",")+1):].strip()
+
+                # Check to see if it should be omitted
+                keep_event = True
+                for o in omit:
+                    if o in event_text:
+                        keep_event = False
+                        break
+                if not keep_event:
+                    continue
+
+                events.append(LogActionEvent(event_time, event_text, "EVENT"))
+
+    return events
+
+def parse_actions(log_file: str, omit: [str] = []):
+    action_tag = "[Action]"
+    actions = []
+    with open(log_file) as f:
+        lines = f.readlines()
+        idx = 0
+        while idx < len(lines):
+            line = lines[idx]
+            if len(line) == 0:
+                idx += 1
+                continue
+            action_idx = line.find(action_tag)
+            if action_idx == -1:
+                idx += 1
+                continue
+            elif "AdvanceTime" in line:
+                idx += 1
+                continue
+            else:
+                action_text = line[(action_idx+len(action_tag)):].lstrip()
+                end_time_idx = action_text.find("(s)")
+                if end_time_idx == -1:
+                    end_time_idx = action_text.find(",")
+                action_time = float(action_text[:end_time_idx].strip())
+                action_text = action_text[(action_text.find(",")+1):].lstrip()
+
+                # Find blank line at end of action
+                while (idx + 1) < len(lines) and len(lines[idx+1].strip()) != 0:
+                    idx += 1
+                    line = lines[idx]
+                    action_text = ''.join([action_text, line])
+
+                # Check to see if it should be omitted
+                keep_action = True
+                for o in omit:
+                    if o in action_text:
+                        keep_action = False
+                        break
+                if not keep_action:
+                    idx += 1
+                    continue
+
+                action_text = SEAction.pretty_print(action_text)
+
+                # Remove leading spaces on each line
+                action_text = '\n'.join([s.strip() for s in action_text.splitlines()])
+
+                actions.append(LogActionEvent(action_time, action_text, "ACTION"))
+
+            idx += 1
+
+    return actions
+
+# Respects existing line breaks
+class DocumentWrapper(TextWrapper):
+    def wrap(self, text):
+        split_text = text.split('\n')
+        lines = [line for para in split_text for line in TextWrapper.wrap(self, para)]
+        return lines
+
 def create_plot(plot_sources: [SEPlotSource],
                 plot_config : SEPlotConfig,
                 x_header: str,
@@ -136,7 +243,7 @@ def create_plot(plot_sources: [SEPlotSource],
                 y2_headers: [str] = [],
                 validation_source: SEPlotSource = None):
 
-    # To line formats across axes
+    # To support line formats across axes
     setup_fmt_cycler = cycler(linestyle=['-', '--', '-.', ':']) * cycler(color=mcolors.TABLEAU_COLORS)
     fmt_cycler = setup_fmt_cycler()
 
@@ -165,6 +272,7 @@ def create_plot(plot_sources: [SEPlotSource],
         ax1.set_ylim(top=y_bounds.get_upper_bound())
 
     # Secondary y axis
+    ax2 = None
     if y2_headers:
         ax2 = ax1.twinx()
         ax2.set_ylabel(plot_config.get_y2_label() if plot_config.has_y2_label() else y2_headers[0], fontsize=plot_config.get_font_size())
@@ -176,6 +284,12 @@ def create_plot(plot_sources: [SEPlotSource],
             ax2.set_ylim(bottom=y2_bounds.get_lower_bound())
         if y2_bounds.has_upper_bound():
             ax2.set_ylim(top=y2_bounds.get_upper_bound())
+
+    # Action/Events axis
+    ax3 = None
+    if plot_config.get_plot_events() or plot_config.get_plot_actions():
+        ax3 = ax1.twinx()
+        ax3.axis('off')
 
     # Plot data
     for ps in plot_sources:
@@ -214,6 +328,38 @@ def create_plot(plot_sources: [SEPlotSource],
                 if plot_config.get_fill_area():
                     ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
 
+        # Plot any actions or events if requested
+        if plot_config.get_plot_events() or plot_config.get_plot_actions():
+            # Find log file containing information
+            log_file = None
+            if ps.has_log_file():
+                log_file = ps.get_log_file()
+            else:
+                if ps.has_csv_data():
+                    idx = ps.get_csv_data().rfind("Results.csv")
+                    if idx == -1:
+                        idx = ps.get_csv_data().rfind(".csv")
+                    log_file = ps.get_csv_data()[:idx] + ".log"
+
+            if log_file and os.path.exists(log_file):
+                actions_events = []
+
+                # Get events
+                if plot_config.get_plot_events():
+                    actions_events.extend(parse_events(log_file, plot_config.get_omit_events_with()))
+
+                # Get actions
+                if plot_config.get_plot_actions():
+                    actions_events.extend(parse_actions(log_file, plot_config.get_omit_actions_with()))
+
+                # Sort and plot all actions and events
+                actions_events = sorted(actions_events, key=attrgetter('time'))
+                for ae in actions_events:
+                    color = next(fmt_cycler)['color']
+                    ax3.axvline(x=ae.time, color = color, label = f"{ae.category}:{ae.text}\nt={ae.time}")
+            else:
+                raise ValueError(f"Could not find corresponding log file: {ps.get_csv_data()}")
+
     # Plot validation data if needed
     if validation_source:
         df = validation_source.get_data_frame()
@@ -230,11 +376,25 @@ def create_plot(plot_sources: [SEPlotSource],
 
     # Legend and gridline settings
     if not plot_config.get_remove_legends():
-        lbls = [l.get_label() for l in lns]
-        plt.legend(lns, lbls, fontsize=plot_config.get_legend_font_size())
-    plt.grid(plot_config.get_gridlines())
+        text_wrapper = DocumentWrapper(width=45)
 
-    fig.tight_layout()
+        box = ax1.get_position()
+        ax1.set_position([box.x0, box.y0 + box.height * 0.1,
+                        box.width, box.height * 0.9])
+        if ax2 is not None:
+            ax2.set_position([box.x0, box.y0 + box.height * 0.1,
+                        box.width, box.height * 0.9])
+        # Action and event legend
+        if not plot_config.get_hide_action_event_legend() and ax3 is not None and ax3.lines:
+            ax3.set_position([box.x0, box.y0 + box.height * 0.1,
+                        box.width, box.height * 0.9])
+            lbls = [text_wrapper.fill(l.get_label()) for l in ax3.lines]
+            action_event_legend = ax3.legend(ax3.lines, lbls, loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = min(4, len(lbls)), fontsize=plot_config.get_legend_font_size())
+            plt.setp(action_event_legend.get_texts(), multialignment='center')
+
+        lbls = [text_wrapper.fill(l.get_label()) for l in lns]
+        ax1.legend(lns, lbls, fontsize=plot_config.get_legend_font_size(), loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = min(4, len(lbls)))
+    ax1.grid(plot_config.get_gridlines())
 
     return True
 
