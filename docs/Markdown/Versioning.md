@@ -12,11 +12,15 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ---
 
-## Pulse v4.2.0 (March 2022)
+## Pulse v4.2.0 (March 2023)
 
 - Software Architecture Improvements
   - iOS build support
   - New utility to translate a log file into a scenario
+    - Logs now contain json for patient, actions and conditions
+  - More serialization testing
+  - Reusable data request files
+    - Scenarios can now reference external files for data requests
   - Added support for expanding ane engine's systems and/or circuits
     - Provides the ability to define and run a more complex circuit within a common system model
   - Improved BlackBox support for external model coupling
@@ -30,6 +34,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - More validation
   - Respiratory model updates:
     - Corrected respiratory inhale/exhale transition timing
+    - Added shunting and labored breathing effects to collapsing lung functionality
   - Intubation Updates
     - Added a severity to control flow
     - Esophageal intubation can provide air to lungs via a severity
@@ -52,8 +57,9 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Automation Support - Set a frequency and severity or depth to repeat
     - Single Squeeze - Set a severity or depth for a single squeeze
     - Instantaneous - Set a severity or depth to apply (Intended for hardware integration)
-  - ECMO Equipment Updates
+  - ECMO Support Updates
     - End user can adjust substance values and flow rates back into Pulse
+    - *NOT A MODEL* Intended for external users to perscribe flow rates and substance concentrations
   - Removed Pulmonary Function Test Assessment
 
 
