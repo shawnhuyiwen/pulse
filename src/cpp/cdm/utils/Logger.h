@@ -14,6 +14,8 @@ namespace pulse { namespace cdm
   // Not happy with how std does this for floats/doubles
   std::string to_string(float f);
   std::string to_string(double d);
+  enum class PrettyPrintType { ACTION=0, CONDITION};
+  std::string PrettyPrint(const std::string& str, PrettyPrintType ppt);
 }}
 
 class CDM_DECL Loggable

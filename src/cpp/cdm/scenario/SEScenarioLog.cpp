@@ -54,7 +54,7 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
     dst.GetPatientConfiguration().GetPatient().SerializeFromString(m_Patient, eSerializationFormat::TEXT);
     for (std::string condition : m_Conditions)
     {
-      SECondition* c = SECondition::SerializeFromString(condition, eSerializationFormat::TEXT, dst.GetSubstanceManager());
+      SECondition* c = SECondition::SerializeFromString(condition, eSerializationFormat::JSON, dst.GetSubstanceManager());
       if (c == nullptr)
       {
         dst.Error("Unable to serialize condition : " + condition);
@@ -104,7 +104,7 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
 
     for (std::string s : itr.second)
     {
-      SEAction* a = SEAction::SerializeFromString(s, eSerializationFormat::TEXT, dst.GetSubstanceManager());
+      SEAction* a = SEAction::SerializeFromString(s, eSerializationFormat::JSON, dst.GetSubstanceManager());
       if (a == nullptr)
       {
         dst.Error("Unable to serialize action : " + s);
@@ -205,7 +205,7 @@ void SEScenarioLog::DetectEOL(const std::string& content)
 
     // Remove found character from possibilities so we don't end up getting something like \n\n
     EOLchars.erase(std::remove(EOLchars.begin(), EOLchars.end(), content[foundFirst]), EOLchars.end());
-  
+
     size_t foundLast = content.substr(foundFirst+1).find_first_not_of(EOLchars);
 
     if (foundLast == std::string::npos)
@@ -238,7 +238,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
   //  0: Whole match
   //  1: Remainder of line after tag
   //  2: Open brace if it exists
-  std::smatch mTagBegin; 
+  std::smatch mTagBegin;
   std::regex rTagBegin(tagPattern);
   while (std::regex_search(text, mTagBegin, rTagBegin))
   {
@@ -275,7 +275,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
   //  1: [Time(unit)]
   //  2: Remainder of line after tag
   //  3: Open brace if it exists
-  std::smatch mTagBegin; 
+  std::smatch mTagBegin;
   std::regex rTagBegin(tagPattern);
   while (std::regex_search(text, mTagBegin, rTagBegin))
   {
@@ -394,7 +394,7 @@ bool SEScenarioLog::GetPatient(const std::string& content)
   //  0: Whole match
   //  1: Remainder of line, left trimmed (name info)
   std::string patientPattern = R"(\[Patient\][ \t]*([^\n\r]*))";
-  std::smatch mPatient; 
+  std::smatch mPatient;
   std::regex rPatient(patientPattern);
   std::string text = content;
   if (!std::regex_search(text, mPatient, rPatient))
@@ -456,5 +456,3 @@ bool SEScenarioLog::GetSerializeFromString(const std::string& content)
 
   return true;
 }
-
-

@@ -30,7 +30,7 @@ public:
 
   virtual bool SerializeToString(std::string& dst, eSerializationFormat fmt) const;
   static SEAction* SerializeFromString(const std::string, eSerializationFormat fmt, const SESubstanceManager&);
-  
+
   /** Test if the action has all data it needs */
   virtual bool IsValid() const { return true; }
 
@@ -54,14 +54,14 @@ public:
 protected:
   bool                  m_Active = true;
   std::string           m_Comment;
-};  
+};
 
-inline std::ostream& operator<< (std::ostream& out, const SEAction& a) 
+inline std::ostream& operator<< (std::ostream& out, const SEAction& a)
 {
   std::string s;
-  if (!a.SerializeToString(s, eSerializationFormat::TEXT))
+  if (!a.SerializeToString(s, eSerializationFormat::VERBOSE_JSON))
     a.Error("Unable to serialize action");
   else
-    out << s;
+    out << SEAction::PrettyPrint(s);
   return out;
 }

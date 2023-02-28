@@ -49,3 +49,7 @@ void SECondition::InvalidateComment()
   m_Comment = "";
 }
 
+std::string SECondition::PrettyPrint(const std::string& str)
+{
+  return pulse::cdm::PrettyPrint(str, pulse::cdm::PrettyPrintType::CONDITION);
+}
