@@ -287,7 +287,6 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   const SEAdvanceTime* adv;
   double expectedFinalSimTime_s = 0;
   double spareAdvanceTime_s = 0;
-  std::string json;
   for (SEAction* a : sce.GetActions())
   {
     // We override advance time actions in order to advance and
@@ -296,11 +295,7 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     adv=dynamic_cast<const SEAdvanceTime*>(a);
     if (adv!=nullptr)
     {
-      if (!a->SerializeToString(json, eSerializationFormat::VERBOSE_JSON))
-        pe.GetLogger()->Error("Unable to serialize action");
-      else
-        pe.GetLogger()->Info("[Action] " + json);
-
+      pe.GetLogger()->Info("[Action] " + a->ToJSON());
       expectedFinalSimTime_s += adv->GetTime(TimeUnit::s);
 
       double time_s = adv->GetTime(TimeUnit::s) + spareAdvanceTime_s;

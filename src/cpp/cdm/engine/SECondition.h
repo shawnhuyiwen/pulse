@@ -31,6 +31,9 @@ public:
 
   static std::string PrettyPrint(const std::string& str);
 
+  virtual std::string ToJSON() const;
+  virtual std::string ToString() const;
+
 protected:
 
   std::string  m_Comment;
@@ -38,10 +41,6 @@ protected:
 
 inline std::ostream& operator<< (std::ostream& out, const SECondition& c)
 {
-  std::string s;
-  if (!c.SerializeToString(s, eSerializationFormat::VERBOSE_JSON))
-    c.Error("Unable to serialize condition");
-  else
-    out << SECondition::PrettyPrint(s);
+  out << c.ToString();
   return out;
 }

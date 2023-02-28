@@ -63,6 +63,10 @@ std::string SEAction::ToJSON() const
     Error("Unable to serialize action to json");
   return s;
 }
+std::string SEAction::ToString() const
+{
+  return PrettyPrint(this->ToJSON());
+}
 
 std::string SEAction::PrettyPrint(const std::string& str)
 {

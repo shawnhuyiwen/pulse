@@ -150,11 +150,7 @@ bool SEDynamicStabilization::StabilizeConditions(Controller& engine, const SECon
     }
     else
     {
-      std::string json;
-      if (!c->SerializeToString(json, eSerializationFormat::VERBOSE_JSON))
-        Error("Unable to serialize condition");
-      else
-        Info("[Condition] " + json);
+      Info("[Condition] " + c->ToJSON());
       m_ActiveConditions[c->GetName()] = &GetConditionConvergence(c->GetName());
     }
   }

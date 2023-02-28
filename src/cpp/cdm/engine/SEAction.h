@@ -50,6 +50,7 @@ public:
   static std::string PrettyPrint(const std::string& str);
 
   virtual std::string ToJSON() const;
+  virtual std::string ToString() const;
 
 protected:
   bool                  m_Active = true;
@@ -58,10 +59,6 @@ protected:
 
 inline std::ostream& operator<< (std::ostream& out, const SEAction& a)
 {
-  std::string s;
-  if (!a.SerializeToString(s, eSerializationFormat::VERBOSE_JSON))
-    a.Error("Unable to serialize action");
-  else
-    out << SEAction::PrettyPrint(s);
+  out << a.ToString();
   return out;
 }
