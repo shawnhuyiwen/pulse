@@ -519,6 +519,7 @@ CDM_BIND::ConsciousRespirationData* PBPatientAction::Unload(const SEConsciousRes
 void PBPatientAction::Serialize(const SEConsciousRespiration& src, CDM_BIND::ConsciousRespirationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_startimmediately(src.StartImmediately());
   for (SEConsciousRespirationCommand* cmd : src.m_Commands)
   {
     CDM_BIND::AnyConsciousRespirationCommandData* cmdData = dst.add_command();
@@ -823,7 +824,7 @@ void PBPatientAction::Serialize(const CDM_BIND::ImpairedAlveolarExchangeExacerba
     PBProperty::Load(src.impairedfraction(), dst.GetImpairedFraction());
   else if (src.has_impairedsurfacearea())
     PBProperty::Load(src.impairedsurfacearea(), dst.GetImpairedSurfaceArea());
-  
+
 }
 CDM_BIND::ImpairedAlveolarExchangeExacerbationData* PBPatientAction::Unload(const SEImpairedAlveolarExchangeExacerbation& src)
 {
@@ -1171,6 +1172,7 @@ void PBPatientAction::Serialize(const CDM_BIND::RespiratoryMechanicsConfiguratio
     dst.SetSettingsFile(src.settingsfile());
   else if (src.has_settings())
     PBPhysiology::Load(src.settings(), dst.GetSettings());
+  dst.SetAppliedRespiratoryCycle((eAppliedRespiratoryCycle)src.appliedcycle());
   dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::RespiratoryMechanicsConfigurationData* PBPatientAction::Unload(const SERespiratoryMechanicsConfiguration& src)
@@ -1186,6 +1188,7 @@ void PBPatientAction::Serialize(const SERespiratoryMechanicsConfiguration& src, 
     dst.set_settingsfile(src.m_SettingsFile);
   else if (src.HasSettings())
     dst.set_allocated_settings(PBPhysiology::Unload(*src.m_Settings));
+  dst.set_appliedcycle((CDM_BIND::eAppliedRespiratoryCycle)src.m_AppliedRespiratoryCycle);
   dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 void PBPatientAction::Copy(const SERespiratoryMechanicsConfiguration& src, SERespiratoryMechanicsConfiguration& dst)
@@ -1426,7 +1429,7 @@ void PBPatientAction::Load(const CDM_BIND::UseInhalerData& src, SEUseInhaler& ds
 }
 void PBPatientAction::Serialize(const CDM_BIND::UseInhalerData& /*src*/, SEUseInhaler& /*dst*/)
 {
-  
+
 }
 CDM_BIND::UseInhalerData* PBPatientAction::Unload(const SEUseInhaler& src)
 {
