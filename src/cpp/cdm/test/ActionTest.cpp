@@ -293,30 +293,24 @@ void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
   rmc.SetSettingsFile("TestSettingsFile.json");
   TestAction<SERespiratoryMechanicsConfiguration>(testSuite.CreateTestCase(), subMgr, rmc, "-SettingsFile");
 
-  /*// TODO: No default constructor for SESubstanceBolus
   SESubstanceBolus sb(*subMgr.GetSubstance("Morphine"));
   sb.GetAdminDuration().SetValue(2, TimeUnit::hr);
   sb.SetAdminRoute(eSubstanceAdministration_Route::Intravenous);
   sb.GetConcentration().SetValue(.3, MassPerVolumeUnit::ug_Per_mL);
   sb.GetDose().SetValue(10, VolumeUnit::mL);
   sb.GetTotalInfusedDose().SetValue(3, VolumeUnit::mL);
-  SESubstanceBolus* sb2 = new SESubstanceBolus(*subMgr.GetSubstance("Morphine"));
-  TestAction<SESubstanceBolus>(testSuite.CreateTestCase(), subMgr, sb, "-AdminDuration-AdminRoute-Concentration-Dose-TotalInfusedDose", sb2);
+  TestAction<SESubstanceBolus>(testSuite.CreateTestCase(), subMgr, sb, "-AdminDuration-AdminRoute-Concentration-Dose-TotalInfusedDose");
 
-  // TODO: No default constructor for SESubstanceCompoundInfusion
   SESubstanceCompoundInfusion sci(*subMgr.GetCompound("Saline"));
   sci.GetBagVolume().SetValue(15, VolumeUnit::mL);
   sci.GetRate().SetValue(.25, VolumePerTimeUnit::mL_Per_min);
-  SESubstanceCompoundInfusion* sci2 = new SESubstanceCompoundInfusion(*subMgr.GetCompound("Saline"));
-  TestAction<SESubstanceCompoundInfusion>(testSuite.CreateTestCase(), subMgr, sci, "-BagVolume-Rate", sci2);
+  TestAction<SESubstanceCompoundInfusion>(testSuite.CreateTestCase(), subMgr, sci, "-BagVolume-Rate");
 
-  // TODO: No default constructor for SESubstanceInfusion
   SESubstanceInfusion si(*subMgr.GetSubstance("Insulin"));
   si.GetConcentration().SetValue(.8, MassPerVolumeUnit::ug_Per_mL);
   si.GetRate().SetValue(.2, VolumePerTimeUnit::mL_Per_s);
   si.GetVolume().SetValue(4, VolumeUnit::mL);
-  SESubstanceInfusion* si2 = new SESubstanceInfusion(*subMgr.GetSubstance("Insulin"));
-  TestAction<SESubstanceInfusion>(testSuite.CreateTestCase(), subMgr, si, "-Concentration-Rate-Volume", si2);*/
+  TestAction<SESubstanceInfusion>(testSuite.CreateTestCase(), subMgr, si, "-Concentration-Rate-Volume");
 
   SESupplementalOxygen so;
   so.SetDevice(eSupplementalOxygen_Device::NonRebreatherMask);
