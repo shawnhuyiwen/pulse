@@ -70,5 +70,5 @@ std::string SEAction::ToString() const
 
 std::string SEAction::PrettyPrint(const std::string& str)
 {
-  return pulse::cdm::PrettyPrint(str, pulse::cdm::PrettyPrintType::ACTION);
+  return pulse::cdm::PrettyPrint(str, ePrettyPrintType::Action);
 }

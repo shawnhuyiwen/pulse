@@ -27,15 +27,15 @@ std::string pulse::cdm::to_string(float f)
   return std::string(buffer);
 }
 
-std::string pulse::cdm::PrettyPrint(const std::string& str, PrettyPrintType ppt)
+std::string pulse::cdm::PrettyPrint(const std::string& str, ePrettyPrintType ppt)
 {
   std::string typeTag = "";
   switch (ppt)
   {
-    case PrettyPrintType::ACTION:
+    case ePrettyPrintType::Action:
       typeTag = "Action";
       break;
-    case PrettyPrintType::CONDITION:
+    case ePrettyPrintType::Condition:
       typeTag = "Condition";
       break;
     default:

@@ -63,5 +63,5 @@ std::string SECondition::ToString() const
 
 std::string SECondition::PrettyPrint(const std::string& str)
 {
-  return pulse::cdm::PrettyPrint(str, pulse::cdm::PrettyPrintType::CONDITION);
+  return pulse::cdm::PrettyPrint(str, ePrettyPrintType::Condition);
 }

@@ -26,8 +26,13 @@ namespace HowTo_UseEngine
     {
       if (msg.Contains("[Action]"))
       {
-        Console.WriteLine("[INFO] " + msg.Substring(0, msg.IndexOf(',')));
+        Console.WriteLine("[INFO] " + msg.Substring(0, msg.IndexOf('\n')));
         Console.WriteLine(SEAction.PrettyPrint(msg));
+      }
+      else if (msg.Contains("[Condition]"))
+      {
+       Console.WriteLine("[INFO] " + msg.Substring(0, msg.IndexOf('\n')));
+        Console.WriteLine(SECondition.PrettyPrint(msg));
       }
       else
         Console.WriteLine("[INFO] " + msg);
