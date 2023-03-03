@@ -295,7 +295,7 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     adv=dynamic_cast<const SEAdvanceTime*>(a);
     if (adv!=nullptr)
     {
-      pe.GetLogger()->Info("[Action] " + a->ToJSON());
+      pe.GetLogger()->Info("[Action]\n" + a->ToJSON());
       expectedFinalSimTime_s += adv->GetTime(TimeUnit::s);
 
       double time_s = adv->GetTime(TimeUnit::s) + spareAdvanceTime_s;

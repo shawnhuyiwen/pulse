@@ -150,7 +150,7 @@ bool SEDynamicStabilization::StabilizeConditions(Controller& engine, const SECon
     }
     else
     {
-      Info("[Condition] " + c->ToJSON());
+      Info("[Condition]\n" + c->ToJSON());
       m_ActiveConditions[c->GetName()] = &GetConditionConvergence(c->GetName());
     }
   }
