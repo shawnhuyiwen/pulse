@@ -77,7 +77,7 @@ void TestAction(SETestCase& testCase, SESubstanceManager& subMgr, SEAction& acti
 
   if (s1 != s2)
   {
-    testCase.AddFailure("Serialization string do not match");
+    testCase.AddFailure("Serialization strings do not match");
     testCase.Info(s1);
     testCase.Info(s2);
   }
@@ -86,6 +86,7 @@ void TestAction(SETestCase& testCase, SESubstanceManager& subMgr, SEAction& acti
   // Maybe the user should pass in the number of properties they set
   // And we make sure we have that many lines + 1 (for the action name line)
   testCase.Info(action.PrettyPrint(s1));
+  delete a2;
 }
 
 void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
@@ -202,7 +203,7 @@ void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
   TestAction<SEConsciousRespiration>(testSuite.CreateTestCase(), subMgr, cr, "-StartImmediately-Inhale-Exhale-Inhaler-Pause");
 
   SEConsumeNutrients cn;
-  cn.SetNutritionFile("testFile.json");
+  cn.SetNutritionFile("TestFile.json");
   TestAction<SEConsumeNutrients>(testSuite.CreateTestCase(), subMgr, cn, "-NutritionFile");
   cn.Clear();
   cn.GetNutrition().GetWater().SetValue(50, VolumeUnit::mL);
