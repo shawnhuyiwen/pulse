@@ -970,7 +970,7 @@ void PBPatientAction::Serialize(const CDM_BIND::MechanicalVentilationData& src, 
       dst.Error("Ignoring an environmental conditions aerosol that was not found : " + scData.name());
       continue;
     }
-    if (sub->GetState() != eSubstance_State::Liquid && sub->GetState() != eSubstance_State::Solid)
+    if (sub->GetState() != eSubstance_State::Gas)
     {
       dst.Error("Ignoring an environmental conditions aerosol that is not a gas : " + scData.name());
       continue;
