@@ -150,8 +150,7 @@ bool SEDynamicStabilization::StabilizeConditions(Controller& engine, const SECon
     }
     else
     {
-      m_ss << "[Condition] " << *c;
-      Info(m_ss);
+      Info("[Condition]\n" + c->ToJSON());
       m_ActiveConditions[c->GetName()] = &GetConditionConvergence(c->GetName());
     }
   }
@@ -295,7 +294,7 @@ bool SEDynamicStabilization::Merge()
   // Get a std::hash<std::string>()("foo"); for each Property convergence Data Request
   // Don't forget to add hashes of compartments and substance names! if applicable
   // Put it in a map<hash#,vector<PropertyConvergence*>>
-  // After this loop, go through the map and remove any 
+  // After this loop, go through the map and remove any
   // entries where the vector length is < activeConditions.size()
   // We only want convergence objects if ALL active conditions have them
   // From there find the PropertyConvergence with the largest %diff
@@ -373,7 +372,7 @@ bool SEDynamicStabilization::Merge()
     m_MergedConditions->m_PropertyConvergence.push_back(pConv);
   }
 
-  DELETE_MAP_SECOND(cMap);// Clean up our Map  
+  DELETE_MAP_SECOND(cMap);// Clean up our Map
   m_MergedConditions->GetConvergenceTime().SetValue(maxConv_s, TimeUnit::s);
   m_ss << "Merged Convergence Time : " << m_MergedConditions->GetConvergenceTime();
   Info(m_ss);
@@ -385,5 +384,3 @@ bool SEDynamicStabilization::Merge()
   Info(m_ss);
   return true;
 }
-
-

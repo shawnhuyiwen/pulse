@@ -293,16 +293,15 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     // pull requested data at each time step, all other actions
     // will be processed by the engine
     adv=dynamic_cast<const SEAdvanceTime*>(a);
-    if(adv!=nullptr)
+    if (adv!=nullptr)
     {
-      ss << "[Action] " << *a;
-      pe.GetLogger()->Info(ss);
+      pe.GetLogger()->Info("[Action]\n" + a->ToJSON());
       expectedFinalSimTime_s += adv->GetTime(TimeUnit::s);
 
       double time_s = adv->GetTime(TimeUnit::s) + spareAdvanceTime_s;
       int count = (int)(time_s/dT_s);
       spareAdvanceTime_s = time_s - (count * dT_s);
-      for(int i=0;i<count;i++)
+      for (int i=0;i<count;i++)
       {
         AdvanceEngine(pe);
 

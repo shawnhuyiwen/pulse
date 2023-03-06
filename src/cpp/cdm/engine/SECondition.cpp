@@ -49,3 +49,19 @@ void SECondition::InvalidateComment()
   m_Comment = "";
 }
 
+std::string SECondition::ToJSON() const
+{
+  std::string s;
+  if (!SerializeToString(s, eSerializationFormat::VERBOSE_JSON))
+    Error("Unable to serialize condition to json");
+  return s;
+}
+std::string SECondition::ToString() const
+{
+  return PrettyPrint(this->ToJSON());
+}
+
+std::string SECondition::PrettyPrint(const std::string& str)
+{
+  return pulse::cdm::PrettyPrint(str, ePrettyPrintType::Condition);
+}

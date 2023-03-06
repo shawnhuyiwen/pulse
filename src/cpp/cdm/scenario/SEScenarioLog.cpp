@@ -54,7 +54,7 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
     dst.GetPatientConfiguration().GetPatient().SerializeFromString(m_Patient, eSerializationFormat::TEXT);
     for (std::string condition : m_Conditions)
     {
-      SECondition* c = SECondition::SerializeFromString(condition, eSerializationFormat::TEXT, dst.GetSubstanceManager());
+      SECondition* c = SECondition::SerializeFromString(condition, eSerializationFormat::JSON, dst.GetSubstanceManager());
       if (c == nullptr)
       {
         dst.Error("Unable to serialize condition : " + condition);
@@ -104,36 +104,40 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
 
     for (std::string s : itr.second)
     {
-      SEAction* a = SEAction::SerializeFromString(s, eSerializationFormat::TEXT, dst.GetSubstanceManager());
+      SEAction* a = SEAction::SerializeFromString(s, eSerializationFormat::JSON, dst.GetSubstanceManager());
       if (a == nullptr)
       {
         dst.Error("Unable to serialize action : " + s);
         err = true;
       }
       else
+      {
         dst.AddAction(*a);
+        if (a->GetName().compare("Advance Time") == 0)
+        {
+          SEAdvanceTime* adv = static_cast<SEAdvanceTime*>(a);
+          if (adv->HasTime())
+            time_s += adv->GetTime(TimeUnit::s);
+        }
+      }
       delete a;
     }
   }
 
+  double additionalTime_s;
   if (m_FinalSimTime_s > 0)
+    additionalTime_s = m_FinalSimTime_s - time_s;
+  else
+    additionalTime_s = m_AdditionalTime.GetValue(TimeUnit::s);
+
+  if (additionalTime_s > 0)
   {
     SEAdvanceTime adv;
-    adv.GetTime().SetValue(m_FinalSimTime_s - time_s, TimeUnit::s);
-    time_s += m_FinalSimTime_s - time_s;
+    adv.GetTime().SetValue(additionalTime_s, TimeUnit::s);
+    time_s += additionalTime_s;
     dst.AddAction(adv);
   }
-  else
-  {
-    SEAdvanceTime adv;
-    double additionalTime_s = m_AdditionalTime.GetValue(TimeUnit::s);
-    if (additionalTime_s > 0)
-    {
-      adv.GetTime().SetValue(additionalTime_s, TimeUnit::s);
-      time_s += additionalTime_s;
-      dst.AddAction(adv);
-    }
-  }
+
   return !err;
 }
 
@@ -205,7 +209,7 @@ void SEScenarioLog::DetectEOL(const std::string& content)
 
     // Remove found character from possibilities so we don't end up getting something like \n\n
     EOLchars.erase(std::remove(EOLchars.begin(), EOLchars.end(), content[foundFirst]), EOLchars.end());
-  
+
     size_t foundLast = content.substr(foundFirst+1).find_first_not_of(EOLchars);
 
     if (foundLast == std::string::npos)
@@ -231,14 +235,15 @@ void SEScenarioLog::DetectEOL(const std::string& content)
 
 bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string& content, std::vector<std::string>& tagStrs, bool braces)
 {
-  std::string tagPattern = R"(\[)" + tag + R"(\][ \t]*(?:\d*\.?\d*\(.*\),)?[ \t]*([^\{\n\r]*(\{?)))";
+
+  std::string tagPattern = R"(\[)" + tag + R"(\][ \t]*((?!\r\n|\r|\n).*)*(?:\r\n|\r|\n)(\{?))";
   std::string text = content;
 
   // Capture groups:
   //  0: Whole match
   //  1: Remainder of line after tag
   //  2: Open brace if it exists
-  std::smatch mTagBegin; 
+  std::smatch mTagBegin;
   std::regex rTagBegin(tagPattern);
   while (std::regex_search(text, mTagBegin, rTagBegin))
   {
@@ -256,7 +261,8 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
       Error("Unable to identify tag string terminator : " + std::string(mTagBegin[0]));
       return false;
     }
-    tagStr = text.substr(mTagBegin.position(1), mTagBegin.length(1) + endIdx);
+    size_t idx = braces? 2: 1;
+    tagStr = text.substr(mTagBegin.position(idx), mTagBegin.length(idx) + endIdx);
 
     tagStrs.push_back(tagStr);
     text = mTagBegin.suffix().str();
@@ -267,7 +273,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
 
 bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string& content, std::map<double, std::vector<std::string>>& tagStrs, bool braces)
 {
-  std::string tagPattern = R"((\[\d*\.?\d*\(.*\)\])\s*\[)" + tag + R"(\][ \t]*(?:\d*\.?\d*\(.*\),)?[ \t]*([^\{\n\r]*(\{?)))";
+  std::string tagPattern = R"((\[\d*\.?\d*\(.*\)\])[ \t]*\[)" + tag + R"(\][ \t]*((?!\r\n|\r|\n).*)*(?:\r\n|\r|\n)(\{?))";
   std::string text = content;
 
   // Capture groups:
@@ -275,7 +281,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
   //  1: [Time(unit)]
   //  2: Remainder of line after tag
   //  3: Open brace if it exists
-  std::smatch mTagBegin; 
+  std::smatch mTagBegin;
   std::regex rTagBegin(tagPattern);
   while (std::regex_search(text, mTagBegin, rTagBegin))
   {
@@ -297,7 +303,8 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
       Error("Unable to identify tag string terminator : " + std::string(mTagBegin[0]));
       return false;
     }
-    tagStr = text.substr(mTagBegin.position(2), mTagBegin.length(2) + endIdx);
+    size_t idx = braces? 3: 2;
+    tagStr = text.substr(mTagBegin.position(idx), mTagBegin.length(idx) + endIdx);
 
     if (tagStrs.find(time_s) == tagStrs.end())
     {
@@ -316,7 +323,7 @@ bool SEScenarioLog::IdentifyTagStringEnd(const std::string& content, size_t& end
   std::regex rTagEnd("\\}(" + m_EOL + "){2,}");
   if (std::regex_search(content, mTagEnd, rTagEnd))
   {
-    endIdx = mTagEnd.position(0) + 1;
+    endIdx = mTagEnd.position(0) + m_EOL.length() + 1;
     return true;
   }
   // Failed to find terminating brace
@@ -394,7 +401,7 @@ bool SEScenarioLog::GetPatient(const std::string& content)
   //  0: Whole match
   //  1: Remainder of line, left trimmed (name info)
   std::string patientPattern = R"(\[Patient\][ \t]*([^\n\r]*))";
-  std::smatch mPatient; 
+  std::smatch mPatient;
   std::regex rPatient(patientPattern);
   std::string text = content;
   if (!std::regex_search(text, mPatient, rPatient))
@@ -456,5 +463,3 @@ bool SEScenarioLog::GetSerializeFromString(const std::string& content)
 
   return true;
 }
-
-

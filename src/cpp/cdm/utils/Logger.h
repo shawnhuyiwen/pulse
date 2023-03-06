@@ -9,11 +9,14 @@ class log_lib; // Encapsulates 3rd party logging library
 #include <sstream>
 #include <mutex>
 
+enum class ePrettyPrintType { Action = 0, Condition };
+
 namespace pulse { namespace cdm
 {
   // Not happy with how std does this for floats/doubles
   std::string to_string(float f);
   std::string to_string(double d);
+  std::string PrettyPrint(const std::string& str, ePrettyPrintType ppt);
 }}
 
 class CDM_DECL Loggable

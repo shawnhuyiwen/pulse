@@ -107,10 +107,16 @@ namespace Pulse.CDM
           dst.SetComment(src.Comment);
       }
     }
+
     public static void Serialize(SEAction src, pulse.cdm.bind.ActionData dst)
     {
       if (src.HasComment())
         dst.Comment = src.GetComment();
+    }
+    public static string SerializeToString(SEAction src)
+    {
+      var pb = PBAction.Unload(src);
+      return pb.ToString();
     }
     #endregion
 

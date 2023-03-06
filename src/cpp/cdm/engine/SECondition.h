@@ -15,7 +15,7 @@ public:
   virtual std::string GetName() const = 0;
   static constexpr char const* ConditionType = "Condition";
   virtual std::string GetConditionType() const { return ConditionType; }
-  
+
   virtual void Clear();
 
   virtual bool SerializeToString(std::string& dst, eSerializationFormat fmt) const;
@@ -29,6 +29,11 @@ public:
   virtual bool HasComment()const;
   virtual void InvalidateComment();
 
+  static std::string PrettyPrint(const std::string& str);
+
+  virtual std::string ToJSON() const;
+  virtual std::string ToString() const;
+
 protected:
 
   std::string  m_Comment;
@@ -36,10 +41,6 @@ protected:
 
 inline std::ostream& operator<< (std::ostream& out, const SECondition& c)
 {
-  std::string s;
-  if (!c.SerializeToString(s, eSerializationFormat::TEXT))
-    c.Error("Unable to serialize condition");
-  else
-    out << s;
+  out << c.ToString();
   return out;
 }

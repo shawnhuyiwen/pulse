@@ -583,7 +583,7 @@ namespace pulse
 
     if (!IsReady())
       return false;
-    m_ss << "[Action] " << m_SimulationTime << ", " << action;
+    m_ss << "[Action]\n" << action.ToJSON();
     Info(m_ss);
 
     const SEAdvanceTime* adv = dynamic_cast<const SEAdvanceTime*>(&action);
