@@ -50,6 +50,8 @@ std::string pulse::cdm::PrettyPrint(const std::string& str, ePrettyPrintType ppt
   buffer.str(Replace(buffer.str(), "\"", ""));
   buffer.str(Replace(buffer.str(), "{", ""));
   buffer.str(Replace(buffer.str(), "}", ""));
+  buffer.str(Replace(buffer.str(), "[", ""));
+  buffer.str(Replace(buffer.str(), "]", ""));
   buffer.str(Replace(buffer.str(), ",", ""));
 
   size_t idx;

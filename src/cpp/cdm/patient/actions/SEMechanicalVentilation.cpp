@@ -65,12 +65,30 @@ bool SEMechanicalVentilation::IsValid() const
       double total = 0;
       for (const SESubstanceFraction* sf : m_cGasFractions)
       {
+        if (sf->GetSubstance().GetState() != eSubstance_State::Gas)
+        {
+          Error("Mechanical Ventilation Gas fractions substances must be a gas");
+          return false;
+        }
+
         total += sf->GetFractionAmount();
       }
       if (!SEScalar::IsValue(1, total))
       {
         Error("Mechanical Ventilation Gas fractions do not sum to 1");
         return false;
+      }
+    }
+    if (HasAerosol())
+    {
+      for (const SESubstanceConcentration* sc : m_cAerosols)
+      {
+        if (sc->GetSubstance().GetState() != eSubstance_State::Solid &&
+            sc->GetSubstance().GetState() != eSubstance_State::Liquid)
+        {
+          Error("Mechanical Ventilation aerosol substances must be a solid or a liquid");
+          return false;
+        }
       }
     }
   }

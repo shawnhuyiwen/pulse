@@ -68,6 +68,13 @@ void TestAction(SETestCase& testCase, SESubstanceManager& subMgr, SEAction& acti
 {
   testCase.SetName(action.GetName()+desc);
   testCase.Info("Testing " + testCase.GetName());
+
+  if (!action.IsValid())
+  {
+    testCase.AddFailure("Testing an invalid action configuration");
+    return;
+  }
+
   std::string s1;
   action.SerializeToString(s1, eSerializationFormat::VERBOSE_JSON);
 
@@ -78,8 +85,8 @@ void TestAction(SETestCase& testCase, SESubstanceManager& subMgr, SEAction& acti
   if (s1 != s2)
   {
     testCase.AddFailure("Serialization strings do not match");
-    testCase.Info(s1);
-    testCase.Info(s2);
+    testCase.Info("Original Action:\n"+s1);
+    testCase.Info("What I read in: \n" + s2);
   }
 
   // Not really sure how to test this printed everything...
@@ -93,7 +100,7 @@ void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
 {
   std::string testName = "ActionTest";
   m_Logger->SetLogFile(rptDirectory + "/" + testName + ".log");
-  //m_Logger->LogToConsole(true); // Uncomment to see pretty prints
+  m_Logger->LogToConsole(true); // Uncomment to see pretty prints
 
   SESubstanceManager subMgr(m_Logger);
   if (!subMgr.LoadSubstanceDirectory())
@@ -260,8 +267,7 @@ void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
   O2frac.GetFractionAmount().SetValue(0.21);
   CO2frac.GetFractionAmount().SetValue(4.0E-4);
   N2frac.GetFractionAmount().SetValue(0.7896);
-  SESubstanceConcentration& O2conc = mv.GetAerosol(*subMgr.GetSubstance("Oxygen"));
-  O2conc.GetConcentration().SetValue(0.1, MassPerVolumeUnit::g_Per_L);
+  mv.GetAerosol(*subMgr.GetSubstance("Albuterol")).GetConcentration().SetValue(2500, MassPerVolumeUnit::mg_Per_m3);
   TestAction<SEMechanicalVentilation>(testSuite.CreateTestCase(), subMgr, mv, "-State-Flow-Pressure-GasFraction(O2, CO2, N2)-Aerosol(O2)");
 
   SENeedleDecompression nd;

@@ -50,6 +50,8 @@ namespace Pulse.CDM
       buffer = buffer.Replace("\"", "");
       buffer = buffer.Replace("{", "");
       buffer = buffer.Replace("}", "");
+      buffer = buffer.Replace("[", "");
+      buffer = buffer.Replace("]", "");
       buffer = buffer.Replace(",", "");
 
       string[] lines = buffer.Split(
