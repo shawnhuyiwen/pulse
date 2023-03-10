@@ -8,8 +8,7 @@ message AnyPlotterData
 {
   oneof Plotter
   {
-    ActionEventPlotterData            ActionEventPlotter        = 1;
-    MultiHeaderSeriesPlotterData      MultiHeaderSeriesPlotter  = 2;
+    MultiHeaderSeriesPlotterData      MultiHeaderSeriesPlotter  = 1;
   }
 }
 
@@ -24,6 +23,15 @@ message PlotterListData
 /** @brief Data used to configure plots. */
 message PlotConfigData
 {
+  /** @brief Enumeration for legend modes. */
+  enum eLegendMode
+  {
+    AllLegends                                                  = 0; /**<< @brief Show the data legend and action/event legend if actions/events plotted. */
+    NoLegends                                                   = 1; /**<< @brief Show no legends. */
+    HideActionEventLegend                                       = 2; /**<< @brief Will hide the legend for actions and events, leaving the legend for data and the action and event lines on the plot. */
+    OnlyActionEventLegend                                       = 3; /**<< @brief Show only the action event legend, no plot area. */
+  }
+
   /** @brief Enumeration for percentage of baseline modes. */
   enum ePercentageOfBaselineMode
   {
@@ -50,19 +58,19 @@ message PlotConfigData
   optional bool                       FillArea                  = 1;  /**<< @brief Fill the area under the curve. */
   optional double                     FontSize                  = 2;  /**<< @brief Set the font size of axis labels and chart title. */
   optional bool                       Gridlines                 = 3;  /**<< @brief Turn gridlines on or off. */
-  optional bool                       HideActionEventLegend     = 4;  /**<< @brief Will hide the legend for actions and events, leaving the legend for data and the action and event lines on the plot. */
-  optional ImagePropertyData          ImageProperties           = 5;  /**<< @brief Specify the image properties. */
-  optional double                     LegendFontSize            = 6;  /**<< @brief Set the font size of the legend. */
+  optional ImagePropertyData          ImageProperties           = 4;  /**<< @brief Specify the image properties. */
+  optional double                     LegendFontSize            = 5;  /**<< @brief Set the font size of the legend. */
+  optional eLegendMode                LegendMode                = 6;
   optional bool                       LogAxis                   = 7;  /**<< @brief Make all Y axes logarithmic. */
   repeated string                     OmitActionsWith           = 8;  /**<< @brief Will attempt to omit from the plot actions that contain any of the specified case-sensitive words, i.e. OmitActionsWith=Hemorrhage,Infusion */
   repeated string                     OmitEventsWith            = 9;  /**<< @brief Will attempt to omit from the plot events that contain any of the specified case-sensitive words, i.e. OmitEventsWith=Tachycardia */
   optional string                     OutputPathOverride        = 10; /**<< @brief Specify the path (relative to bin) to output the plot. */
   optional ePercentageOfBaselineMode  PercentOfBaselineMode     = 11;
-  optional bool                       PlotActions               = 12;
-  optional bool                       PlotEvents                = 13;
-  optional bool                       RemoveLegends             = 14;  /**<< @brief Removes all legends from the generated plot. */
-  optional SciLimitsData              SciLimits                 = 15;
-  optional eTickStyle                 TickStyle                 = 16;
+  optional bool                       PlotActions               = 12; /**<< @brief Plot actions parsed from log file. */
+  optional bool                       PlotEvents                = 13; /**<< @brief Plot events parsed from log file. */
+  optional SciLimitsData              SciLimits                 = 14;
+  optional eTickStyle                 TickStyle                 = 15;
+  optional bool                       ZeroAxis                  = 16; /**<< @brief Will ensure that zero is included on the Y axis rather than zooming away from it based on the plot's min/max Y values. */
 }
 
 /** @brief Data used to configure a plot source. */
@@ -72,28 +80,9 @@ message PlotSourceData
 
   optional string                     Label                     = 4;  /**<< @brief If provided, label to be used in legend. */
   optional string                     LineFormat                = 5;  /**<< @brief Plot this source with this format. */
-  optional int32                      StartRow                  = 6;
-  optional int32                      EndRow                    = 7;
-  optional string                     LogFile                   = 8;
-}
-
-/** @brief Data used to configure action event plots. */
-message ActionEventPlotterData
-{
-  string                              Comment                   = 1;
-
-  PlotConfigData                      PlotConfig                = 2;
-  PlotSourceData                      PlotSource                = 3;
-
-  repeated string                     Header                    = 4;  /**<< @brief Specify the header(s) that you want to plot on the Y axis. */
-  bool                                HideActionEventLegend     = 5;  /**<< @brief Will hide the legend for actions and events, leaving the legend for data and the action and event lines on the plot. */
-  bool                                LegendOnly                = 6;  /**<< @brief Generate an image with ONLY the legend, no plot included. */
-  bool                                NoActions                 = 7;  /**<< @brief Actions will not be included on the plot or legend. */
-  bool                                NoEvents                  = 8;  /**<< @brief Events will not be included on the plot or legend. */
-  repeated string                     OmitEventsWith            = 9;  /**<< @brief Will attempt to omit from the plot events that contain any of the specified case-sensitive words, i.e. OmitEventsWith=Tachycardia */
-  repeated string                     OmitActionsWith           = 10; /**<< @brief Will attempt to omit from the plot actions that contain any of the specified case-sensitive words, i.e. OmitActionsWith=Hemorrhage,Infusion */
-  string                              ValidationData            = 11; /**<< @brief Specify the relative path and filename for validation results to be plotted as scatter points. */
-  bool                                ZeroAxis                  = 12; /**<< @brief Will ensure that zero is included on the Y axis rather than zooming away from it based on the plot's min/max Y values. */
+  optional int32                      StartRow                  = 6;  /**<< @brief Specify the starting row number of the CSV data to include in plot. */
+  optional int32                      EndRow                    = 7;  /**<< @brief Specify the ending row number of the CSV data to include in plot. */
+  optional string                     LogFile                   = 8;  /**<< @brief Specify log file if it does not following usual naming conventions/location. */
 }
 
 /** @brief Data used to configure x vs y plots. */
@@ -137,8 +126,17 @@ message BoundsData
 /** @brief Data used to specify image property data. */
 message ImagePropertyData
 {
-  optional string                     FileFormat                = 1;  /**<< @brief  Specify the desired image file format. */
-  optional double                     Height_inch               = 2;  /**<< @brief  Specify the desired image height in inches. */
-  optional double                     Width_inch                = 3;  /**<< @brief  Specify the desired image width in inches. */
-  optional double                     DPI                       = 4;  /**<< @brief  Specify the desired image DPI. */
+  /** @brief Dimension modes. */
+  enum eDimensionMode
+  {
+    Default                                                     = 0; /**<< @brief Use pre-defined dimension defaults, MxN. */
+    Square                                                      = 1; /**<< @brief MxM dimensions. */
+    Legend                                                      = 2; /**<< @bried 2MxP dimensions. */
+  }
+
+  optional eDimensionMode             DimensionMode             = 1;  /**<< @brief  Specify the desired image dimension mode. Any provided height/width values will take prority. */
+  optional string                     FileFormat                = 2;  /**<< @brief  Specify the desired image file format. */
+  optional double                     Height_inch               = 3;  /**<< @brief  Specify the desired image height in inches. */
+  optional double                     Width_inch                = 4;  /**<< @brief  Specify the desired image width in inches. */
+  optional double                     DPI                       = 5;  /**<< @brief  Specify the desired image DPI. */
 }

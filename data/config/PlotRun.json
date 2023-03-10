@@ -1,5 +1,5 @@
 {
-  
+
   "Plotter" :
   [
     {
@@ -7,7 +7,7 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "RemoveLegends": true, "FillArea": true,
+          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "LegendMode": "NoLegends", "FillArea": true,
           "ImageProperties": { "FileFormat": ".png", "Height_inch": 2, "Width_inch": 6 }
         },
         "PlotSource":
@@ -38,7 +38,7 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "RemoveLegends": true, "FillArea": true,
+          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "LegendMode": "NoLegends", "FillArea": true,
           "ImageProperties": { "FileFormat": ".png", "Height_inch": 2, "Width_inch": 6 }
         },
         "PlotSource":
@@ -69,7 +69,7 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "RemoveLegends": true, "FillArea": true,
+          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "LegendMode": "NoLegends", "FillArea": true,
           "ImageProperties": { "FileFormat": ".png", "Height_inch": 2, "Width_inch": 6 }
         },
         "PlotSource":
@@ -100,7 +100,7 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "RemoveLegends": true, "FillArea": true,
+          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "LegendMode": "NoLegends", "FillArea": true,
           "ImageProperties": { "FileFormat": ".png", "Height_inch": 2, "Width_inch": 6 }
         },
         "PlotSource":
@@ -131,7 +131,7 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "RemoveLegends": true, "FillArea": true,
+          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "LegendMode": "NoLegends", "FillArea": true,
           "ImageProperties": { "FileFormat": ".png", "Height_inch": 2, "Width_inch": 6 }
         },
         "PlotSource":
@@ -162,7 +162,7 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "RemoveLegends": true, "FillArea": true,
+          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "LegendMode": "NoLegends", "FillArea": true,
           "ImageProperties": { "FileFormat": ".png", "Height_inch": 2, "Width_inch": 6 }
         },
         "PlotSource":
@@ -193,7 +193,7 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "RemoveLegends": true, "FillArea": true,
+          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "LegendMode": "NoLegends", "FillArea": true,
           "ImageProperties": { "FileFormat": ".png", "Height_inch": 2, "Width_inch": 6 }
         },
         "PlotSource":
@@ -224,7 +224,7 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "RemoveLegends": true, "FillArea": true,
+          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "LegendMode": "NoLegends", "FillArea": true,
           "ImageProperties": { "FileFormat": ".png", "Height_inch": 2, "Width_inch": 6 }
         },
         "PlotSource":
@@ -255,7 +255,7 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "RemoveLegends": true, "FillArea": true,
+          "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/ventilator_analysis/", "LegendMode": "NoLegends", "FillArea": true,
           "ImageProperties": { "FileFormat": ".png", "Height_inch": 2, "Width_inch": 6 }
         },
         "PlotSource":

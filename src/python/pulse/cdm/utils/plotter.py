@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 import os
+import re
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,9 +17,7 @@ from operator import attrgetter
 from pulse.cdm.plots import *
 from pulse.cdm.io.plots import serialize_plotter_list_from_file
 from pulse.cdm.utils.file_utils import get_config_dir
-from pulse.cdm.scenario import SEScenario
-from pulse.cdm.io.scenario import serialize_scenario_from_file
-from pulse.cdm.engine import SEAction
+from pulse.cdm.utils.logger import pretty_print, ePrettyPrintType
 
 def create_plots(plots_file: str, benchmark: bool = False):
     plotters = []
@@ -27,14 +26,15 @@ def create_plots(plots_file: str, benchmark: bool = False):
         if isinstance(p, SEMultiHeaderSeriesPlotter):
             multi_header_series_plotter(p, benchmark)
         else:
-            raise Exception("Unknown plotter type")
+            print(f"ERROR: Unknown plotter type: {p}")
 
 def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: bool = False):
     if benchmark:
         start = timer()
 
     if not plotter.has_plot_sources():
-        raise Exception("No plot source provided")
+        print("ERROR: No plot source provided")
+        return
     sources = plotter.get_plot_sources()
     validation_source = plotter.get_validation_source()
 
@@ -50,7 +50,13 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         config = series.get_plot_config()
 
         # Default x header is time (first column)
-        x_header = series.get_x_header() if series.has_x_header() else sources[0].get_data_frame().columns[0]
+        x_header = None
+        if series.has_x_header():
+            x_header = series.get_x_header()
+        elif not sources[0].get_data_frame().empty:
+            x_header = sources[0].get_data_frame().columns[0]
+        else: # No data frame
+            return
         x2_header = None
         if series.has_x2_header():
             x2_header = series.get_x2_header()
@@ -82,12 +88,16 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         if validation_source and not y2_headers:
             y2_headers = series.get_y_headers()
 
-        if not config.has_title():
+        if not config.has_title() and series.has_y_headers():
             config.set_title(generate_title(x_header, series.get_y_headers()[0]))
         if not config.get_output_filename():
+            if not config.has_title():
+                print("ERROR: Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
+                return
             config.set_output_filename(config.get_title().replace(" ", "_").replace("/", "_Per_"))
 
         output_filename = config.get_output_filename()
+        # Add file extension if needed
         if not os.path.splitext(output_filename)[1]:
             output_filename += config.get_image_properties().get_file_format()
         output_filepath = os.path.join(output_path, output_filename)
@@ -100,6 +110,8 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
                        y2_headers,
                        validation_source):
             save_current_plot(output_filepath, config.get_image_properties())
+        else:
+            print(f"ERROR: Failed to create plot {output_filepath}")
         clear_current_plot()
 
         if benchmark:
@@ -111,6 +123,8 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         print(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 def generate_title(x_header, y_header):
+    if not y_header or not x_header:
+        return ""
     return y_header + " vs "+ x_header
 
 def percentage_of_baseline(baseline_mode, df, x_header, y_headers, x2_header, y2_headers):
@@ -194,12 +208,12 @@ def parse_actions(log_file: str, omit: [str] = []):
                 idx += 1
                 continue
             else:
-                action_text = line[(action_idx+len(action_tag)):].lstrip()
-                end_time_idx = action_text.find("(s)")
-                if end_time_idx == -1:
-                    end_time_idx = action_text.find(",")
-                action_time = float(action_text[:end_time_idx].strip())
-                action_text = action_text[(action_text.find(",")+1):].lstrip()
+                action_text = line
+                # Group 0: Entire match
+                # Group 1: Time
+                match = re.search(r'\[(\d*\.?d*)\(.*\)\]', action_text)
+                action_time = float(match.group(1))
+                action_text = action_text[(action_idx+len(action_tag)):].lstrip()
 
                 # Find blank line at end of action
                 while (idx + 1) < len(lines) and len(lines[idx+1].strip()) != 0:
@@ -217,7 +231,7 @@ def parse_actions(log_file: str, omit: [str] = []):
                     idx += 1
                     continue
 
-                action_text = SEAction.pretty_print(action_text)
+                action_text = pretty_print(action_text, ePrettyPrintType.Action)
 
                 # Remove leading spaces on each line
                 action_text = '\n'.join([s.strip() for s in action_text.splitlines()])
@@ -244,17 +258,37 @@ def create_plot(plot_sources: [SEPlotSource],
                 validation_source: SEPlotSource = None):
 
     # To support line formats across axes
-    setup_fmt_cycler = cycler(linestyle=['-', '--', '-.', ':']) * cycler(color=mcolors.TABLEAU_COLORS)
+    setup_fmt_cycler = cycler(linestyle=['-', '--', '-.', ':']) * cycler(color=['r', 'b', 'g', 'y', 'm', 'c'])
+    if plot_config.get_plot_actions() or plot_config.get_plot_events(): # Don't overlap colors between cyclers
+        setup_fmt_cycler = cycler(linestyle=['-', '--', '-.', ':']) * cycler(color=['b', 'g', 'c'])
+    setup_action_event_fmt_cycler = cycler(color=["lime", "k", "magenta", "yellow", "r"])
     fmt_cycler = setup_fmt_cycler()
+    action_event_fmt_cycler = setup_action_event_fmt_cycler()
 
     # To support legend across axes
     lns = []
 
     # Labels and title
     fig, ax1 = plt.subplots()
-    ax1.set_xlabel(plot_config.get_x_label() if plot_config.has_x_label() else x_header, fontsize=plot_config.get_font_size())
-    ax1.set_ylabel(plot_config.get_y_label() if plot_config.has_y_label() else y_headers[0], fontsize=plot_config.get_font_size())
-    ax1.set_title(plot_config.get_title() if plot_config.has_title() else generate_title(x_header, y_headers[0]), fontsize=plot_config.get_font_size())
+    fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
+    x_label = ""
+    if plot_config.has_x_label():
+        x_label = plot_config.get_x_label()
+    elif x_header:
+        x_label = x_header
+    ax1.set_xlabel(x_label, fontsize=plot_config.get_font_size())
+    y_label = ""
+    if plot_config.has_y_label():
+        y_label = plot_config.get_y_label()
+    elif y_headers:
+        y_label = y_headers[0]
+    ax1.set_ylabel(y_label, fontsize=plot_config.get_font_size())
+    title = ""
+    if plot_config.has_title():
+        title = plot_config.get_title()
+    elif y_headers:
+        title = generate_title(x_header, y_headers[0])
+    ax1.set_title(title, fontsize=plot_config.get_font_size())
     ax1.ticklabel_format(axis="y", style=plot_config.get_tick_style().name, scilimits=plot_config.get_sci_limits())
 
     # Main axes
@@ -295,6 +329,9 @@ def create_plot(plot_sources: [SEPlotSource],
     for ps in plot_sources:
         baseline_mode = plot_config.get_percent_of_baseline_mode()
         df = ps.get_data_frame()
+        if df.empty:
+            print(f"ERROR: Data frame is empty: {ps.get_csv_data()}")
+            continue
         if not percentage_of_baseline(baseline_mode,
                                       df,
                                       x_header,
@@ -315,8 +352,12 @@ def create_plot(plot_sources: [SEPlotSource],
             if plot_config.get_fill_area():
                 ax1.fill_between(x_header, y_header, data=df, facecolor=color)
 
+        if y2_headers or validation_source:
+            ax1.yaxis.label.set_color(color)
+            ax1.tick_params(axis='y', colors=color)
+
         # Secondary axis, not from validation data
-        if not validation_source:
+        if not validation_source and y2_headers:
             for y2_header in y2_headers:
                 if ps.has_line_format():
                     lns.extend(ax2.plot(x2_header, y2_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_config.get_y2_label()))
@@ -327,6 +368,9 @@ def create_plot(plot_sources: [SEPlotSource],
                     lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=ps.get_label() if ps.has_label() else plot_config.get_y2_label()))
                 if plot_config.get_fill_area():
                     ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
+
+            ax2.yaxis.label.set_color(color)
+            ax2.tick_params(axis='y', colors=color)
 
         # Plot any actions or events if requested
         if plot_config.get_plot_events() or plot_config.get_plot_actions():
@@ -355,27 +399,53 @@ def create_plot(plot_sources: [SEPlotSource],
                 # Sort and plot all actions and events
                 actions_events = sorted(actions_events, key=attrgetter('time'))
                 for ae in actions_events:
-                    color = next(fmt_cycler)['color']
+                    color = next(action_event_fmt_cycler)['color']
                     ax3.axvline(x=ae.time, color = color, label = f"{ae.category}:{ae.text}\nt={ae.time}")
             else:
-                raise ValueError(f"Could not find corresponding log file: {ps.get_csv_data()}")
+                print(f"ERROR: Could not find corresponding log file: {ps.get_csv_data()}")
+                return False
 
     # Plot validation data if needed
     if validation_source:
         df = validation_source.get_data_frame()
-        for y2_header in y2_headers:
-            if validation_source.has_line_format():
-                lns.extend(ax2.plot(x2_header, y2_header, validation_source.get_line_format(), data=df, label=validation_source.get_label() if validation_source.has_label() else plot_config.get_y2_label()))
-                color = validation_source.get_line_format()[-1]
-            else:
-                c = next(fmt_cycler)
-                color = c['color']
-                lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=validation_source.get_label() if validation_source.has_label() else plot_config.get_y2_label()))
-            if plot_config.get_fill_area():
-                ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
+        if df.empty:
+            print(f"ERROR: Data frame is empty: {validation_source.get_csv_data()}")
+        elif y2_headers:
+            for y2_header in y2_headers:
+                if validation_source.has_line_format():
+                    lns.extend(ax2.plot(x2_header, y2_header, validation_source.get_line_format(), data=df, label=validation_source.get_label() if validation_source.has_label() else plot_config.get_y2_label()))
+                    color = validation_source.get_line_format()[-1]
+                else:
+                    c = next(fmt_cycler)
+                    color = c['color']
+                    lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=validation_source.get_label() if validation_source.has_label() else plot_config.get_y2_label()))
+                if plot_config.get_fill_area():
+                    ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
+
+            ax2.yaxis.label.set_color(color)
+            ax2.tick_params(axis='y', colors=color)
+
+    # Zero axis
+    if plot_config.get_zero_axis():
+        for ax in [ax1, ax2]:
+            if ax:
+                l, u = ax.get_ylim()
+                if l > 0:
+                    l = 0
+                elif u < 0:
+                    u = 0
+                ax.set_ylim(l, u)
+
+
+    # Dual axis for action/event plots
+    if (plot_config.get_plot_actions() or plot_config.get_plot_events()) and ax2 is None:
+        ax2 = ax1.twinx()
+        ax2.set_ylim(ax1.get_ylim())
 
     # Legend and gridline settings
-    if not plot_config.get_remove_legends():
+    if plot_config.get_gridlines():
+        ax1.grid(linestyle='dotted')
+    if plot_config.get_legend_mode() != eLegendMode.NoLegends:
         text_wrapper = DocumentWrapper(width=45)
 
         box = ax1.get_position()
@@ -384,25 +454,35 @@ def create_plot(plot_sources: [SEPlotSource],
         if ax2 is not None:
             ax2.set_position([box.x0, box.y0 + box.height * 0.1,
                         box.width, box.height * 0.9])
-        # Action and event legend
-        if not plot_config.get_hide_action_event_legend() and ax3 is not None and ax3.lines:
-            ax3.set_position([box.x0, box.y0 + box.height * 0.1,
-                        box.width, box.height * 0.9])
-            lbls = [text_wrapper.fill(l.get_label()) for l in ax3.lines]
-            action_event_legend = ax3.legend(ax3.lines, lbls, loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = min(4, len(lbls)), fontsize=plot_config.get_legend_font_size())
-            plt.setp(action_event_legend.get_texts(), multialignment='center')
 
         lbls = [text_wrapper.fill(l.get_label()) for l in lns]
         ax1.legend(lns, lbls, fontsize=plot_config.get_legend_font_size(), loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = min(4, len(lbls)))
-    ax1.grid(plot_config.get_gridlines())
+
+    # Action and event legend
+    if plot_config.get_legend_mode() != eLegendMode.NoLegends and \
+       plot_config.get_legend_mode() != eLegendMode.HideActionEventLegend and ax3 is not None and ax3.lines:
+
+        ax3.set_position([box.x0, box.y0 + box.height * 0.1,
+                    box.width, box.height * 0.9])
+        lbls = [text_wrapper.fill(l.get_label()) for l in ax3.lines]
+        ax3.legend(ax3.lines, lbls, loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol = min(4, len(lbls)), fontsize=plot_config.get_legend_font_size())
+
+        if plot_config.get_legend_mode() == eLegendMode.OnlyActionEventLegend:
+            legend_fig, legend_ax = plt.subplots()
+            legend_fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
+            legend_ax.axis(False)
+            legend_ax.legend(ax3.lines, lbls, loc='center', ncol = min(4, len(lbls)), fontsize=plot_config.get_legend_font_size())
 
     return True
 
 def save_current_plot(filename: str, image_props: SEImageProperties):
     print("Creating plot "+filename)
     figure = plt.gcf()
+    # Doing tight layout twice helps prevent legends getting cut off
+    plt.tight_layout()
     figure.set_size_inches(image_props.get_width_inch(), image_props.get_height_inch())
-    figure.savefig(filename, bbox_inches='tight', dpi=image_props.get_dpi())
+    plt.tight_layout()
+    figure.savefig(filename, dpi=image_props.get_dpi())
 
 def clear_current_plot():
     plt.close()

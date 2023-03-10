@@ -6,12 +6,12 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "Width_inch": 8 },
+          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "DimensionMode": "Square" },
           "SciLimits": {}
         },
         "PlotSource":
         [
-          { "CSVData": "./verification/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv", "LineFormat": "-r" }
+          { "CSVData": "./verification/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv" }
         ],
         "Series":
         [
@@ -24,15 +24,12 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "Width_inch": 8 },
-          "RemoveLegends": true, "SciLimits": {}
+          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "DimensionMode": "Square" },
+          "LegendMode": "NoLegends", "SciLimits": {}
         },
         "PlotSource":
         [
-          {
-            "CSVData": "$VALIDATION_DIR/Waveforms/PulmonaryCompliance_Guyton.csv",
-            "LineFormat": "-r"
-          }
+          { "CSVData": "$VALIDATION_DIR/Waveforms/PulmonaryCompliance_Guyton.csv" }
         ],
         "Series":
         [
@@ -45,12 +42,12 @@
       {
         "PlotConfig":
         {
-          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "Width_inch": 8 },
+          "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "DimensionMode": "Square" },
           "SciLimits": {}
         },
         "PlotSource":
         [
-          { "CSVData": "./verification/scenarios/miscellaneous/ComplianceCurveResults.csv", "LineFormat": "-r" }
+          { "CSVData": "./verification/scenarios/miscellaneous/ComplianceCurveResults.csv" }
         ],
         "Series":
         [
@@ -68,12 +65,11 @@
         },
         "PlotSource":
         [
-          { "CSVData": "./verification/scenarios/patient/HemorrhageClass4NoFluidResults.csv", "LineFormat": "-r" }
+          { "CSVData": "./verification/scenarios/patient/HemorrhageClass4NoFluidResults.csv" }
         ],
         "ValidationSource":
         {
-          "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicCardiacOutputShockValidation.csv",
-          "LineFormat": "-b"
+          "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicCardiacOutputShockValidation.csv"
         },
         "Series":
         [
@@ -106,7 +102,7 @@
         [
           { "Title": "", "OutputFilename": "HemorrhageGroups_partial", "XHeader": "Time(s)",
               "YHeader": [ "MeanArterialPressure(mmHg)" ], "YLabel": "Mean Arterial Pressure Delta",
-              "YBounds": { "LowerBound": 0, "UpperBound": 105 }}
+              "YBounds": { "LowerBound": 0, "UpperBound": 105 } }
         ]
       }
     },
@@ -151,7 +147,7 @@
         "PlotConfig":
         {
           "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Endocrine/", "PlotActions": true, "PlotEvents": true,
-          "RemoveLegends": true, "TickStyle": "Plain"
+          "LegendMode": "NoLegends", "TickStyle": "Plain"
         },
         "PlotSource":
         [
@@ -160,7 +156,15 @@
         "Series":
         [
           { "Title": "Epinephrine Blood Concentration", "OutputFilename": "AcuteStressBloodEpi_partial",
-              "YHeader": [ "Aorta-Epinephrine-Concentration(ug/L)" ] }
+              "YHeader": [ "Aorta-Epinephrine-Concentration(ug/L)" ] },
+          { "Title": "Heart Rate", "OutputFilename": "AcuteStressHR_partial",
+              "YHeader": [ "HeartRate(1/min)" ] },
+          { "Title": "Systolic Pressure", "OutputFilename": "AcuteStressSystolic_partial",
+              "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+          { "Title": "Diastolic Pressure", "OutputFilename": "AcuteStressDiastolic_partial",
+              "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+          { "OutputFilename": "AcuteStressLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false, "ImageProperties": { "DimensionMode": "Legend" } } }
         ]
       }
     },
@@ -182,6 +186,24 @@
               "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ], "YBounds": { "UpperBound": 2.6 },
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Bounds": { "UpperBound": 2.6 },
               "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular/",
+          "ImageProperties": { "Height_inch": 6, "Width_inch": 4 }, "SciLimits": {}, "LegendMode": "NoLegends", "ZeroAxis": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "./verification/scenarios/validation/systems/CardiovascularValidation-StandardMaleResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "PVLoop_partial", "Title": "", "XHeader": "LeftHeart-Volume(mL)", "YHeader": [ "LeftHeart-Pressure(mmHg)" ] }
         ]
       }
     }

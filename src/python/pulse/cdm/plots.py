@@ -3,19 +3,37 @@
 from enum import Enum
 from typing import Tuple
 from copy import deepcopy
+import os
+import pandas as pd
 
 from pulse.cdm.scalars import SEScalar, SEScalarLength
 from pulse.cdm.utils.file_utils import get_dir_from_run_config
 from pulse.cdm.utils.csv_utils import read_csv_into_df
 
+class eDimensionMode(Enum):
+    Default = 0
+    Square = 1
+    Legend = 2
 class SEImageProperties():
-    __slots__ = ["_file_format", "_height_inch", "_width_inch", "_dpi"]
+    __slots__ = ["_dimension_mode", "_dim_dict", "_file_format", "_height_inch", "_width_inch", "_dpi"]
 
     def __init__(self):
+        self._dimension_mode = eDimensionMode.Default
         self._file_format = ".jpg"
-        self._height_inch = 8
-        self._width_inch = 16
+        self._height_inch = None
+        self._width_inch = None
         self._dpi = 100
+
+        self._dim_dict = {
+            eDimensionMode.Default: { "h": 8, "w": 16 },
+            eDimensionMode.Square:  { "h": 8, "w": 8  },
+            eDimensionMode.Legend:  { "h": 2, "w": 32 }
+        }
+
+    def get_dimension_mode(self):
+        return self._dimension_mode
+    def set_dimension_mode(self, mode: eDimensionMode):
+        self._dimension_mode = mode
 
     def get_file_format(self):
         return self._file_format
@@ -23,12 +41,22 @@ class SEImageProperties():
         self._file_format = fmt
 
     def get_height_inch(self):
-        return self._height_inch
+        if self._height_inch is not None:
+            return self._height_inch
+        elif self._dimension_mode in self._dim_dict:
+            return self._dim_dict[self._dimension_mode]["h"]
+        else:
+            raise ValueError(f"Unknown dimension mode {self._dimension_mode}")
     def set_height_inch(self, h: float):
         self._height_inch = h
 
     def get_width_inch(self):
-        return self._width_inch
+        if self._width_inch is not None:
+            return self._width_inch
+        elif self._dimension_mode in self._dim_dict:
+            return self._dim_dict[self._dimension_mode]["w"]
+        else:
+            raise ValueError(f"Unknown dimension mode {self._dimension_mode}")
     def set_width_inch(self, w: float):
         self._width_inch = w
 
@@ -63,7 +91,11 @@ class SEBounds():
     def invalidate_upper_bound(self):
         self._upper_bound = None
 
-
+class eLegendMode(Enum):
+    AllLegends = 0
+    NoLegends = 1
+    HideActionEventLegend = 2
+    OnlyActionEventLegend = 3
 class ePercentageOfBaselineMode(Enum):
     Off = 0
     All = 1
@@ -73,23 +105,39 @@ class eTickStyle(Enum):
     Scientific = 0
     Plain = 1
 class SEPlotConfig():
-    __slots__ = [ "_fill_area", "_font_size", "_gridlines", "_hide_action_event_legend",
-                  "_image_properties", "_legend_font_size", "_log_axis", "_omit_actions_with",
+    __slots__ = [ "_fill_area", "_font_size", "_gridlines", "_image_properties",
+                  "_legend_font_size", "_legend_mode", "_log_axis", "_omit_actions_with",
                   "_omit_events_with", "_output_filename", "_output_path_override",
-                  "_percent_of_baseline_mode", "_plot_actions", "_plot_events", "_remove_legends",
+                  "_percent_of_baseline_mode", "_plot_actions", "_plot_events",
                   "_sci_limits", "_tick_style", "_title", "_x_label", "_x_bounds", "_y_label",
-                  "_y_bounds", "_y2_label", "_y2_bounds"]
+                  "_y_bounds", "_y2_label", "_y2_bounds", "_zero_axis"]
 
     def __init__(self):
         self.clear()
+
+    def __repr__(self):
+        return f'SEPlotConfig({self._fill_area}, {self._font_size}, {self._gridlines}, {self._image_properties}, ' \
+            f'{self._legend_font_size}, {self._legend_mode}, {self._log_axis}, {self._omit_actions_with}, ' \
+            f'{self._omit_events_with}, {self._output_path_override}, {self._percent_of_baseline_mode}, '\
+            f'{self._plot_actions}, {self._plot_events}, {self._sci_limits}, {self._tick_style}, {self._zero_axis})'
+
+    def __str__(self):
+        return f'SEPlotConfig:\n\tFill Area: {self._fill_area}\n\tFont Size: {self._font_size}\n\tGridlines: ' \
+            f'{self._gridlines}\n\tImage Properties: {self._image_properties}\n\tLegend Font Size: ' \
+            f'{self._legend_font_size}\n\tLegend Mode: {self._legend_mode}\n\tLog Axis: {self._log_axis}\n\t' \
+            f'Omit Actions With: {self._omit_actions_with}\n\tOmit Events With: {self._omit_events_with}\n\t' \
+            f'Output Path Override: {self._output_path_override}\n\tPercent of Baseline Mode: ' \
+            f'{self._percent_of_baseline_mode}\n\tPlot Actions: {self._plot_actions}\n\tPlot Events: ' \
+            f'{self._plot_events}\n\tSci Limits: {self._sci_limits}\n\tTick Style: {self._tick_style}\n\t' \
+            f'Zero Axis: {self._zero_axis}'
 
     def clear(self):
         self._fill_area = None
         self._font_size = None
         self._gridlines = None
-        self._hide_action_event_legend = None
         self._image_properties = None
         self._legend_font_size = None
+        self._legend_mode = None
         self._log_axis = None
         self._omit_actions_with = None
         self._omit_events_with = None
@@ -97,9 +145,9 @@ class SEPlotConfig():
         self._percent_of_baseline_mode = None
         self._plot_actions = None
         self._plot_events = None
-        self._remove_legends = None
         self._sci_limits = None
         self._tick_style = None
+        self._zero_axis = None
 
         # Internal
         self._output_filename = None
@@ -118,12 +166,12 @@ class SEPlotConfig():
             self._font_size = 14
         if self._gridlines is None:
             self._gridlines = False
-        if self._hide_action_event_legend is None:
-            self._hide_action_event_legend = False
         if self._image_properties is None:
             self._image_properties = SEImageProperties()
         if self._legend_font_size is None:
             self._legend_font_size = 12
+        if self._legend_mode is None:
+            self._legend_mode = eLegendMode.AllLegends
         if self._log_axis is None:
             self._log_axis = False
         if self._omit_actions_with is None:
@@ -138,10 +186,10 @@ class SEPlotConfig():
             self._plot_actions = False
         if self._plot_events is None:
             self._plot_events = False
-        if self._remove_legends is None:
-            self._remove_legends = False
         if self._tick_style is None:
             self._tick_style = eTickStyle.Scientific
+        if self._zero_axis is None:
+            self._zero_axis = False
 
         # Internal
         if self._x_bounds is None:
@@ -159,12 +207,12 @@ class SEPlotConfig():
             self._font_size = src._font_size
         if src._gridlines is not None:
             self._gridlines = src._gridlines
-        if src._hide_action_event_legend is not None:
-            self._hide_action_event_legend = src._hide_action_event_legend
         if src._image_properties is not None:
             self._image_properties = src._image_properties
         if src._legend_font_size is not None:
             self._legend_font_size = src._legend_font_size
+        if src._legend_mode is not None:
+            self._legend_mode = src._legend_mode
         if src._log_axis is not None:
             self._log_axis = src._log_axis
         if src._omit_actions_with is not None:
@@ -175,16 +223,16 @@ class SEPlotConfig():
             self._output_path_override = src._output_path_override
         if src._percent_of_baseline_mode is not None:
             self._percent_of_baseline_mode = src._percent_of_baseline_mode
-        if self._plot_actions is not None:
+        if src._plot_actions is not None:
             self._plot_actions = src._plot_actions
-        if self._plot_events is not None:
+        if src._plot_events is not None:
             self._plot_events = src._plot_events
-        if src._remove_legends is not None:
-            self._remove_legends = src._remove_legends
         if src._sci_limits is not None:
             self._sci_limits = src._sci_limits
         if src._tick_style is not None:
             self._tick_style = src._tick_style
+        if src._zero_axis is not None:
+            self._zero_axis = src._zero_axis
 
         # Internal
         if src._output_filename is not None:
@@ -231,15 +279,6 @@ class SEPlotConfig():
     def invalidate_gridlines_setting(self):
         self._gridlines = None
 
-    def get_hide_action_event_legend(self):
-        return self._hide_action_event_legend
-    def set_hide_action_event_legend(self, hide_action_event_legend: bool):
-        self._hide_action_event_legend = hide_action_event_legend
-    def has_hide_action_event_legend_setting(self):
-        return self._hide_action_event_legend is not None
-    def invalidate_hide_action_event_legend_setting(self):
-        self._hide_action_event_legend = None
-
     def get_image_properties(self):
         return self._image_properties
     def set_image_properties(self, image_props: SEImageProperties):
@@ -257,6 +296,15 @@ class SEPlotConfig():
         return self._legend_font_size is not None
     def invalidate_legend_font_size(self):
         self._legend_font_size = None
+
+    def get_legend_mode(self):
+        return self._legend_mode
+    def set_legend_mode(self, mode: eLegendMode):
+        self._legend_mode = mode
+    def has_legend_mode(self):
+        return self._legend_mode is not None
+    def invalidate_legend_mode(self):
+        self._legend_mode = None
 
     def get_log_axis(self):
         return self._log_axis
@@ -334,15 +382,6 @@ class SEPlotConfig():
     def invalidate_plot_events_setting(self):
         self._plot_events = None
 
-    def get_remove_legends(self):
-        return self._remove_legends
-    def set_remove_legends(self, remove_legends: bool):
-        self._remove_legends = remove_legends
-    def has_remove_legends_setting(self):
-        return self._remove_legends is not None
-    def invalidate_remove_legends_setting(self):
-        self._remove_legends = None
-
     def get_sci_limits(self):
         return self._sci_limits
     def set_sci_limits(self, limits: Tuple[int, int]):
@@ -350,7 +389,7 @@ class SEPlotConfig():
     def has_sci_limits(self):
         return self._sci_limits is not None
     def invalidate_sci_limits(self):
-        self._sci_limis = None
+        self._sci_limits = None
 
     def get_tick_style(self):
         return self._tick_style
@@ -360,6 +399,15 @@ class SEPlotConfig():
         return self._tick_style is not None
     def invalidate_tick_style(self):
         self._tick_style = None
+
+    def get_zero_axis(self):
+        return self._zero_axis
+    def set_zero_axis(self, zero_axis: bool):
+        self._zero_axis = zero_axis
+    def has_zero_axis_setting(self):
+        return self._zero_axis is not None
+    def invalidate_zero_axis_setting(self):
+        self._zero_axis = None
 
     def get_title(self):
         return self._title
@@ -426,17 +474,18 @@ class SEPlotConfig():
 
 
 class SEPlotSource():
-    __slots__ = ["_csv_data", "_log_file", "_df", "_label", "_line_format",
-                 "_start_row", "_end_row"]
+    __slots__ = ["_csv_data", "_log_file", "_df", "_label",
+                 "_line_format", "_start_row", "_end_row"]
 
     def __init__(self):
         self._csv_data = None
         self._log_file = None
-        self._df = None
         self._label = None
         self._line_format = ""
         self._start_row = None
         self._end_row = None
+
+        self._df = pd.DataFrame()
 
     def get_csv_data(self):
         return self._csv_data
@@ -458,11 +507,11 @@ class SEPlotSource():
         self._log_file = None
 
     def get_data_frame(self):
-        if self._df is None:
+        if self._df.empty:
             self._read_csv_into_df()
-        return self._df.loc[self._start_row:self._end_row]
+        return self._df.loc[self._start_row:self._end_row] if not self._df.empty else self._df
     def invalidate_data_frame(self):
-        self._df = None
+        self._df = pd.DataFrame()
 
     def get_label(self):
         return self._label
@@ -504,12 +553,16 @@ class SEPlotSource():
         return filepath
     def _read_csv_into_df(self):
         if not self.has_csv_data():
-            raise Exception("No CSV data provided")
+            print("ERROR: No CSV data provided")
+            return
 
         # Perform replacement if needed
         self._csv_data = self._filepath_replacement(self._csv_data)
 
-        self._df = read_csv_into_df(self._csv_data, replace_slashes=False)
+        if os.path.exists(self._csv_data):
+            self._df = read_csv_into_df(self._csv_data, replace_slashes=False)
+        else:
+            print(f"ERROR: File not found: {self._csv_data}")
 
 class SESeries():
     __slots__ = ["_plot_config", "_output_filename", "_title",

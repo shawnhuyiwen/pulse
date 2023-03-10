@@ -20,9 +20,7 @@ def serialize_plotter_list_from_bind(src: PlotterListData, dst: [SEPlotter]):
         base_config.set_defaults()
 
     for any_plotter_data in src.Plotter:
-        if any_plotter_data.HasField("ActionEventPlotter"):
-            raise Exception("Action Event Plotter not implemented")
-        elif any_plotter_data.HasField("MultiHeaderSeriesPlotter"):
+        if any_plotter_data.HasField("MultiHeaderSeriesPlotter"):
             plot = SEMultiHeaderSeriesPlotter()
             serialize_multi_header_series_plotter_from_bind(any_plotter_data.MultiHeaderSeriesPlotter,
                                                             plot,
@@ -32,11 +30,14 @@ def serialize_plotter_list_from_bind(src: PlotterListData, dst: [SEPlotter]):
             raise Exception("No valid plotter in serialize_plot_list_from_bind")
 
 def serialize_image_properties_to_bind(src: SEImageProperties, dst: ImagePropertyData):
+    dst.DimensionMode = src.get_dimension_mode().value
     dst.FileFormat = src.get_file_format()
     dst.Height_inch = src.get_height_inch()
     dst.Width_inch = src.get_width_inch()
     dst.DPI = src.get_dpi()
 def serialize_image_properties_from_bind(src: ImagePropertyData, dst: SEImageProperties):
+    if src.HasField("DimensionMode"):
+        dst.set_dimension_mode(eDimensionMode(src.DimensionMode))
     if src.HasField("FileFormat"):
         dst.set_file_format(src.FileFormat)
     if src.HasField("Height_inch"):
@@ -64,12 +65,12 @@ def serialize_plot_config_to_bind(src: SEPlotConfig, dst: PlotConfigData):
         dst.FontSize = src.get_font_size()
     if src.has_gridlines_setting():
         dst.Gridlines = src.get_gridlines()
-    if src.has_hide_action_event_legend_setting():
-        dst.HideActionEventLegend = src.get_hide_action_event_legend()
     if src.has_image_properties():
         dst.ImageProperties = src.get_image_properties()
     if src.has_legend_font_size():
         dst.LegendFontSize = src.get_legend_font_size()
+    if src.has_legend_mode():
+        dst.LegendMode = src.get_legend_mode().value
     if src.has_log_axis_setting():
         dst.LogAxis = src.get_log_axis()
     if src.has_omit_actions_with():
@@ -88,14 +89,14 @@ def serialize_plot_config_to_bind(src: SEPlotConfig, dst: PlotConfigData):
         dst.PlotActions = src.get_plot_actions()
     if src.has_plot_events_setting():
         dst.PlotEvents = src.get_plot_events()
-    if src.has_remove_legends_setting():
-        dst.RemoveLegends = src.get_remove_legends()
     if src.has_sci_limits():
         limits = src.get_sci_limits()
         dst.SciLimits.M = limits[0]
         dst.SciLimits.N = limits[1]
     if src.has_tick_style():
         dst.TickStyle = src.get_tick_style().value
+    if src.has_zero_axis_setting():
+        dst.ZeroAxis = src.get_zero_axis()
 def serialize_plot_config_from_bind(src: PlotConfigData,
                                     dst: SEPlotConfig,
                                     base_config: SEPlotConfig = None):
@@ -110,12 +111,12 @@ def serialize_plot_config_from_bind(src: PlotConfigData,
         dst.set_font_size(src.FontSize)
     if src.HasField("Gridlines"):
         dst.set_gridlines(src.Gridlines)
-    if src.HasField("HideActionEventLegend"):
-        dst.set_hide_action_event_legend(src.HideActionEventLegend)
     if src.HasField("ImageProperties"):
         serialize_image_properties_from_bind(src.ImageProperties, dst.get_image_properties())
     if src.HasField("LegendFontSize"):
         dst.set_legend_font_size(src.LegendFontSize)
+    if src.HasField("LegendMode"):
+        dst.set_legend_mode(eLegendMode(src.LegendMode))
     if src.HasField("LogAxis"):
         dst.set_log_axis(src.LogAxis)
     for omitData in src.OmitActionsWith:
@@ -130,12 +131,12 @@ def serialize_plot_config_from_bind(src: PlotConfigData,
         dst.set_plot_actions(src.PlotActions)
     if src.HasField("PlotEvents"):
         dst.set_plot_events(src.PlotEvents)
-    if src.HasField("RemoveLegends"):
-        dst.set_remove_legends(src.RemoveLegends)
     if src.HasField("SciLimits"):
         dst.set_sci_limits((src.SciLimits.M, src.SciLimits.N))
     if src.HasField("TickStyle"):
         dst.set_tick_style(eTickStyle(src.TickStyle))
+    if src.HasField("ZeroAxis"):
+        dst.set_zero_axis(src.ZeroAxis)
 
 def serialize_plot_source_to_bind(src: SEPlotSource, dst: PlotSourceData):
     if src.has_csv_data():
