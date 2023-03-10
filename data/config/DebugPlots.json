@@ -4,6 +4,259 @@
     {
       "MultiHeaderSeriesPlotter":
       {
+        "Comment": "Blood Chemistry Methodology Report",
+        "PlotConfig":
+        {
+          "OutputPathOverride": "./docs/html/plots/BloodChemistry/", "ImageProperties": { "Height_inch": 4, "Width_inch": 11 },
+          "LegendMode": "NoLegends", "PlotActions": true, "PlotEvents": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageClass2SalineResults.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "Volume_partial", "YHeader": [ "BloodVolume(L)" ] },
+          { "Title": "Hemoglobin_partial", "YHeader": [ "HemoglobinContent(g)" ] },
+          { "OutputFilename": "BloodChemistryLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 2, "Width_inch": 16 },
+                  "PlotEvents": false } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Elastance/Compliance plot",
+        "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "TickStyle": "Plain" },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/unit_tests/pulse/CardiovascularCircuitOutput.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "", "OutputFilename": "ComplianceVsElastance_partial", "XBounds": { "LowerBound": 30, "UpperBound": 35 },
+                "YHeader": [ "LeftHeartCompliance_mL_Per_mmHg" ], "Y2Header": [ "LeftHeartElastance_mmHg_Per_mL" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "TickStyle": "Plain"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/systems/CardiovascularValidation-StandardMaleResults.csv" }
+        ],
+        "Series":
+        [
+          { "Comment": "Pressure/volume", "Title": "", "OutputFilename": "PressureVsVolume_partial",
+              "XBounds": { "LowerBound": 4.58, "UpperBound": 7.12 }, "YHeader": [ "LeftHeart-Pressure(mmHg)" ],
+              "Y2Header": [ "LeftHeart-Volume(mL)" ] },
+          { "Comment": "P-V Loop", "Title": "", "OutputFilename": "PVLoop_partial", "XHeader": "LeftHeart-Volume(mL)",
+              "YHeader": [ "LeftHeart-Pressure(mmHg)" ],
+              "PlotConfig": { "ImageProperties": { "Height_inch": 6, "Width_inch": 4 }, "LegendMode": "NoLegends",
+                  "TickStyle": "Scientific", "SciLimits": {}, "ZeroAxis": true } },
+          { "Comment": "Pressure waveform - Arterial", "Title": "", "OutputFilename": "EnginePressure_partial",
+              "XBounds": { "LowerBound": 2.78, "UpperBound": 4.46 }, "YBounds": { "LowerBound": 70, "UpperBound": 120 },
+              "YHeader": [ "ArterialPressure(mmHg)" ],
+              "PlotConfig": { "ImageProperties": { "Height_inch": 5, "Width_inch": 4 }, "LegendMode": "NoLegends" } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "TickStyle": "Plain",
+          "ImageProperties": { "Height_inch": 5, "Width_inch": 4 }, "LegendMode": "NoLegends"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VALIDATION_DIR/Waveforms/Systemic_Blood_Pressure.csv" }
+        ],
+        "Series":
+        [
+          { "Comment": "Pressure waveform", "Title": "", "OutputFilename": "PhysioNetPressure_partial",
+              "XBounds": { "LowerBound": 6.025, "UpperBound": 7.217 }, "YBounds": { "LowerBound": 40, "UpperBound": 130 },
+              "YHeader": [ "Pressure(mmHg)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Hemorrhages - Class 2 Blood",
+        "PlotConfig":
+        {
+          "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "ImageProperties": { "Height_inch": 7, "Width_inch": 11 },
+          "LegendMode": "NoLegends", "PlotActions": true, "PlotEvents": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageClass2BloodResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Class2Blood_BloodVolume_partial", "Title": "", "YHeader": [ "BloodVolume(L)" ] },
+          { "OutputFilename": "Class2Blood_Hb_partial", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
+          { "OutputFilename": "Class2BloodLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 1.5, "Width_inch": 20 },
+                  "PlotEvents": false } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Hemorrhages - Class 2 Saline",
+        "PlotConfig":
+        {
+          "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "ImageProperties": { "Height_inch": 7, "Width_inch": 11 },
+          "LegendMode": "NoLegends", "PlotActions": true, "PlotEvents": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageClass2SalineResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Class2Saline_BloodVolume_partial", "Title": "", "YHeader": [ "BloodVolume(L)" ] },
+          { "OutputFilename": "Class2Saline_Hb_partial", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
+          { "OutputFilename": "Class2SalineLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 1.5, "Width_inch": 20 },
+                  "PlotEvents": false } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Hemorrhages - To Shock",
+        "PlotConfig":
+        {
+          "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "ImageProperties": { "Height_inch": 7, "Width_inch": 11 },
+          "LegendMode": "NoLegends", "PlotActions": true, "PlotEvents": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageToShockResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Class4NoFluid_BloodVolume_partial", "Title": "", "YHeader": [ "BloodVolume(L)" ] },
+          { "OutputFilename": "Class4NoFluid_Hb_partial", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
+          { "OutputFilename": "Class4NoFluidLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 1.5, "Width_inch": 20 },
+                  "PlotEvents": false } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Hemorrhages - Class 4 No Fluid",
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All",
+          "TickStyle": "Plain"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageClass4NoFluidResults.csv" }
+        ],
+        "ValidationSource": { "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicCardiacOutputShockValidation.csv" },
+        "Series":
+        [
+          { "Title": "Cardiac Output - Response to Hemorrhage", "OutputFilename": "CardiacOutputShock_partial",
+              "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss", "XBounds": { "LowerBound": 0, "UpperBound": 50 },
+              "YHeader": [ "CardiacOutput(L/min)" ], "YBounds": { "LowerBound": 0, "UpperBound": 105 }, "YLabel": "Pulse Normalized Cardiac Output",
+              "X2Header": "BloodVolumeLost(%)", "Y2Header": [ "NormalizedCardiacOutput" ], "Y2Label": "Validation Normalized Cardiac Output",
+              "Y2Bounds": { "LowerBound": 0, "UpperBound": 105 }}
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Hemorrhages - Class 4 No Fluid",
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All",
+          "TickStyle": "Plain"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageClass4NoFluidResults.csv" }
+        ],
+        "ValidationSource": { "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicMeanArterialPressureShockValidation.csv" },
+        "Series":
+        [
+          { "Title": "Mean Arterial Pressure - Response to Hemorrhage", "OutputFilename": "MeanArterialPressureShock_partial",
+              "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss", "XBounds": { "LowerBound": 0, "UpperBound": 50 },
+              "YHeader": [ "MeanArterialPressure(mmHg)" ], "YBounds": { "LowerBound": 0, "UpperBound": 105 }, "YLabel": "Pulse Normalized Mean Arterial Pressure",
+              "X2Header": "BloodVolumeLost(%)", "Y2Header": [ "NormalizedMeanArterialPressure" ], "Y2Label": "Validation Normalized Mean Arterial Pressure",
+              "Y2Bounds": { "LowerBound": 0, "UpperBound": 105 }}
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Hemorrhage Groups",
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "OnlyY",
+          "TickStyle": "Plain"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup1Results.csv", "Label": "Group 1" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup2Results.csv", "Label": "Group 2" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup3Results.csv", "Label": "Group 3" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup4Results.csv", "Label": "Group 4" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup5Results.csv", "Label": "Group 5" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup6Results.csv", "Label": "Group 6" }
+        ],
+        "Series":
+        [
+          { "Title": "Cardiovascular Hemorrhage Groups", "OutputFilename": "HemorrhageGroups_partial",
+              "YHeader": [ "MeanArterialPressure(mmHg)" ], "YLabel": "Mean Arterial Pressure Delta",
+              "YBounds": { "LowerBound": 0, "UpperBound": 105 } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Heart Failure",
+        "PlotConfig": { "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotActions": true, "PlotEvents": true, "TickStyle": "Plain" },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/VentricularSystolicDysfunctionResults.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "", "OutputFilename": "HeartFailure_partial", "YHeader": [ "BloodVolume(L)" ] }
+        ]
+      }
+    },
+
+
+
+
+
+
+
+
+
+
+
+    {
+      "MultiHeaderSeriesPlotter":
+      {
         "PlotConfig":
         {
           "OutputPathOverride": "./docs/html/plots/Respiratory/", "ImageProperties": { "DimensionMode": "Square" },
@@ -11,7 +264,7 @@
         },
         "PlotSource":
         [
-          { "CSVData": "./verification/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv" }
+          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv" }
         ],
         "Series":
         [
@@ -47,97 +300,11 @@
         },
         "PlotSource":
         [
-          { "CSVData": "./verification/scenarios/miscellaneous/ComplianceCurveResults.csv" }
+          { "CSVData": "$VERIFICATION_DIR/scenarios/miscellaneous/ComplianceCurveResults.csv" }
         ],
         "Series":
         [
           { "Title": "Experimental Pulmonary Compliance", "XHeader": "IntrapulmonaryPressure(cmH2O)", "YHeader": [ "TotalLungVolume(mL)" ] }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "PlotConfig":
-        {
-          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All",
-          "TickStyle": "Plain"
-        },
-        "PlotSource":
-        [
-          { "CSVData": "./verification/scenarios/patient/HemorrhageClass4NoFluidResults.csv" }
-        ],
-        "ValidationSource":
-        {
-          "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicCardiacOutputShockValidation.csv"
-        },
-        "Series":
-        [
-          { "Title": "", "OutputFilename": "CardiacOutputShock_partial",
-              "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss", "XBounds": { "LowerBound": 0, "UpperBound": 50 },
-              "YHeader": [ "CardiacOutput(L/min)" ], "YBounds": { "LowerBound": 0, "UpperBound": 105 }, "YLabel": "Pulse Normalized Cardiac Output",
-              "X2Header": "BloodVolumeLost(%)", "Y2Header": [ "NormalizedCardiacOutput" ], "Y2Label": "Validation Normalized Cardiac Output",
-              "Y2Bounds": { "LowerBound": 0, "UpperBound": 105 }}
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "PlotConfig":
-        {
-          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "OnlyY",
-          "TickStyle": "Plain"
-        },
-        "PlotSource":
-        [
-          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup1Results.csv", "Label": "Group 1" },
-          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup2Results.csv", "Label": "Group 2" },
-          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup3Results.csv", "Label": "Group 3" },
-          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup4Results.csv", "Label": "Group 4" },
-          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup5Results.csv", "Label": "Group 5" },
-          { "CSVData": "./verification/scenarios/patient/HemorrhageGroup6Results.csv", "Label": "Group 6" }
-        ],
-        "Series":
-        [
-          { "Title": "", "OutputFilename": "HemorrhageGroups_partial", "XHeader": "Time(s)",
-              "YHeader": [ "MeanArterialPressure(mmHg)" ], "YLabel": "Mean Arterial Pressure Delta",
-              "YBounds": { "LowerBound": 0, "UpperBound": 105 } }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "PlotConfig":
-        {
-          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "TickStyle": "Plain"
-        },
-        "PlotSource":
-        [
-          { "CSVData": "./verification/unit_tests/pulse/CardiovascularCircuitOutput.csv" }
-        ],
-        "Series":
-        [
-          { "Title": "", "OutputFilename": "ComplianceVsElastance_partial", "XBounds": { "LowerBound": 30, "UpperBound": 35 },
-              "YHeader": [ "LeftHeartCompliance_mL_Per_mmHg" ], "Y2Header": [ "LeftHeartElastance_mmHg_Per_mL" ] }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "PlotConfig":
-        {
-          "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotEvents": true, "TickStyle": "Plain"
-        },
-        "PlotSource":
-        [
-          { "CSVData": "./verification/scenarios/patient/VentricularSystolicDysfunctionResults.csv" }
-        ],
-        "Series":
-        [
-          { "Title": "", "OutputFilename": "HeartFailure_partial", "YHeader": [ "BloodVolume(L)" ] }
         ]
       }
     },
@@ -151,7 +318,7 @@
         },
         "PlotSource":
         [
-          { "CSVData": "./verification/scenarios/patient/AcuteStressResults.csv" }
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/AcuteStressResults.csv" }
         ],
         "Series":
         [
@@ -177,7 +344,7 @@
         },
         "PlotSource":
         [
-          { "CSVData": "./verification/scenarios/validation/drugs/AlbuterolValidationResults.csv", "LineFormat": "-b" }
+          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/AlbuterolValidationResults.csv", "LineFormat": "-b" }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Albuterol.csv", "LineFormat": "Dr" },
         "Series":
@@ -186,24 +353,6 @@
               "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ], "YBounds": { "UpperBound": 2.6 },
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Bounds": { "UpperBound": 2.6 },
               "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "PlotConfig":
-        {
-          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular/",
-          "ImageProperties": { "Height_inch": 6, "Width_inch": 4 }, "SciLimits": {}, "LegendMode": "NoLegends", "ZeroAxis": true
-        },
-        "PlotSource":
-        [
-          { "CSVData": "./verification/scenarios/validation/systems/CardiovascularValidation-StandardMaleResults.csv" }
-        ],
-        "Series":
-        [
-          { "OutputFilename": "PVLoop_partial", "Title": "", "XHeader": "LeftHeart-Volume(mL)", "YHeader": [ "LeftHeart-Pressure(mmHg)" ] }
         ]
       }
     }

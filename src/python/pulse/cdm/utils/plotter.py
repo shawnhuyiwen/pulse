@@ -212,6 +212,9 @@ def parse_actions(log_file: str, omit: [str] = []):
                 # Group 0: Entire match
                 # Group 1: Time
                 match = re.search(r'\[(\d*\.?d*)\(.*\)\]', action_text)
+                if match is None:
+                    print("ERROR: Could not parse actions")
+                    return actions
                 action_time = float(match.group(1))
                 action_text = action_text[(action_idx+len(action_tag)):].lstrip()
 
@@ -443,6 +446,7 @@ def create_plot(plot_sources: [SEPlotSource],
         ax2.set_ylim(ax1.get_ylim())
 
     # Legend and gridline settings
+    MAX_NCOLS = 6
     if plot_config.get_gridlines():
         ax1.grid(linestyle='dotted')
     if plot_config.get_legend_mode() != eLegendMode.NoLegends:
@@ -456,7 +460,7 @@ def create_plot(plot_sources: [SEPlotSource],
                         box.width, box.height * 0.9])
 
         lbls = [text_wrapper.fill(l.get_label()) for l in lns]
-        ax1.legend(lns, lbls, fontsize=plot_config.get_legend_font_size(), loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = min(4, len(lbls)))
+        ax1.legend(lns, lbls, fontsize=plot_config.get_legend_font_size(), loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = min(MAX_NCOLS, len(lbls)))
 
     # Action and event legend
     if plot_config.get_legend_mode() != eLegendMode.NoLegends and \
@@ -465,13 +469,13 @@ def create_plot(plot_sources: [SEPlotSource],
         ax3.set_position([box.x0, box.y0 + box.height * 0.1,
                     box.width, box.height * 0.9])
         lbls = [text_wrapper.fill(l.get_label()) for l in ax3.lines]
-        ax3.legend(ax3.lines, lbls, loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol = min(4, len(lbls)), fontsize=plot_config.get_legend_font_size())
+        ax3.legend(ax3.lines, lbls, loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol = min(MAX_NCOLS, len(lbls)), fontsize=plot_config.get_legend_font_size())
 
         if plot_config.get_legend_mode() == eLegendMode.OnlyActionEventLegend:
             legend_fig, legend_ax = plt.subplots()
             legend_fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
             legend_ax.axis(False)
-            legend_ax.legend(ax3.lines, lbls, loc='center', ncol = min(4, len(lbls)), fontsize=plot_config.get_legend_font_size())
+            legend_ax.legend(ax3.lines, lbls, loc='center', ncol = min(MAX_NCOLS, len(lbls)), fontsize=plot_config.get_legend_font_size())
 
     return True
 
