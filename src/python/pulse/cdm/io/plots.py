@@ -59,6 +59,8 @@ def serialize_bounds_from_bind(src: ImagePropertyData, dst: SEBounds):
         dst.set_upper_bound(src.UpperBound)
 
 def serialize_plot_config_to_bind(src: SEPlotConfig, dst: PlotConfigData):
+    if src.has_disabled_setting():
+        dst.Disabled = src.get_disabled()
     if src.has_fill_area_setting():
         dst.FillArea = src.get_fill_area()
     if src.has_font_size():
@@ -105,6 +107,8 @@ def serialize_plot_config_from_bind(src: PlotConfigData,
     else:
         dst.set_defaults()
 
+    if src.HasField("Disabled"):
+        dst.set_disabled(src.Disabled)
     if src.HasField("FillArea"):
         dst.set_fill_area(src.FillArea)
     if src.HasField("FontSize"):

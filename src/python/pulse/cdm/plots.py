@@ -105,7 +105,7 @@ class eTickStyle(Enum):
     Scientific = 0
     Plain = 1
 class SEPlotConfig():
-    __slots__ = [ "_fill_area", "_font_size", "_gridlines", "_image_properties",
+    __slots__ = [ "_disabled", "_fill_area", "_font_size", "_gridlines", "_image_properties",
                   "_legend_font_size", "_legend_mode", "_log_axis", "_omit_actions_with",
                   "_omit_events_with", "_output_filename", "_output_path_override",
                   "_percent_of_baseline_mode", "_plot_actions", "_plot_events",
@@ -116,22 +116,24 @@ class SEPlotConfig():
         self.clear()
 
     def __repr__(self):
-        return f'SEPlotConfig({self._fill_area}, {self._font_size}, {self._gridlines}, {self._image_properties}, ' \
-            f'{self._legend_font_size}, {self._legend_mode}, {self._log_axis}, {self._omit_actions_with}, ' \
-            f'{self._omit_events_with}, {self._output_path_override}, {self._percent_of_baseline_mode}, '\
-            f'{self._plot_actions}, {self._plot_events}, {self._sci_limits}, {self._tick_style}, {self._zero_axis})'
+        return f'SEPlotConfig({self._disabled}, {self._fill_area}, {self._font_size}, {self._gridlines}, ' \
+            f'{self._image_properties}, {self._legend_font_size}, {self._legend_mode}, {self._log_axis}, ' \
+            f'{self._omit_actions_with}, {self._omit_events_with}, {self._output_path_override}, ' \
+            f'{self._percent_of_baseline_mode}, {self._plot_actions}, {self._plot_events}, {self._sci_limits}, ' \
+            f'{self._tick_style}, {self._zero_axis})'
 
     def __str__(self):
-        return f'SEPlotConfig:\n\tFill Area: {self._fill_area}\n\tFont Size: {self._font_size}\n\tGridlines: ' \
-            f'{self._gridlines}\n\tImage Properties: {self._image_properties}\n\tLegend Font Size: ' \
-            f'{self._legend_font_size}\n\tLegend Mode: {self._legend_mode}\n\tLog Axis: {self._log_axis}\n\t' \
-            f'Omit Actions With: {self._omit_actions_with}\n\tOmit Events With: {self._omit_events_with}\n\t' \
-            f'Output Path Override: {self._output_path_override}\n\tPercent of Baseline Mode: ' \
-            f'{self._percent_of_baseline_mode}\n\tPlot Actions: {self._plot_actions}\n\tPlot Events: ' \
-            f'{self._plot_events}\n\tSci Limits: {self._sci_limits}\n\tTick Style: {self._tick_style}\n\t' \
+        return f'SEPlotConfig:\n\tDisabled: {self._disabled}\n\tFill Area: {self._fill_area}\n\tFont Size: ' \
+            f'{self._font_size}\n\tGridlines: {self._gridlines}\n\tImage Properties: {self._image_properties}\n\t' \
+            f'Legend Font Size: {self._legend_font_size}\n\tLegend Mode: {self._legend_mode}\n\tLog Axis: '\
+            f'{self._log_axis}\n\tOmit Actions With: {self._omit_actions_with}\n\tOmit Events With: ' \
+            f'{self._omit_events_with}\n\tOutput Path Override: {self._output_path_override}\n\t' \
+            f'Percent of Baseline Mode: {self._percent_of_baseline_mode}\n\tPlot Actions: {self._plot_actions}\n\t' \
+            f'Plot Events: {self._plot_events}\n\tSci Limits: {self._sci_limits}\n\tTick Style: {self._tick_style}\n\t' \
             f'Zero Axis: {self._zero_axis}'
 
     def clear(self):
+        self._disabled = None
         self._fill_area = None
         self._font_size = None
         self._gridlines = None
@@ -160,6 +162,8 @@ class SEPlotConfig():
         self._y2_bounds = None
 
     def set_defaults(self):
+        if self._disabled is None:
+            self._disabled = False
         if self._fill_area is None:
             self._fill_area = False
         if self._font_size is None:
@@ -201,6 +205,8 @@ class SEPlotConfig():
 
     def merge_configs(self, src):
         src = deepcopy(src)
+        if src._disabled is not None:
+            self._disabled = src._disabled
         if src._fill_area is not None:
             self._fill_area = src._fill_area
         if src._font_size is not None:
@@ -251,6 +257,15 @@ class SEPlotConfig():
             self._y2_label = src._y2_label
         if src._y2_bounds is not None:
             self._y2_bounds = src._y2_bounds
+
+    def get_disabled(self):
+        return self._disabled
+    def set_disabled(self, disabled: bool):
+        self._disabled = disabled
+    def has_disabled_setting(self):
+        return self._disabled is not None
+    def invalidate_disabled_setting(self):
+        self._disabled = None
 
     def get_fill_area(self):
         return self._fill_area

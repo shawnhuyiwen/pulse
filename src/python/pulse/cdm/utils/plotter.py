@@ -49,6 +49,10 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
 
         config = series.get_plot_config()
 
+        # Check if disabled
+        if config.get_disabled():
+            continue
+
         # Default x header is time (first column)
         x_header = None
         if series.has_x_header():
@@ -56,7 +60,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         elif not sources[0].get_data_frame().empty:
             x_header = sources[0].get_data_frame().columns[0]
         else: # No data frame
-            return
+            continue
         x2_header = None
         if series.has_x2_header():
             x2_header = series.get_x2_header()
@@ -93,7 +97,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         if not config.get_output_filename():
             if not config.has_title():
                 print("ERROR: Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
-                return
+                continue
             config.set_output_filename(config.get_title().replace(" ", "_").replace("/", "_Per_"))
 
         output_filename = config.get_output_filename()
@@ -480,7 +484,7 @@ def create_plot(plot_sources: [SEPlotSource],
     return True
 
 def save_current_plot(filename: str, image_props: SEImageProperties):
-    print("Creating plot "+filename)
+    print("Saving plot "+filename)
     figure = plt.gcf()
     # Doing tight layout twice helps prevent legends getting cut off
     plt.tight_layout()

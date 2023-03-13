@@ -55,22 +55,23 @@ message PlotConfigData
     int32                             N                         = 2;
   }
 
-  optional bool                       FillArea                  = 1;  /**<< @brief Fill the area under the curve. */
-  optional double                     FontSize                  = 2;  /**<< @brief Set the font size of axis labels and chart title. */
-  optional bool                       Gridlines                 = 3;  /**<< @brief Turn gridlines on or off. */
-  optional ImagePropertyData          ImageProperties           = 4;  /**<< @brief Specify the image properties. */
-  optional double                     LegendFontSize            = 5;  /**<< @brief Set the font size of the legend. */
-  optional eLegendMode                LegendMode                = 6;
-  optional bool                       LogAxis                   = 7;  /**<< @brief Make all Y axes logarithmic. */
-  repeated string                     OmitActionsWith           = 8;  /**<< @brief Will attempt to omit from the plot actions that contain any of the specified case-sensitive words, i.e. OmitActionsWith=Hemorrhage,Infusion */
-  repeated string                     OmitEventsWith            = 9;  /**<< @brief Will attempt to omit from the plot events that contain any of the specified case-sensitive words, i.e. OmitEventsWith=Tachycardia */
-  optional string                     OutputPathOverride        = 10; /**<< @brief Specify the path (relative to bin) to output the plot. */
-  optional ePercentageOfBaselineMode  PercentOfBaselineMode     = 11;
-  optional bool                       PlotActions               = 12; /**<< @brief Plot actions parsed from log file. */
-  optional bool                       PlotEvents                = 13; /**<< @brief Plot events parsed from log file. */
-  optional SciLimitsData              SciLimits                 = 14;
-  optional eTickStyle                 TickStyle                 = 15;
-  optional bool                       ZeroAxis                  = 16; /**<< @brief Will ensure that zero is included on the Y axis rather than zooming away from it based on the plot's min/max Y values. */
+  optional bool                       Disabled                  = 1;  /**<< @brief Disable this plot. */
+  optional bool                       FillArea                  = 2;  /**<< @brief Fill the area under the curve. */
+  optional double                     FontSize                  = 3;  /**<< @brief Set the font size of axis labels and chart title. */
+  optional bool                       Gridlines                 = 4;  /**<< @brief Turn gridlines on or off. */
+  optional ImagePropertyData          ImageProperties           = 5;  /**<< @brief Specify the image properties. */
+  optional double                     LegendFontSize            = 6;  /**<< @brief Set the font size of the legend. */
+  optional eLegendMode                LegendMode                = 7;
+  optional bool                       LogAxis                   = 8;  /**<< @brief Make all Y axes logarithmic. */
+  repeated string                     OmitActionsWith           = 9;  /**<< @brief Will attempt to omit from the plot actions that contain any of the specified case-sensitive words, i.e. OmitActionsWith=Hemorrhage,Infusion */
+  repeated string                     OmitEventsWith            = 10; /**<< @brief Will attempt to omit from the plot events that contain any of the specified case-sensitive words, i.e. OmitEventsWith=Tachycardia */
+  optional string                     OutputPathOverride        = 11; /**<< @brief Specify the path (relative to bin) to output the plot. */
+  optional ePercentageOfBaselineMode  PercentOfBaselineMode     = 12;
+  optional bool                       PlotActions               = 13; /**<< @brief Plot actions parsed from log file. */
+  optional bool                       PlotEvents                = 14; /**<< @brief Plot events parsed from log file. */
+  optional SciLimitsData              SciLimits                 = 15;
+  optional eTickStyle                 TickStyle                 = 16;
+  optional bool                       ZeroAxis                  = 17; /**<< @brief Will ensure that zero is included on the Y axis rather than zooming away from it based on the plot's min/max Y values. */
 }
 
 /** @brief Data used to configure a plot source. */
