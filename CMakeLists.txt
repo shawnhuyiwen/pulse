@@ -65,7 +65,7 @@ option(${PROJECT_NAME}_DOWNLOAD_BASELINES "Download all V&V Scenarios and their 
 option(${PROJECT_NAME}_CSHARP_API "Build C# API" OFF)
 option(${PROJECT_NAME}_JAVA_API "Build Java utils for data generation and testing" ON)
 option(${PROJECT_NAME}_PYTHON_API "Build Python API" OFF)
-option(${PROJECT_NAME}_SLAVE_BUILD "Pulse is being built as part of a different superbuild" OFF)
+option(${PROJECT_NAME}_DEPENDENT_BUILD "Pulse is being built as part of a different superbuild" OFF)
 # This dir inteded for use during cross compiling, provide the directory to the generated bindings from a native pulse build
 # This will be in a <build>/Innerbuild/src/schema
 set(${PROJECT_NAME}_NATIVE_BUILD_DIR "" CACHE PATH "For crosscompiling, provide the root folder of a native build with protobuf bindings")
@@ -136,7 +136,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
 
   if(${PROJECT_NAME}_DEPENDENCIES)
     if(MSVC OR XCode)
-      if(NOT ${PROJECT_NAME}_SLAVE_BUILD)
+      if(NOT ${PROJECT_NAME}_DEPENDENT_BUILD)
         message(STATUS "Optimizing your superbuild experience")
         set(${PROJECT_NAME}_MULTI_BUILD ON)
         set(CMAKE_CONFIGURATION_TYPES Release CACHE STRING INTERNAL FORCE)
