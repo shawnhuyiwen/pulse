@@ -301,30 +301,35 @@ def create_plot(plot_sources: [SEPlotSource],
     # Main axes
     if plot_config.get_log_axis():
         ax1.set_yscale("log")
+        if y_label:
+            ax1.set_ylabel(f'Log({y_label})', fontsize=plot_config.get_font_size())
     x_bounds = plot_config.get_x_bounds()
     if x_bounds.has_lower_bound():
         ax1.set_xlim(left=x_bounds.get_lower_bound())
     if x_bounds.has_upper_bound():
         ax1.set_xlim(right=x_bounds.get_upper_bound())
     y_bounds = plot_config.get_y_bounds()
-    if y_bounds.has_lower_bound():
-        ax1.set_ylim(bottom=y_bounds.get_lower_bound())
-    if y_bounds.has_upper_bound():
-        ax1.set_ylim(top=y_bounds.get_upper_bound())
+    if y_bounds.has_lower_bound() or y_bounds.has_upper_bound():
+        ax1.set_ylim(bottom=y_bounds.get_lower_bound(), top=y_bounds.get_upper_bound())
 
     # Secondary y axis
     ax2 = None
+    y2_label = ""
     if y2_headers:
         ax2 = ax1.twinx()
-        ax2.set_ylabel(plot_config.get_y2_label() if plot_config.has_y2_label() else y2_headers[0], fontsize=plot_config.get_font_size())
+        if plot_config.has_y2_label():
+            y2_label = plot_config.get_y2_label()
+        else:
+            y2_label = y2_headers[0]
+        ax2.set_ylabel(y2_label, fontsize=plot_config.get_font_size())
         ax2.ticklabel_format(axis="y", style=plot_config.get_tick_style().name, scilimits=plot_config.get_sci_limits())
         if plot_config.get_log_axis():
             ax2.set_yscale("log")
+            if y2_label:
+                ax2.set_ylabel(f'Log({y2_label})', fontsize=plot_config.get_font_size())
         y2_bounds = plot_config.get_y2_bounds()
-        if y2_bounds.has_lower_bound():
-            ax2.set_ylim(bottom=y2_bounds.get_lower_bound())
-        if y2_bounds.has_upper_bound():
-            ax2.set_ylim(top=y2_bounds.get_upper_bound())
+        if y2_bounds.has_lower_bound() or y2_bounds.has_upper_bound():
+            ax2.set_ylim(bottom=y2_bounds.get_lower_bound(), top=y2_bounds.get_upper_bound())
 
     # Action/Events axis
     ax3 = None
@@ -348,13 +353,21 @@ def create_plot(plot_sources: [SEPlotSource],
             return False
 
         for y_header in y_headers:
+            line_lbl = ""
+            if ps.has_label():
+                line_lbl = ps.get_label()
+            elif len(y_headers) > 1:
+                line_lbl = y_header
+            else:
+                line_lbl = y_label
+
             if ps.has_line_format():
-                lns.extend(ax1.plot(x_header, y_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_config.get_y_label()))
+                lns.extend(ax1.plot(x_header, y_header, ps.get_line_format(), data=df, label=line_lbl))
                 color = ps.get_line_format()[-1]
             else:
                 c = next(fmt_cycler)
                 color = c['color']
-                lns.extend(ax1.plot(x_header, y_header, **c, data=df, label=ps.get_label() if ps.has_label() else plot_config.get_y_label()))
+                lns.extend(ax1.plot(x_header, y_header, **c, data=df, label=line_lbl))
 
             if plot_config.get_fill_area():
                 ax1.fill_between(x_header, y_header, data=df, facecolor=color)
@@ -366,13 +379,21 @@ def create_plot(plot_sources: [SEPlotSource],
         # Secondary axis, not from validation data
         if not validation_source and y2_headers:
             for y2_header in y2_headers:
+                line_lbl = ""
+                if ps.has_label():
+                    line_lbl = ps.get_label()
+                elif len(y_headers) > 1:
+                    line_lbl = y2_header
+                else:
+                    line_lbl = y2_label
+
                 if ps.has_line_format():
-                    lns.extend(ax2.plot(x2_header, y2_header, ps.get_line_format(), data=df, label=ps.get_label() if ps.has_label() else plot_config.get_y2_label()))
+                    lns.extend(ax2.plot(x2_header, y2_header, ps.get_line_format(), data=df, label=line_lbl))
                     color = ps.get_line_format()[-1]
                 else:
                     c = next(fmt_cycler)
                     color = c['color']
-                    lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=ps.get_label() if ps.has_label() else plot_config.get_y2_label()))
+                    lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=line_lbl))
                 if plot_config.get_fill_area():
                     ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
 
@@ -419,18 +440,27 @@ def create_plot(plot_sources: [SEPlotSource],
             print(f"ERROR: Data frame is empty: {validation_source.get_csv_data()}")
         elif y2_headers:
             for y2_header in y2_headers:
+                line_lbl = ""
+                if validation_source.has_label():
+                    line_lbl = validation_source.get_label()
+                elif len(y_headers) > 1:
+                    line_lbl = y2_header
+                else:
+                    line_lbl = y2_label
+
                 if validation_source.has_line_format():
-                    lns.extend(ax2.plot(x2_header, y2_header, validation_source.get_line_format(), data=df, label=validation_source.get_label() if validation_source.has_label() else plot_config.get_y2_label()))
+                    lns.extend(ax2.plot(x2_header, y2_header, validation_source.get_line_format(), data=df, label=line_lbl))
                     color = validation_source.get_line_format()[-1]
                 else:
                     c = next(fmt_cycler)
                     color = c['color']
-                    lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=validation_source.get_label() if validation_source.has_label() else plot_config.get_y2_label()))
+                    lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=line_lbl))
                 if plot_config.get_fill_area():
                     ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
 
             ax2.yaxis.label.set_color(color)
             ax2.tick_params(axis='y', colors=color)
+            ax2.set_ylim(ax1.get_ylim())
 
     # Zero axis
     if plot_config.get_zero_axis():
@@ -450,7 +480,7 @@ def create_plot(plot_sources: [SEPlotSource],
         ax2.set_ylim(ax1.get_ylim())
 
     # Legend and gridline settings
-    MAX_NCOLS = 6
+    MAX_NCOLS = 5
     if plot_config.get_gridlines():
         ax1.grid(linestyle='dotted')
     if plot_config.get_legend_mode() != eLegendMode.NoLegends:
