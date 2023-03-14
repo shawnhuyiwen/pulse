@@ -1148,33 +1148,106 @@
         ]
       }
     },
-
-
-
-
-
-
     {
       "MultiHeaderSeriesPlotter":
       {
-        "PlotConfig":
-        {
-          "ImageProperties": { "DimensionMode": "Square" }, "OutputPathOverride": "./docs/html/plots/Respiratory/",
-          "SciLimits": {}
-        },
+        "Comment": "Respiratory Methodology Report - Design - Conscious Respiration",
+        "PlotConfig": { "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv" }
+          { "CSVData": "$VERIFICATION_DIR/scenarios/miscellaneous/ConsciousRespirationResults.csv" }
         ],
         "Series":
         [
-          { "Title": "Engine Pulmonary Compliance", "XHeader": "LeftPleuralCavity-Pressure(cmH2O)", "YHeader": [ "TotalLungVolume(mL)" ] }
+          { "OutputFilename": "DriverWaveform_partial", "YHeader": [ "TransMusclePressure(cmH2O)" ] }
         ]
       }
     },
     {
       "MultiHeaderSeriesPlotter":
       {
+        "Comment": "Respiratory Methodology Report - Design - Respiratory Validation Standard Male",
+        "PlotConfig": { "OutputPathOverride": "./docs/html/plots/Respiratory/" },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "Muscle Pressure", "OutputFilename": "Muscle_Pressure_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+              "YHeader": [ "RespiratoryMusclePressure(cmH2O)" ], "YLabel": "Pressure(cmH2O)" },
+          { "Title": "Pleural and Alveoli Pressure", "OutputFilename": "Pleural_and_Alveoli_Pressure_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+              "YHeader": [ "LeftPleuralCavity-Pressure(cmH2O)", "LeftAlveoli-Pressure(cmH2O)" ], "YLabel": "Pressure(cmH2O)" },
+          { "Title": "Transpulmonary Pressure", "OutputFilename": "Transpulmonary_Pressure_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 }, "YHeader": [ "TranspulmonaryPressure(cmH2O)" ],
+              "YLabel": "Pressure(cmH2O)" },
+          { "Title": "Tidal Volume from Total Lung Volume", "OutputFilename": "TidalVolume_from_TotalLungVolume_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 }, "YHeader": [ "TotalLungVolume(mL)" ],
+              "Y2Header": [ "TidalVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" } },
+          { "Title": "Alveoli and Dead Space Volumes", "OutputFilename": "Alveoli_and_Dead_Space_Volumes_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+              "YHeader": [ "LeftAnatomicDeadSpace-Volume(mL)", "RightAnatomicDeadSpace-Volume(mL)", "LeftAlveoli-Volume(mL)",
+                "RightAlveoli-Volume(mL)" ], "YLabel": "Volumes(mL)" },
+          { "Title": "Total Flow Through Trachea", "OutputFilename": "Total_Flow_Through_Trachea_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 }, "YHeader": [ "InspiratoryFlow(L/s)" ],
+              "Y2Header": [ "TotalLungVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" }  },
+          { "Title": "Lung Pressure And Volume", "OutputFilename": "Lung_Pressure_And_Volume_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 }, "YHeader": [ "LeftAlveoli-Pressure(cmH2O)" ],
+              "Y2Header": [ "TotalLungVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" }  },
+          { "Title": "Engine Pressures", "OutputFilename": "Engine_Pressures_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
+              "YHeader": [ "LeftAlveoli-Pressure(cmH2O)", "LeftPleuralCavity-Pressure(cmH2O)" ], "YLabel": "Pressure(cmH2O)",
+              "PlotConfig": { "ImageProperties": { "DimensionMode": "Square" } } },
+          { "Title": "Engine Lung Volume", "OutputFilename": "Engine_Lung_Volume_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 }, "YHeader": [ "TotalLungVolume(mL)" ],
+              "PlotConfig": { "ImageProperties": { "Height_inch": 5, "Width_inch": 8 } } },
+          { "Title": "Alveolar Oxygen Partial Pressure", "OutputFilename": "Alveolar_Oxygen_Partial_Pressure_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+              "YHeader": [ "LeftAlveoli-Oxygen-PartialPressure(mmHg)", "RightAlveoli-Oxygen-PartialPressure(mmHg)" ],
+              "YLabel": "Alveoli-Oxygen-PartialPressure(mmHg)" },
+          { "Title": "Alveolar Carbon Dioxide Partial Pressure", "OutputFilename": "Alveolar_Carbon_Dioxide_Partial_Pressure_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+              "YHeader": [ "LeftAlveoli-CarbonDioxide-PartialPressure(mmHg)", "RightAlveoli-CarbonDioxide-PartialPressure(mmHg)" ],
+              "YLabel": "Alveoli-CarbonDioxide-PartialPressure(mmHg)" },
+          { "Title": "Trachea Carbon Dioxide Partial Pressure", "OutputFilename": "Trachea_Carbon_Dioxide_Partial_Pressure_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 }, "YHeader": [ "Carina-CarbonDioxide-PartialPressure(mmHg)" ],
+              "Y2Header": [ "TotalLungVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" }  },
+          { "Title": "Trachea Oxygen Partial Pressure", "OutputFilename": "Trachea_Oxygen_Partial_Pressure_partial",
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 }, "YHeader": [ "Carina-Oxygen-PartialPressure(mmHg)" ],
+              "Y2Header": [ "TotalLungVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" }  },
+          { "Title": "Engine Pulmonary Compliance", "XHeader": "LeftPleuralCavity-Pressure(cmH2O)", "YHeader": [ "TotalLungVolume(mL)" ],
+              "PlotConfig": { "ImageProperties": { "DimensionMode": "Square" }, "SciLimits": {} } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Design - Lung Pressures Validation",
+        "PlotConfig":
+        {
+          "ImageProperties": { "DimensionMode": "Square" }, "LegendMode": "NoLegends",
+          "OutputPathOverride": "./docs/html/plots/Respiratory/"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VALIDATION_DIR/Waveforms/AlveolarPressure_Guyton.csv" }
+        ],
+        "ValidationSource": { "CSVData": "$VALIDATION_DIR/Waveforms/PleuralPressure_Guyton.csv" },
+        "Series":
+        [
+          { "Title": "Guyton Lung Pressures", "OutputFilename": "Guyton_Lung_Pressures_partial", "YHeader": [ "AlveolarPressure(cmH2O)" ],
+            "YBounds": { "LowerBound": -8.5, "UpperBound": 1.5},
+            "Y2Header": [ "PleuralPressure(cmH2O)" ], "Y2Bounds": { "LowerBound": -8.5, "UpperBound": 1.5} }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Design - Compliance Validation",
         "PlotConfig":
         {
           "ImageProperties": { "DimensionMode": "Square" }, "LegendMode": "NoLegends",
@@ -1193,6 +1266,64 @@
     {
       "MultiHeaderSeriesPlotter":
       {
+        "Comment": "Respiratory Methodology Report - Design - Lung Volume Validation",
+        "PlotConfig":
+        {
+          "ImageProperties": { "Height_inch": 4, "Width_inch": 8 }, "LegendMode": "NoLegends",
+          "OutputPathOverride": "./docs/html/plots/Respiratory/"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VALIDATION_DIR/Waveforms/LungVolume_Guyton.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "Guyton Lung Volume", "OutputFilename": "Guyton_Lung_Volume_partial", "YHeader": [ "LungVolume(L)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Design - Cough",
+        "PlotConfig":
+        {
+          "ImageProperties": { "DimensionMode": "Square" }, "OutputPathOverride": "./docs/html/plots/Respiratory/"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/CoughResults.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "Engine Cough Flow", "OutputFilename": "Engine_Cough_Flow_partial",
+            "XBounds": { "LowerBound": 30, "UpperBound": 32 }, "YHeader": [ "ExpiratoryFlow(L/s)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Design - Cough Validation",
+        "PlotConfig":
+        {
+          "ImageProperties": { "DimensionMode": "Square" }, "LegendMode": "NoLegends",
+          "OutputPathOverride": "./docs/html/plots/Respiratory/"
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VALIDATION_DIR/Waveforms/CoughFlow.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "Experimental Cough Flow", "OutputFilename": "Experimental_Cough_Flow_partial", "YHeader": [ "Airflow(L/s)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Design - Compliance Curve",
         "PlotConfig":
         {
           "ImageProperties": { "DimensionMode": "Square" }, "OutputPathOverride": "./docs/html/plots/Respiratory/",
@@ -1205,6 +1336,266 @@
         "Series":
         [
           { "Title": "Experimental Pulmonary Compliance", "XHeader": "IntrapulmonaryPressure(cmH2O)", "YHeader": [ "TotalLungVolume(mL)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Validation - AirwayObstructionVaried",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/AirwayObstructionVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "AirwayObstruction_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AirwayObstruction_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "AirwayObstruction_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "AirwayObstruction_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "AirwayObstructionLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Validation - Mainstem Intubation",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/MainstemIntubationResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "MainstemIntubation_RightLungVolume_partial", "YHeader": [ "RightLungPulmonary-Volume(mL)" ] },
+          { "OutputFilename": "MainstemIntubation_LeftLungVolume_partial", "YHeader": [ "LeftLungPulmonary-Volume(mL)" ] },
+          { "OutputFilename": "MainstemIntubation_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "MainstemIntubation_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "MainstemIntubationLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Validation - Tension Pneumothorax Open Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/TensionPneumothoraxOpenVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "TensionPneumothoraxOpenVaried_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "TensionPneumothoraxOpenVaried_LeftLungVolume_partial", "YHeader": [ "LeftLungPulmonary-Volume(mL)" ] },
+          { "OutputFilename": "TensionPneumothoraxOpenVaried_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "TensionPneumothoraxOpenVaried_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "TensionPneumothoraxOpenVariedLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Validation - Tension Pneumothorax Closed Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/TensionPneumothoraxClosedVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "TensionPneumothoraxClosedVaried_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "TensionPneumothoraxClosedVaried_RightLungVolume_partial", "YHeader": [ "RightLungPulmonary-Volume(mL)" ] },
+          { "OutputFilename": "TensionPneumothoraxClosedVaried_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "TensionPneumothoraxClosedVaried_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "TensionPneumothoraxClosedVariedLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Validation - Esophageal Intubation",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/EsophagealIntubationResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "EsophagealIntubation_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "EsophagealIntubation_StomachInflow_partial", "YHeader": [ "Stomach-InFlow(L/min)" ] },
+          { "OutputFilename": "EsophagealIntubation_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "EsophagealIntubation_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "EsophagealIntubationLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Validation - Broncho Constriction Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/BronchoConstrictionVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "BronchoConstrictionVaried_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "BronchoConstrictionVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "BronchoConstrictionVaried_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "BronchoConstrictionVaried_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "BronchoConstrictionVariedLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Validation - Asthma Attack Moderate Acute",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/AsthmaAttackModerateAcuteResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "AsthmaAttackModerateAcute_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AsthmaAttackModerateAcute_IERatio_partial", "YHeader": [ "InspiratoryExpiratoryRatio" ] },
+          { "OutputFilename": "AsthmaAttackModerateAcute_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "AsthmaAttackModerateAcute_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "AsthmaAttackModerateAcuteLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Validation - Asthma Attack Severe Acute",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/AsthmaAttackSevereAcuteResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "AsthmaAttackSevereAcute_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AsthmaAttackSevereAcute_IERatio_partial", "YHeader": [ "InspiratoryExpiratoryRatio" ] },
+          { "OutputFilename": "AsthmaAttackSevereAcute_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "AsthmaAttackSevereAcute_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "AsthmaAttackSevereAcuteLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Validation - Asthma Attack Life Threatening Acute",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/AsthmaAttackLifeThreateningAcuteResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_IERatio_partial", "YHeader": [ "InspiratoryExpiratoryRatio" ] },
+          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "AsthmaAttackLifeThreateningAcuteLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Tissue Methodology Report - Nutrient Fractions",
+        "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Tissue/" },
+        "PlotSource":
+        [
+          { "CSVData": "$VALIDATION_DIR/Waveforms/NutrientFractionsResults.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "Macronutrient Consumption", "OutputFilename": "Macronutrient_Consumption_partial",
+            "XHeader": "RQ", "XLabel": "Respiratory Quotient", "XBounds": { "LowerBound": 0.7, "UpperBound": 1.0 },
+            "YHeader": [ "Carbohydrate", "Fat" ], "YLabel": "Consumption Fraction",
+            "YBounds": { "LowerBound": 0.0, "UpperBound": 1.0 } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Tissue Methodology Report - Four Compartment",
+        "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Tissue/" },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/unit_tests/pulse/SimpleDiffusionFourCompartmentTest.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "", "OutputFilename": "ConcentrationEquilibration_partial", "XBounds": { "LowerBound": 0, "UpperBound": 10 },
+            "YHeader": [ "cmpt1conc_g_Per_mL", "cmpt2conc_g_Per_mL", "cmpt3conc_g_Per_mL", "cmpt4conc_g_Per_mL" ],
+            "YLabel": "Compartment Concentration" }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Tissue Methodology Report - Facilitated",
+        "PlotConfig": { "OutputPathOverride": "./docs/html/plots/Tissue/" },
+        "PlotSource":
+        [
+          { "CSVData": "$VALIDATION_DIR/Waveforms/MassFlux.csv" }
+        ],
+        "Series":
+        [
+          { "Title": "", "OutputFilename": "FluxVsGradient_partial", "XHeader": "Gradient",
+            "XBounds": { "UpperBound": 50 }, "XLabel": "Gradient(mass/volume)",
+            "YHeader": [ "Flux_Facilitated", "Flux_Simple" ], "YBounds": { "UpperBound": 30 },
+            "YLabel": "Flux(mass/area-time)" }
         ]
       }
     }

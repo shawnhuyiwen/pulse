@@ -524,7 +524,7 @@ def save_current_plot(filename: str, image_props: SEImageProperties):
     figure.savefig(filename, dpi=image_props.get_dpi())
 
 def clear_current_plot():
-    plt.close()
+    plt.close('all')
     plt.clf()
 
 if __name__ == "__main__":
