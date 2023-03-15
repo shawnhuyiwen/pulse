@@ -478,6 +478,8 @@ def create_plot(plot_sources: [SEPlotSource],
     if (plot_config.get_plot_actions() or plot_config.get_plot_events()) and ax2 is None:
         ax2 = ax1.twinx()
         ax2.set_ylim(ax1.get_ylim())
+        if plot_config.get_log_axis():
+            ax2.set_yscale("log")
 
     # Legend and gridline settings
     if plot_config.get_gridlines():
@@ -499,7 +501,7 @@ def create_plot(plot_sources: [SEPlotSource],
     # Action and event legend
     if plot_config.get_legend_mode() != eLegendMode.NoLegends and \
        plot_config.get_legend_mode() != eLegendMode.HideActionEventLegend and ax3 is not None and ax3.lines:
-        max_ncols = int(plot_config.get_image_properties().get_width_inch() / 4) # Approximate width of each column for large labels
+        max_ncols = int(plot_config.get_image_properties().get_width_inch() / 4.25) # Approximate width of each column for large labels
 
         ax3.set_position([box.x0, box.y0 + box.height * 0.1,
                     box.width, box.height * 0.9])

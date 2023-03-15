@@ -1027,7 +1027,7 @@
           { "Title": "Right Eye Reactivity Modifier", "OutputFilename": "TBI_RightReactivity_partial", "YHeader": [ "RightEyePupillaryResponse-ReactivityModifier" ], "YLabel": "" },
           { "Title": "ICP(mmHg)", "OutputFilename": "TBI_PupilICP_partial", "YHeader": [ "IntracranialPressure(mmHg)" ], "YLabel": "" },
           { "OutputFilename": "PupilLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 1.5 } } }
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 2.5 } } }
         ]
       }
     },
@@ -1051,7 +1051,7 @@
           { "Title": "", "OutputFilename": "HemorrhageRBF_partial", "YHeader": [ "RenalBloodFlow(L/min)" ] },
           { "Title": "", "OutputFilename": "HemorrhageArterioleResistance_partial", "YHeader": [ "RightAfferentArterioleResistance(mmHg_min/mL)" ] },
           { "OutputFilename": "HemorrhageClass3NoFluidLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 1.6, "Width_inch": 16 }, "PlotEvents": false } }
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 2, "Width_inch": 16 }, "PlotEvents": false } }
         ]
       }
     },
@@ -1596,6 +1596,614 @@
             "XBounds": { "UpperBound": 50 }, "XLabel": "Gradient(mass/volume)",
             "YHeader": [ "Flux_Facilitated", "Flux_Simple" ], "YBounds": { "UpperBound": 30 },
             "YLabel": "Flux(mass/area-time)" }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Varied Configuration",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineVariedConfigurationResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_VentilatorVolume_partial",
+              "YHeader": [ "AnesthesiaMachineVentilator-Volume(mL)" ] },
+          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AMVariedLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Mask Leak Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineMaskLeakVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "MaskLeakVaried_Inflow_partial", "YHeader": [ "AnesthesiaMachineConnection-InFlow(L/min)" ] },
+          { "OutputFilename": "MaskLeakVaried_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "MaskLeakVaried_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "MaskLeakVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "MaskLeakLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Expiratory Valve Leak Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineExpiratoryValveLeakVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "ExpiratoryValveLeakVaried_Inflow_partial", "YHeader": [ "AnesthesiaMachineInspiratoryLimb-InFlow(L/min)" ] },
+          { "OutputFilename": "ExpiratoryValveLeakVaried_EndTidalCO2_partial", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
+          { "OutputFilename": "ExpiratoryValveLeakVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "ExpiratoryValveLeakVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "ExpiratoryValveLeakLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Inspiratory Valve Leak Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineInspiratoryValveLeakVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "InspiratoryValveLeakVaried_Inflow_partial", "YHeader": [ "AnesthesiaMachineExpiratoryLimb-InFlow(L/min)" ] },
+          { "OutputFilename": "InspiratoryValveLeakVaried_EndTidalCO2_partial", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
+          { "OutputFilename": "InspiratoryValveLeakVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "InspiratoryValveLeakVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "InspiratoryValveLeakLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Expiratory Valve Obstruction Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineExpiratoryValveObstructionVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "ExpiratoryValveObstructionVaried_Inflow_partial", "YHeader": [ "AnesthesiaMachineExpiratoryLimb-InFlow(L/min)" ] },
+          { "OutputFilename": "ExpiratoryValveObstructionVaried_EndTidalCO2_partial", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
+          { "OutputFilename": "ExpiratoryValveObstructionVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "ExpiratoryValveObstructionVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "ExpiratoryValveObstructionLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Inspiratory Valve Obstruction Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineInspiratoryValveObstructionVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "InspiratoryValveObstructionVaried_Inflow_partial", "YHeader": [ "AnesthesiaMachineInspiratoryLimb-InFlow(L/min)" ] },
+          { "OutputFilename": "InspiratoryValveObstructionVaried_EndTidalCO2_partial", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
+          { "OutputFilename": "InspiratoryValveObstructionVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "InspiratoryValveObstructionVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "InspiratoryValveObstructionLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Ventilator Pressure Loss Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineVentilatorPressureLossVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "VentilatorPressureLossVaried_VentilatorVolume_partial", "YHeader": [ "AnesthesiaMachineVentilator-Volume(mL)" ] },
+          { "OutputFilename": "VentilatorPressureLossVaried_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "VentilatorPressureLossVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "VentilatorPressureLossVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "VentilatorPressureLossLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Soda Lime Failure Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineSodaLimeFailureVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "SodaLimeFailureVaried_InletCO2_partial", "YHeader": [ "AnesthesiaMachineGasInlet-CarbonDioxide-VolumeFraction" ] },
+          { "OutputFilename": "SodaLimeFailureVaried_EndTidalCO2_partial", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
+          { "OutputFilename": "SodaLimeFailureVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "SodaLimeFailureVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "SodaLimeFailureLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Vaporizer Failure Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineVaporizerFailureVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "VaporizerFailureVaried_DesfluraneConcentration_partial", "YHeader": [ "Desflurane-PlasmaConcentration(ug/L)" ],
+              "PlotConfig": { "LogAxis": true } },
+          { "OutputFilename": "VaporizerFailureLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Oxygen Wall Pressure Loss",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineOxygenWallPressureLossResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "OxygenWallPressureLoss_InletO2_partial", "YHeader": [ "AnesthesiaMachineGasInlet-Oxygen-VolumeFraction" ] },
+          { "OutputFilename": "OxygenWallPressureLoss_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "OxygenWallPressureLoss_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "OxygenWallPressureLoss_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "OxygenWallPressureLossLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Anesthesia Machine Methodology Report - Validation - Oxygen Tank Pressure Loss",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineOxygenTankPressureLossResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "OxygenTankPressureLoss_InletO2_partial", "YHeader": [ "AnesthesiaMachineGasInlet-Oxygen-VolumeFraction" ] },
+          { "OutputFilename": "OxygenTankPressureLoss_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "OxygenTankPressureLoss_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "OxygenTankPressureLoss_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "OxygenTankPressureLossLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.1 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Inhaler Methodology Report - Validation - One Actuation",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true, "OmitActionsWith": [""]
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/InhalerOneActuationResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Inhaler_OneActuation_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "Inhaler_OneActuation_AlbuterolConcentration_partial", "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Inhaler Methodology Report - Validation - One Actuation Incorrect Use",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true, "OmitActionsWith": [""]
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/InhalerOneActuationIncorrectUseResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Inhaler_OneActuationIncorrectUse_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "Inhaler_OneActuationIncorrectUse_AlbuterolMass_partial", "YHeader": [ "Albuterol-MassInBody(ug)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Inhaler Methodology Report - Validation - One Actuation With Spacer",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true, "OmitActionsWith": [""]
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/InhalerOneActuationWithSpacerResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Inhaler_OneActuationWithSpacer_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "Inhaler_OneActuationWithSpacer_AlbuterolMass_partial", "YHeader": [ "Albuterol-MassInBody(ug)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Inhaler Methodology Report - Validation - Two Actuations",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true, "OmitActionsWith": [""]
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/InhalerTwoActuationsResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Inhaler_TwoActuations_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "Inhaler_TwoActuations_AlbuterolConcentration_partial", "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ] }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Mechanical Ventilator Methodology Report - Validation - PC-CMV Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/MechanicalVentilator_PC-CMV_VariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_TotalLungVolume_partial",
+              "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_InspiratoryExpiratoryRatio_partial",
+              "YHeader": [ "InspiratoryExpiratoryRatio" ] },
+          { "OutputFilename": "MechanicalVentilatorPressureControlledVariedLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 6 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Mechanical Ventilator Methodology Report - Validation - VC-AC ARDS",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/MechanicalVentilator_VC-AC_ARDSResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_TotalLungVolume_partial",
+              "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_InspiratoryExpiratoryRatio_partial",
+              "YHeader": [ "InspiratoryExpiratoryRatio" ] },
+          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDSLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 6 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Bag Valve Mask Methodology Report - Validation - Apnea",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/BagValveMask/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/BagValveMaskApneaResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "BagValveMaskApnea_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "BagValveMaskOxygenSaturation_RR_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "BagValveMaskApnea_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "BagValveMaskApnea_Aorta-CarbonDioxide-PartialPressure_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "BagValveMaskApnea_TotalLungVolume_Legend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "System Methodology Report - Combined Validation - Cynthia",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/System/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/combined/CynthiaResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Cynthia_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "Cynthia_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "Cynthia_ArterialPressure_partial", "YHeader": [ "ArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Cynthia_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "CynthiaLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "System Methodology Report - Combined Validation - Gus",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/System/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/combined/GusResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Gus_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "Gus_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "Gus_ArterialPressure_partial", "YHeader": [ "ArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Gus_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "GusLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "System Methodology Report - Combined Validation - Hassan",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/System/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/combined/HassanResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Hassan_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "Hassan_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "Hassan_ArterialPressure_partial", "YHeader": [ "ArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Hassan_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "HassanLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "System Methodology Report - Combined Validation - Joel",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/System/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/combined/JoelResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Joel_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "Joel_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "Joel_ArterialPressure_partial", "YHeader": [ "ArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Joel_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "JoelLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "System Methodology Report - Combined Validation - Nathan",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/System/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/combined/NathanResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "Nathan_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "Nathan_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "Nathan_ArterialPressure_partial", "YHeader": [ "ArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Nathan_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "NathanLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "System Methodology Report - Showcase Validation - Combat Multitrauma",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/System/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/showcase/CombatMultitraumaResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "CombatMultitrauma_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(L)" ] },
+          { "OutputFilename": "CombatMultitrauma_BloodVolume_partial", "YHeader": [ "BloodVolume(mL)" ] },
+          { "OutputFilename": "CombatMultitrauma_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "CombatMultitrauma_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "CombatMultitraumaLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 3.5 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "System Methodology Report - Showcase Validation - Asthma Attack",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/System/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/showcase/AsthmaAttackResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "AsthmaAttack_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(L)" ] },
+          { "OutputFilename": "AsthmaAttack_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AsthmaAttack_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "AsthmaAttack_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "AsthmaAttackLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "System Methodology Report - Showcase Validation - Heat Stroke",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/System/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/showcase/HeatStrokeResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "HeatStroke_AchievedExerciseLevel_partial", "YHeader": [ "AchievedExerciseLevel" ] },
+          { "OutputFilename": "HeatStroke_CoreTemp_partial", "YHeader": [ "CoreTemperature(degC)" ] },
+          { "OutputFilename": "HeatStroke_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "HeatStroke_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "HeatStrokeLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 7 } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "System Methodology Report - Showcase Validation - Environment Exposure",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/System/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/showcase/EnvironmentExposureResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "EnvironmentExposure_TotalMetabolicRate_partial", "YHeader": [ "TotalMetabolicRate(kcal/day)" ] },
+          { "OutputFilename": "EnvironmentExposure_O2Consumption_partial", "YHeader": [ "OxygenConsumptionRate(mL/min)" ] },
+          { "OutputFilename": "EnvironmentExposure_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "EnvironmentExposure_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "EnvironmentExposureLegend_partial",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 3.6 } } }
         ]
       }
     }
