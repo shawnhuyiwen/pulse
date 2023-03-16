@@ -16,11 +16,11 @@
         ],
         "Series":
         [
-          { "Title": "Volume_partial", "YHeader": [ "BloodVolume(L)" ] },
-          { "Title": "Hemoglobin_partial", "YHeader": [ "HemoglobinContent(g)" ] },
-          { "OutputFilename": "BloodChemistryLegend_partial",
-              "PlotConfig": { "ImageProperties": { "Height_inch": 2, "Width_inch": 16 }, "LegendMode": "OnlyActionEventLegend",
-                  "PlotEvents": false } }
+          { "Title": "Volume", "YHeader": [ "BloodVolume(L)" ] },
+          { "Title": "Hemoglobin", "YHeader": [ "HemoglobinContent(g)" ] },
+          { "OutputFilename": "BloodChemistryLegend",
+              "PlotConfig": { "ImageProperties": { "Height_inch": 3 }, "LegendMode": "OnlyActionEventLegend",
+                "PlotEvents": false } }
         ]
       }
     },
@@ -35,8 +35,8 @@
         ],
         "Series":
         [
-          { "Title": "", "OutputFilename": "ComplianceVsElastance_partial", "XBounds": { "LowerBound": 30, "UpperBound": 35 },
-                "YHeader": [ "LeftHeartCompliance_mL_Per_mmHg" ], "Y2Header": [ "LeftHeartElastance_mmHg_Per_mL" ] }
+          { "Title": "", "OutputFilename": "ComplianceVsElastance", "XBounds": { "LowerBound": 30, "UpperBound": 35 },
+              "YHeader": [ "LeftHeartCompliance_mL_Per_mmHg" ], "Y2Header": [ "LeftHeartElastance_mmHg_Per_mL" ] }
         ]
       }
     },
@@ -46,18 +46,20 @@
         "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular/" },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/systems/CardiovascularValidation-StandardMaleResults.csv" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/systems/CardiovascularValidation-StandardMaleResults.csv"
+          }
         ],
         "Series":
         [
-          { "Comment": "Pressure/volume", "Title": "", "OutputFilename": "PressureVsVolume_partial",
+          { "Comment": "Pressure/volume", "Title": "", "OutputFilename": "PressureVsVolume",
               "XBounds": { "LowerBound": 4.58, "UpperBound": 7.12 }, "YHeader": [ "LeftHeart-Pressure(mmHg)" ],
               "Y2Header": [ "LeftHeart-Volume(mL)" ] },
-          { "Comment": "P-V Loop", "Title": "", "OutputFilename": "PVLoop_partial", "XHeader": "LeftHeart-Volume(mL)",
+          { "Comment": "P-V Loop", "Title": "", "OutputFilename": "PVLoop", "XHeader": "LeftHeart-Volume(mL)",
               "YHeader": [ "LeftHeart-Pressure(mmHg)" ],
               "PlotConfig": { "ImageProperties": { "Height_inch": 6, "Width_inch": 4 }, "LegendMode": "NoLegends",
-                  "SciLimits": {}, "ZeroAxis": true } },
-          { "Comment": "Pressure waveform - Arterial", "Title": "", "OutputFilename": "EnginePressure_partial",
+                "SciLimits": {}, "ZeroAxis": true } },
+          { "Comment": "Pressure waveform - Arterial", "Title": "", "OutputFilename": "EnginePressure",
               "XBounds": { "LowerBound": 2.78, "UpperBound": 4.46 }, "YBounds": { "LowerBound": 70, "UpperBound": 120 },
               "YHeader": [ "ArterialPressure(mmHg)" ],
               "PlotConfig": { "ImageProperties": { "Height_inch": 5, "Width_inch": 4 }, "LegendMode": "NoLegends" } }
@@ -78,9 +80,9 @@
         ],
         "Series":
         [
-          { "Comment": "Pressure waveform", "Title": "", "OutputFilename": "PhysioNetPressure_partial",
-              "XBounds": { "LowerBound": 6.025, "UpperBound": 7.217 }, "YBounds": { "LowerBound": 40, "UpperBound": 130 },
-              "YHeader": [ "Pressure(mmHg)" ] }
+          { "Comment": "Pressure waveform", "Title": "", "OutputFilename": "PhysioNetPressure",
+              "XBounds": { "LowerBound": 6.025, "UpperBound": 7.217 },
+              "YBounds": { "LowerBound": 40, "UpperBound": 130 }, "YHeader": [ "Pressure(mmHg)" ] }
         ]
       }
     },
@@ -100,11 +102,11 @@
         ],
         "Series":
         [
-          { "OutputFilename": "SinusECG_partial", "Title": "", "XBounds": { "LowerBound": 2.5, "UpperBound": 5.5 },
+          { "OutputFilename": "SinusECG", "Title": "", "XBounds": { "LowerBound": 2.5, "UpperBound": 5.5 },
               "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] },
-          { "OutputFilename": "SinusBradycardia_Engine_partial", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
-              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ],
-              "PlotConfig": { "ImageProperties": { "Width_inch": 10 } } }
+          { "OutputFilename": "SinusBradycardia_Engine", "Title": "",
+              "XBounds": { "LowerBound": 140, "UpperBound": 146 }, "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 },
+              "YHeader": [ "Lead3ElectricPotential(mV)" ], "PlotConfig": { "ImageProperties": { "Width_inch": 10 } } }
         ]
       }
     },
@@ -124,13 +126,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "HeartRateStableVentricularTachycardia_partial", "Title": "",
+          { "OutputFilename": "HeartRateStableVentricularTachycardia", "Title": "",
               "XBounds": { "LowerBound": 0, "UpperBound": 150 }, "YBounds": { "LowerBound": 40, "UpperBound": 190 },
               "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "BloodPressureStableVentricularTachycardia_partial", "Title": "",
+          { "OutputFilename": "BloodPressureStableVentricularTachycardia", "Title": "",
               "XBounds": { "LowerBound": 0, "UpperBound": 150 }, "YBounds": { "LowerBound": 40, "UpperBound": 130 },
               "YHeader": [ "MeanArterialPressure(mmHg)" ] },
-          { "OutputFilename": "ECGVT_Engine_partial", "Title": "",
+          { "OutputFilename": "ECGVT_Engine", "Title": "",
               "XBounds": { "LowerBound": 140, "UpperBound": 145 }, "YBounds": { "LowerBound": -1.0, "UpperBound": 2.0 },
               "YHeader": [ "Lead3ElectricPotential(mV)" ], "PlotConfig": { "ImageProperties": { "Width_inch": 10 } } }
         ]
@@ -152,10 +154,10 @@
         ],
         "Series":
         [
-          { "OutputFilename": "HeartRateUnstableVentricularTachycardia_partial", "Title": "",
+          { "OutputFilename": "HeartRateUnstableVentricularTachycardia", "Title": "",
               "XBounds": { "LowerBound": 0, "UpperBound": 150 }, "YBounds": { "LowerBound": 40, "UpperBound": 190 },
               "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "BloodPressureUntableVentricularTachycardia_partial", "Title": "",
+          { "OutputFilename": "BloodPressureUntableVentricularTachycardia", "Title": "",
               "XBounds": { "LowerBound": 0, "UpperBound": 150 }, "YBounds": { "LowerBound": 40, "UpperBound": 130 },
               "YHeader": [ "MeanArterialPressure(mmHg)" ] }
         ]
@@ -176,8 +178,9 @@
         ],
         "Series":
         [
-          { "OutputFilename": "SinusTachycardia_Engine_partial", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
-              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
+          { "OutputFilename": "SinusTachycardia_Engine", "Title": "",
+              "XBounds": { "LowerBound": 140, "UpperBound": 146 }, "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 },
+              "YHeader": [ "Lead3ElectricPotential(mV)" ] }
         ]
       }
     },
@@ -196,7 +199,7 @@
         ],
         "Series":
         [
-          { "OutputFilename": "SinusPEA_Engine_partial", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
+          { "OutputFilename": "SinusPEA_Engine", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
               "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
         ]
       }
@@ -216,7 +219,7 @@
         ],
         "Series":
         [
-          { "OutputFilename": "PulselessVT_Engine_partial", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
+          { "OutputFilename": "PulselessVT_Engine", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
               "YBounds": { "LowerBound": -0.5, "UpperBound": 1.0 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
         ]
       }
@@ -236,7 +239,7 @@
         ],
         "Series":
         [
-          { "OutputFilename": "ECGCoarseVF_Engine_partial", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
+          { "OutputFilename": "ECGCoarseVF_Engine", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
               "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
         ]
       }
@@ -256,7 +259,7 @@
         ],
         "Series":
         [
-          { "OutputFilename": "ECGFineVF_Engine_partial", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
+          { "OutputFilename": "ECGFineVF_Engine", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
               "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
         ]
       }
@@ -276,7 +279,7 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Asystole_Engine_partial", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
+          { "OutputFilename": "Asystole_Engine", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
               "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
         ]
       }
@@ -296,13 +299,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Class2Blood_BloodVolume_partial", "Title": "", "YHeader": [ "BloodVolume(L)" ] },
-          { "OutputFilename": "Class2Blood_Hb_partial", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
-          { "OutputFilename": "Class2Blood_Systolic_partial", "Title": "", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
-          { "OutputFilename": "Class2Blood_Diastolic_partial", "Title": "", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
-          { "OutputFilename": "Class2BloodLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 1.5, "Width_inch": 22 },
-                  "PlotEvents": false } }
+          { "OutputFilename": "Class2Blood_BloodVolume", "Title": "", "YHeader": [ "BloodVolume(L)" ] },
+          { "OutputFilename": "Class2Blood_Hb", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
+          { "OutputFilename": "Class2Blood_Systolic", "Title": "", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Class2Blood_Diastolic", "Title": "", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Class2Blood_Legend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "Height_inch": 1.5, "Width_inch": 22 }, "PlotEvents": false } }
         ]
       }
     },
@@ -321,11 +324,11 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Class2Saline_BloodVolume_partial", "Title": "", "YHeader": [ "BloodVolume(L)" ] },
-          { "OutputFilename": "Class2Saline_Hb_partial", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
-          { "OutputFilename": "Class2SalineLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 1.5, "Width_inch": 22 },
-                  "PlotEvents": false } }
+          { "OutputFilename": "Class2Saline_BloodVolume", "Title": "", "YHeader": [ "BloodVolume(L)" ] },
+          { "OutputFilename": "Class2Saline_Hb", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
+          { "OutputFilename": "Class2Saline_Legend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "Height_inch": 1.5, "Width_inch": 22 }, "PlotEvents": false } }
         ]
       }
     },
@@ -344,11 +347,11 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Class4NoFluid_BloodVolume_partial", "Title": "", "YHeader": [ "BloodVolume(L)" ] },
-          { "OutputFilename": "Class4NoFluid_Hb_partial", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
-          { "OutputFilename": "Class4NoFluidLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 1.5, "Width_inch": 22 },
-                  "PlotEvents": false } }
+          { "OutputFilename": "Class4NoFluid_BloodVolume", "Title": "", "YHeader": [ "BloodVolume(L)" ] },
+          { "OutputFilename": "Class4NoFluid_Hb", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
+          { "OutputFilename": "Class4NoFluid_Legend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "Height_inch": 1.5, "Width_inch": 22 }, "PlotEvents": false } }
         ]
       }
     },
@@ -367,10 +370,11 @@
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicCardiacOutputShockValidation.csv" },
         "Series":
         [
-          { "Title": "Cardiac Output - Response to Hemorrhage", "OutputFilename": "CardiacOutputShock_partial",
-              "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss", "XBounds": { "LowerBound": 0, "UpperBound": 50 },
-              "YHeader": [ "CardiacOutput(L/min)" ], "YLabel": "Pulse Normalized Cardiac Output",
-              "X2Header": "BloodVolumeLost(%)", "Y2Header": [ "NormalizedCardiacOutput" ], "Y2Label": "Validation Normalized Cardiac Output"}
+          { "Title": "Cardiac Output - Response to Hemorrhage", "OutputFilename": "CardiacOutputShock",
+              "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss",
+              "XBounds": { "LowerBound": 0, "UpperBound": 50 }, "YHeader": [ "CardiacOutput(L/min)" ],
+              "YLabel": "Pulse Normalized Cardiac Output", "X2Header": "BloodVolumeLost(%)",
+              "Y2Header": [ "NormalizedCardiacOutput" ], "Y2Label": "Validation Normalized Cardiac Output" }
         ]
       }
     },
@@ -378,18 +382,26 @@
       "MultiHeaderSeriesPlotter":
       {
         "Comment": "Hemorrhages - Class 4 No Fluid",
-        "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All" },
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All"
+        },
         "PlotSource":
         [
           { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageClass4NoFluidResults.csv" }
         ],
-        "ValidationSource": { "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicMeanArterialPressureShockValidation.csv" },
+        "ValidationSource":
+        {
+          "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicMeanArterialPressureShockValidation.csv"
+        },
         "Series":
         [
-          { "Title": "Mean Arterial Pressure - Response to Hemorrhage", "OutputFilename": "MeanArterialPressureShock_partial",
-              "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss", "XBounds": { "LowerBound": 0, "UpperBound": 50 },
-              "YHeader": [ "MeanArterialPressure(mmHg)" ], "YLabel": "Pulse Normalized Mean Arterial Pressure",
-              "X2Header": "BloodVolumeLost(%)", "Y2Header": [ "NormalizedMeanArterialPressure" ], "Y2Label": "Validation Normalized Mean Arterial Pressure" }
+          { "Title": "Mean Arterial Pressure - Response to Hemorrhage", "OutputFilename": "MeanArterialPressureShock",
+              "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss",
+              "XBounds": { "LowerBound": 0, "UpperBound": 50 }, "YHeader": [ "MeanArterialPressure(mmHg)" ],
+              "YLabel": "Pulse Normalized Mean Arterial Pressure", "X2Header": "BloodVolumeLost(%)",
+              "Y2Header": [ "NormalizedMeanArterialPressure" ],
+              "Y2Label": "Validation Normalized Mean Arterial Pressure" }
         ]
       }
     },
@@ -397,7 +409,10 @@
       "MultiHeaderSeriesPlotter":
       {
         "Comment": "Hemorrhage Groups",
-        "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "OnlyY" },
+        "PlotConfig":
+        {
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "OnlyY"
+        },
         "PlotSource":
         [
           { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup1Results.csv", "Label": "Group 1" },
@@ -409,7 +424,7 @@
         ],
         "Series":
         [
-          { "Title": "Cardiovascular Hemorrhage Groups", "OutputFilename": "HemorrhageGroups_partial",
+          { "Title": "Cardiovascular Hemorrhage Groups", "OutputFilename": "HemorrhageGroups",
               "YHeader": [ "MeanArterialPressure(mmHg)" ], "YLabel": "Mean Arterial Pressure Delta",
               "YBounds": { "LowerBound": 0, "UpperBound": 105 } }
         ]
@@ -419,14 +434,17 @@
       "MultiHeaderSeriesPlotter":
       {
         "Comment": "Heart Failure",
-        "PlotConfig": { "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotActions": true, "PlotEvents": true },
+        "PlotConfig":
+        {
+          "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotActions": true, "PlotEvents": true
+        },
         "PlotSource":
         [
           { "CSVData": "$VERIFICATION_DIR/scenarios/patient/VentricularSystolicDysfunctionResults.csv" }
         ],
         "Series":
         [
-          { "Title": "", "OutputFilename": "HeartFailure_partial", "YHeader": [ "BloodVolume(L)" ] }
+          { "Title": "", "OutputFilename": "HeartFailure", "YHeader": [ "BloodVolume(L)" ] }
         ]
       }
     },
@@ -437,12 +455,15 @@
         "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Drugs/" },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/AlbuterolValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/AlbuterolValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Albuterol.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Albuterol", "OutputFilename": "Albuterol_partial", "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ],
+          { "Title": "Albuterol", "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -457,12 +478,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/EtomidateValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/EtomidateValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Etomidate.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Etomidate", "OutputFilename": "Etomidate_partial", "YHeader": [ "Etomidate-PlasmaConcentration(ug/L)" ],
+          { "Title": "Etomidate", "YHeader": [ "Etomidate-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "Plasma Concentration (ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -477,12 +501,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/FentanylValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/FentanylValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Fentanyl.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Fentanyl", "OutputFilename": "Fentanyl_partial", "YHeader": [ "Fentanyl-PlasmaConcentration(ug/L)" ],
+          { "Title": "Fentanyl", "YHeader": [ "Fentanyl-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "VenousConcentration(ug/L)" ], "Y2Label": "Experimental VenousConcentration(ug/L)" }
         ]
       }
@@ -497,12 +524,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/FurosemideValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/FurosemideValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Furosemide.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Furosemide", "OutputFilename": "Furosemide_partial", "YHeader": [ "Furosemide-PlasmaConcentration(ug/L)" ],
+          { "Title": "Furosemide", "YHeader": [ "Furosemide-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -517,12 +547,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/KetamineValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/KetamineValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Ketamine.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Ketamine", "OutputFilename": "Ketamine_partial", "YHeader": [ "Ketamine-PlasmaConcentration(ug/L)" ],
+          { "Title": "Ketamine", "YHeader": [ "Ketamine-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "Plasma Concentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -537,12 +570,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/LorazepamValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/LorazepamValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Lorazepam.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Lorazepam", "OutputFilename": "Lorazepam_partial", "YHeader": [ "Lorazepam-PlasmaConcentration(ug/L)" ],
+          { "Title": "Lorazepam", "YHeader": [ "Lorazepam-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "Plasma Concentration (ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -557,12 +593,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/MidazolamValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/MidazolamValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Midazolam.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Midazolam", "OutputFilename": "Midazolam_partial", "YHeader": [ "Midazolam-PlasmaConcentration(ug/L)" ],
+          { "Title": "Midazolam", "YHeader": [ "Midazolam-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -577,12 +616,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/MorphineValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/MorphineValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Morphine.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Morphine", "OutputFilename": "Morphine_partial", "YHeader": [ "Morphine-PlasmaConcentration(ug/L)" ],
+          { "Title": "Morphine", "YHeader": [ "Morphine-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -597,12 +639,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/NaloxoneValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/NaloxoneValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Naloxone.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Naloxone", "OutputFilename": "Naloxone_partial", "YHeader": [ "Naloxone-PlasmaConcentration(ug/L)" ],
+          { "Title": "Naloxone", "YHeader": [ "Naloxone-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -617,12 +662,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PralidoximeValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PralidoximeValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Pralidoxime.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Pralidoxime", "OutputFilename": "Pralidoxime_partial", "YHeader": [ "Pralidoxime-PlasmaConcentration(ug/L)" ],
+          { "Title": "Pralidoxime", "YHeader": [ "Pralidoxime-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -637,12 +685,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PrednisoneValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PrednisoneValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Prednisone.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Prednisone", "OutputFilename": "Prednisone_partial", "YHeader": [ "Prednisone-PlasmaConcentration(ug/L)" ],
+          { "Title": "Prednisone", "YHeader": [ "Prednisone-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -657,12 +708,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PropofolValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PropofolValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Propofol.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Propofol", "OutputFilename": "Propofol_partial", "YHeader": [ "Propofol-PlasmaConcentration(ug/L)" ],
+          { "Title": "Propofol", "YHeader": [ "Propofol-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -677,12 +731,15 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/RocuroniumValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/RocuroniumValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Rocuronium.csv", "LineFormat": "Dr" },
         "Series":
         [
-          { "Title": "Rocuronium", "OutputFilename": "Rocuronium_partial", "YHeader": [ "Rocuronium-PlasmaConcentration(ug/L)" ],
+          { "Title": "Rocuronium", "YHeader": [ "Rocuronium-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -697,12 +754,19 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/SuccinylcholineValidationResults.csv", "LineFormat": "-b" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/SuccinylcholineValidationResults.csv",
+            "LineFormat": "-b"
+          }
         ],
-        "ValidationSource": { "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Succinylcholine.csv", "LineFormat": "Dr" },
+        "ValidationSource":
+        {
+          "CSVData": "$VALIDATION_DIR/Pharmacokinetic/CSVs/Succinylcholine.csv",
+          "LineFormat": "Dr"
+        },
         "Series":
         [
-          { "Title": "Succinylcholine", "OutputFilename": "Succinylcholine_partial", "YHeader": [ "Succinylcholine-PlasmaConcentration(ug/L)" ],
+          { "Title": "Succinylcholine", "YHeader": [ "Succinylcholine-PlasmaConcentration(ug/L)" ],
               "Y2Header": [ "PlasmaConcentration(ug/L)" ], "Y2Label": "Experimental PlasmaConcentration(ug/L)" }
         ]
       }
@@ -722,13 +786,17 @@
         ],
         "Series":
         [
-          { "Title": "Succinylcholine Heart Rate", "OutputFilename": "Succinylcholine_HeartRate_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "Title": "Succinylcholine Mean Arterial Pressure", "OutputFilename": "Succinylcholine_MeanArterialPressure_partial",
+          { "Title": "Succinylcholine Heart Rate", "OutputFilename": "Succinylcholine_HeartRate",
+              "YHeader": [ "HeartRate(1/min)" ] },
+          { "Title": "Succinylcholine Mean Arterial Pressure", "OutputFilename": "Succinylcholine_MeanArterialPressure",
               "YHeader": [ "MeanArterialPressure(mmHg)" ] },
-          { "Title": "Succinylcholine Respiration Rate", "OutputFilename": "Succinylcholine_RespirationRate_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "Title": "Succinylcholine Oxygen Saturation", "OutputFilename": "Succinylcholine_OxygenSaturation_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "SuccinylcholineLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 2.4, "Width_inch": 22 } } }
+          { "Title": "Succinylcholine Respiration Rate", "OutputFilename": "Succinylcholine_RespirationRate",
+              "YHeader": [ "RespirationRate(1/min)" ] },
+          { "Title": "Succinylcholine Oxygen Saturation", "OutputFilename": "Succinylcholine_OxygenSaturation",
+              "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "SuccinylcholineLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "Height_inch": 2.4, "Width_inch": 22 } } }
         ]
       }
     },
@@ -747,15 +815,18 @@
         ],
         "Series":
         [
-          { "Title": "Furosemide Blood Volume", "OutputFilename": "Furosemide_BloodVolume_partial", "YHeader": [ "BloodVolume(L)" ] },
-          { "Title": "Furosemide Urine Production Rate", "OutputFilename": "Furosemide_UrineProductionRate_partial",
+          { "Title": "Furosemide Blood Volume", "OutputFilename": "Furosemide_BloodVolume",
+              "YHeader": [ "BloodVolume(L)" ] },
+          { "Title": "Furosemide Urine Production Rate", "OutputFilename": "Furosemide_UrineProductionRate",
               "YHeader": [ "UrineProductionRate(mL/min)" ] },
-          { "Title": "Furosemide Sodium-Clearance-RenalExcretionRate", "OutputFilename": "Furosemide_SodiumClearance_partial",
+          { "Title": "Furosemide Sodium-Clearance-RenalExcretionRate", "OutputFilename": "Furosemide_SodiumClearance",
               "YHeader": [ "Sodium-Clearance-RenalExcretionRate(g/day)" ] },
-          { "Title": "Furosemide Chloride-Clearance-RenalExcretionRate", "OutputFilename": "Furosemide_ChlorideClearance_partial",
+          { "Title": "Furosemide Chloride-Clearance-RenalExcretionRate",
+              "OutputFilename": "Furosemide_ChlorideClearance",
               "YHeader": [ "Chloride-Clearance-RenalExcretionRate(g/day)" ] },
-          { "OutputFilename": "FurosemideLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 2, "Width_inch": 22 } } }
+          { "OutputFilename": "FurosemideLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "Height_inch": 2, "Width_inch": 22 } } }
         ]
       }
     },
@@ -765,8 +836,8 @@
         "Comment": "Endocrine Methodology Report",
         "PlotConfig":
         {
-          "Gridlines": true, "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Endocrine/", "PlotActions": true,
-          "PlotEvents": true
+          "Gridlines": true, "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Endocrine/",
+          "PlotActions": true, "PlotEvents": true
         },
         "PlotSource":
         [
@@ -774,12 +845,16 @@
         ],
         "Series":
         [
-          { "Title": "Epinephrine Blood Concentration", "OutputFilename": "AcuteStressBloodEpi_partial", "YHeader": [ "Aorta-Epinephrine-Concentration(ug/L)" ] },
-          { "Title": "Heart Rate", "OutputFilename": "AcuteStressHR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "Title": "Systolic Pressure", "OutputFilename": "AcuteStressSystolic_partial", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
-          { "Title": "Diastolic Pressure", "OutputFilename": "AcuteStressDiastolic_partial", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
-          { "OutputFilename": "AcuteStressLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false, "ImageProperties": { "DimensionMode": "Legend" } } }
+          { "Title": "Epinephrine Blood Concentration", "OutputFilename": "AcuteStressBloodEpi",
+              "YHeader": [ "Aorta-Epinephrine-Concentration(ug/L)" ] },
+          { "Title": "Heart Rate", "OutputFilename": "AcuteStressHR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "Title": "Systolic Pressure", "OutputFilename": "AcuteStressSystolic",
+              "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+          { "Title": "Diastolic Pressure", "OutputFilename": "AcuteStressDiastolic",
+              "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+          { "OutputFilename": "AcuteStressLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false,
+                "ImageProperties": { "DimensionMode": "Legend" } } }
         ]
       }
     },
@@ -798,7 +873,7 @@
         ],
         "Series":
         [
-          { "Title": "", "OutputFilename": "EpiExercise_partial", "XHeader": "Exercise(W)", "YHeader": [ "ReleaseMultiplier" ] }
+          { "Title": "", "OutputFilename": "EpiExercise", "XHeader": "Exercise(W)", "YHeader": [ "ReleaseMultiplier" ] }
         ]
       }
     },
@@ -817,11 +892,15 @@
         ],
         "Series":
         [
-          { "Title": "Total Metabolic Rate", "OutputFilename": "ColdWaterSubmersion_TotalMetabolicRate_partial", "YHeader": [ "TotalMetabolicRate(W)" ] },
-          { "Title": "Core Temperature", "OutputFilename": "ColdWaterSubmersion_CoreTemp_partial", "YHeader": [ "CoreTemperature(degC)" ] },
-          { "Title": "Skin Temperature", "OutputFilename": "ColdWaterSubmersion_SkinTemp_partial", "YHeader": [ "SkinTemperature(degC)" ] },
-          { "OutputFilename": "ColdWaterSubmersionLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false, "ImageProperties": { "Height_inch": 4.8 } } }
+          { "Title": "Total Metabolic Rate", "OutputFilename": "ColdWaterSubmersion_TotalMetabolicRate",
+              "YHeader": [ "TotalMetabolicRate(W)" ] },
+          { "Title": "Core Temperature", "OutputFilename": "ColdWaterSubmersion_CoreTemp",
+              "YHeader": [ "CoreTemperature(degC)" ] },
+          { "Title": "Skin Temperature", "OutputFilename": "ColdWaterSubmersion_SkinTemp",
+              "YHeader": [ "SkinTemperature(degC)" ] },
+          { "OutputFilename": "ColdWaterSubmersionLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false,
+                "ImageProperties": { "Height_inch": 4.8 } } }
         ]
       }
     },
@@ -840,12 +919,14 @@
         ],
         "Series":
         [
-          { "Title": "Oxygen Saturation", "OutputFilename": "HighAltitude_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "Title": "Respiration Rate", "OutputFilename": "HighAltitude_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "Title": "Heart Rate", "OutputFilename": "HighAltitude_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "Title": "Oxygen Pressure", "OutputFilename": "HighAltitude_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "HighAltitudeLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false, "ImageProperties": { "Height_inch": 4.5, "Width_inch": 22 } } }
+          { "Title": "Oxygen Saturation", "OutputFilename": "HighAltitude_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "Title": "Respiration Rate", "OutputFilename": "HighAltitude_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "Title": "Heart Rate", "OutputFilename": "HighAltitude_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "Title": "Oxygen Pressure", "OutputFilename": "HighAltitude_O2PP",
+              "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "HighAltitudeLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false,
+                "ImageProperties": { "Height_inch": 4.5, "Width_inch": 22 } } }
         ]
       }
     },
@@ -864,14 +945,15 @@
         ],
         "Series":
         [
-          { "Title": "Expiratory Flow Before", "OutputFilename": "ExpiratoryFlowBefore_partial", "XBounds": { "LowerBound": 11.2, "UpperBound": 17.21 },
-              "YHeader": [ "ExpiratoryFlow(L/s)" ] },
-          { "Title": "Expiratory Flow After", "OutputFilename": "ExpiratoryFlowAfter_partial", "XBounds": { "LowerBound": 10811.2, "UpperBound": 10817.21 },
-              "YHeader": [ "ExpiratoryFlow(L/s)" ] },
-          { "Title": "Avleoli Mass Deposited", "OutputFilename": "AvleoliMassDeposited_partial",
+          { "Title": "Expiratory Flow Before", "OutputFilename": "ExpiratoryFlowBefore",
+              "XBounds": { "LowerBound": 11.2, "UpperBound": 17.21 }, "YHeader": [ "ExpiratoryFlow(L/s)" ] },
+          { "Title": "Expiratory Flow After", "OutputFilename": "ExpiratoryFlowAfter",
+              "XBounds": { "LowerBound": 10811.2, "UpperBound": 10817.21 }, "YHeader": [ "ExpiratoryFlow(L/s)" ] },
+          { "Title": "Avleoli Mass Deposited", "OutputFilename": "AvleoliMassDeposited",
               "YHeader": [ "RightAlveoli-ForestFireParticulate-MassDeposited(ug)" ], "YLabel": "MassDeposited(ug)" },
-          { "Title": "Dead Space Mass Deposited", "OutputFilename": "DeadSpaceMassDeposited_partial",
-              "YHeader": [ "RightAnatomicDeadSpace-ForestFireParticulate-MassDeposited(ug)" ], "YLabel": "DeadSpaceMassDeposited(ug)" }
+          { "Title": "Dead Space Mass Deposited", "OutputFilename": "DeadSpaceMassDeposited",
+              "YHeader": [ "RightAnatomicDeadSpace-ForestFireParticulate-MassDeposited(ug)" ],
+              "YLabel": "DeadSpaceMassDeposited(ug)" }
         ]
       }
     },
@@ -890,20 +972,33 @@
         ],
         "Series":
         [
-          { "OutputFilename": "6hr_BV_partial", "YHeader": [ "BloodVolume(L)" ], "XBounds": { "UpperBound": 22000 } },
-          { "OutputFilename": "6hr_BloodCalcium_partial", "YHeader": [ "Calcium-BloodConcentration(mg/L)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_BloodGlucose_partial", "YHeader": [ "Glucose-BloodConcentration(mg/dL)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_BloodInsulin_partial", "YHeader": [ "Insulin-BloodConcentration(ug/L)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_IntestineVolume_partial", "YHeader": [ "SmallIntestineChyme-Volume(mL)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_BloodSodium_partial", "YHeader": [ "Sodium-BloodConcentration(g/dL)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_BloodTristearin_partial", "YHeader": [ "Tristearin-BloodConcentration(mg/dL)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_BloodUrea_partial", "YHeader": [ "Urea-BloodConcentration(mg/dL)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_StomachCalcium_partial", "YHeader": [ "StomachContents-Calcium(g)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_StomachCarbs_partial", "YHeader": [ "StomachContents-Carbohydrate(g)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_StomachFat_partial", "YHeader": [ "StomachContents-Fat(g)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_StomachProtein_partial", "YHeader": [ "StomachContents-Protein(g)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_StomachSodium_partial", "YHeader": [ "StomachContents-Sodium(g)" ], "XBounds": { "UpperBound": 22000 }  },
-          { "OutputFilename": "6hr_StomachWater_partial", "YHeader": [ "StomachContents-Water(mL)" ], "XBounds": { "UpperBound": 22000 }  }
+          { "OutputFilename": "6hr_BV", "YHeader": [ "BloodVolume(L)" ], "XBounds": { "UpperBound": 22000 } },
+          { "OutputFilename": "6hr_BloodCalcium", "YHeader": [ "Calcium-BloodConcentration(mg/L)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_BloodGlucose", "YHeader": [ "Glucose-BloodConcentration(mg/dL)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_BloodInsulin", "YHeader": [ "Insulin-BloodConcentration(ug/L)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_IntestineVolume", "YHeader": [ "SmallIntestineChyme-Volume(mL)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_BloodSodium", "YHeader": [ "Sodium-BloodConcentration(g/dL)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_BloodTristearin", "YHeader": [ "Tristearin-BloodConcentration(mg/dL)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_BloodUrea", "YHeader": [ "Urea-BloodConcentration(mg/dL)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_StomachCalcium", "YHeader": [ "StomachContents-Calcium(g)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_StomachCarbs", "YHeader": [ "StomachContents-Carbohydrate(g)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_StomachFat", "YHeader": [ "StomachContents-Fat(g)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_StomachProtein", "YHeader": [ "StomachContents-Protein(g)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_StomachSodium", "YHeader": [ "StomachContents-Sodium(g)" ],
+              "XBounds": { "UpperBound": 22000 }  },
+          { "OutputFilename": "6hr_StomachWater", "YHeader": [ "StomachContents-Water(mL)" ],
+              "XBounds": { "UpperBound": 22000 }  }
         ]
       }
     },
@@ -913,7 +1008,8 @@
         "Comment": "Nervous System Methodology Report - Baroreceptor Methodology",
         "PlotConfig":
         {
-          "ImageProperties": { "Height_inch": 6, "Width_inch": 8 }, "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Nervous/"
+          "ImageProperties": { "Height_inch": 6, "Width_inch": 8 }, "LegendMode": "NoLegends",
+          "OutputPathOverride": "./docs/html/plots/Nervous/"
         },
         "PlotSource":
         [
@@ -921,22 +1017,24 @@
         ],
         "Series":
         [
-          { "Title": "Response Fractions", "OutputFilename": "Response_Fractions_partial", "XHeader": "normMAP",
-              "XLabel": "MeanArterialPressure(Normalized)", "XBounds": { "LowerBound": 0, "UpperBound": 2.5 },
-              "YHeader": [ "SympatheticResponse", "ParasympatheticResponse" ], "YLabel": "Response(Fraction)",
-              "PlotConfig": { "LegendMode": "AllLegends" } },
-          { "Title": "Normalized Heart Rate", "OutputFilename": "Normalized_HeartRate_partial", "XHeader": "normMAP",
+          { "Title": "Response Fractions", "XHeader": "normMAP", "XLabel": "MeanArterialPressure(Normalized)",
+              "XBounds": { "LowerBound": 0, "UpperBound": 2.5 },
+              "YHeader": [ "SympatheticResponse", "ParasympatheticResponse" ],
+              "YLabel": "Response(Fraction)", "PlotConfig": { "LegendMode": "AllLegends" } },
+          { "Title": "Normalized Heart Rate", "OutputFilename": "Normalized_HeartRate", "XHeader": "normMAP",
               "XLabel": "MeanArterialPressure(Normalized)", "XBounds": { "LowerBound": 0, "UpperBound": 2.5 },
               "YHeader": [ "normHR" ], "YLabel": "HeartRate(Normalized)" },
-          { "Title": "Normalized Heart Elastance", "OutputFilename": "Normalized_HeartElastance_partial", "XHeader": "normMAP",
+          { "Title": "Normalized Heart Elastance", "OutputFilename": "Normalized_HeartElastance", "XHeader": "normMAP",
               "XLabel": "MeanArterialPressure(Normalized)", "XBounds": { "LowerBound": 0, "UpperBound": 2.5 },
               "YHeader": [ "normElastance" ], "YLabel": "HeartElastance(Normalized)" },
-          { "Title": "Normalized Systemic Resistance", "OutputFilename": "Normalized_SystemicResistance_partial", "XHeader": "normMAP",
-              "XLabel": "MeanArterialPressure(Normalized)", "XBounds": { "LowerBound": 0, "UpperBound": 2.5 },
-              "YHeader": [ "currentResistance" ], "YLabel": "SystemicResistance(Normalized)" },
-          { "Title": "Normalized Systemic Compliance", "OutputFilename": "Normalized_SystemicCompliance_partial", "XHeader": "normMAP",
-              "XLabel": "MeanArterialPressure(Normalized)", "XBounds": { "LowerBound": 0, "UpperBound": 2.5 },
-              "YHeader": [ "currentCompliance" ], "YLabel": "SystemicCompliance(Normalized)" }
+          { "Title": "Normalized Systemic Resistance", "OutputFilename": "Normalized_SystemicResistance",
+              "XHeader": "normMAP", "XLabel": "MeanArterialPressure(Normalized)",
+              "XBounds": { "LowerBound": 0, "UpperBound": 2.5 }, "YHeader": [ "currentResistance" ],
+              "YLabel": "SystemicResistance(Normalized)" },
+          { "Title": "Normalized Systemic Compliance", "OutputFilename": "Normalized_SystemicCompliance",
+              "XHeader": "normMAP", "XLabel": "MeanArterialPressure(Normalized)",
+              "XBounds": { "LowerBound": 0, "UpperBound": 2.5 }, "YHeader": [ "currentCompliance" ],
+              "YLabel": "SystemicCompliance(Normalized)" }
         ]
       }
     },
@@ -946,7 +1044,8 @@
         "Comment": "Nervous System Methodology Report - Chemoreceptors",
         "PlotConfig":
         {
-          "Gridlines": true, "ImageProperties": { "Height_inch": 5, "Width_inch": 6 }, "OutputPathOverride": "./docs/html/plots/Nervous/"
+          "Gridlines": true, "ImageProperties": { "Height_inch": 5, "Width_inch": 10 },
+          "OutputPathOverride": "./docs/html/plots/Nervous/"
         },
         "PlotSource":
         [
@@ -954,7 +1053,7 @@
         ],
         "Series":
         [
-          { "Title": "", "OutputFilename": "ChemoreceptorsModifiers_partial", "XHeader": "GasFractionBaseline",
+          { "Title": "", "OutputFilename": "ChemoreceptorsModifiers", "XHeader": "GasFractionBaseline",
               "YHeader": [ "Oxygen", "CarbonDioxide"  ], "YLabel": "HeartRateModifier" }
         ]
       }
@@ -965,8 +1064,8 @@
         "Comment": "Nervous System Methodology Report - Baroreceptors",
         "PlotConfig":
         {
-          "ImageProperties": { "Height_inch": 5, "Width_inch": 19 }, "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Nervous/",
-          "PlotActions": true, "PlotEvents": true
+          "ImageProperties": { "Height_inch": 5, "Width_inch": 19 }, "LegendMode": "NoLegends",
+          "OutputPathOverride": "./docs/html/plots/Nervous/", "PlotActions": true, "PlotEvents": true
         },
         "PlotSource":
         [
@@ -974,10 +1073,12 @@
         ],
         "Series":
         [
-          { "Title": "Cardiac Output", "OutputFilename": "Baroreceptors_CardiacOutput_partial", "YHeader": [ "CardiacOutput(L/min)" ] },
-          { "Title": "Heart Rate", "OutputFilename": "Baroreceptors_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "Title": "Systemic Vascular Resistance", "OutputFilename": "Baroreceptors_VascularResistance_partial", "YHeader": [ "SystemicVascularResistance(mmHg_s/mL)" ] },
-          { "OutputFilename": "BaroreceptorsLegend_partial",
+          { "Title": "Cardiac Output", "OutputFilename": "Baroreceptors_CardiacOutput",
+              "YHeader": [ "CardiacOutput(L/min)" ] },
+          { "Title": "Heart Rate", "OutputFilename": "Baroreceptors_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "Title": "Systemic Vascular Resistance", "OutputFilename": "Baroreceptors_VascularResistance",
+              "YHeader": [ "SystemicVascularResistance(mmHg_s/mL)" ] },
+          { "OutputFilename": "BaroreceptorsLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 1.5 } } }
         ]
       }
@@ -989,7 +1090,8 @@
         "PlotConfig":
         {
           "Gridlines": true, "ImageProperties": { "Height_inch": 6, "Width_inch": 9 }, "LegendMode": "NoLegends",
-          "OutputPathOverride": "./docs/html/plots/Nervous/", "PlotActions": true, "PlotEvents": true, "OmitEventsWith": [ "Respiratory" ]
+          "OutputPathOverride": "./docs/html/plots/Nervous/", "PlotActions": true, "PlotEvents": true,
+          "OmitEventsWith": [ "Respiratory" ]
         },
         "PlotSource":
         [
@@ -997,12 +1099,17 @@
         ],
         "Series":
         [
-          { "Title": "IntracranialPressure(mmHg)", "OutputFilename": "TBI_ICP_partial", "YHeader": [ "IntracranialPressure(mmHg)" ] },
-          { "Title": "CerebralBloodFlow(mL/min)", "OutputFilename": "TBI_CBF_partial", "YHeader": [ "CerebralBloodFlow(mL/min)" ] },
-          { "Title": "CerebralPerfusionPressure(mmHg)", "OutputFilename": "TBI_CPP_partial", "YHeader": [ "CerebralPerfusionPressure(mmHg)" ] },
-          { "Title": "MeanArterialPressure(mmHg)", "OutputFilename": "TBI_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
-          { "OutputFilename": "TBILegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 4.5, "Width_inch": 18 } } }
+          { "Title": "IntracranialPressure(mmHg)", "OutputFilename": "TBI_ICP",
+              "YHeader": [ "IntracranialPressure(mmHg)" ] },
+          { "Title": "CerebralBloodFlow(mL/min)", "OutputFilename": "TBI_CBF",
+              "YHeader": [ "CerebralBloodFlow(mL/min)" ] },
+          { "Title": "CerebralPerfusionPressure(mmHg)", "OutputFilename": "TBI_CPP",
+              "YHeader": [ "CerebralPerfusionPressure(mmHg)" ] },
+          { "Title": "MeanArterialPressure(mmHg)", "OutputFilename": "TBI_MAP",
+              "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "TBILegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "Height_inch": 4.5, "Width_inch": 18 } } }
         ]
       }
     },
@@ -1021,12 +1128,17 @@
         ],
         "Series":
         [
-          { "Title": "Left Eye Size Modifier", "OutputFilename": "TBI_LeftSize_partial", "YHeader": [ "LeftEyePupillaryResponse-SizeModifier" ], "YLabel": "" },
-          { "Title": "Right Eye Size Modifier", "OutputFilename": "TBI_RightSize_partial", "YHeader": [ "RightEyePupillaryResponse-SizeModifier" ], "YLabel": "" },
-          { "Title": "Left Eye Reactivity Modifier", "OutputFilename": "TBI_LeftReactivity_partial", "YHeader": [ "LeftEyePupillaryResponse-ReactivityModifier" ], "YLabel": "" },
-          { "Title": "Right Eye Reactivity Modifier", "OutputFilename": "TBI_RightReactivity_partial", "YHeader": [ "RightEyePupillaryResponse-ReactivityModifier" ], "YLabel": "" },
-          { "Title": "ICP(mmHg)", "OutputFilename": "TBI_PupilICP_partial", "YHeader": [ "IntracranialPressure(mmHg)" ], "YLabel": "" },
-          { "OutputFilename": "PupilLegend_partial",
+          { "Title": "Left Eye Size Modifier", "OutputFilename": "TBI_LeftSize",
+              "YHeader": [ "LeftEyePupillaryResponse-SizeModifier" ], "YLabel": "" },
+          { "Title": "Right Eye Size Modifier", "OutputFilename": "TBI_RightSize",
+              "YHeader": [ "RightEyePupillaryResponse-SizeModifier" ], "YLabel": "" },
+          { "Title": "Left Eye Reactivity Modifier", "OutputFilename": "TBI_LeftReactivity",
+              "YHeader": [ "LeftEyePupillaryResponse-ReactivityModifier" ], "YLabel": "" },
+          { "Title": "Right Eye Reactivity Modifier", "OutputFilename": "TBI_RightReactivity",
+              "YHeader": [ "RightEyePupillaryResponse-ReactivityModifier" ], "YLabel": "" },
+          { "Title": "ICP(mmHg)", "OutputFilename": "TBI_PupilICP", "YHeader": [ "IntracranialPressure(mmHg)" ],
+              "YLabel": "" },
+          { "OutputFilename": "PupilLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 2.5 } } }
         ]
       }
@@ -1037,8 +1149,8 @@
         "Comment": "Renal Methodology Report - Hemorrhage Class 3",
         "PlotConfig":
         {
-          "FontSize": 10, "ImageProperties": { "Height_inch": 4, "Width_inch": 8 }, "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Renal/",
-          "PlotActions": true, "PlotEvents": true
+          "FontSize": 10, "ImageProperties": { "Height_inch": 4, "Width_inch": 8 }, "LegendMode": "NoLegends",
+          "OutputPathOverride": "./docs/html/plots/Renal/", "PlotActions": true, "PlotEvents": true
         },
         "PlotSource":
         [
@@ -1046,12 +1158,14 @@
         ],
         "Series":
         [
-          { "Title": "", "OutputFilename": "HemorrhageMAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ]},
-          { "Title": "", "OutputFilename": "HemorrhageGFR_partial", "YHeader": [ "GlomerularFiltrationRate(mL/min)" ] },
-          { "Title": "", "OutputFilename": "HemorrhageRBF_partial", "YHeader": [ "RenalBloodFlow(L/min)" ] },
-          { "Title": "", "OutputFilename": "HemorrhageArterioleResistance_partial", "YHeader": [ "RightAfferentArterioleResistance(mmHg_min/mL)" ] },
-          { "OutputFilename": "HemorrhageClass3NoFluidLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 2, "Width_inch": 16 }, "PlotEvents": false } }
+          { "Title": "", "OutputFilename": "HemorrhageMAP", "YHeader": [ "MeanArterialPressure(mmHg)" ]},
+          { "Title": "", "OutputFilename": "HemorrhageGFR", "YHeader": [ "GlomerularFiltrationRate(mL/min)" ] },
+          { "Title": "", "OutputFilename": "HemorrhageRBF", "YHeader": [ "RenalBloodFlow(L/min)" ] },
+          { "Title": "", "OutputFilename": "HemorrhageArterioleResistance",
+              "YHeader": [ "RightAfferentArterioleResistance(mmHg_min/mL)" ] },
+          { "OutputFilename": "HemorrhageClass3NoFluidLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "Height_inch": 2, "Width_inch": 16 }, "PlotEvents": false } }
         ]
       }
     },
@@ -1061,8 +1175,8 @@
         "Comment": "Renal Methodology Report - High Altitude Environment Change",
         "PlotConfig":
         {
-          "FontSize": 10, "ImageProperties": { "Height_inch": 4, "Width_inch": 8 }, "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Renal/",
-          "PlotEvents": true
+          "FontSize": 10, "ImageProperties": { "Height_inch": 4, "Width_inch": 8 }, "LegendMode": "NoLegends",
+          "OutputPathOverride": "./docs/html/plots/Renal/", "PlotEvents": true
         },
         "PlotSource":
         [
@@ -1070,12 +1184,15 @@
         ],
         "Series":
         [
-          { "Title": "", "OutputFilename": "AltitudeMAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ]},
-          { "Title": "", "OutputFilename": "AltitudeGFR_partial", "YHeader": [ "GlomerularFiltrationRate(mL/min)" ] },
-          { "Title": "", "OutputFilename": "AltitudeRBF_partial", "YHeader": [ "RenalBloodFlow(L/min)" ] },
-          { "Title": "", "OutputFilename": "AltitudeArterioleResistance_partial", "YHeader": [ "RightAfferentArterioleResistance(mmHg_min/mL)" ] },
-          { "OutputFilename": "HighAltitudeEnvironmentChangeLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 4.5, "Width_inch": 16 }, "PlotActions": true, "PlotEvents": false } }
+          { "Title": "", "OutputFilename": "AltitudeMAP", "YHeader": [ "MeanArterialPressure(mmHg)" ]},
+          { "Title": "", "OutputFilename": "AltitudeGFR", "YHeader": [ "GlomerularFiltrationRate(mL/min)" ] },
+          { "Title": "", "OutputFilename": "AltitudeRBF", "YHeader": [ "RenalBloodFlow(L/min)" ] },
+          { "Title": "", "OutputFilename": "AltitudeArterioleResistance",
+              "YHeader": [ "RightAfferentArterioleResistance(mmHg_min/mL)" ] },
+          { "OutputFilename": "HighAltitudeEnvironmentChangeLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "Height_inch": 4.5, "Width_inch": 16 }, "PlotActions": true,
+                "PlotEvents": false } }
         ]
       }
     },
@@ -1083,14 +1200,18 @@
       "MultiHeaderSeriesPlotter":
       {
         "Comment": "Renal Methodology Report - Nutrition",
-        "PlotConfig": { "Gridlines": true, "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Renal/", "PlotActions": true, "PlotEvents": true },
+        "PlotConfig":
+        {
+          "Gridlines": true, "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Renal/",
+          "PlotActions": true, "PlotEvents": true
+        },
         "PlotSource":
         [
           { "CSVData": "$VERIFICATION_DIR/scenarios/nutrition/NutritionResults.csv" }
         ],
         "Series":
         [
-          { "OutputFilename": "4hr_Urination_partial", "YHeader": [ "Bladder-Volume(mL)" ]}
+          { "OutputFilename": "4hr_Urination", "YHeader": [ "Bladder-Volume(mL)" ]}
         ]
       }
     },
@@ -1106,7 +1227,7 @@
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Renal/MAP_vs_GFR.csv" },
         "Series":
         [
-          { "Title": "", "OutputFilename": "MAP_vs_GFR_partial", "XHeader": "MeanArterialPressure(mmHg)",
+          { "Title": "", "OutputFilename": "MAP_vs_GFR", "XHeader": "MeanArterialPressure(mmHg)",
               "XBounds": { "LowerBound": 60, "UpperBound": 200 }, "YHeader": [ "GlomerularFiltrationRate(L/min)" ],
               "YBounds": { "LowerBound": 0.09, "UpperBound": 0.16 } }
         ]
@@ -1124,7 +1245,7 @@
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Renal/MAP_vs_RBF.csv" },
         "Series":
         [
-          { "Title": "", "OutputFilename": "MAP_vs_RBF_partial", "XHeader": "MeanArterialPressure(mmHg)",
+          { "Title": "", "OutputFilename": "MAP_vs_RBF", "XHeader": "MeanArterialPressure(mmHg)",
               "XBounds": { "LowerBound": 60, "UpperBound": 200 }, "YHeader": [ "RenalBloodFlow(L/min)" ],
               "YBounds": { "LowerBound": 1.0, "UpperBound": 1.7 } }
         ]
@@ -1142,7 +1263,7 @@
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Renal/MAP_vs_UPR.csv" },
         "Series":
         [
-          { "Title": "", "OutputFilename": "MAP_vs_UPR_partial", "XHeader": "MeanArterialPressure(mmHg)",
+          { "Title": "", "OutputFilename": "MAP_vs_UPR", "XHeader": "MeanArterialPressure(mmHg)",
               "XBounds": { "LowerBound": 60, "UpperBound": 200 }, "YHeader": [ "UrineProductionRate(mL/min)" ],
               "YBounds": { "LowerBound": 0, "UpperBound": 8 } }
         ]
@@ -1159,7 +1280,7 @@
         ],
         "Series":
         [
-          { "OutputFilename": "DriverWaveform_partial", "YHeader": [ "TransMusclePressure(cmH2O)" ] }
+          { "OutputFilename": "DriverWaveform", "YHeader": [ "TransMusclePressure(cmH2O)" ] }
         ]
       }
     },
@@ -1174,50 +1295,47 @@
         ],
         "Series":
         [
-          { "Title": "Muscle Pressure", "OutputFilename": "Muscle_Pressure_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+          { "Title": "Muscle Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
               "YHeader": [ "RespiratoryMusclePressure(cmH2O)" ], "YLabel": "Pressure(cmH2O)" },
-          { "Title": "Pleural and Alveoli Pressure", "OutputFilename": "Pleural_and_Alveoli_Pressure_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
-              "YHeader": [ "LeftPleuralCavity-Pressure(cmH2O)", "LeftAlveoli-Pressure(cmH2O)" ], "YLabel": "Pressure(cmH2O)" },
-          { "Title": "Transpulmonary Pressure", "OutputFilename": "Transpulmonary_Pressure_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 }, "YHeader": [ "TranspulmonaryPressure(cmH2O)" ],
+          { "Title": "Pleural and Alveoli Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+              "YHeader": [ "LeftPleuralCavity-Pressure(cmH2O)", "LeftAlveoli-Pressure(cmH2O)" ],
               "YLabel": "Pressure(cmH2O)" },
-          { "Title": "Tidal Volume from Total Lung Volume", "OutputFilename": "TidalVolume_from_TotalLungVolume_partial",
+          { "Title": "Transpulmonary Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+              "YHeader": [ "TranspulmonaryPressure(cmH2O)" ], "YLabel": "Pressure(cmH2O)" },
+          { "Title": "Tidal Volume from Total Lung Volume", "OutputFilename": "TidalVolume_from_TotalLungVolume",
               "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 }, "YHeader": [ "TotalLungVolume(mL)" ],
               "Y2Header": [ "TidalVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" } },
-          { "Title": "Alveoli and Dead Space Volumes", "OutputFilename": "Alveoli_and_Dead_Space_Volumes_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
-              "YHeader": [ "LeftAnatomicDeadSpace-Volume(mL)", "RightAnatomicDeadSpace-Volume(mL)", "LeftAlveoli-Volume(mL)",
-                "RightAlveoli-Volume(mL)" ], "YLabel": "Volumes(mL)" },
-          { "Title": "Total Flow Through Trachea", "OutputFilename": "Total_Flow_Through_Trachea_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 }, "YHeader": [ "InspiratoryFlow(L/s)" ],
-              "Y2Header": [ "TotalLungVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" }  },
-          { "Title": "Lung Pressure And Volume", "OutputFilename": "Lung_Pressure_And_Volume_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 }, "YHeader": [ "LeftAlveoli-Pressure(cmH2O)" ],
-              "Y2Header": [ "TotalLungVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" }  },
-          { "Title": "Engine Pressures", "OutputFilename": "Engine_Pressures_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
-              "YHeader": [ "LeftAlveoli-Pressure(cmH2O)", "LeftPleuralCavity-Pressure(cmH2O)" ], "YLabel": "Pressure(cmH2O)",
-              "PlotConfig": { "ImageProperties": { "DimensionMode": "Square" } } },
-          { "Title": "Engine Lung Volume", "OutputFilename": "Engine_Lung_Volume_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 }, "YHeader": [ "TotalLungVolume(mL)" ],
+          { "Title": "Alveoli and Dead Space Volumes", "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+              "YHeader": [ "LeftAnatomicDeadSpace-Volume(mL)", "RightAnatomicDeadSpace-Volume(mL)",
+                "LeftAlveoli-Volume(mL)", "RightAlveoli-Volume(mL)" ],
+              "YLabel": "Volumes(mL)" },
+          { "Title": "Total Flow Through Trachea", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
+              "YHeader": [ "InspiratoryFlow(L/s)" ], "Y2Header": [ "TotalLungVolume(mL)" ],
+              "PlotConfig" : { "LegendMode": "NoLegends" }  },
+          { "Title": "Lung Pressure And Volume", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
+              "YHeader": [ "LeftAlveoli-Pressure(cmH2O)" ], "Y2Header": [ "TotalLungVolume(mL)" ],
+              "PlotConfig" : { "LegendMode": "NoLegends" }  },
+          { "Title": "Engine Pressures", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
+              "YHeader": [ "LeftAlveoli-Pressure(cmH2O)", "LeftPleuralCavity-Pressure(cmH2O)" ],
+              "YLabel": "Pressure(cmH2O)", "PlotConfig": { "ImageProperties": { "DimensionMode": "Square" } } },
+          { "Title": "Engine Lung Volume", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
+              "YHeader": [ "TotalLungVolume(mL)" ],
               "PlotConfig": { "ImageProperties": { "Height_inch": 5, "Width_inch": 8 } } },
-          { "Title": "Alveolar Oxygen Partial Pressure", "OutputFilename": "Alveolar_Oxygen_Partial_Pressure_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+          { "Title": "Alveolar Oxygen Partial Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
               "YHeader": [ "LeftAlveoli-Oxygen-PartialPressure(mmHg)", "RightAlveoli-Oxygen-PartialPressure(mmHg)" ],
               "YLabel": "Alveoli-Oxygen-PartialPressure(mmHg)" },
-          { "Title": "Alveolar Carbon Dioxide Partial Pressure", "OutputFilename": "Alveolar_Carbon_Dioxide_Partial_Pressure_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
-              "YHeader": [ "LeftAlveoli-CarbonDioxide-PartialPressure(mmHg)", "RightAlveoli-CarbonDioxide-PartialPressure(mmHg)" ],
+          { "Title": "Alveolar Carbon Dioxide Partial Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
+              "YHeader": [ "LeftAlveoli-CarbonDioxide-PartialPressure(mmHg)",
+                "RightAlveoli-CarbonDioxide-PartialPressure(mmHg)" ],
               "YLabel": "Alveoli-CarbonDioxide-PartialPressure(mmHg)" },
-          { "Title": "Trachea Carbon Dioxide Partial Pressure", "OutputFilename": "Trachea_Carbon_Dioxide_Partial_Pressure_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 }, "YHeader": [ "Carina-CarbonDioxide-PartialPressure(mmHg)" ],
-              "Y2Header": [ "TotalLungVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" }  },
-          { "Title": "Trachea Oxygen Partial Pressure", "OutputFilename": "Trachea_Oxygen_Partial_Pressure_partial",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 }, "YHeader": [ "Carina-Oxygen-PartialPressure(mmHg)" ],
-              "Y2Header": [ "TotalLungVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" }  },
-          { "Title": "Engine Pulmonary Compliance", "XHeader": "LeftPleuralCavity-Pressure(cmH2O)", "YHeader": [ "TotalLungVolume(mL)" ],
+          { "Title": "Trachea Carbon Dioxide Partial Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
+              "YHeader": [ "Carina-CarbonDioxide-PartialPressure(mmHg)" ], "Y2Header": [ "TotalLungVolume(mL)" ],
+              "PlotConfig" : { "LegendMode": "NoLegends" }  },
+          { "Title": "Trachea Oxygen Partial Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
+              "YHeader": [ "Carina-Oxygen-PartialPressure(mmHg)" ], "Y2Header": [ "TotalLungVolume(mL)" ],
+              "PlotConfig" : { "LegendMode": "NoLegends" }  },
+          { "Title": "Engine Pulmonary Compliance", "XHeader": "LeftPleuralCavity-Pressure(cmH2O)",
+              "YHeader": [ "TotalLungVolume(mL)" ],
               "PlotConfig": { "ImageProperties": { "DimensionMode": "Square" }, "SciLimits": {} } }
         ]
       }
@@ -1238,9 +1356,9 @@
         "ValidationSource": { "CSVData": "$VALIDATION_DIR/Waveforms/PleuralPressure_Guyton.csv" },
         "Series":
         [
-          { "Title": "Guyton Lung Pressures", "OutputFilename": "Guyton_Lung_Pressures_partial", "YHeader": [ "AlveolarPressure(cmH2O)" ],
-            "YBounds": { "LowerBound": -8.5, "UpperBound": 1.5},
-            "Y2Header": [ "PleuralPressure(cmH2O)" ], "Y2Bounds": { "LowerBound": -8.5, "UpperBound": 1.5} }
+          { "Title": "Guyton Lung Pressures", "YHeader": [ "AlveolarPressure(cmH2O)" ],
+              "YBounds": { "LowerBound": -8.5, "UpperBound": 1.5}, "Y2Header": [ "PleuralPressure(cmH2O)" ],
+              "Y2Bounds": { "LowerBound": -8.5, "UpperBound": 1.5} }
         ]
       }
     },
@@ -1259,7 +1377,8 @@
         ],
         "Series":
         [
-          { "Title": "Guyton Pulmonary Compliance", "XHeader": "PleuralPressure(cmH2O)", "YHeader": [ "LungVolume(L)" ] }
+          { "Title": "Guyton Pulmonary Compliance", "XHeader": "PleuralPressure(cmH2O)",
+              "YHeader": [ "LungVolume(L)" ] }
         ]
       }
     },
@@ -1278,7 +1397,7 @@
         ],
         "Series":
         [
-          { "Title": "Guyton Lung Volume", "OutputFilename": "Guyton_Lung_Volume_partial", "YHeader": [ "LungVolume(L)" ] }
+          { "Title": "Guyton Lung Volume", "YHeader": [ "LungVolume(L)" ] }
         ]
       }
     },
@@ -1296,8 +1415,8 @@
         ],
         "Series":
         [
-          { "Title": "Engine Cough Flow", "OutputFilename": "Engine_Cough_Flow_partial",
-            "XBounds": { "LowerBound": 30, "UpperBound": 32 }, "YHeader": [ "ExpiratoryFlow(L/s)" ] }
+          { "Title": "Engine Cough Flow", "XBounds": { "LowerBound": 30, "UpperBound": 32 },
+            "YHeader": [ "ExpiratoryFlow(L/s)" ] }
         ]
       }
     },
@@ -1316,7 +1435,7 @@
         ],
         "Series":
         [
-          { "Title": "Experimental Cough Flow", "OutputFilename": "Experimental_Cough_Flow_partial", "YHeader": [ "Airflow(L/s)" ] }
+          { "Title": "Experimental Cough Flow", "YHeader": [ "Airflow(L/s)" ] }
         ]
       }
     },
@@ -1335,7 +1454,8 @@
         ],
         "Series":
         [
-          { "Title": "Experimental Pulmonary Compliance", "XHeader": "IntrapulmonaryPressure(cmH2O)", "YHeader": [ "TotalLungVolume(mL)" ] }
+          { "Title": "Experimental Pulmonary Compliance", "XHeader": "IntrapulmonaryPressure(cmH2O)",
+              "YHeader": [ "TotalLungVolume(mL)" ] }
         ]
       }
     },
@@ -1353,11 +1473,11 @@
         ],
         "Series":
         [
-          { "OutputFilename": "AirwayObstruction_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "AirwayObstruction_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "AirwayObstruction_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
-          { "OutputFilename": "AirwayObstruction_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "AirwayObstructionLegend_partial",
+          { "OutputFilename": "AirwayObstruction_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AirwayObstruction_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "AirwayObstruction_MAP", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "AirwayObstruction_CO2PP", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "AirwayObstructionLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
         ]
       }
@@ -1376,12 +1496,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "MainstemIntubation_RightLungVolume_partial", "YHeader": [ "RightLungPulmonary-Volume(mL)" ] },
-          { "OutputFilename": "MainstemIntubation_LeftLungVolume_partial", "YHeader": [ "LeftLungPulmonary-Volume(mL)" ] },
-          { "OutputFilename": "MainstemIntubation_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "MainstemIntubation_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "MainstemIntubationLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+          { "OutputFilename": "MainstemIntubation_RightLungVolume", "YHeader": [ "RightLungPulmonary-Volume(mL)" ] },
+          { "OutputFilename": "MainstemIntubation_LeftLungVolume", "YHeader": [ "LeftLungPulmonary-Volume(mL)" ] },
+          { "OutputFilename": "MainstemIntubation_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "MainstemIntubation_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "MainstemIntubationLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                  "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
         ]
       }
     },
@@ -1399,12 +1520,14 @@
         ],
         "Series":
         [
-          { "OutputFilename": "TensionPneumothoraxOpenVaried_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "TensionPneumothoraxOpenVaried_LeftLungVolume_partial", "YHeader": [ "LeftLungPulmonary-Volume(mL)" ] },
-          { "OutputFilename": "TensionPneumothoraxOpenVaried_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
-          { "OutputFilename": "TensionPneumothoraxOpenVaried_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "TensionPneumothoraxOpenVariedLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+          { "OutputFilename": "TensionPneumothoraxOpenVaried_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "TensionPneumothoraxOpenVaried_LeftLungVolume",
+              "YHeader": [ "LeftLungPulmonary-Volume(mL)" ] },
+          { "OutputFilename": "TensionPneumothoraxOpenVaried_MAP", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "TensionPneumothoraxOpenVaried_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "TensionPneumothoraxOpenVariedLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend" } } }
         ]
       }
     },
@@ -1422,12 +1545,14 @@
         ],
         "Series":
         [
-          { "OutputFilename": "TensionPneumothoraxClosedVaried_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "TensionPneumothoraxClosedVaried_RightLungVolume_partial", "YHeader": [ "RightLungPulmonary-Volume(mL)" ] },
-          { "OutputFilename": "TensionPneumothoraxClosedVaried_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
-          { "OutputFilename": "TensionPneumothoraxClosedVaried_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "TensionPneumothoraxClosedVariedLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+          { "OutputFilename": "TensionPneumothoraxClosedVaried_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "TensionPneumothoraxClosedVaried_RightLungVolume",
+              "YHeader": [ "RightLungPulmonary-Volume(mL)" ] },
+          { "OutputFilename": "TensionPneumothoraxClosedVaried_MAP", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "TensionPneumothoraxClosedVaried_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "TensionPneumothoraxClosedVariedLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend" } } }
         ]
       }
     },
@@ -1445,12 +1570,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "EsophagealIntubation_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "EsophagealIntubation_StomachInflow_partial", "YHeader": [ "Stomach-InFlow(L/min)" ] },
-          { "OutputFilename": "EsophagealIntubation_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
-          { "OutputFilename": "EsophagealIntubation_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "EsophagealIntubationLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+          { "OutputFilename": "EsophagealIntubation_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "EsophagealIntubation_StomachInflow", "YHeader": [ "Stomach-InFlow(L/min)" ] },
+          { "OutputFilename": "EsophagealIntubation_MAP", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "EsophagealIntubation_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "EsophagealIntubationLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
         ]
       }
     },
@@ -1468,12 +1594,14 @@
         ],
         "Series":
         [
-          { "OutputFilename": "BronchoConstrictionVaried_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "BronchoConstrictionVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "BronchoConstrictionVaried_MAP_partial", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
-          { "OutputFilename": "BronchoConstrictionVaried_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "BronchoConstrictionVariedLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+          { "OutputFilename": "BronchoConstrictionVaried_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "BronchoConstrictionVaried_CO2PP",
+            "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "BronchoConstrictionVaried_MAP", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+          { "OutputFilename": "BronchoConstrictionVaried_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "BronchoConstrictionVariedLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend" } } }
         ]
       }
     },
@@ -1491,12 +1619,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "AsthmaAttackModerateAcute_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "AsthmaAttackModerateAcute_IERatio_partial", "YHeader": [ "InspiratoryExpiratoryRatio" ] },
-          { "OutputFilename": "AsthmaAttackModerateAcute_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "AsthmaAttackModerateAcute_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "AsthmaAttackModerateAcuteLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+          { "OutputFilename": "AsthmaAttackModerateAcute_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AsthmaAttackModerateAcute_IERatio", "YHeader": [ "InspiratoryExpiratoryRatio" ] },
+          { "OutputFilename": "AsthmaAttackModerateAcute_O2PP", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "AsthmaAttackModerateAcute_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "AsthmaAttackModerateAcuteLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend" } } }
         ]
       }
     },
@@ -1514,12 +1643,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "AsthmaAttackSevereAcute_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "AsthmaAttackSevereAcute_IERatio_partial", "YHeader": [ "InspiratoryExpiratoryRatio" ] },
-          { "OutputFilename": "AsthmaAttackSevereAcute_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "AsthmaAttackSevereAcute_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "AsthmaAttackSevereAcuteLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+          { "OutputFilename": "AsthmaAttackSevereAcute_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AsthmaAttackSevereAcute_IERatio", "YHeader": [ "InspiratoryExpiratoryRatio" ] },
+          { "OutputFilename": "AsthmaAttackSevereAcute_O2PP", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "AsthmaAttackSevereAcute_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "AsthmaAttackSevereAcuteLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend" } } }
         ]
       }
     },
@@ -1537,12 +1667,14 @@
         ],
         "Series":
         [
-          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_IERatio_partial", "YHeader": [ "InspiratoryExpiratoryRatio" ] },
-          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "AsthmaAttackLifeThreateningAcuteLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_IERatio", "YHeader": [ "InspiratoryExpiratoryRatio" ] },
+          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_O2PP",
+              "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "AsthmaAttackLifeThreateningAcute_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "AsthmaAttackLifeThreateningAcuteLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend" } } }
         ]
       }
     },
@@ -1557,10 +1689,9 @@
         ],
         "Series":
         [
-          { "Title": "Macronutrient Consumption", "OutputFilename": "Macronutrient_Consumption_partial",
-            "XHeader": "RQ", "XLabel": "Respiratory Quotient", "XBounds": { "LowerBound": 0.7, "UpperBound": 1.0 },
-            "YHeader": [ "Carbohydrate", "Fat" ], "YLabel": "Consumption Fraction",
-            "YBounds": { "LowerBound": 0.0, "UpperBound": 1.0 } }
+          { "Title": "Macronutrient Consumption", "XHeader": "RQ", "XLabel": "Respiratory Quotient",
+            "XBounds": { "LowerBound": 0.7, "UpperBound": 1.0 }, "YHeader": [ "Carbohydrate", "Fat" ],
+            "YLabel": "Consumption Fraction", "YBounds": { "LowerBound": 0.0, "UpperBound": 1.0 } }
         ]
       }
     },
@@ -1575,7 +1706,8 @@
         ],
         "Series":
         [
-          { "Title": "", "OutputFilename": "ConcentrationEquilibration_partial", "XBounds": { "LowerBound": 0, "UpperBound": 10 },
+          { "Title": "", "OutputFilename": "ConcentrationEquilibration",
+            "XBounds": { "LowerBound": 0, "UpperBound": 10 },
             "YHeader": [ "cmpt1conc_g_Per_mL", "cmpt2conc_g_Per_mL", "cmpt3conc_g_Per_mL", "cmpt4conc_g_Per_mL" ],
             "YLabel": "Compartment Concentration" }
         ]
@@ -1592,7 +1724,7 @@
         ],
         "Series":
         [
-          { "Title": "", "OutputFilename": "FluxVsGradient_partial", "XHeader": "Gradient",
+          { "Title": "", "OutputFilename": "FluxVsGradient", "XHeader": "Gradient",
             "XBounds": { "UpperBound": 50 }, "XLabel": "Gradient(mass/volume)",
             "YHeader": [ "Flux_Facilitated", "Flux_Simple" ], "YBounds": { "UpperBound": 30 },
             "YLabel": "Flux(mass/area-time)" }
@@ -1605,7 +1737,8 @@
         "Comment": "Anesthesia Machine Methodology Report - Validation - Varied Configuration",
         "PlotConfig":
         {
-          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/", "PlotActions": true
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/AnesthesiaMachine/",
+          "PlotActions": true
         },
         "PlotSource":
         [
@@ -1613,13 +1746,15 @@
         ],
         "Series":
         [
-          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_VentilatorVolume_partial",
+          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_VentilatorVolume",
               "YHeader": [ "AnesthesiaMachineVentilator-Volume(mL)" ] },
-          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "AMVariedLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_TotalLungVolume",
+              "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "AnesthesiaMachineVariedConfiguration_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AMVariedLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
         ]
       }
     },
@@ -1637,12 +1772,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "MaskLeakVaried_Inflow_partial", "YHeader": [ "AnesthesiaMachineConnection-InFlow(L/min)" ] },
-          { "OutputFilename": "MaskLeakVaried_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "MaskLeakVaried_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "MaskLeakVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "MaskLeakLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+          { "OutputFilename": "MaskLeakVaried_Inflow", "YHeader": [ "AnesthesiaMachineConnection-InFlow(L/min)" ] },
+          { "OutputFilename": "MaskLeakVaried_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "MaskLeakVaried_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "MaskLeakVaried_CO2PP", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "MaskLeakLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
         ]
       }
     },
@@ -1660,12 +1796,15 @@
         ],
         "Series":
         [
-          { "OutputFilename": "ExpiratoryValveLeakVaried_Inflow_partial", "YHeader": [ "AnesthesiaMachineInspiratoryLimb-InFlow(L/min)" ] },
-          { "OutputFilename": "ExpiratoryValveLeakVaried_EndTidalCO2_partial", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
-          { "OutputFilename": "ExpiratoryValveLeakVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "ExpiratoryValveLeakVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "ExpiratoryValveLeakLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+          { "OutputFilename": "ExpiratoryValveLeakVaried_Inflow",
+              "YHeader": [ "AnesthesiaMachineInspiratoryLimb-InFlow(L/min)" ] },
+          { "OutputFilename": "ExpiratoryValveLeakVaried_EndTidalCO2", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
+          { "OutputFilename": "ExpiratoryValveLeakVaried_O2PP", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "ExpiratoryValveLeakVaried_CO2PP",
+              "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "ExpiratoryValveLeakLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
         ]
       }
     },
@@ -1683,12 +1822,16 @@
         ],
         "Series":
         [
-          { "OutputFilename": "InspiratoryValveLeakVaried_Inflow_partial", "YHeader": [ "AnesthesiaMachineExpiratoryLimb-InFlow(L/min)" ] },
-          { "OutputFilename": "InspiratoryValveLeakVaried_EndTidalCO2_partial", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
-          { "OutputFilename": "InspiratoryValveLeakVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "InspiratoryValveLeakVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "InspiratoryValveLeakLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+          { "OutputFilename": "InspiratoryValveLeakVaried_Inflow",
+              "YHeader": [ "AnesthesiaMachineExpiratoryLimb-InFlow(L/min)" ] },
+          { "OutputFilename": "InspiratoryValveLeakVaried_EndTidalCO2",
+              "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
+          { "OutputFilename": "InspiratoryValveLeakVaried_O2PP", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "InspiratoryValveLeakVaried_CO2PP",
+              "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "InspiratoryValveLeakLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
         ]
       }
     },
@@ -1702,16 +1845,23 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineExpiratoryValveObstructionVariedResults.csv" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineExpiratoryValveObstructionVariedResults.csv"
+          }
         ],
         "Series":
         [
-          { "OutputFilename": "ExpiratoryValveObstructionVaried_Inflow_partial", "YHeader": [ "AnesthesiaMachineExpiratoryLimb-InFlow(L/min)" ] },
-          { "OutputFilename": "ExpiratoryValveObstructionVaried_EndTidalCO2_partial", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
-          { "OutputFilename": "ExpiratoryValveObstructionVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "ExpiratoryValveObstructionVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "ExpiratoryValveObstructionLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+          { "OutputFilename": "ExpiratoryValveObstructionVaried_Inflow",
+              "YHeader": [ "AnesthesiaMachineExpiratoryLimb-InFlow(L/min)" ] },
+          { "OutputFilename": "ExpiratoryValveObstructionVaried_EndTidalCO2",
+              "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
+          { "OutputFilename": "ExpiratoryValveObstructionVaried_O2PP",
+              "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "ExpiratoryValveObstructionVaried_CO2PP",
+              "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "ExpiratoryValveObstructionLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+              "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
         ]
       }
     },
@@ -1725,16 +1875,23 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineInspiratoryValveObstructionVariedResults.csv" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineInspiratoryValveObstructionVariedResults.csv"
+          }
         ],
         "Series":
         [
-          { "OutputFilename": "InspiratoryValveObstructionVaried_Inflow_partial", "YHeader": [ "AnesthesiaMachineInspiratoryLimb-InFlow(L/min)" ] },
-          { "OutputFilename": "InspiratoryValveObstructionVaried_EndTidalCO2_partial", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
-          { "OutputFilename": "InspiratoryValveObstructionVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "InspiratoryValveObstructionVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "InspiratoryValveObstructionLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+          { "OutputFilename": "InspiratoryValveObstructionVaried_Inflow",
+              "YHeader": [ "AnesthesiaMachineInspiratoryLimb-InFlow(L/min)" ] },
+          { "OutputFilename": "InspiratoryValveObstructionVaried_EndTidalCO2",
+              "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
+          { "OutputFilename": "InspiratoryValveObstructionVaried_O2PP",
+              "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "InspiratoryValveObstructionVaried_CO2PP",
+              "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "InspiratoryValveObstructionLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
         ]
       }
     },
@@ -1748,16 +1905,22 @@
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineVentilatorPressureLossVariedResults.csv" }
+          {
+            "CSVData": "$VERIFICATION_DIR/scenarios/equipment/AnesthesiaMachineVentilatorPressureLossVariedResults.csv"
+          }
         ],
         "Series":
         [
-          { "OutputFilename": "VentilatorPressureLossVaried_VentilatorVolume_partial", "YHeader": [ "AnesthesiaMachineVentilator-Volume(mL)" ] },
-          { "OutputFilename": "VentilatorPressureLossVaried_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "VentilatorPressureLossVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "VentilatorPressureLossVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "VentilatorPressureLossLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+          { "OutputFilename": "VentilatorPressureLossVaried_VentilatorVolume",
+              "YHeader": [ "AnesthesiaMachineVentilator-Volume(mL)" ] },
+          { "OutputFilename": "VentilatorPressureLossVaried_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "VentilatorPressureLossVaried_O2PP",
+            "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "VentilatorPressureLossVaried_CO2PP",
+            "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "VentilatorPressureLossLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
         ]
       }
     },
@@ -1775,12 +1938,17 @@
         ],
         "Series":
         [
-          { "OutputFilename": "SodaLimeFailureVaried_InletCO2_partial", "YHeader": [ "AnesthesiaMachineGasInlet-CarbonDioxide-VolumeFraction" ] },
-          { "OutputFilename": "SodaLimeFailureVaried_EndTidalCO2_partial", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
-          { "OutputFilename": "SodaLimeFailureVaried_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "SodaLimeFailureVaried_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "SodaLimeFailureLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+          { "OutputFilename": "SodaLimeFailureVaried_InletCO2",
+              "YHeader": [ "AnesthesiaMachineGasInlet-CarbonDioxide-VolumeFraction" ] },
+          { "OutputFilename": "SodaLimeFailureVaried_EndTidalCO2",
+              "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
+          { "OutputFilename": "SodaLimeFailureVaried_O2PP",
+              "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "SodaLimeFailureVaried_CO2PP",
+              "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "SodaLimeFailureLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
         ]
       }
     },
@@ -1798,10 +1966,11 @@
         ],
         "Series":
         [
-          { "OutputFilename": "VaporizerFailureVaried_DesfluraneConcentration_partial", "YHeader": [ "Desflurane-PlasmaConcentration(ug/L)" ],
-              "PlotConfig": { "LogAxis": true } },
-          { "OutputFilename": "VaporizerFailureLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+          { "OutputFilename": "VaporizerFailureVaried_DesfluraneConcentration",
+              "YHeader": [ "Desflurane-PlasmaConcentration(ug/L)" ], "PlotConfig": { "LogAxis": true } },
+          { "OutputFilename": "VaporizerFailureLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
         ]
       }
     },
@@ -1819,12 +1988,15 @@
         ],
         "Series":
         [
-          { "OutputFilename": "OxygenWallPressureLoss_InletO2_partial", "YHeader": [ "AnesthesiaMachineGasInlet-Oxygen-VolumeFraction" ] },
-          { "OutputFilename": "OxygenWallPressureLoss_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "OxygenWallPressureLoss_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "OxygenWallPressureLoss_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "OxygenWallPressureLossLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+          { "OutputFilename": "OxygenWallPressureLoss_InletO2",
+              "YHeader": [ "AnesthesiaMachineGasInlet-Oxygen-VolumeFraction" ] },
+          { "OutputFilename": "OxygenWallPressureLoss_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "OxygenWallPressureLoss_O2PP", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "OxygenWallPressureLoss_CO2PP",
+              "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "OxygenWallPressureLossLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
         ]
       }
     },
@@ -1842,12 +2014,15 @@
         ],
         "Series":
         [
-          { "OutputFilename": "OxygenTankPressureLoss_InletO2_partial", "YHeader": [ "AnesthesiaMachineGasInlet-Oxygen-VolumeFraction" ] },
-          { "OutputFilename": "OxygenTankPressureLoss_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "OxygenTankPressureLoss_O2PP_partial", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "OxygenTankPressureLoss_CO2PP_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "OxygenTankPressureLossLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.1 } } }
+          { "OutputFilename": "OxygenTankPressureLoss_InletO2",
+              "YHeader": [ "AnesthesiaMachineGasInlet-Oxygen-VolumeFraction" ] },
+          { "OutputFilename": "OxygenTankPressureLoss_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "OxygenTankPressureLoss_O2PP", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "OxygenTankPressureLoss_CO2PP",
+              "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "OxygenTankPressureLossLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.1 } } }
         ]
       }
     },
@@ -1857,7 +2032,8 @@
         "Comment": "Inhaler Methodology Report - Validation - One Actuation",
         "PlotConfig":
         {
-          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true, "OmitActionsWith": [""]
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true,
+          "OmitActionsWith": [""]
         },
         "PlotSource":
         [
@@ -1865,8 +2041,9 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Inhaler_OneActuation_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "Inhaler_OneActuation_AlbuterolConcentration_partial", "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ] }
+          { "OutputFilename": "Inhaler_OneActuation_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "Inhaler_OneActuation_AlbuterolConcentration",
+              "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ] }
         ]
       }
     },
@@ -1876,7 +2053,8 @@
         "Comment": "Inhaler Methodology Report - Validation - One Actuation Incorrect Use",
         "PlotConfig":
         {
-          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true, "OmitActionsWith": [""]
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true,
+          "OmitActionsWith": [""]
         },
         "PlotSource":
         [
@@ -1884,27 +2062,32 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Inhaler_OneActuationIncorrectUse_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "Inhaler_OneActuationIncorrectUse_AlbuterolMass_partial", "YHeader": [ "Albuterol-MassInBody(ug)" ] }
+          { "OutputFilename": "Inhaler_OneActuationIncorrectUse_TotalLungVolume",
+              "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "Inhaler_OneActuationIncorrectUse_AlbuterolMass",
+              "YHeader": [ "Albuterol-MassInBody(ug)" ] }
         ]
       }
     },
     {
       "MultiHeaderSeriesPlotter":
       {
-        "Comment": "Inhaler Methodology Report - Validation - One Actuation With Spacer",
+        "Comment": "Inhaler Methodology Report - Validation - One Actuation With Spacer Incorrect Use",
         "PlotConfig":
         {
-          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true, "OmitActionsWith": [""]
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true,
+          "OmitActionsWith": [""]
         },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/InhalerOneActuationWithSpacerResults.csv" }
+          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/InhalerOneActuationWithSpacerIncorrectUseResults.csv" }
         ],
         "Series":
         [
-          { "OutputFilename": "Inhaler_OneActuationWithSpacer_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "Inhaler_OneActuationWithSpacer_AlbuterolMass_partial", "YHeader": [ "Albuterol-MassInBody(ug)" ] }
+          { "OutputFilename": "Inhaler_OneActuationWithSpacerIncorrectUse_TotalLungVolume",
+              "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "Inhaler_OneActuationWithSpacerIncorrectUse_AlbuterolMass",
+              "YHeader": [ "Albuterol-MassInBody(ug)" ] }
         ]
       }
     },
@@ -1914,7 +2097,8 @@
         "Comment": "Inhaler Methodology Report - Validation - Two Actuations",
         "PlotConfig":
         {
-          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true, "OmitActionsWith": [""]
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Inhaler/", "PlotActions": true,
+          "OmitActionsWith": [""]
         },
         "PlotSource":
         [
@@ -1922,8 +2106,9 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Inhaler_TwoActuations_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "Inhaler_TwoActuations_AlbuterolConcentration_partial", "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ] }
+          { "OutputFilename": "Inhaler_TwoActuations_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "Inhaler_TwoActuations_AlbuterolConcentration",
+              "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ] }
         ]
       }
     },
@@ -1933,7 +2118,8 @@
         "Comment": "Mechanical Ventilator Methodology Report - Validation - PC-CMV Varied",
         "PlotConfig":
         {
-          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/", "PlotActions": true
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/",
+          "PlotActions": true
         },
         "PlotSource":
         [
@@ -1941,14 +2127,17 @@
         ],
         "Series":
         [
-          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_TotalLungVolume_partial",
+          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_TotalLungVolume",
               "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_InspiratoryExpiratoryRatio_partial",
+          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_RR",
+              "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_TidalVolume",
+              "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_InspiratoryExpiratoryRatio",
               "YHeader": [ "InspiratoryExpiratoryRatio" ] },
-          { "OutputFilename": "MechanicalVentilatorPressureControlledVariedLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 6 } } }
+          { "OutputFilename": "MechanicalVentilatorPressureControlledVariedLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 6 } } }
         ]
       }
     },
@@ -1958,7 +2147,8 @@
         "Comment": "Mechanical Ventilator Methodology Report - Validation - VC-AC ARDS",
         "PlotConfig":
         {
-          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/", "PlotActions": true
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/",
+          "PlotActions": true
         },
         "PlotSource":
         [
@@ -1966,14 +2156,17 @@
         ],
         "Series":
         [
-          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_TotalLungVolume_partial",
+          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_TotalLungVolume",
               "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_InspiratoryExpiratoryRatio_partial",
+          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_RR",
+              "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_TidalVolume",
+              "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_InspiratoryExpiratoryRatio",
               "YHeader": [ "InspiratoryExpiratoryRatio" ] },
-          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDSLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 6 } } }
+          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDSLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 6 } } }
         ]
       }
     },
@@ -1991,12 +2184,14 @@
         ],
         "Series":
         [
-          { "OutputFilename": "BagValveMaskApnea_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "BagValveMaskOxygenSaturation_RR_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "BagValveMaskApnea_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "BagValveMaskApnea_Aorta-CarbonDioxide-PartialPressure_partial", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "BagValveMaskApnea_TotalLungVolume_Legend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+          { "OutputFilename": "BagValveMaskApnea_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "BagValveMaskOxygenSaturation_RR", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "BagValveMaskApnea_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "BagValveMaskApnea_Aorta-CarbonDioxide-PartialPressure",
+              "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+          { "OutputFilename": "BagValveMaskApnea_TotalLungVolume_Legend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
         ]
       }
     },
@@ -2014,12 +2209,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Cynthia_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "Cynthia_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "Cynthia_ArterialPressure_partial", "YHeader": [ "ArterialPressure(mmHg)" ] },
-          { "OutputFilename": "Cynthia_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "CynthiaLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+          { "OutputFilename": "Cynthia_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "Cynthia_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "Cynthia_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Cynthia_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "CynthiaLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
         ]
       }
     },
@@ -2037,12 +2233,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Gus_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "Gus_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "Gus_ArterialPressure_partial", "YHeader": [ "ArterialPressure(mmHg)" ] },
-          { "OutputFilename": "Gus_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "GusLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+          { "OutputFilename": "Gus_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "Gus_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "Gus_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Gus_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "GusLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
         ]
       }
     },
@@ -2060,12 +2257,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Hassan_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "Hassan_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "Hassan_ArterialPressure_partial", "YHeader": [ "ArterialPressure(mmHg)" ] },
-          { "OutputFilename": "Hassan_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "HassanLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+          { "OutputFilename": "Hassan_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "Hassan_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "Hassan_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Hassan_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "HassanLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
         ]
       }
     },
@@ -2083,12 +2281,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Joel_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "Joel_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "Joel_ArterialPressure_partial", "YHeader": [ "ArterialPressure(mmHg)" ] },
-          { "OutputFilename": "Joel_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "JoelLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+          { "OutputFilename": "Joel_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "Joel_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "Joel_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Joel_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "JoelLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
         ]
       }
     },
@@ -2106,12 +2305,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "Nathan_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "Nathan_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "Nathan_ArterialPressure_partial", "YHeader": [ "ArterialPressure(mmHg)" ] },
-          { "OutputFilename": "Nathan_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "NathanLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+          { "OutputFilename": "Nathan_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "Nathan_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "Nathan_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+          { "OutputFilename": "Nathan_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "NathanLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
         ]
       }
     },
@@ -2129,12 +2329,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "CombatMultitrauma_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(L)" ] },
-          { "OutputFilename": "CombatMultitrauma_BloodVolume_partial", "YHeader": [ "BloodVolume(mL)" ] },
-          { "OutputFilename": "CombatMultitrauma_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "CombatMultitrauma_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "CombatMultitraumaLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 3.5 } } }
+          { "OutputFilename": "CombatMultitrauma_TotalLungVolume", "YHeader": [ "TotalLungVolume(L)" ] },
+          { "OutputFilename": "CombatMultitrauma_BloodVolume", "YHeader": [ "BloodVolume(mL)" ] },
+          { "OutputFilename": "CombatMultitrauma_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "CombatMultitrauma_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "CombatMultitraumaLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 3.5 } } }
         ]
       }
     },
@@ -2152,12 +2353,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "AsthmaAttack_TotalLungVolume_partial", "YHeader": [ "TotalLungVolume(L)" ] },
-          { "OutputFilename": "AsthmaAttack_TidalVolume_partial", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "AsthmaAttack_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "AsthmaAttack_O2Sat_partial", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "AsthmaAttackLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+          { "OutputFilename": "AsthmaAttack_TotalLungVolume", "YHeader": [ "TotalLungVolume(L)" ] },
+          { "OutputFilename": "AsthmaAttack_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+          { "OutputFilename": "AsthmaAttack_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "AsthmaAttack_O2Sat", "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "AsthmaAttackLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
         ]
       }
     },
@@ -2175,12 +2377,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "HeatStroke_AchievedExerciseLevel_partial", "YHeader": [ "AchievedExerciseLevel" ] },
-          { "OutputFilename": "HeatStroke_CoreTemp_partial", "YHeader": [ "CoreTemperature(degC)" ] },
-          { "OutputFilename": "HeatStroke_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "HeatStroke_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "HeatStrokeLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 7 } } }
+          { "OutputFilename": "HeatStroke_AchievedExerciseLevel", "YHeader": [ "AchievedExerciseLevel" ] },
+          { "OutputFilename": "HeatStroke_CoreTemp", "YHeader": [ "CoreTemperature(degC)" ] },
+          { "OutputFilename": "HeatStroke_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "HeatStroke_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "HeatStrokeLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 7 } } }
         ]
       }
     },
@@ -2198,12 +2401,13 @@
         ],
         "Series":
         [
-          { "OutputFilename": "EnvironmentExposure_TotalMetabolicRate_partial", "YHeader": [ "TotalMetabolicRate(kcal/day)" ] },
-          { "OutputFilename": "EnvironmentExposure_O2Consumption_partial", "YHeader": [ "OxygenConsumptionRate(mL/min)" ] },
-          { "OutputFilename": "EnvironmentExposure_HR_partial", "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "EnvironmentExposure_RR_partial", "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "EnvironmentExposureLegend_partial",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 3.6 } } }
+          { "OutputFilename": "EnvironmentExposure_TotalMetabolicRate", "YHeader": [ "TotalMetabolicRate(kcal/day)" ] },
+          { "OutputFilename": "EnvironmentExposure_O2Consumption", "YHeader": [ "OxygenConsumptionRate(mL/min)" ] },
+          { "OutputFilename": "EnvironmentExposure_HR", "YHeader": [ "HeartRate(1/min)" ] },
+          { "OutputFilename": "EnvironmentExposure_RR", "YHeader": [ "RespirationRate(1/min)" ] },
+          { "OutputFilename": "EnvironmentExposureLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 3.6 } } }
         ]
       }
     }
