@@ -10,7 +10,7 @@ from matplotlib import colors as mcolors
 from cycler import cycler
 from timeit import default_timer as timer
 from datetime import timedelta
-from typing import NamedTuple
+from typing import List, NamedTuple, Optional
 from textwrap import TextWrapper
 from operator import attrgetter
 
@@ -18,6 +18,7 @@ from pulse.cdm.plots import *
 from pulse.cdm.io.plots import serialize_plotter_list_from_file
 from pulse.cdm.utils.file_utils import get_config_dir
 from pulse.cdm.utils.logger import pretty_print, ePrettyPrintType
+
 
 def create_plots(plots_file: str, benchmark: bool = False):
     plotters = []
@@ -27,6 +28,7 @@ def create_plots(plots_file: str, benchmark: bool = False):
             multi_header_series_plotter(p, benchmark)
         else:
             print(f"ERROR: Unknown plotter type: {p}")
+
 
 def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: bool = False):
     if benchmark:
@@ -39,7 +41,9 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
     validation_source = plotter.get_validation_source()
 
     # Create output directory if it does not exist
-    output_path = plotter.get_plot_config().get_output_path_override()
+    output_path = "./"
+    if plotter.get_plot_config().has_output_path_override():
+        output_path = plotter.get_plot_config().get_output_path_override()
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
@@ -92,13 +96,30 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         if validation_source and not y2_headers:
             y2_headers = series.get_y_headers()
 
+        # Note: A naming collision could occur in cases where a filename is not provided.
+        # Generally, plot names/titles are provided in the configuration. When either of
+        # these values are not provided, an attempt will be made to infer/generate the
+        # missing information.
+        #
+        # If the title is missing, one will be generated based on the x and y headers.
+        # If the filename is missing, the title will be used as the filename (with
+        # relevant character such as spaces replaced).
+        #
+        # Since titles are not guaranteed to be unique, neither are filenames;
+        # potentially resulting in overwritten files. If you experiences this,
+        # provide a unique title/filename in the plot configuration or update
+        # this logic.
         if not config.has_title() and series.has_y_headers():
             config.set_title(generate_title(x_header, series.get_y_headers()[0]))
         if not config.get_output_filename():
-            if not config.has_title():
-                print("ERROR: Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
-                continue
-            config.set_output_filename(config.get_title().replace(" ", "_").replace("/", "_Per_"))
+            title = config.get_title()
+            if not title: # Empty string title
+                if series.has_y_headers():
+                    title = generate_title(x_header, series.get_y_headers()[0])
+                else:
+                    print("ERROR: Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
+                    continue
+            config.set_output_filename(title.replace(" ", "_").replace("/", "_Per_"))
 
         output_filename = config.get_output_filename()
         # Add file extension if needed
@@ -126,12 +147,19 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         end = timer()
         print(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
-def generate_title(x_header, y_header):
+
+def generate_title(x_header: str, y_header: str):
     if not y_header or not x_header:
         return ""
     return y_header + " vs "+ x_header
 
-def percentage_of_baseline(baseline_mode, df, x_header, y_headers, x2_header, y2_headers):
+
+def percentage_of_baseline(baseline_mode: ePercentageOfBaselineMode,
+                           df: pd.DataFrame,
+                           x_header: str,
+                           y_headers: List[str],
+                           x2_header: Optional[str],
+                           y2_headers: Optional[List[str]]):
     xcols = []
     ycols = []
     if baseline_mode == ePercentageOfBaselineMode.All:
@@ -156,12 +184,14 @@ def percentage_of_baseline(baseline_mode, df, x_header, y_headers, x2_header, y2
     df[ycols] = df[ycols].apply(lambda x: x * 100.0 / x[0])
     return True
 
+
 class LogActionEvent(NamedTuple):
     time: float
     text: str
     category: str
 
-def parse_events(log_file: str, omit: [str] = []):
+
+def parse_events(log_file: str, omit: List[str] = []):
     event_tag = "[Event]"
     events = []
     with open(log_file) as f:
@@ -193,7 +223,8 @@ def parse_events(log_file: str, omit: [str] = []):
 
     return events
 
-def parse_actions(log_file: str, omit: [str] = []):
+
+def parse_actions(log_file: str, omit: List[str] = []):
     action_tag = "[Action]"
     actions = []
     with open(log_file) as f:
@@ -249,20 +280,22 @@ def parse_actions(log_file: str, omit: [str] = []):
 
     return actions
 
+
 # Respects existing line breaks
 class DocumentWrapper(TextWrapper):
-    def wrap(self, text):
+    def wrap(self, text: str):
         split_text = text.split('\n')
         lines = [line for para in split_text for line in TextWrapper.wrap(self, para)]
         return lines
 
+
 def create_plot(plot_sources: [SEPlotSource],
                 plot_config : SEPlotConfig,
                 x_header: str,
-                y_headers: [str],
-                x2_header: str = None,
-                y2_headers: [str] = [],
-                validation_source: SEPlotSource = None):
+                y_headers: List[str],
+                x2_header: Optional[str] = None,
+                y2_headers: Optional[List[str]] = [],
+                validation_source: Optional[SEPlotSource] = None):
 
     # To support line formats across axes
     setup_fmt_cycler = cycler(linestyle=['-', '--', '-.', ':']) * cycler(color=['r', 'b', 'g', 'y', 'm', 'c'])
@@ -481,11 +514,26 @@ def create_plot(plot_sources: [SEPlotSource],
         if plot_config.get_log_axis():
             ax2.set_yscale("log")
 
+    # Note that, for both data and action/event legends, the maximum number of columns
+    # is estimated via output image width and rough approximations of label lengths.
+    # Actual labels are not currently being taken into account and are instead
+    # estimated from maximum character count per line based on the DocumentWrapper.
+    # Due to this, the full width of the image may not be as highly utilized as
+    # possible. For better column estimation, further processing of labels would
+    # be required as well as some font size to pixel calculations (considering DPI).
+    #
+    # The text wrapper attempts to wrap text at logical points but may be forced
+    # to break in the middle of a large group of characters without spaces. This
+    # particular text wrapper is set up to respect existing line breaks which
+    # is useful for action/event legends. If the width given to a wrapper
+    # is modified, the estimated widths for the respective legend column
+    # approximation will also likely need to be updated.
+
     # Legend and gridline settings
     if plot_config.get_gridlines():
         ax1.grid(linestyle='dotted')
     if plot_config.get_legend_mode() != eLegendMode.NoLegends:
-        text_wrapper = DocumentWrapper(width=45)
+        text_wrapper = DocumentWrapper(width=60)
 
         box = ax1.get_position()
         ax1.set_position([box.x0, box.y0 + box.height * 0.1,
@@ -501,6 +549,7 @@ def create_plot(plot_sources: [SEPlotSource],
     # Action and event legend
     if plot_config.get_legend_mode() != eLegendMode.NoLegends and \
        plot_config.get_legend_mode() != eLegendMode.HideActionEventLegend and ax3 is not None and ax3.lines:
+        text_wrapper = DocumentWrapper(width=45)
         max_ncols = int(plot_config.get_image_properties().get_width_inch() / 4.25) # Approximate width of each column for large labels
 
         ax3.set_position([box.x0, box.y0 + box.height * 0.1,
