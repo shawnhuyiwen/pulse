@@ -532,7 +532,7 @@ def create_plot(plot_sources: [SEPlotSource],
     # Legend and gridline settings
     if plot_config.get_gridlines():
         ax1.grid(linestyle='dotted')
-    if plot_config.get_legend_mode() != eLegendMode.NoLegends:
+    if plot_config.get_legend_mode() != eLegendMode.NoLegends and len(lns) > 0:
         text_wrapper = DocumentWrapper(width=60)
 
         box = ax1.get_position()
@@ -552,6 +552,7 @@ def create_plot(plot_sources: [SEPlotSource],
         text_wrapper = DocumentWrapper(width=45)
         max_ncols = int(plot_config.get_image_properties().get_width_inch() / 4.25) # Approximate width of each column for large labels
 
+        box = ax1.get_position()
         ax3.set_position([box.x0, box.y0 + box.height * 0.1,
                     box.width, box.height * 0.9])
         lbls = [text_wrapper.fill(l.get_label()) for l in ax3.lines]
