@@ -39,8 +39,8 @@
         "Comment": "Respiratory Methodology Report - Spirometry Lung Volume Comparison",
         "PlotConfig":
         {
-          "Gridlines": true, "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/",
-          "PlotActions": true, "OmitActionsWith": [ "ConsciousRespiration" ]
+          "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Respiratory/",
+          "PlotActions": true, "OmitActionsWith": [ "ConsciousRespiration", "\"Value\": 0," ]
         },
         "PlotSource":
         [
