@@ -225,6 +225,8 @@ def parse_events(log_file: str, omit: List[str] = []):
 
 
 def parse_actions(log_file: str, omit: List[str] = []):
+    advTime = "AdvanceTime"
+    omit.append(advTime)
     action_tag = "[Action]"
     actions = []
     with open(log_file) as f:
@@ -239,7 +241,7 @@ def parse_actions(log_file: str, omit: List[str] = []):
             if action_idx == -1:
                 idx += 1
                 continue
-            elif "AdvanceTime" in line:
+            elif advTime in line:
                 idx += 1
                 continue
             else:
