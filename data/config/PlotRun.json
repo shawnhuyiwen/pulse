@@ -157,7 +157,7 @@
           { "OutputFilename": "HeartRateUnstableVentricularTachycardia", "Title": "",
               "XBounds": { "LowerBound": 0, "UpperBound": 150 }, "YBounds": { "LowerBound": 40, "UpperBound": 190 },
               "YHeader": [ "HeartRate(1/min)" ] },
-          { "OutputFilename": "BloodPressureUntableVentricularTachycardia", "Title": "",
+          { "OutputFilename": "BloodPressureUnstableVentricularTachycardia", "Title": "",
               "XBounds": { "LowerBound": 0, "UpperBound": 150 }, "YBounds": { "LowerBound": 40, "UpperBound": 130 },
               "YHeader": [ "MeanArterialPressure(mmHg)" ] }
         ]
