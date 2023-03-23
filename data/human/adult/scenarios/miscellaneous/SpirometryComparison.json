@@ -54,8 +54,6 @@
       }}
     },
 
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" }}}},
-
     { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
       {
         "Severity": { "Scalar0To1": { "Value": 0.6 }},
