@@ -37,7 +37,7 @@ def pretty_print(string: str, print_type: ePrettyPrintType):
         if "ReadOnly" in line:
             idx += 1
             continue
-        if "Comment:" in line and len(line) < 9:
+        if line.endswith("Comment:"):
             idx += 1
             continue
 
