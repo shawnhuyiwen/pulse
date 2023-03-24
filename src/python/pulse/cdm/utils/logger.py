@@ -6,7 +6,7 @@ import re
 
 from pulse.cdm.engine import SEAction
 
-def break_camel_case(string: str, preserve_units: Set[str]):
+def break_camel_case(string: str, preserve: Set[str]):
     # https://stackoverflow.com/a/9283563
     camel_case_regex = r"""
         (            # start the group
@@ -26,11 +26,13 @@ def break_camel_case(string: str, preserve_units: Set[str]):
 
     string = re.sub(camel_case_regex, r' \1', string, flags=re.VERBOSE)
 
-    # Return specified units to their original form
-    for unit in preserve_units:
-        spaced_unit = re.sub(camel_case_regex, r' \1', unit, flags=re.VERBOSE)
-        if spaced_unit != unit:
-            string = string.replace(spaced_unit, unit)
+    # Return specified strs to their original form
+    for p in preserve:
+        spaced_p = re.sub(camel_case_regex, r' \1', p, flags=re.VERBOSE)
+        r_spaced_p = r"\b" + re.escape(spaced_p.strip()) + r"\b"
+        if spaced_p != p:
+            string = re.sub(r_spaced_p, p.strip(), string)
+
     return string
 
 class ePrettyPrintType(Enum):
