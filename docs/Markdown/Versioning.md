@@ -12,7 +12,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ---
 
-## Pulse v4.2.0 (March 2023)
+## Pulse v4.2.0 (April 2023)
 
 - Software Architecture Improvements
   - iOS build support
@@ -26,38 +26,39 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Improved BlackBox support for external model coupling
   
 - Physiology Model Improvements
-  - Mechanical ventilator model updates:
+  - Mechanical ventilator model updates
     - Improved triggering
     - Improved error handling
     - Additional waveform types
     - Expose more control parameters
     - More validation
-  - Respiratory model updates:
+  - Respiratory model updates
     - Corrected respiratory inhale/exhale transition timing
     - Added shunting and labored breathing effects to collapsing lung functionality
-  - Intubation Updates
+    - Improved lung collapse (e.g., tension pneumothorax and hemothorax) responses
+  - Intubation updates
     - Added a severity to control flow
     - Esophageal intubation can provide air to lungs via a severity
-  - Bag, Valve Mask Updates
+  - Bag, Valve, Mask updates
     - Automation Support - Set a frequency and pressure to repeat
     - Single Squeeze - Set a pressure for a single squeeze
     - Instantaneous - Set a pressure to apply (Intended for hardware integration)
-  - Cardiovascular model updates:
+  - Cardiovascular model updates
     - Improved heart driver and cardiac cycle
     - More control to adjust vascular tone
     - Pulmonary capillary coverage adjusts based on Mean Arterial Pressure
-  - Cardiac Arrest Updates
+  - Cardiac Arrest updates
     - Improved End Tidal Carbon Dioxide Pressure response
     - Improved SpO2 response
     - Improved recovery transition model
-  - Hemorrhage Updates
+  - Hemorrhage updates
     - Improved Baroreceptor response
     - Severity now calculates resitance using compartment inflow average
-  - CPR Updates
+  - CPR updates
     - Automation Support - Set a frequency and severity or depth to repeat
     - Single Squeeze - Set a severity or depth for a single squeeze
     - Instantaneous - Set a severity or depth to apply (Intended for hardware integration)
-  - ECMO Support Updates
+  - ECMO Support updates
     - End user can adjust substance values and flow rates back into Pulse
     - *NOT A MODEL* Intended for external users to perscribe flow rates and substance concentrations
   - Removed Pulmonary Function Test Assessment

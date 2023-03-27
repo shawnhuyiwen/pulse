@@ -1102,7 +1102,6 @@ namespace pulse
       {
         so.GetVolume().SetValue(0.0, VolumeUnit::L);
         flow_L_Per_min = 0.0;
-        /// \event Supplemental Oxygen: Oxygen bottle is exhausted. There is no longer any oxygen to provide.
         m_data.GetEvents().SetEvent(eEvent::SupplementalOxygenBottleExhausted, true, m_data.GetSimulationTime());
       }
       else
@@ -1143,8 +1142,6 @@ namespace pulse
 
         //No air can come from the bag
         OxygenInlet->GetNextResistance().SetValue(m_RespOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
-        /// \event Supplemental Oxygen: The nonrebreather mask is empty. Oxygen may need to be provided at a faster rate.
         m_data.GetEvents().SetEvent(eEvent::NonRebreatherMaskOxygenBagEmpty, true, m_data.GetSimulationTime());
       }
       else
@@ -1173,7 +1170,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::CalculateDriver()
   {
-    /// \event Patient: Start of exhale/inhale
+    //Start of exhale/inhale
     if (m_data.GetEvents().IsEventActive(eEvent::StartOfExhale))
       m_data.GetEvents().SetEvent(eEvent::StartOfExhale, false, m_data.GetSimulationTime());
     if (m_data.GetEvents().IsEventActive(eEvent::StartOfInhale))
@@ -1318,7 +1315,6 @@ namespace pulse
           double dTargetPulmonaryVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min;
 
           double dMaximumPulmonaryVentilationRate = m_data.GetConfiguration().GetPulmonaryVentilationRateMaximum(VolumePerTimeUnit::L_Per_min);
-          /// \event Patient: Maximum Pulmonary Ventilation Rate : Pulmonary ventilation exceeds maximum value
           if (dTargetPulmonaryVentilation_L_Per_min > dMaximumPulmonaryVentilationRate)
           {
             dTargetPulmonaryVentilation_L_Per_min = dMaximumPulmonaryVentilationRate;
@@ -1678,7 +1674,6 @@ namespace pulse
       {
         if (m_PatientActions->HasLeftChestOcclusiveDressing() || m_PatientActions->HasLeftNeedleDecompression())
         {
-          /// \error Patient: Cannot perform an intervention if Tension Pneumothorax is not present on that side.
           Error("Cannot perform an intervention if Tension Pneumothorax is not present on that side.");
           m_PatientActions->RemoveLeftChestOcclusiveDressing();
           m_PatientActions->RemoveLeftNeedleDecompression();
@@ -1689,7 +1684,6 @@ namespace pulse
       {
         if (m_PatientActions->HasRightChestOcclusiveDressing() || m_PatientActions->HasRightNeedleDecompression())
         {
-          /// \error Patient: Cannot perform an intervention if Tension Pneumothorax is not present on that side.
           Error("Cannot perform an intervention if Tension Pneumothorax is not present on that side.");
           m_PatientActions->RemoveRightChestOcclusiveDressing();
           m_PatientActions->RemoveRightNeedleDecompression();
@@ -1703,7 +1697,6 @@ namespace pulse
       // initiated a pneumothorax action
       if (m_PatientActions->HasNeedleDecompression())
       {
-        /// \error Patient: can't process needle decompression if no pneumothorax is present
         Error("Cannot perform a Needle Decompression intervention if Tension Pneumothorax is not present");
         m_PatientActions->RemoveLeftNeedleDecompression();
         m_PatientActions->RemoveRightNeedleDecompression();
@@ -1711,7 +1704,6 @@ namespace pulse
       }
       if (m_PatientActions->HasChestOcclusiveDressing())
       {
-        /// \error Patient: can't process a chest occlusive dressing if no pneumothorax is present      
         Error("Cannot perform a Chest Occlusive Dressing intervention if Tension Pneumothorax is not present");
         m_PatientActions->RemoveLeftChestOcclusiveDressing();
         m_PatientActions->RemoveRightChestOcclusiveDressing();
@@ -2275,13 +2267,11 @@ namespace pulse
       //Bradypnea
       if (GetRespirationRate().GetValue(FrequencyUnit::Per_min) < 10)
       {
-        /// \event Patient: Bradypnea: Respiration rate is below 10 breaths per minute
         /// The patient has bradypnea.
         m_data.GetEvents().SetEvent(eEvent::Bradypnea, true, m_data.GetSimulationTime());  /// \cite overdyk2007continuous
       }
       else if (GetRespirationRate().GetValue(FrequencyUnit::Per_min) >= 10.5)  // offset by .5 
       {
-        /// \event Patient: End Bradypnea Event. The respiration rate has risen above 10. 
         /// The patient is no longer considered to have bradypnea.
         m_data.GetEvents().SetEvent(eEvent::Bradypnea, false, m_data.GetSimulationTime());
       }
@@ -2289,13 +2279,11 @@ namespace pulse
       //Tachypnea
       if (GetRespirationRate().GetValue(FrequencyUnit::Per_min) > 20)
       {
-        /// \event Patient: Tachypnea: Respiration rate is above 20 breaths per minute.
         /// The patient has tachypnea.
         m_data.GetEvents().SetEvent(eEvent::Tachypnea, true, m_data.GetSimulationTime());  /// \cite 
       }
       else if (GetRespirationRate().GetValue(FrequencyUnit::Per_min) <= 19.5) // offset by .5 
       {
-        /// \event Patient: End Tachypnea Event. The respiration rate has fallen below 19.5. 
         /// The patient is no longer considered to have tachypnea.
         m_data.GetEvents().SetEvent(eEvent::Tachypnea, false, m_data.GetSimulationTime());
       }
@@ -2325,14 +2313,12 @@ namespace pulse
         //// Respiratory Acidosis
         if (m_LastCardiacCycleBloodPH < 7.35 && m_ArterialCO2PartialPressure_mmHg > 47.0)
         {
-          /// \event Patient: Respiratory Acidosis: event is triggered when blood pH is below 7.36
           /// The patient has respiratory acidosis.
           m_data.GetEvents().SetEvent(eEvent::RespiratoryAcidosis, true, m_data.GetSimulationTime());
 
         }
         else if (m_LastCardiacCycleBloodPH >= 7.38 && m_ArterialCO2PartialPressure_mmHg < 44.0)
         {
-          /// \event Patient: End Respiratory Acidosis Event. The pH value has risen above 7.38. 
           /// The patient is no longer considered to have respiratory acidosis.
           m_data.GetEvents().SetEvent(eEvent::RespiratoryAcidosis, false, m_data.GetSimulationTime());
         }
@@ -2340,14 +2326,12 @@ namespace pulse
         ////Respiratory Alkalosis
         if (m_LastCardiacCycleBloodPH > 7.45 && m_ArterialCO2PartialPressure_mmHg < 37.0)
         {
-          /// \event Patient: Respiratory Alkalosis: event is triggered when blood pH is above 7.45
           /// The patient has respiratory alkalosis.
           m_data.GetEvents().SetEvent(eEvent::RespiratoryAlkalosis, true, m_data.GetSimulationTime());
 
         }
         else if (m_LastCardiacCycleBloodPH <= 7.43 && m_ArterialCO2PartialPressure_mmHg > 39.0)
         {
-          /// \event Patient: End Respiratory Alkalosis Event. The pH value has has fallen below 7.45. 
           /// The patient is no longer considered to have respiratory alkalosis.
           m_data.GetEvents().SetEvent(eEvent::RespiratoryAlkalosis, false, m_data.GetSimulationTime());
         }
@@ -2587,7 +2571,6 @@ namespace pulse
       }
       else
       {
-        /// \error Error: Unknown respiratory compliance type.
         Error("Unknown respiratory compliance type.");
       }
 
@@ -3530,13 +3513,11 @@ namespace pulse
 
         if (total == 0)
         {
-          /// \error Fatal: The Impaired Alveolar Exchange action must include a surface area, fraction, or severity.
           Fatal("The Impaired Alveolar Exchange action must include a surface area, fraction, or severity.");
         }
 
         if (total > 1)
         {
-          /// \error Warning: The Impaired Alveolar Exchange action is defined with mulitple values. Defaulting to the surface area value first, impaired fraction next, and severity last.
           Warning("The Impaired Alveolar Exchange action is defined with mulitple values. Defaulting to the surface area value first, impaired fraction next, and severity last.");
         }
 
@@ -3564,13 +3545,11 @@ namespace pulse
 
         if (total == 0)
         {
-          /// \error Fatal: The Impaired Alveolar Exchange action must include a surface area, fraction, or severity.
           Fatal("The Impaired Alveolar Exchange action must include a surface area, fraction, or severity.");
         }
 
         if (total > 1)
         {
-          /// \error Warning: The Impaired Alveolar Exchange condition is defined with mulitple values. Defaulting to the surface area value first, impaired fraction next, and severity last.
           Warning("The Impaired Alveolar Exchange condition is defined with mulitple values. Defaulting to the surface area value first, impaired fraction next, and severity last.");
         }
 
@@ -4192,7 +4171,6 @@ namespace pulse
 
     if (airwayResistance_cmH2O_s_Per_L <= 0)
     {
-      /// \error Error: Ignoring the resistance override.  The airway resistance cannot be lowered enough to meet the criteria.
       Error("Ignoring the resistance override.  The airway resistance cannot be lowered enough to meet the criteria.");
     }
 

@@ -135,7 +135,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
     ss << "The solver was unable to determine a solution for the circuit with the attempted combination of valves and/or polarized elements. "
       << "Relative error = " << relative_error
       << ". Absolute error = " << absolute_error;
-    ///\error Fatal: The solver was unable to determine a solution for the circuit with the attempted combination of valves and/or polarized elements.
     Fatal(ss);
   }
 
@@ -161,7 +160,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   // Check the Reference Node
   if (!m_circuit->HasReferenceNode())
   {
-    ///\error Fatal: Circuit must have at least 1 reference node
     Fatal("Circuit must have at least 1 reference node");
   }
 
@@ -201,7 +199,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
 
       if (!ref->HasPotential() && !ref->HasNextPotential())
       {
-        ///\error Warning: Reference potential is not defined - setting it to 0.
         Warning("Reference potential is not defined - setting it to 0.");
         ValueOverride<PotentialUnit>(ref->GetNextPotential(), 0, m_PotentialUnit);
         Override<PotentialUnit>(ref->GetNextPotential(), ref->GetPotential());
@@ -214,7 +211,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         r = ref;
       else if (!r->GetPotential().Equals(r->GetPotential()))
       {
-        ///\error Fatal: Multiple Reference Potentials must be equal
         Fatal("Multiple Reference Potentials must be equal");
       }
     }
@@ -308,7 +304,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       {
         if (sourceNode->IsReferenceNode())
         {
-          /// \error Fatal: Black boxes cannot set the reference node potential
           Fatal("Black boxes cannot set the reference node potential : " + sourceNode->GetName());
         }
         else
@@ -325,7 +320,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       {
         if (targetNode->IsReferenceNode())
         {
-          /// \error Fatal: Black boxes cannot set the reference node potential
           Fatal("Black boxes cannot set the reference node potential : " + targetNode->GetName());
         }
         else
@@ -389,7 +383,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         double r = p->GetNextResistance().GetValue(m_ResistanceUnit);
         if (r <= 0.0)
         {
-          /// \error Fatal: Resistance cannot be negative
           Fatal("Resistance cannot be negative or zero : " + p->GetName());
         }
         double dMultiplier = 1.0 / r;
@@ -402,7 +395,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         {
           //Initial source potential is not defined, assume it's the same as the reference
           ValueOverride<PotentialUnit>(nSrc->GetPotential(), 0.0, m_PotentialUnit);
-          ///\error Warning: Initial compliance source potential is not defined, assuming it is the reference potential.
           Warning("Initial capacitance source potential is not defined for " + nSrc->GetName() + ", assuming it is the reference potential.");
         }
 
@@ -410,7 +402,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         {
           //Initial target potential is not defined, assume it's the same as the reference
           ValueOverride<PotentialUnit>(nTgt->GetPotential(), 0.0, m_PotentialUnit);
-          ///\error Warning: Initial compliance target potential is not defined, assuming it is the reference potential.
           Warning("Initial capacitance target potential is not defined for " + nTgt->GetName() + ", assuming it is the reference potential.");
         }
 
@@ -424,7 +415,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
           dStartingCompliance = p->GetNextCapacitance().GetValue(m_CapacitanceUnit);
           if (dStartingCompliance < 0.0)
           {
-            /// \error Fatal: Capacitance cannot be negative
             Fatal("Capacitance is negative for " + p->GetName());
           }
         }
@@ -452,7 +442,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         {
           //Initial flux is not defined, assume it's 0
           ValueOverride<FluxUnit>(p->GetFlux(), 0.0, m_FluxUnit);
-          ///\error Warning: Initial inductance is not defined, assuming it is 0.
           Warning("Initial inductance is not defined for " + p->GetName() + ", assuming it is 0.");
         }
 
@@ -460,21 +449,18 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         {
           //Initial source potential is not defined, assume it's the same as the reference
           ValueOverride<PotentialUnit>(nSrc->GetPotential(), 0.0, m_PotentialUnit);
-          ///\error Warning: Initial inductance source potential is not defined, assuming it is the reference potential.
           Warning("Initial inductance source potential is not defined " + nSrc->GetName() + ", assuming it is the reference potential.");
         }
         if (!nTgt->HasPotential())
         {
           //Initial source potential is not defined, assume it's the same as the reference
           ValueOverride<PotentialUnit>(nTgt->GetPotential(), 0.0, m_PotentialUnit);
-          ///\error Warning: Initial inductance target potential is not defined, assuming it is the reference potential.
           Warning("Initial inductance target potential is not defined " + nTgt->GetName() + ", assuming it is the reference potential.");
         }
 
         double pInductance = p->GetNextInductance().GetValue(m_InductanceUnit);
         if (pInductance < 0.0)
         {
-          /// \error Fatal: Inductance cannot be negative
           Fatal("Inductance is negative for " + p->GetName());
         }
 
@@ -713,7 +699,6 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
         ss << "The solver was unable to determine a solution for the circuit with the attempted combination of valves and/or polarized elements. "
           << "Relative error = " << relative_error
           << ". Absolute error = " << absolute_error;
-        ///\error Warning: The solver was unable to determine a solution for the circuit with the attempted combination of valves and/or polarized elements.
         Warning(ss);
 #endif
         return false;
@@ -728,7 +713,6 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
     _eigen->AMatrix.rows() != _eigen->xVector.rows() ||
     _eigen->AMatrix.rows() != _eigen->bVector.rows())
   {
-    ///\error Fatal: The solver was unable to determine a solution for the circuit due to a matrix size mismatch.
     Fatal("The solver was unable to determine a solution for the circuit due to a matrix size mismatch.");
   }
 
@@ -962,7 +946,6 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CheckAndModifyValves(bool so
 
   if (m_valveStates.size() >= ((uint64_t)(pow(2.0, int(m_valveStates.size())))))
   {
-    ///\error Fatal: The combination of valves precludes the circuit from being solved.
     Fatal("The combination of valves precludes the circuit from being solved.");
   }
 

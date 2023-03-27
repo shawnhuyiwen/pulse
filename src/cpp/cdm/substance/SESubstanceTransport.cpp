@@ -91,11 +91,9 @@ void SESubstanceTransporter<GraphType, FluxUnit, QuantityUnit, ExtensiveUnit, In
     {
       if (quantity.IsNegative())
       {
-        ///\error Fatal: Can't transport with a negative quantity included.
         std::stringstream ss;
         ss << "Can't transport with a negative volume included. Node = " << v->GetName()
           << ". Volume = " << v->GetQuantity().GetValue(VolumeUnit::mL) << " mL";
-        ///\error Fatal: Can't transport with a negative volume included.
         Fatal(ss);
       }
 

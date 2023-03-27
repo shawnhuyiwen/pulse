@@ -163,7 +163,6 @@ namespace pulse
     //  inhaler is currently off and about to be activated.
     if (m_State == eSwitch::On)
     {
-      /// \error: Already processing a Substance Inhalation, ignoring this command.
       Error("Already processing a Substance Inhalation, ignoring this command");
       return;
     }

@@ -176,7 +176,6 @@ namespace pulse
   //  double fluidLoss_mL = 0.0;
   //
   //  if (coarseTimeStep_days<0.0)
-  //    /// \error Cannot specify elapsed time less than zero in the consume meal action.
   //    Error("Cannot specify a negative time since last meal. Time since last meal is now set to zero.");
   //
   //  if (coarseTimeStep_days > 1.0)
@@ -424,7 +423,6 @@ namespace pulse
 
     GetTotalWorkRateLevel().SetValue(workRate_W / maxWorkRate_W);
     double fatigue = (normalizedEnduranceEnergyDeficit + normalizedMediumEnergyDeficit + normalizedPeakEnergyDeficit + normalizedUsableEnergyDeficit) / 4.0;
-    /// \event Patient: Fatigue - Energy stores are sub-maximal.
     if (fatigue > 0.0) {
       m_data.GetEvents().SetEvent(eEvent::Fatigue, true, m_data.GetSimulationTime());
     }
@@ -522,7 +520,6 @@ namespace pulse
     // \cite Stocks2004HumanPhysiologicalResponseCold coreTempIrreversible_degC = 20.0
     if (coreTemperature_degC < 35.0) /// \cite mallet2001hypothermia
     {
-      /// \event Patient: Core temperature has fallen below 35 degrees Celsius. Patient is hypothermic.
       m_data.GetEvents().SetEvent(eEvent::Hypothermia, true, m_data.GetSimulationTime());
 
     }
@@ -533,7 +530,6 @@ namespace pulse
     //Hyperthermia check
     if (coreTemperature_degC > 38.8) /// \cite mallet2001hypothermia
     {
-      /// \event Patient: Core temperature has exceeded 38.3 degrees Celsius. Patient is hyperthermic.
       m_data.GetEvents().SetEvent(eEvent::Hyperthermia, true, m_data.GetSimulationTime());
     }
     else if (m_data.GetEvents().IsEventActive(eEvent::Hyperthermia) && coreTemperature_degC < 38.0)
@@ -559,19 +555,15 @@ namespace pulse
       if (m_data.GetState() > EngineState::InitialStabilization)
       {// Don't throw events if we are initializing
         if (bloodPH < 7.35 && bloodBicarbonate_mmol_Per_L < 22.0)
-          /// \event The patient is in a state of metabolic acidosis
           m_data.GetEvents().SetEvent(eEvent::MetabolicAcidosis, true, m_data.GetSimulationTime());
 
         if (bloodPH > 7.38 && bloodBicarbonate_mmol_Per_L > 23.0)
-          /// \event The patient has exited the state state of metabolic acidosis
           m_data.GetEvents().SetEvent(eEvent::MetabolicAcidosis, false, m_data.GetSimulationTime());
 
         if (bloodPH > 7.45 && bloodBicarbonate_mmol_Per_L > 26.0)
-          /// \event The patient is in a state of metabolic alkalosis
           m_data.GetEvents().SetEvent(eEvent::MetabolicAlkalosis, true, m_data.GetSimulationTime());
 
         else if (bloodPH < 7.42 && bloodBicarbonate_mmol_Per_L < 25.0)
-          /// \event The patient has exited the state of metabolic alkalosis
           m_data.GetEvents().SetEvent(eEvent::MetabolicAlkalosis, false, m_data.GetSimulationTime());
       }
       // Reset the running averages. Why do we need running averages here? Does the aorta pH fluctuate that much? 

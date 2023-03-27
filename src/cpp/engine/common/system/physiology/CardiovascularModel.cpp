@@ -816,7 +816,6 @@ namespace pulse
     // Maximum 30% reduction
     if (rf > 0.3)
     {
-      /// \error if too much hemoglobin is removed, we will no longer meet validation, so set to maximum amount that can be removed.
       Error("Cannot remove more than 30% of hemoglobin in anemia in the Pulse Engine. Setting value to 30% and continuing.");
       rf = 0.3;
     }
@@ -890,13 +889,11 @@ namespace pulse
     if (deltaVolume_mL > 1000.0)
     {
       Error("Cannot specify volume accumulation greater than 1000 mL. Accumulated volume is now set at 1000 mL.");
-      /// \error Cannot specify volume accumulation greater than 1000 mL. Accumulated volume is now set at 1000 mL.
       deltaVolume_mL = 1000.0;
     }
     else if (deltaVolume_mL < 0.0)
     {
       Error("Cannot specify volume accumulation less than 0 mL. Accumulated volume is now set at 0 mL.");
-      /// \error Cannot specify volume accumulation less than 0 mL. Accumulated volume is now set at 0 mL.
       deltaVolume_mL = 0.0;
     }
 
@@ -916,34 +913,30 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::ChronicRenalStenosis()
   {
-    ///\todo move this to CV
+    //todo: move this to CV
     double LeftOcclusionFraction = m_data.GetConditions().GetChronicRenalStenosis().GetLeftKidneySeverity().GetValue();
     double RightOcclusionFraction = m_data.GetConditions().GetChronicRenalStenosis().GetRightKidneySeverity().GetValue();
 
     if (LeftOcclusionFraction < 0.0)
     {
-      /// \error Cannot specify left occlusion fraction less than zero
       Error("Cannot specify left occlusion fraction less than zero. Renal resistances remain unchanged."); //Specify resistance is the same in error
       return;
     }
 
     if (RightOcclusionFraction < 0.0)
     {
-      /// \error Cannot specify right occlusion fraction less than zero
       Error("Cannot specify right occlusion fraction less than zero. Renal resistances remain unchanged.");
       return;
     }
 
     if (LeftOcclusionFraction > 1.0)
     {
-      /// \error Cannot specify left occlusion fraction greater than one
       Error("Cannot specify left occlusion fraction greater than one. Renal resistances remain unchanged.");
       return;
     }
 
     if (RightOcclusionFraction > 1.0)
     {
-      /// \error Cannot specify right occlusion fraction greater than one
       Error("Cannot specify right occlusion fraction greater than  one. Renal resistances remain unchanged.");
       return;
     }
@@ -1136,12 +1129,10 @@ namespace pulse
     if (m_CardiacCycleAortaPressureLow_mmHg < -2.0)
     {
       Fatal("Diastolic pressure has fallen below zero.");
-      /// \error Fatal: Diastolic pressure has fallen below -2
     }
     if (m_CardiacCycleAortaPressureHigh_mmHg > 700.0)
     {
       Fatal("Systolic pressure has exceeded physiologic range.");
-      /// \error Fatal: Systolic pressure has exceeded 700
     }
 
     // Pressures\Flows from circuit
@@ -1156,7 +1147,6 @@ namespace pulse
     {// Don't throw events if we are initializing
 
     // Check for hypovolemic shock
-    /// \event Patient: Hypovolemic Shock: blood volume below 65% of its normal value
       if (GetBloodVolume().GetValue(VolumeUnit::mL) <= (m_data.GetConfiguration().GetMinimumBloodVolumeFraction() * m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL)))
       {
         m_data.GetEvents().SetEvent(eEvent::HypovolemicShock, true, m_data.GetSimulationTime());
@@ -1180,7 +1170,6 @@ namespace pulse
         GetSystolicArterialPressure(PressureUnit::mmHg) < 90.0 &&
         GetPulmonaryCapillariesWedgePressure(PressureUnit::mmHg) > 15.0)
       {
-        /// \event Patient: Cardiogenic Shock: Cardiac Index has fallen below 2.2 L/min-m^2, Systolic Arterial Pressure is below 90 mmHg, and Pulmonary Capillary Wedge Pressure is above 15.0.
         /// \cite dhakam2008review
         m_data.GetEvents().SetEvent(eEvent::CardiogenicShock, true, m_data.GetSimulationTime());
       }
@@ -1444,7 +1433,6 @@ namespace pulse
       {
         if (h->GetSeverity().GetValue() < 0.0 || h->GetSeverity().GetValue() > 1.0)
         {
-          /// \error Error: Severity cannot be less than zero or greater than 1.0
           Error("A severity less than 0 or greater than 1.0 cannot be specified.");
           invalid_hemorrhages.push_back(h);
           continue;
@@ -1455,7 +1443,6 @@ namespace pulse
         double rate_mL_Per_s = h->GetFlowRate().GetValue(VolumePerTimeUnit::mL_Per_s);
         if (rate_mL_Per_s < 0)
         {
-          /// \error Error: Bleeding rate cannot be less than zero
           Error("Cannot specify bleeding less than 0");
           invalid_hemorrhages.push_back(h);
           continue;
@@ -1463,7 +1450,6 @@ namespace pulse
       }
       else
       {
-        /// \error Error: A severity or a rate must be specified for hemorrhage
         Error("A severity or a rate must be specified.");
       }
 
@@ -1480,7 +1466,6 @@ namespace pulse
         //Unsupported compartment
         if (trk->Compartment == nullptr)
         {
-          /// \error Error: Removing invalid Hemorrhage due to unsupported compartment
           Error("Removing invalid Hemorrhage due to unsupported compartment : " + h->GetCompartmentName());
           invalid_hemorrhages.push_back(h);
           continue;
@@ -1489,7 +1474,6 @@ namespace pulse
         {
           if (!m_Abdomen->HasChild(*trk->Compartment))
           {
-            /// \error Error: Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.
             Error("Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.");
             invalid_hemorrhages.push_back(h);
             continue;
@@ -1741,7 +1725,6 @@ namespace pulse
     else if (effusionRate_mL_Per_s > 1.0)
     {
       Error("Effusion rate is out of physiologic bounds. Effusion rate is reset to 1.0 milliliters per second.");
-      /// \error Effusion rate is out of physiologic bounds. Effusion rate is reset to 1.0 milliliters per second.
       effusionRate_mL_Per_s = 1.0;
       complianceSlopeParameter = 50;
       complianceCurveParameter = 0.1;
@@ -1749,7 +1732,6 @@ namespace pulse
     else if (effusionRate_mL_Per_s < 0.0)
     {
       Error("Cannot specify effusion rate less than zero. Effusion rate is now set to 0.0.");
-      /// \error Cannot specify effusion rate less than zero. Effusion rate is now set to 0.0.
       effusionRate_mL_Per_s = 0.0;
       complianceSlopeParameter = 0.4;
       complianceCurveParameter = 0.55;

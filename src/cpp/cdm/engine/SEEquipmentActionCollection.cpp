@@ -454,7 +454,6 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     }
   }
 
-  /// \error Unsupported Action
   Error("Unsupported Action");
   return false;
 }

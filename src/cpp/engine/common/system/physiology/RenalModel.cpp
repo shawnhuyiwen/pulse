@@ -785,7 +785,6 @@ namespace pulse
       }
       else
       {
-        /// \error Fatal: Unrecognized renal clearance type
         Fatal("Unrecognized renal clearance type.");
       }
     }
@@ -1476,12 +1475,12 @@ namespace pulse
       /// 2.5 mL/min 
         if (m_urineProductionRate_mL_Per_min_runningAvg->Value() > 2.5)
         {
-          /// \event Patient: Diuresis. Occurs when the urine production rate double to around 2.5 ml/min. \cite lahav1992intermittent
+          //Diuresis occurs when the urine production rate double to around 2.5 ml/min. \cite lahav1992intermittent
           m_data.GetEvents().SetEvent(eEvent::Diuresis, true, m_data.GetSimulationTime());
         }
         else if (m_urineProductionRate_mL_Per_min_runningAvg->Value() < 1.0)
         {
-          /// \event Patient: Ends when the urine production rate falls below 1.0 mL/min (near normal urine production). \cite lahav1992intermittent
+          //Ends when the urine production rate falls below 1.0 mL/min (near normal urine production). \cite lahav1992intermittent
           m_data.GetEvents().SetEvent(eEvent::Diuresis, false, m_data.GetSimulationTime());
         }
 
@@ -1490,12 +1489,12 @@ namespace pulse
         /// urine osmolarity must be hyperosmotic relative to plasma and urine production rate must be less than 0.5 mL/min
         if (m_urineProductionRate_mL_Per_min_runningAvg->Value() < 0.5 && m_urineOsmolarity_mOsm_Per_L_runningAvg->Value() > 280)
         {
-          /// \event Patient: Antidiuresis occurs when urine production rate is less than 0.5 mL/min and the urine osmolarity is hyperosmotic to the plasma \cite valtin1995renal
+          //Antidiuresis occurs when urine production rate is less than 0.5 mL/min and the urine osmolarity is hyperosmotic to the plasma \cite valtin1995renal
           m_data.GetEvents().SetEvent(eEvent::Antidiuresis, true, m_data.GetSimulationTime());
         }
         else if ((m_urineProductionRate_mL_Per_min_runningAvg->Value() > 0.55 || m_urineOsmolarity_mOsm_Per_L_runningAvg->Value() < 275))
         {
-          /// \event Patient: Antidiuresis. Ends when urine production rate rises back above 0.55 mL/min or the urine osmolarity falls below that of the plasma \cite valtin1995renal
+          //Antidiuresis. Ends when urine production rate rises back above 0.55 mL/min or the urine osmolarity falls below that of the plasma \cite valtin1995renal
           m_data.GetEvents().SetEvent(eEvent::Antidiuresis, false, m_data.GetSimulationTime());
         }
 
@@ -1503,12 +1502,10 @@ namespace pulse
         /// Computing percent decrease as (1-1.6/11.2)*100 = 85 percent decrease or 15% total flow (using 20ml/s as "normal" value, below 3ml/s):
         if (renalBloodFlow_mL_Per_s < 3.0)
         {
-          /// \event Patient: hypoperfusion occurs when renal blood flow decreases below 3 ml/s 
           m_data.GetEvents().SetEvent(eEvent::RenalHypoperfusion, true, m_data.GetSimulationTime());
         }
         else if (renalBloodFlow_mL_Per_s > 4.0)
         {
-          /// \event Patient: hypoperfusion ends when blood flow recovers above 4 ml/s
           m_data.GetEvents().SetEvent(eEvent::RenalHypoperfusion, false, m_data.GetSimulationTime());
         }
 
@@ -1518,12 +1515,12 @@ namespace pulse
 
         if (m_sodiumExcretionRate_mg_Per_min_runningAvg->Value() > 14.4)
         {
-          /// \event Patient: Natriuresis. Occurs when the sodium excretion rate rises above 14.4 mg/min \cite moss2013hormonal
+          //Natriuresis occurs when the sodium excretion rate rises above 14.4 mg/min \cite moss2013hormonal
           m_data.GetEvents().SetEvent(eEvent::Natriuresis, true, m_data.GetSimulationTime());
         }
         else if (m_sodiumExcretionRate_mg_Per_min_runningAvg->Value() < 14.0)
         {
-          /// \event Patient: Ends when the sodium excretion rate falls below 14.0 mg/min \cite moss2013hormonal
+          //Ends when the sodium excretion rate falls below 14.0 mg/min \cite moss2013hormonal
           m_data.GetEvents().SetEvent(eEvent::Natriuresis, false, m_data.GetSimulationTime());
         }
       }
@@ -1555,7 +1552,6 @@ namespace pulse
     //Check and see if the bladder is overfull or if there is an action called
     if (m_bladderNode->GetNextVolume().GetValue(VolumeUnit::mL) > bladderMaxVolume_mL)
     {
-      /// \event Patient: FunctionalIncontinence: The patient's bladder has reached a maximum
       m_data.GetEvents().SetEvent(eEvent::FunctionalIncontinence, true, m_data.GetSimulationTime());
       m_Urinating = true;
     }

@@ -1156,7 +1156,6 @@ namespace pulse
     }
     if ((m_RestingFluidMass_kg - currentFluidMass_kg) / m_RestingPatientMass_kg > 0.03)
     {
-      /// \event Patient: Patient is dehydrated when 3% of body mass is lost due to fluid reduction
       m_data.GetEvents().SetEvent(eEvent::Dehydration, true, m_data.GetSimulationTime()); /// \cite who2005dehydration
     }
     else if ((m_RestingFluidMass_kg - currentFluidMass_kg) / m_RestingPatientMass_kg < 0.02)
@@ -1176,7 +1175,6 @@ namespace pulse
     // Electrolyte imbalance may cause fasciculations.
     /*if (m_Muscleintracellular.GetSubstanceQuantity(*m_Calcium)->GetConcentration(MassPerVolumeUnit::g_Per_L) < 1.0)
     {
-      /// \event Patient: Patient is fasciculating due to calcium deficiency
       m_data.GetPatient().SetEvent(ePatient_Event::Fasciculation, true, m_data.GetSimulationTime());
     }
     else if (m_Muscleintracellular.GetSubstanceQuantity(*m_Calcium)->GetConcentration(MassPerVolumeUnit::g_Per_L) > 3.0)

@@ -211,7 +211,6 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     }
   }
 
-  /// \error Unsupported Condition
   Error(condition.GetName()+" is an unsupported Condition");
   return false;
 }
