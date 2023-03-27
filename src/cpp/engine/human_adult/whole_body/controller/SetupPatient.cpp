@@ -516,7 +516,7 @@ namespace pulse { namespace human_adult_whole_body
       err = true;
     }
 
-    if (diastolic_mmHg > 0.75 * systolic_mmHg)
+    if (diastolic_mmHg > narrowestPulseFactor * systolic_mmHg)
     {
       ss << "Patient baseline pulse pressure (systolic vs. diastolic pressure fraction) of " << diastolic_mmHg / systolic_mmHg << " is abnormally narrow. Minimum fraction allowed is " << narrowestPulseFactor << " .";
       patient.Error(ss);
