@@ -21,44 +21,48 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - More serialization testing
   - Reusable data request files
     - Scenarios can now reference external files for data requests
-  - Added support for expanding ane engine's systems and/or circuits
+  - Added support for expanding an engine's systems and/or circuits
     - Provides the ability to define and run a more complex circuit within a common system model
   - Improved BlackBox support for external model coupling
+  - Added Python plotting tools for improved verification, validation, and documentation
   
 - Physiology Model Improvements
-  - Mechanical ventilator model updates
+  - Patient variability
+    - Added system validation for standard female patients
+    - Added optional pulse pressure, mean arterial pressure, and body mass index settings
+  - Mechanical ventilator
     - Improved triggering
     - Improved error handling
     - Additional waveform types
     - Expose more control parameters
     - More validation
-  - Respiratory model updates
+  - Respiratory
     - Corrected respiratory inhale/exhale transition timing
     - Added shunting and labored breathing effects to collapsing lung functionality
     - Improved lung collapse (e.g., tension pneumothorax and hemothorax) responses
-  - Intubation updates
+  - Intubation
     - Added a severity to control flow
     - Esophageal intubation can provide air to lungs via a severity
-  - Bag, Valve, Mask updates
+  - Bag-Valve-Mask
     - Automation Support - Set a frequency and pressure to repeat
     - Single Squeeze - Set a pressure for a single squeeze
     - Instantaneous - Set a pressure to apply (Intended for hardware integration)
-  - Cardiovascular model updates
+  - Cardiovascular
     - Improved heart driver and cardiac cycle
     - More control to adjust vascular tone
     - Pulmonary capillary coverage adjusts based on Mean Arterial Pressure
-  - Cardiac Arrest updates
+  - Cardiac Arrest
     - Improved End Tidal Carbon Dioxide Pressure response
     - Improved SpO2 response
     - Improved recovery transition model
-  - Hemorrhage updates
+  - Hemorrhage
     - Improved Baroreceptor response
     - Severity now calculates resitance using compartment inflow average
-  - CPR updates
+  - CPR
     - Automation Support - Set a frequency and severity or depth to repeat
     - Single Squeeze - Set a severity or depth for a single squeeze
     - Instantaneous - Set a severity or depth to apply (Intended for hardware integration)
-  - ECMO Support updates
+  - ECMO support
     - End user can adjust substance values and flow rates back into Pulse
     - *NOT A MODEL* Intended for external users to perscribe flow rates and substance concentrations
   - Removed Pulmonary Function Test Assessment

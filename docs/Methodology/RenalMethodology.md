@@ -93,7 +93,7 @@ The %Renal system needs to meet the following requirements in the engine:
 	- Extensible and flexible model
 	- Maintain conservation of mass and homeostasis
 
-### Existing
+### Previous Research
 
 There have been numerous approaches to renal modeling in the past. The most significant results stem from a region-based modeling
 approach that discretizes the depth and allows varying permeability along the length of the nephron @cite layton2011mathematical.
@@ -536,7 +536,14 @@ Validation of the urine panel is done by analyzing at the resting physiologic qu
 proteins are expected in the urine in significant quantities, which is confirmed below. Specific gravity and color are each dependent on the osmolarity of the urine and are within
 expected values for a healthy individual at rest.</i>
 </center>
+
+<b>Standard Male</b>
+
 @insert ./test_results/tables/Urinalysis-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/Urinalysis-StandardFemaleValidationTable.md
 
 Results and Conclusions
 =======================
@@ -552,14 +559,26 @@ Validation results for system and compartment quantities for a resting standard 
 to referenced values.*
 </center>
 
+<b>Standard Male</b>
+
 @insert ./test_results/tables/Renal-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/Renal-StandardFemaleValidationTable.md
 
 <br><center>
 *Table 6. Validation of the resting physiologic state comparison of compartment-level outputs from the engine
 to referenced values.*
 </center>
 
+<b>Standard Male</b>
+
 @insert ./test_results/tables/RenalCompartments-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/RenalCompartments-StandardFemaleValidationTable.md
 
 Validation results for substance parameters that are determined and/or applied by the %Renal system are shown in Table 7.  These values are highly dependent on substance parameters and show favorable overall agreement for the resting standard patient. Sodium is especially critical for the osmoreceptor and tubuloglomerular feedback mechanisms.
 
@@ -568,7 +587,13 @@ Validation results for substance parameters that are determined and/or applied b
 to referenced values.*
 </center>
 
+<b>Standard Male</b>
+
 @insert ./test_results/tables/RenalSubstances-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/RenalSubstances-StandardFemaleValidationTable.md
 
 @anchor renal-actionconditionvalidation
 Validation - Actions and Conditions
