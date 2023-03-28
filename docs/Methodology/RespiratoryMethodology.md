@@ -1198,12 +1198,12 @@ When positive pressure ventilation is applied (i.e., mechanical ventilator or an
  <tr><td>Fatigue Factor</td><td>Respiratory</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.87</td><td>0.76</td><td>0.64</td></tr>
 </table>
 
-Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure 17 shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD.
+Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure 17 shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD. The conscious respiration action was used to exhale to the expiratory reserve volume and inhale to the inspiratory capacity.
 
 @htmlonly
 <center>
-<a href="./Images/Respiratory/FlowVolumeCurves.png">
-<img src="./Images/Respiratory/FlowVolumeCurves.png" width="800"></a>
+<a href="./plots/Respiratory/FlowVolumeCurves.jpg">
+<img src="./plots/Respiratory/FlowVolumeCurves.jpg" width="800"></a>
 <br>
 </center>
 @endhtmlonly
@@ -1213,8 +1213,8 @@ Modifications to respiratory circuit resistances and compliances can further be 
 
 @htmlonly
 <center>
-<a href="./Images/Respiratory/SpirometryVolumeCurves.png">
-<img src="./Images/Respiratory/SpirometryVolumeCurves.png" width="800"></a>
+<a href="./plots/Respiratory/SpirometryVolumeCurves.jpg">
+<img src="./plots/Respiratory/SpirometryVolumeCurves.jpg" width="800"></a>
 <br>
 </center>
 @endhtmlonly
