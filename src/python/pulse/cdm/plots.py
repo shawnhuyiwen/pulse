@@ -167,13 +167,13 @@ class SEPlotConfig():
         if self._fill_area is None:
             self._fill_area = False
         if self._font_size is None:
-            self._font_size = 14
+            self._font_size = 16
         if self._gridlines is None:
             self._gridlines = False
         if self._image_properties is None:
             self._image_properties = SEImageProperties()
         if self._legend_font_size is None:
-            self._legend_font_size = 12
+            self._legend_font_size = 14
         if self._legend_mode is None:
             self._legend_mode = eLegendMode.AllLegends
         if self._log_axis is None:

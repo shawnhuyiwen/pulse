@@ -305,7 +305,7 @@
           { "OutputFilename": "Class2Blood_Diastolic", "Title": "", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
           { "OutputFilename": "Class2Blood_Legend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 1.5, "Width_inch": 22 }, "PlotEvents": false } }
+                "ImageProperties": { "Height_inch": 2.2, "Width_inch": 22 }, "PlotEvents": false } }
         ]
       }
     },
@@ -328,7 +328,7 @@
           { "OutputFilename": "Class2Saline_Hb", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
           { "OutputFilename": "Class2Saline_Legend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 1.5, "Width_inch": 22 }, "PlotEvents": false } }
+                "ImageProperties": { "Height_inch": 2.2, "Width_inch": 22 }, "PlotEvents": false } }
         ]
       }
     },
@@ -796,7 +796,7 @@
               "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "SuccinylcholineLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 2.4, "Width_inch": 22 } } }
+                "ImageProperties": { "Height_inch": 3, "Width_inch": 22 } } }
         ]
       }
     },
@@ -926,7 +926,7 @@
               "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
           { "OutputFilename": "HighAltitudeLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false,
-                "ImageProperties": { "Height_inch": 4.5, "Width_inch": 22 } } }
+                "ImageProperties": { "Height_inch": 4.8, "Width_inch": 22 } } }
         ]
       }
     },
@@ -1191,7 +1191,7 @@
               "YHeader": [ "RightAfferentArterioleResistance(mmHg_min/mL)" ] },
           { "OutputFilename": "HighAltitudeEnvironmentChangeLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 4.5, "Width_inch": 16 }, "PlotActions": true,
+                "ImageProperties": { "Height_inch": 5, "Width_inch": 16 }, "PlotActions": true,
                 "PlotEvents": false } }
         ]
       }
@@ -1502,7 +1502,7 @@
           { "OutputFilename": "MainstemIntubation_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "MainstemIntubationLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                  "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+                  "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.8 } } }
         ]
       }
     },
@@ -1527,7 +1527,7 @@
           { "OutputFilename": "TensionPneumothoraxOpenVaried_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "TensionPneumothoraxOpenVariedLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend" } } }
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 2.5 } } }
         ]
       }
     },
@@ -1754,7 +1754,7 @@
           { "OutputFilename": "AnesthesiaMachineVariedConfiguration_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
           { "OutputFilename": "AMVariedLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.6 } } }
         ]
       }
     },
@@ -1804,7 +1804,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "ExpiratoryValveLeakLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
         ]
       }
     },
@@ -1831,7 +1831,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "InspiratoryValveLeakLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
         ]
       }
     },
@@ -1861,7 +1861,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "ExpiratoryValveObstructionLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-              "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+              "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
         ]
       }
     },
@@ -1891,7 +1891,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "InspiratoryValveObstructionLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
         ]
       }
     },
@@ -1920,7 +1920,7 @@
             "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "VentilatorPressureLossLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
         ]
       }
     },
@@ -1948,7 +1948,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "SodaLimeFailureLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
         ]
       }
     },
