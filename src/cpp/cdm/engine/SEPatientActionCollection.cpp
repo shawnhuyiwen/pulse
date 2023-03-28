@@ -638,7 +638,6 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     return true;
   }
 
-  /// \error Unsupported Action
   Error("Unsupported Action");
   return false;
 }

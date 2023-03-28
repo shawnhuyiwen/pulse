@@ -1,13 +1,35 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 from enum import Enum
+from typing import Set
+import re
 
 from pulse.cdm.engine import SEAction
+
+def break_camel_case(string: str):
+    # https://stackoverflow.com/a/9283563
+    camel_case_regex = r"""
+        (            # start the group
+            # alternative 1
+        (?<=[a-z])  # current position is preceded by a lower char
+                    # (positive lookbehind: does not consume any char)
+        [A-Z]       # an upper char
+                    #
+        |   # or
+            # alternative 2
+        (?<!\A)     # current position is not at the beginning of the string
+                    # (negative lookbehind: does not consume any char)
+        [A-Z]       # an upper char
+        (?=[a-z])   # matches if next char is a lower char
+                    # lookahead assertion: does not consume any char
+        )           # end the group"""
+
+    return re.sub(camel_case_regex, r' \1', string, flags=re.VERBOSE)
 
 class ePrettyPrintType(Enum):
     Action = 0
     Condition = 1
-def pretty_print(string: str, print_type: ePrettyPrintType):
+def pretty_print(string: str, print_type: ePrettyPrintType, preserve_camel_case: bool = False):
     typeTag = ""
     if print_type == ePrettyPrintType.Action:
         typeTag = "Action"
@@ -37,10 +59,11 @@ def pretty_print(string: str, print_type: ePrettyPrintType):
         if "ReadOnly" in line:
             idx += 1
             continue
-        if "Comment:" in line and len(line) < 9:
+        if line.endswith("Comment:"):
             idx += 1
             continue
 
+        found_unit = False
         if idx+1 < len(lines):
             peek = lines[idx+1]
             if "Scalar" in peek:
@@ -50,8 +73,18 @@ def pretty_print(string: str, print_type: ePrettyPrintType):
                     idx += 3
                     peek = lines[idx]
                     line = ''.join([line, peek[(peek.find("Unit:")+5):].rstrip()])
+                    found_unit = True
                 else:
                     idx += 2
+
+        if not preserve_camel_case and "Comment:" not in line:
+            # Don't change files or units
+            if found_unit or "Unit:" in line or "File" in line:
+                colon = line.rfind(":")
+                if colon != -1:
+                    line = break_camel_case(line[:colon]) + line[colon:]
+            else:
+                line = break_camel_case(line)
 
         ret = ''.join([ret, line, "\n"])
         idx += 1

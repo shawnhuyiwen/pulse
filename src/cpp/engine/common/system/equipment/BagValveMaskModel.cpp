@@ -166,7 +166,6 @@ namespace pulse
     {
       double FiO2 = m_Reservoir->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
 
-      /// \error Error: FiO2 setting + ambient fractions other than N2 is greater than 1.0. Setting FiO2 to max value
       m_ss << "FiO2 setting + ambient fractions other than N2 is greater than 1.0. Setting FiO2 to max value of " << FiO2 + currentN2Fraction + gasFractionDiff << ".";
       Error(m_ss);
       m_Reservoir->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(0.0);
@@ -290,19 +289,16 @@ namespace pulse
     {
       if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskAutomated())
       {
-        /// \error Error: The Bag Valve Mask must be connected (i.e., connection type configured) to run the Squeeze action.
         Error("The Bag Valve Mask must be connected (i.e., connection type configured) to run the automated action.");
         m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskAutomated();
       }
       if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskInstantaneous())
       {
-        /// \error Error: The Bag Valve Mask must be connected (i.e., connection type configured) to run the Instantaneous action.
         Error("The Bag Valve Mask must be connected (i.e., connection type configured) to run the Instantaneous action.");
         m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskInstantaneous();
       }
       if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
       {
-        /// \error Error: The Bag Valve Mask must be connected (i.e., connection type configured) to run the Squeeze action.
         Error("The Bag Valve Mask must be connected (i.e., connection type configured) to run the Squeeze action.");
         m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskSqueeze();
       }
@@ -439,12 +435,10 @@ namespace pulse
   {
     if (!std::isnan(m_SqueezePressure_cmH2O) && !std::isnan(m_SqueezeFlow_L_Per_s))
     {
-      /// \error Error: Bag Valve Mask squeeze pressure and flow both set, only one allowed. Using the pressure value.
       Error("Bag Valve Mask squeeze pressure and flow both set, only one allowed. Using the pressure value.");
     }
     else if (std::isnan(m_SqueezePressure_cmH2O) && std::isnan(m_SqueezeFlow_L_Per_s))
     {
-      /// \error Error:  Bag Valve Mask squeeze pressure or flow must be set. Using a pressure of 0.
       Error(" Bag Valve Mask squeeze pressure or flow must be set. Using a pressure of 0.");
 
       m_SqueezePressure_cmH2O = 0.0;

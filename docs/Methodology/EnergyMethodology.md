@@ -127,7 +127,7 @@ Additional dependence on the cardiovascular system comes from the extravascular 
 
 @anchor energy-variability
 ### Patient Variability
-The basal metabolic rate is computed from the sex, height, weight, and age of the patient using the Harris-Benedict formula and will be directly affected by patient variability. Other indirect effects, such as fluid compositional changes due to sweating, may be observed. As with all of the systems, the energy system is validated using the Standard Male patient. A detailed discussion of patient variability is available in the @ref PatientMethodology report.
+The basal metabolic rate is computed from the sex, height, weight, and age of the patient using the Harris-Benedict formula and will be directly affected by patient variability. Other indirect effects, such as fluid compositional changes due to sweating, may be observed. As with all of the systems, the energy system is validated using the Standard patient. A detailed discussion of patient variability is available in the @ref PatientMethodology report.
 
 @anchor energy-assumptions
 Assumptions and Limitations
@@ -267,7 +267,14 @@ Validation - Resting Physiologic State
 <br><center>
 *Table 2. The %Energy system properties consist of core and skin temperature, as well as metabolic production rates. The properties show good agreement with the validation values.*
 </center>
+
+<b>Standard Male</b>
+
 @insert ./test_results/tables/Energy-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/Energy-StandardFemaleValidationTable.md
 
 The resting system properties for the energy system are temperatures and metabolic production rates. From Table 2, it is shown that the temperatures meet the validation criteria extremely well for resting conditions. The production rates show reasonable agreement with the validation data. Gas consumption and production yield the largest disparity. This is due to accurate resting physiology being achieved for the displayed consumption and production rates. Additional refinement of the gas consumption and production rates can occur, but the change would propagate through the other systems. In order to preserve accurate resting physiology all other systems would need to be adjusted for this change. This is currently planned for a future release. The remaining metabolic production rates show good agreement with the validation data.
 

@@ -225,6 +225,8 @@ def parse_events(log_file: str, omit: List[str] = []):
 
 
 def parse_actions(log_file: str, omit: List[str] = []):
+    advTime = "AdvanceTime"
+    omit.append(advTime)
     action_tag = "[Action]"
     actions = []
     with open(log_file) as f:
@@ -239,7 +241,7 @@ def parse_actions(log_file: str, omit: List[str] = []):
             if action_idx == -1:
                 idx += 1
                 continue
-            elif "AdvanceTime" in line:
+            elif advTime in line:
                 idx += 1
                 continue
             else:
@@ -550,7 +552,7 @@ def create_plot(plot_sources: [SEPlotSource],
     if plot_config.get_legend_mode() != eLegendMode.NoLegends and \
        plot_config.get_legend_mode() != eLegendMode.HideActionEventLegend and ax3 is not None and ax3.lines:
         text_wrapper = DocumentWrapper(width=45)
-        max_ncols = int(plot_config.get_image_properties().get_width_inch() / 4.25) # Approximate width of each column for large labels
+        max_ncols = int(plot_config.get_image_properties().get_width_inch() / 5.35) # Approximate width of each column for large labels
 
         box = ax1.get_position()
         ax3.set_position([box.x0, box.y0 + box.height * 0.1,

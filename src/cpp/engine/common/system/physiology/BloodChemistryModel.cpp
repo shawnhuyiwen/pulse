@@ -299,13 +299,11 @@ namespace pulse
         double hypercapniaFlag = 60.0; // \cite Guyton11thEd p.531 
         if (arterialCarbonDioxide_mmHg >= hypercapniaFlag)
         {
-          /// \event Patient: Hypercapnia. The carbon dioxide partial pressure has risen above 60 mmHg. The patient is now hypercapnic.
           m_data.GetEvents().SetEvent(eEvent::Hypercapnia, true, m_data.GetSimulationTime());
 
         }
         else if (m_data.GetEvents().IsEventActive(eEvent::Hypercapnia) && arterialCarbonDioxide_mmHg < (hypercapniaFlag - 3))
         {
-          /// \event Patient: End Hypercapnia. The carbon dioxide partial pressure has fallen below 57 mmHg. The patient is no longer considered to be hypercapnic.
           /// This event is triggered if the patient was hypercapnic and is now considered to be recovered.
           m_data.GetEvents().SetEvent(eEvent::Hypercapnia, false, m_data.GetSimulationTime());
         }
@@ -314,12 +312,10 @@ namespace pulse
         double hypoxiaFlag = 65.0; //Arterial O2 Partial Pressure in mmHg \cite Pierson2000Pathophysiology
         if (arterialOxygen_mmHg <= hypoxiaFlag)
         {
-          /// \event Patient: Hypoxia Event. The oxygen partial pressure has fallen below 65 mmHg, indicating that the patient is hypoxic.
           m_data.GetEvents().SetEvent(eEvent::Hypoxia, true, m_data.GetSimulationTime());
         }
         else if (arterialOxygen_mmHg > (hypoxiaFlag + 3))
         {
-          /// \event Patient: End Hypoxia Event. The oxygen partial pressure has rise above 68 mmHg. If this occurs when the patient is hypoxic, it will reverse the hypoxic event.
           /// The patient is no longer considered to be hypoxic.
           m_data.GetEvents().SetEvent(eEvent::Hypoxia, false, m_data.GetSimulationTime());
         }
@@ -329,13 +325,11 @@ namespace pulse
         double hyperoxemiaSevereFlag = 200.0; //Arterial O2 Partial Pressure in mmHg
         if (arterialOxygen_mmHg > hyperoxemiaSevereFlag)
         {
-          /// \event Patient: Severe Hyperoxemia: Arterial O2 Partial Pressure is above 200 mmHg causing oxygen toxicity
           m_data.GetEvents().SetEvent(eEvent::SevereHyperoxemia, true, m_data.GetSimulationTime());
           m_data.GetEvents().SetEvent(eEvent::ModerateHyperoxemia, false, m_data.GetSimulationTime());
         }
         else if (arterialOxygen_mmHg > hyperoxemiaModerateFlag)
         {
-          /// \event Patient: Moderate Hyperoxemia: Arterial O2 Partial Pressure is above 120 mmHg
           m_data.GetEvents().SetEvent(eEvent::SevereHyperoxemia, false, m_data.GetSimulationTime());
           m_data.GetEvents().SetEvent(eEvent::ModerateHyperoxemia, true, m_data.GetSimulationTime());
         }
@@ -350,13 +344,11 @@ namespace pulse
         double hypocapniaSevereFlag = 15.0; //Arterial CO2 Partial Pressure in mmHg
         if (arterialOxygen_mmHg < hypocapniaSevereFlag)
         {
-          /// \event Patient: Severe Hypocapnia: Arterial CO2 Partial Pressure is below 15 mmHg
           m_data.GetEvents().SetEvent(eEvent::SevereHypocapnia, true, m_data.GetSimulationTime());
           m_data.GetEvents().SetEvent(eEvent::ModerateHypocapnia, false, m_data.GetSimulationTime());
         }
         else if (arterialOxygen_mmHg < hypocapniaModerateFlag)
         {
-          /// \event Patient: Moderate Hypocapnia: Arterial CO2 Partial Pressure is below 30 mmHg
           m_data.GetEvents().SetEvent(eEvent::SevereHypocapnia, false, m_data.GetSimulationTime());
           m_data.GetEvents().SetEvent(eEvent::ModerateHypocapnia, true, m_data.GetSimulationTime());
         }
@@ -380,25 +372,21 @@ namespace pulse
       // and from data presented in @cite purins2012brain and @cite doppenberg1998determination.
       if (m_BrainO2->GetPartialPressure(PressureUnit::mmHg) < 19.0) // We are using the mean from dhawan
       {
-        /// \event Patient: Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a dangerously low level.
         m_data.GetEvents().SetEvent(eEvent::BrainOxygenDeficit, true, m_data.GetSimulationTime());
 
         // If the O2 tension is below a critical threshold, the damage occurs more quickly
         if (m_BrainO2->GetPartialPressure(PressureUnit::mmHg) < 10.0)
         {
-          /// \event Patient: Critical Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a critically low level.
           m_data.GetEvents().SetEvent(eEvent::CriticalBrainOxygenDeficit, true, m_data.GetSimulationTime());
         }
         else if (m_BrainO2->GetPartialPressure(PressureUnit::mmHg) > 12.0)
         {
-          /// \event Patient: End Brain Oxygen Deficit Event. The oxygen partial pressure has risen above 12 mmHg in the brain. If this occurs when the patient has a critical brain oxygen deficit event, it will reverse the event.
           /// The brain is not in a critical oxygen deficit.
           m_data.GetEvents().SetEvent(eEvent::CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
         }
       }
       else if (m_BrainO2->GetPartialPressure(PressureUnit::mmHg) > 25.0)
       {
-        /// \event Patient: End Brain Oxygen Deficit Event. The oxygen partial pressure has risen above 25 mmHg in the brain. If this occurs when the patient has a brain oxygen deficit event, it will reverse the event.
         /// The brain is getting oxygen.
         m_data.GetEvents().SetEvent(eEvent::BrainOxygenDeficit, false, m_data.GetSimulationTime());
         // The critical deficit event is also set to false just in case there is an unrealistically rapid transition in oxygen partial pressure.
@@ -408,12 +396,10 @@ namespace pulse
       //Myocardium Oxygen Check
       if (m_MyocardiumO2->GetPartialPressure(PressureUnit::mmHg) < 5)
       {
-        /// \event Patient: The heart is not receiving enough oxygen. Coronary arteries should dilate to increase blood flow to the heart.
-        m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());       
+        m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());
       }
       else if (m_MyocardiumO2->GetPartialPressure(PressureUnit::mmHg) > 8)
       {
-        /// \event Patient: End Myocardium Oxygen Event. The heart is now receiving enough oxygen. If this occurs when the patient has a heart oxygen deficit event, it will reverse the event.
         /// The brain is getting oxygen.
         m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, false, m_data.GetSimulationTime());
       }

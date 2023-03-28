@@ -264,7 +264,6 @@ namespace pulse
     {
       double FiO2 = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
 
-      /// \error Error: FiO2 setting + ambient fractions other than N2 is greater than 1.0. Setting FiO2 to max value
       m_ss << "FiO2 setting + ambient fractions other than N2 is greater than 1.0. Setting FiO2 to max value of " << FiO2 + currentN2Fraction + gasFractionDiff << ".";
       Error(m_ss);
       m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(0.0);
@@ -427,12 +426,10 @@ namespace pulse
 
     if (!std::isnan(driverPressure_cmH2O) && !std::isnan(driverFlow_L_Per_s))
       {
-        /// \error Error: Ventilator driver pressure and flow both set, only one allowed. Using the pressure value.
         Error("Ventilator driver pressure and flow both set, only one allowed. Using the pressure value.");
       }
     else if (std::isnan(driverPressure_cmH2O) && std::isnan(driverFlow_L_Per_s))
     {
-      /// \error Error: Ventilator driver pressure or flow must be set. Using a pressure of 0.
       Error("Ventilator driver pressure or flow must be set. Using a pressure of 0.");
 
       m_DriverPressure_cmH2O = 0.0;
@@ -604,7 +601,6 @@ namespace pulse
 
     if(!triggerDefined)
     {
-      /// \error Fatal: No expiration cycle defined.
       Fatal("No expiration cycle defined.");
     }
 
@@ -647,7 +643,6 @@ namespace pulse
     if (GetSettings().GetInspirationWaveform() != eDriverWaveform::Square &&
       !GetSettings().HasInspirationWaveformPeriod())
     {
-      /// \error Fatal: Non-square waveforms require a period.
       Fatal("Non-square waveforms require a period.");
     }
 
@@ -666,7 +661,6 @@ namespace pulse
       }
       else
       {
-        /// \error Fatal: Inspiration mode not yet supported.
         Fatal("Inspiration mode not yet supported.");
       }
     }
@@ -695,7 +689,6 @@ namespace pulse
       }
       else
       {
-        /// \error Fatal: Inspiration mode not yet supported.
         Fatal("Inspiration mode not yet supported.");
       }
     }
@@ -724,13 +717,11 @@ namespace pulse
       }
       else
       {
-        /// \error Fatal: Inspiration mode not yet supported.
         Fatal("Inspiration mode not yet supported.");
       }
     }
     else
     {
-      /// \error Fatal: Waveform type not yet supported.
       Fatal("Waveform type not yet supported.");
     }
   }
@@ -841,7 +832,6 @@ namespace pulse
 
     if(!triggerDefined)
     {
-      /// \error Fatal: No inspiration trigger defined.
       Fatal("No inspiration trigger defined.");
     }
 
@@ -855,7 +845,6 @@ namespace pulse
       }
       else if (GetSettings().HasFunctionalResidualCapacity())
       {
-        /// \error Fatal: Functional residual capacity expiratory baseline not yet supported.
         Fatal("Functional residual capacity expiratory baseline not yet supported.");
       }
       else
@@ -866,7 +855,6 @@ namespace pulse
     }
     else
     {
-      /// \error Fatal: Non-square waveforms are not yet supported for expiration.
       Fatal("Non-square waveforms are not yet supported for expiration.");
     }
   }
@@ -1275,7 +1263,6 @@ namespace pulse
     //Check to see if it reached the pressure threshold
     if (!m_data.GetEvents().IsEventActive(eEvent::MechanicalVentilatorReliefValveActive) && m_ConnectionToReliefValve->GetNextValve() == eGate::Closed)
     {
-      /// \event %MechanicalVentilator: Relief Valve is active. The pressure setting has been exceeded.
       m_data.GetEvents().SetEvent(eEvent::MechanicalVentilatorReliefValveActive, true, m_data.GetSimulationTime());
     }
     else if (m_data.GetEvents().IsEventActive(eEvent::MechanicalVentilatorReliefValveActive) && m_ConnectionToReliefValve->GetNextValve() == eGate::Open)

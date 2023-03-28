@@ -198,7 +198,7 @@ Figure 6 shows the lead 3 sinus waveform in Pulse compared to an example sinus w
 
 @anchor cardiovascular-variability
 ### Patient Variability
-The cardiovascular system is heavily dependent on the patient. The cardiovascular circuit parameters are all set based on the patient configuration. For example, the proportion of blood flow to the fat compartment depends on the sex of the patient, and the initial flow proportions dictate initial vascular resistance. Likewise, the volume of the fat compartment depends on the sex, body fat fraction, height, and weight of the patient, and the initial volume and pressure are used to compute the initial vascular compliance for paths associated with a compartment. After initial values are computed, the cardiovascular circuit parameters are adjusted to meet target pressures, which are also specified in the patient file. Because the cardiovascular system is profoundly dependent on the patient configuration, several stabilization iterations are sometimes necessary to achieve a specific desired state. For that reason, we make modifications to the parameters to move the circuit closer to a Standard Male patient state to speed stabilization for that patient, and other custom states may require longer stabilization periods. A detailed discussion of patient configuration and variability is available in the @ref PatientMethodology report.
+The cardiovascular system is heavily dependent on the patient. The cardiovascular circuit parameters are all set based on the patient configuration. For example, the proportion of blood flow to the fat compartment depends on the sex of the patient, and the initial flow proportions dictate initial vascular resistance. Likewise, the volume of the fat compartment depends on the sex, body fat fraction, height, and weight of the patient, and the initial volume and pressure are used to compute the initial vascular compliance for paths associated with a compartment. After initial values are computed, the cardiovascular circuit parameters are adjusted to meet target pressures, which are also specified in the patient file. Because the cardiovascular system is profoundly dependent on the patient configuration, several stabilization iterations are sometimes necessary to achieve a specific desired state. For that reason, we make modifications to the parameters to move the circuit closer to a Standard patient state to speed stabilization for that patient, and other custom states may require longer stabilization periods. A detailed discussion of patient configuration and variability is available in the @ref PatientMethodology report.
 @anchor cardiovascular-dependencies
 ### Dependencies
 The other engine systems depend on the CV System to function accurately and appropriately. The CV System provides the medium (blood) and the energy (pressure differentials and subsequent flow) to transport substances throughout the engine. A complete list of substances and their descriptions can be found in the @ref SubstanceTransportMethodology. Similarly, the CV System is dependent on all of the other systems. Feedback from other systems influences the cardiac behavior via heart rate and elastance modifiers and the systemic circulation through resistance modifications to the circuits. For example, as the plasma concentration of a drug increases, the elastance of the heart, heart rate, and systemic resistance are modified through the pharmacodynamic effects (multipliers), resulting in changes to the blood flow, pressure, and volume calculations. Additionally, baroreceptor feedback leads to modification of heart rate, elastance, and vascular resistance and compliance in order to regulate the arterial pressure. For more information on baroreceptor feedback see @ref NervousMethodology.
@@ -588,12 +588,26 @@ Validation results for system and compartment quantities are listed in Tables 1 
 <br><center>
 *Table 1. Validation of the resting physiologic state comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data.*
 </center>
+
+<b>Standard Male</b>
+
 @insert ./test_results/tables/Cardiovascular-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/Cardiovascular-StandardFemaleValidationTable.md
 
 <br><center>
 *Table 2. Validation of the resting physiologic state comparison of compartment-level outputs from the engine to referenced values. The compartments are currently validated on a flow/volume basis. Flows and most of the volumes show good agreement with validation values.*
 </center>
+
+<b>Standard Male</b>
+
 @insert ./test_results/tables/CardiovascularCompartments-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/CardiovascularCompartments-StandardFemaleValidationTable.md
 
 Compartment-level quantities show reasonable agreement with the validation values. All of the flows match the reference values within ~10 percent. The volumes show some moderate differences for a few specific compartments. The aorta compartment volume is much smaller than the validated value. The compliance on this compartment needed to remain low in order to preserve the arterial pressure waveform, which led to less volume than expected. Similarly, the vena cava compliance was set in order to maintain the correct cardiac output and arterial pressures; therefore, its expected volume was limited. The right heart pressures and volumes show some disagreement with the validation data. The minimum values for right heart pressure and volume are much lower than valid ranges. This is due to restriction of unstressed volume in the right heart, which currently has an unstressed volume of zero. An increase in unstressed volume would shift the pressure volume minimums up, while also preserving the maximum values within their respective ranges. The %Cardiovascular System is tuned to vitals output validation (Table 1), as well as good agreement with insults' and interventions&rsquo; expected trends and values (see the following section).  In addition, compartment validation was achieved on a reasonable level.
 
