@@ -9,6 +9,7 @@ message AnyPlotterData
   oneof Plotter
   {
     MultiHeaderSeriesPlotterData      MultiHeaderSeriesPlotter  = 1;
+    ComparePlotterData                ComparePlotter            = 2;
   }
 }
 
@@ -84,6 +85,17 @@ message PlotSourceData
   optional int32                      StartRow                  = 6;  /**<< @brief Specify the starting row number of the CSV data to include in plot. */
   optional int32                      EndRow                    = 7;  /**<< @brief Specify the ending row number of the CSV data to include in plot. */
   optional string                     LogFile                   = 8;  /**<< @brief Specify log file if it does not following usual naming conventions/location. */
+}
+
+/** @brief Data used to configure x vs y plots. */
+message ComparePlotterData
+{
+  string                              Comment                   = 1;
+
+  optional PlotConfigData             PlotConfig                = 2;  /**<< @brief Provided settings take precedence over PlotConfig settings defined in plotter list. */
+  PlotSourceData                      ComputedSource            = 3;
+  PlotSourceData                      ExpectedSource            = 4;
+  repeated string                     Failures                  = 5;  /**<< @brief Headers that were deemed as failure during comparison. */
 }
 
 /** @brief Data used to configure x vs y plots. */

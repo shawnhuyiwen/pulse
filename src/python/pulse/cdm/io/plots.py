@@ -1,3 +1,6 @@
+# Distributed under the Apache License, Version 2.0.
+# See accompanying NOTICE file for details.
+
 from pulse.cdm.plots import *
 from pulse.cdm.bind.Plots_pb2 import *
 from pulse.cdm.engine import eSerializationFormat
@@ -22,9 +25,19 @@ def serialize_plotter_list_from_bind(src: PlotterListData, dst: [SEPlotter]):
     for any_plotter_data in src.Plotter:
         if any_plotter_data.HasField("MultiHeaderSeriesPlotter"):
             plot = SEMultiHeaderSeriesPlotter()
-            serialize_multi_header_series_plotter_from_bind(any_plotter_data.MultiHeaderSeriesPlotter,
-                                                            plot,
-                                                            base_config)
+            serialize_multi_header_series_plotter_from_bind(
+                any_plotter_data.MultiHeaderSeriesPlotter,
+                plot,
+                base_config
+            )
+            dst.append(plot)
+        elif any_plotter_data.HasField("ComparePlotter"):
+            plot = SEComparePlotter()
+            serialize_compare_plotter_from_bind(
+                any_plotter_data.ComparePlotter,
+                plot,
+                base_config
+            )
             dst.append(plot)
         else:
             raise Exception("No valid plotter in serialize_plot_list_from_bind")
@@ -99,9 +112,11 @@ def serialize_plot_config_to_bind(src: SEPlotConfig, dst: PlotConfigData):
         dst.TickStyle = src.get_tick_style().value
     if src.has_zero_axis_setting():
         dst.ZeroAxis = src.get_zero_axis()
-def serialize_plot_config_from_bind(src: PlotConfigData,
-                                    dst: SEPlotConfig,
-                                    base_config: SEPlotConfig = None):
+def serialize_plot_config_from_bind(
+    src: PlotConfigData,
+    dst: SEPlotConfig,
+    base_config: SEPlotConfig = None
+):
     if base_config:
         dst.merge_configs(base_config)
     else:
@@ -142,6 +157,7 @@ def serialize_plot_config_from_bind(src: PlotConfigData,
     if src.HasField("ZeroAxis"):
         dst.set_zero_axis(src.ZeroAxis)
 
+
 def serialize_plot_source_to_bind(src: SEPlotSource, dst: PlotSourceData):
     if src.has_csv_data():
         dst.CSVData = src.get_csv_data()
@@ -167,6 +183,7 @@ def serialize_plot_source_from_bind(src: PlotSourceData, dst: SEPlotSource):
         dst.set_end_row(src.EndRow)
     if src.HasField("LogFile"):
         dst.set_log_file(src.LogFile)
+
 
 def serialize_series_to_bind(src: SESeries, dst: MultiHeaderSeriesPlotterData.SeriesData):
     if src.has_plot_config():
@@ -197,9 +214,11 @@ def serialize_series_to_bind(src: SESeries, dst: MultiHeaderSeriesPlotterData.Se
         dst.Y2Label = src.get_y2_label()
     if src.has_y2_bounds():
         serialize_bounds_to_bind(src.get_y2_bounds(), dst.Y2Bounds)
-def serialize_series_from_bind(src: MultiHeaderSeriesPlotterData.SeriesData,
-                               dst: SESeries,
-                               base_config: SEPlotConfig):
+def serialize_series_from_bind(
+    src: MultiHeaderSeriesPlotterData.SeriesData,
+    dst: SESeries,
+    base_config: SEPlotConfig
+):
     if src.HasField("PlotConfig"):
         serialize_plot_config_from_bind(src.PlotConfig, dst.get_plot_config(), base_config)
     else:
@@ -235,6 +254,7 @@ def serialize_series_from_bind(src: MultiHeaderSeriesPlotterData.SeriesData,
         serialize_bounds_from_bind(src.Y2Bounds, bounds)
         dst.set_y2_bounds(bounds)
 
+
 def serialize_multi_header_series_plotter_to_bind(src: SEMultiHeaderSeriesPlotter, dst: MultiHeaderSeriesPlotterData):
     if src.has_plot_config():
         serialize_plot_config_to_bind(src.get_plot_config(), dst.PlotConfig)
@@ -246,9 +266,11 @@ def serialize_multi_header_series_plotter_to_bind(src: SEMultiHeaderSeriesPlotte
         serialize_series_to_bind(s, seriesData)
     if src.has_valiation_source():
         serialize_plot_source_to_bind(src.get_validation_source(), dst.ValidationSource)
-def serialize_multi_header_series_plotter_from_bind(src: MultiHeaderSeriesPlotterData,
-                                                    dst: SEMultiHeaderSeriesPlotter,
-                                                    base_config: SEPlotConfig):
+def serialize_multi_header_series_plotter_from_bind(
+    src: MultiHeaderSeriesPlotterData,
+    dst: SEMultiHeaderSeriesPlotter,
+    base_config: SEPlotConfig
+):
     if src.HasField("PlotConfig"):
         serialize_plot_config_from_bind(src.PlotConfig, dst.get_plot_config(), base_config)
     else:
@@ -266,3 +288,35 @@ def serialize_multi_header_series_plotter_from_bind(src: MultiHeaderSeriesPlotte
         val_source = SEPlotSource()
         serialize_plot_source_from_bind(src.ValidationSource, val_source)
         dst.set_validation_source(val_source)
+
+
+def serialize_compare_plotter_to_bind(src: SEComparePlotter, dst: ComparePlotterData):
+    if src.has_plot_config():
+        serialize_plot_config_to_bind(src.get_plot_config(), dst.PlotConfig)
+    if src.has_computed_source():
+        serialize_plot_source_to_bind(src.get_computed_source(), dst.ComputedSource)
+    if src.has_expected_source():
+        serialize_plot_source_to_bind(src.get_expected_source(), dst.ExpectedSource)
+    for f in src.get_failures():
+        failureData = dst.Failures.add()
+        failureData = f
+def serialize_compare_plotter_from_bind(
+    src: ComparePlotterData,
+    dst: SEComparePlotter,
+    base_config: SEPlotConfig
+):
+    if src.HasField("PlotConfig"):
+        serialize_plot_config_from_bind(src.PlotConfig, dst.get_plot_config(), base_config)
+    else:
+        dst.set_plot_config(base_config)
+
+    computed_source = SEPlotSource()
+    serialize_plot_source_from_bind(src.ComputedSource, computed_source)
+    dst.set_computed_source(computed_source)
+
+    expected_source = SEPlotSource()
+    serialize_plot_source_from_bind(src.ExpectedSource, expected_source)
+    dst.set_expected_source(expected_source)
+
+    for failureData in src.Failures:
+        dst.add_failure(failureData)

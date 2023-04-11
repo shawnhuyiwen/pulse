@@ -1,5 +1,6 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
+
 from enum import Enum
 from typing import Tuple
 from copy import deepcopy
@@ -764,3 +765,41 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
         return self._validation_source is not None
     def invalidate_validation_source(self):
         self._validation_source = None
+
+
+class SEComparePlotter(SEPlotter):
+    __slots__ = ["_computed_source", "_expected_source", "_failures"]
+
+    def __init__(self):
+        super().__init__()
+
+        self._computed_source = None
+        self._expected_source = None
+        self._failures = set()
+
+    def get_computed_source(self):
+        return self._computed_source
+    def set_computed_source(self, computed_source: SEPlotSource):
+        self._computed_source = deepcopy(computed_source)
+    def has_computed_source(self):
+        return self._computed_source is not None
+    def invalidate_computed_source(self):
+        self._computed_source = None
+
+    def get_expected_source(self):
+        return self._expected_source
+    def set_expected_source(self, expected_source: SEPlotSource):
+        self._expected_source = deepcopy(expected_source)
+    def has_expected_source(self):
+        return self._expected_source is not None
+    def invalidate_expected_source(self):
+        self._expected_source = None
+
+    def get_failures(self):
+        return self._failures
+    def add_failure(self, header: str):
+        self._failures.add(header)
+    def has_failures(self):
+        return len(self._failures) > 0
+    def invalidate_failures(self):
+        self._failures = set()

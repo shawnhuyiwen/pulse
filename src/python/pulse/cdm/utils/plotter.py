@@ -4,20 +4,19 @@
 import os
 import re
 import sys
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors as mcolors
 from cycler import cycler
 from timeit import default_timer as timer
 from datetime import timedelta
-from typing import List, NamedTuple, Optional
+from typing import List, Optional
 from textwrap import TextWrapper
 from operator import attrgetter
 
 from pulse.cdm.plots import *
 from pulse.cdm.io.plots import serialize_plotter_list_from_file
 from pulse.cdm.utils.file_utils import get_config_dir
-from pulse.cdm.utils.logger import pretty_print, ePrettyPrintType
+from pulse.cdm.utils.logger import LogActionEvent, parse_actions, parse_events
 
 
 def create_plots(plots_file: str, benchmark: bool = False):
@@ -26,6 +25,8 @@ def create_plots(plots_file: str, benchmark: bool = False):
     for p in plotters:
         if isinstance(p, SEMultiHeaderSeriesPlotter):
             multi_header_series_plotter(p, benchmark)
+        elif isinstance(p, SEComparePlotter):
+            compare_plotter(p, benchmark)
         else:
             print(f"ERROR: Unknown plotter type: {p}")
 
@@ -103,7 +104,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         #
         # If the title is missing, one will be generated based on the x and y headers.
         # If the filename is missing, the title will be used as the filename (with
-        # relevant character such as spaces replaced).
+        # relevant characters such as spaces replaced).
         #
         # Since titles are not guaranteed to be unique, neither are filenames;
         # potentially resulting in overwritten files. If you experiences this,
@@ -119,7 +120,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
                 else:
                     print("ERROR: Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
                     continue
-            config.set_output_filename(title.replace(" ", "_").replace("/", "_Per_"))
+            config.set_output_filename(generate_filename(title))
 
         output_filename = config.get_output_filename()
         # Add file extension if needed
@@ -127,13 +128,15 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
             output_filename += config.get_image_properties().get_file_format()
         output_filepath = os.path.join(output_path, output_filename)
 
-        if create_plot(sources,
-                       config,
-                       x_header,
-                       series.get_y_headers(),
-                       x2_header,
-                       y2_headers,
-                       validation_source):
+        if create_plot(
+            sources,
+            config,
+            x_header,
+            series.get_y_headers(),
+            x2_header,
+            y2_headers,
+            validation_source
+        ):
             save_current_plot(output_filepath, config.get_image_properties())
         else:
             print(f"ERROR: Failed to create plot {output_filepath}")
@@ -148,10 +151,140 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         print(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
+def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
+    if benchmark:
+        start = timer()
+
+    computed_source = plotter.get_computed_source()
+    computed_df = computed_source.get_data_frame()
+    expected_source = plotter.get_expected_source()
+    expected_df = expected_source.get_data_frame()
+
+    # Create output directory if it does not exist
+    output_path = "./"
+    if plotter.get_plot_config().has_output_path_override():
+        output_path = plotter.get_plot_config().get_output_path_override()
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    # Need to compare against time
+    x_header = None
+    if not expected_df.empty:
+         for c in expected_df.columns:
+            if re.search('^Time', c):
+                x_header = c
+                break
+    if x_header is None:
+        if not computed_df.empty:
+            print(f"ERROR: There is no data in the expected file? I will plot what you computed...")
+            for c in computed_df.columns:
+                if re.search('^Time', c):
+                    x_header = c
+                    break
+        else:
+            print(f"ERROR: Both expected and computed files seem to be empty?")
+            return
+
+    # Action Event Legend
+    config = plotter.get_plot_config()
+    config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
+    output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
+    output_filepath = os.path.join(output_path, output_filename)
+    if create_plot(
+        [computed_source],
+        config,
+        x_header,
+        [],
+    ):
+        save_current_plot(output_filepath, config.get_image_properties())
+    else:
+        print(f"ERROR: Failed to create legend {output_filepath}")
+        config.set_plot_actions(False)
+        config.set_plot_events(False)
+    clear_current_plot()
+
+    # Helper function to plot every header against x_header
+    def _plot_header(sources: List[SEPlotSource]):
+        if benchmark:
+            start_series = timer()
+
+        config.set_title(generate_title(x_header, y_header))
+        config.set_output_filename(generate_filename(config.get_title()).replace("_vs_", "vs"))
+        config.set_legend_mode(eLegendMode.HideActionEventLegend)
+
+        output_filename = config.get_output_filename()
+        if not os.path.splitext(output_filename)[1]:
+            output_filename += config.get_image_properties().get_file_format()
+        output_filepath = os.path.join(output_path, output_filename)
+
+        x_label = " ".join(
+            [f"{s.get_label() if s.has_label() else s.get_csv_data()} is NaN"
+                for s in sources if s.get_data_frame()[y_header].isna().all()]
+        )
+        if x_label:
+            config.set_x_label(x_label)
+
+        # Update background color based on fail/pass
+        color = "lime"
+        dark_bg_params = {
+            "legend.facecolor" : "dimgrey",
+            "text.color" : "w",
+            "ytick.color" : "w",
+            "xtick.color" : "w",
+            "axes.labelcolor" : "w",
+            "axes.edgecolor" : "w"
+        }
+        if y_header in plotter.get_failures():
+            plt.rcParams.update(dark_bg_params)
+            color = "red"
+
+        if create_plot(
+            sources,
+            config,
+            x_header,
+            [y_header],
+        ):
+            save_current_plot(output_filepath, config.get_image_properties(), facecolor=color)
+        else:
+            print(f"ERROR: Failed to create plot {output_filepath}")
+
+        # Reset
+        clear_current_plot()
+        config.invalidate_x_label()
+        plt.rcParams.update(plt.rcParamsDefault)
+
+        if benchmark:
+            end_series = timer()
+            print(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
+
+    # Plot all expected columns
+    for y_header in expected_df.columns[1:]:
+        if y_header not in computed_df.columns:
+            print(f'ERROR: Computed results did not provide expected result "{y_header}"')
+            continue
+
+        _plot_header([computed_source, expected_source])
+
+    # Plot anything not in expected data
+    for y_header in computed_df.columns[1:]:
+        if y_header in expected_df.columns:
+            continue
+
+        _plot_header([computed_source])
+
+    if benchmark:
+        end = timer()
+        print(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
+
+
 def generate_title(x_header: str, y_header: str):
     if not y_header or not x_header:
         return ""
-    return y_header + " vs "+ x_header
+    return y_header + " vs " + x_header
+
+
+def generate_filename(title: str):
+    return (re.sub("[\(\[].*?[\)\]]", "", title)).replace(" ", "_").replace("/", "_Per_")
 
 
 def percentage_of_baseline(baseline_mode: ePercentageOfBaselineMode,
@@ -183,104 +316,6 @@ def percentage_of_baseline(baseline_mode: ePercentageOfBaselineMode,
     df[xcols] = df[xcols].apply(lambda x: (1-(x / x[0])) * 100.0)
     df[ycols] = df[ycols].apply(lambda x: x * 100.0 / x[0])
     return True
-
-
-class LogActionEvent(NamedTuple):
-    time: float
-    text: str
-    category: str
-
-
-def parse_events(log_file: str, omit: List[str] = []):
-    event_tag = "[Event]"
-    events = []
-    with open(log_file) as f:
-        lines = f.readlines()
-        for line in lines:
-            if len(line) == 0:
-                continue
-            event_idx = line.find(event_tag)
-            if event_idx == -1:
-                continue
-            else:
-                event_text = line[(event_idx+len(event_tag)):].strip()
-                end_time_idx = event_text.find("(s)")
-                if end_time_idx == -1:
-                    end_time_idx = event_text.find(",")
-                event_time = float(event_text[:end_time_idx].strip())
-                event_text = event_text[(event_text.find(",")+1):].strip()
-
-                # Check to see if it should be omitted
-                keep_event = True
-                for o in omit:
-                    if o in event_text:
-                        keep_event = False
-                        break
-                if not keep_event:
-                    continue
-
-                events.append(LogActionEvent(event_time, event_text, "EVENT"))
-
-    return events
-
-
-def parse_actions(log_file: str, omit: List[str] = []):
-    advTime = "AdvanceTime"
-    omit.append(advTime)
-    action_tag = "[Action]"
-    actions = []
-    with open(log_file) as f:
-        lines = f.readlines()
-        idx = 0
-        while idx < len(lines):
-            line = lines[idx]
-            if len(line) == 0:
-                idx += 1
-                continue
-            action_idx = line.find(action_tag)
-            if action_idx == -1:
-                idx += 1
-                continue
-            elif advTime in line:
-                idx += 1
-                continue
-            else:
-                action_text = line
-                # Group 0: Entire match
-                # Group 1: Time
-                match = re.search(r'\[(\d*\.?d*)\(.*\)\]', action_text)
-                if match is None:
-                    print("ERROR: Could not parse actions")
-                    return actions
-                action_time = float(match.group(1))
-                action_text = action_text[(action_idx+len(action_tag)):].lstrip()
-
-                # Find blank line at end of action
-                while (idx + 1) < len(lines) and len(lines[idx+1].strip()) != 0:
-                    idx += 1
-                    line = lines[idx]
-                    action_text = ''.join([action_text, line])
-
-                # Check to see if it should be omitted
-                keep_action = True
-                for o in omit:
-                    if o in action_text:
-                        keep_action = False
-                        break
-                if not keep_action:
-                    idx += 1
-                    continue
-
-                action_text = pretty_print(action_text, ePrettyPrintType.Action)
-
-                # Remove leading spaces on each line
-                action_text = '\n'.join([s.strip() for s in action_text.splitlines()])
-
-                actions.append(LogActionEvent(action_time, action_text, "ACTION"))
-
-            idx += 1
-
-    return actions
 
 
 # Respects existing line breaks
@@ -372,6 +407,31 @@ def create_plot(plot_sources: [SEPlotSource],
         ax3 = ax1.twinx()
         ax3.axis('off')
 
+    # Helper function to plot each header for specified source and axis
+    def _plot_headers(ax, ps, df, x_header, y_headers, y_label):
+        color = ""
+        for y_header in y_headers:
+            line_lbl = ""
+            if ps.has_label():
+                line_lbl = ps.get_label()
+            elif len(y_headers) > 1:
+                line_lbl = y_header
+            else:
+                line_lbl = y_label
+
+            if ps.has_line_format():
+                lns.extend(ax.plot(x_header, y_header, ps.get_line_format(), data=df, label=line_lbl))
+                color = ps.get_line_format()[-1]
+            else:
+                c = next(fmt_cycler)
+                color = c['color']
+                lns.extend(ax.plot(x_header, y_header, **c, data=df, label=line_lbl))
+
+            if plot_config.get_fill_area():
+                ax.fill_between(x_header, y_header, data=df, facecolor=color)
+
+        return color
+
     # Plot data
     for ps in plot_sources:
         baseline_mode = plot_config.get_percent_of_baseline_mode()
@@ -387,25 +447,7 @@ def create_plot(plot_sources: [SEPlotSource],
                                       y2_headers if not validation_source else None):
             return False
 
-        for y_header in y_headers:
-            line_lbl = ""
-            if ps.has_label():
-                line_lbl = ps.get_label()
-            elif len(y_headers) > 1:
-                line_lbl = y_header
-            else:
-                line_lbl = y_label
-
-            if ps.has_line_format():
-                lns.extend(ax1.plot(x_header, y_header, ps.get_line_format(), data=df, label=line_lbl))
-                color = ps.get_line_format()[-1]
-            else:
-                c = next(fmt_cycler)
-                color = c['color']
-                lns.extend(ax1.plot(x_header, y_header, **c, data=df, label=line_lbl))
-
-            if plot_config.get_fill_area():
-                ax1.fill_between(x_header, y_header, data=df, facecolor=color)
+        color = _plot_headers(ax1, ps, df, x_header, y_headers, y_label)
 
         if y2_headers or validation_source:
             ax1.yaxis.label.set_color(color)
@@ -413,60 +455,44 @@ def create_plot(plot_sources: [SEPlotSource],
 
         # Secondary axis, not from validation data
         if not validation_source and y2_headers:
-            for y2_header in y2_headers:
-                line_lbl = ""
-                if ps.has_label():
-                    line_lbl = ps.get_label()
-                elif len(y_headers) > 1:
-                    line_lbl = y2_header
-                else:
-                    line_lbl = y2_label
-
-                if ps.has_line_format():
-                    lns.extend(ax2.plot(x2_header, y2_header, ps.get_line_format(), data=df, label=line_lbl))
-                    color = ps.get_line_format()[-1]
-                else:
-                    c = next(fmt_cycler)
-                    color = c['color']
-                    lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=line_lbl))
-                if plot_config.get_fill_area():
-                    ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
+            color = _plot_headers(ax2, ps, df, x2_header, y2_headers, y2_label)
 
             ax2.yaxis.label.set_color(color)
             ax2.tick_params(axis='y', colors=color)
 
-        # Plot any actions or events if requested
-        if plot_config.get_plot_events() or plot_config.get_plot_actions():
-            # Find log file containing information
-            log_file = None
-            if ps.has_log_file():
-                log_file = ps.get_log_file()
-            else:
-                if ps.has_csv_data():
-                    idx = ps.get_csv_data().rfind("Results.csv")
-                    if idx == -1:
-                        idx = ps.get_csv_data().rfind(".csv")
-                    log_file = ps.get_csv_data()[:idx] + ".log"
+    # Plot any actions or events if requested
+    ps = plot_sources[0]
+    if plot_config.get_plot_events() or plot_config.get_plot_actions():
+        # Find log file containing information
+        log_file = None
+        if ps.has_log_file():
+            log_file = ps.get_log_file()
+        else:
+            if ps.has_csv_data():
+                idx = ps.get_csv_data().rfind("Results.csv")
+                if idx == -1:
+                    idx = ps.get_csv_data().rfind(".csv")
+                log_file = ps.get_csv_data()[:idx] + ".log"
 
-            if log_file and os.path.exists(log_file):
-                actions_events = []
+        if log_file and os.path.exists(log_file):
+            actions_events = []
 
-                # Get events
-                if plot_config.get_plot_events():
-                    actions_events.extend(parse_events(log_file, plot_config.get_omit_events_with()))
+            # Get events
+            if plot_config.get_plot_events():
+                actions_events.extend(parse_events(log_file, plot_config.get_omit_events_with()))
 
-                # Get actions
-                if plot_config.get_plot_actions():
-                    actions_events.extend(parse_actions(log_file, plot_config.get_omit_actions_with()))
+            # Get actions
+            if plot_config.get_plot_actions():
+                actions_events.extend(parse_actions(log_file, plot_config.get_omit_actions_with()))
 
-                # Sort and plot all actions and events
-                actions_events = sorted(actions_events, key=attrgetter('time'))
-                for ae in actions_events:
-                    color = next(action_event_fmt_cycler)['color']
-                    ax3.axvline(x=ae.time, color = color, label = f"{ae.category}:{ae.text}\nt={ae.time}")
-            else:
-                print(f"ERROR: Could not find corresponding log file: {ps.get_csv_data()}")
-                return False
+            # Sort and plot all actions and events
+            actions_events = sorted(actions_events, key=attrgetter('time'))
+            for ae in actions_events:
+                color = next(action_event_fmt_cycler)['color']
+                ax3.axvline(x=ae.time, color = color, label = f"{ae.category}:{ae.text}\nt={ae.time}")
+        else:
+            print(f"ERROR: Could not find corresponding log file: {ps.get_csv_data()}")
+            return False
 
     # Plot validation data if needed
     if validation_source:
@@ -474,24 +500,7 @@ def create_plot(plot_sources: [SEPlotSource],
         if df.empty:
             print(f"ERROR: Data frame is empty: {validation_source.get_csv_data()}")
         elif y2_headers:
-            for y2_header in y2_headers:
-                line_lbl = ""
-                if validation_source.has_label():
-                    line_lbl = validation_source.get_label()
-                elif len(y_headers) > 1:
-                    line_lbl = y2_header
-                else:
-                    line_lbl = y2_label
-
-                if validation_source.has_line_format():
-                    lns.extend(ax2.plot(x2_header, y2_header, validation_source.get_line_format(), data=df, label=line_lbl))
-                    color = validation_source.get_line_format()[-1]
-                else:
-                    c = next(fmt_cycler)
-                    color = c['color']
-                    lns.extend(ax2.plot(x2_header, y2_header, **c, data=df, label=line_lbl))
-                if plot_config.get_fill_area():
-                    ax2.fill_between(x2_header, y2_header, data=df, facecolor=color)
+            color = _plot_headers(ax2, validation_source, df, x2_header, y2_headers, y2_label)
 
             ax2.yaxis.label.set_color(color)
             ax2.tick_params(axis='y', colors=color)
@@ -568,18 +577,21 @@ def create_plot(plot_sources: [SEPlotSource],
 
     return True
 
-def save_current_plot(filename: str, image_props: SEImageProperties):
-    print("Saving plot "+filename)
+
+def save_current_plot(filename: str, image_props: SEImageProperties, facecolor: Optional[str] = None):
+    print(f"Saving plot {filename}")
     figure = plt.gcf()
     # Doing tight layout twice helps prevent legends getting cut off
     plt.tight_layout()
     figure.set_size_inches(image_props.get_width_inch(), image_props.get_height_inch())
     plt.tight_layout()
-    figure.savefig(filename, dpi=image_props.get_dpi())
+    figure.savefig(filename, dpi=image_props.get_dpi(), facecolor=facecolor)
+
 
 def clear_current_plot():
     plt.close('all')
     plt.clf()
+
 
 if __name__ == "__main__":
     benchmark = False

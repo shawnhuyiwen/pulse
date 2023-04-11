@@ -1,7 +1,8 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
+
 from enum import Enum
-from typing import Set
+from typing import List, NamedTuple, Set
 import re
 
 from pulse.cdm.engine import SEAction
@@ -92,3 +93,97 @@ def pretty_print(string: str, print_type: ePrettyPrintType, preserve_camel_case:
     ret = ret.replace('::', ':')
 
     return ret
+
+
+class LogActionEvent(NamedTuple):
+    time: float
+    text: str
+    category: str
+def parse_events(log_file: str, omit: List[str] = []):
+    event_tag = "[Event]"
+    events = []
+    with open(log_file) as f:
+        lines = f.readlines()
+        for line in lines:
+            if len(line) == 0:
+                continue
+            event_idx = line.find(event_tag)
+            if event_idx == -1:
+                continue
+            else:
+                event_text = line[(event_idx+len(event_tag)):].strip()
+                end_time_idx = event_text.find("(s)")
+                if end_time_idx == -1:
+                    end_time_idx = event_text.find(",")
+                event_time = float(event_text[:end_time_idx].strip())
+                event_text = event_text[(event_text.find(",")+1):].strip()
+
+                # Check to see if it should be omitted
+                keep_event = True
+                for o in omit:
+                    if o in event_text:
+                        keep_event = False
+                        break
+                if not keep_event:
+                    continue
+
+                events.append(LogActionEvent(event_time, event_text, "EVENT"))
+
+    return events
+def parse_actions(log_file: str, omit: List[str] = []):
+    advTime = "AdvanceTime"
+    omit.append(advTime)
+    action_tag = "[Action]"
+    actions = []
+    with open(log_file) as f:
+        lines = f.readlines()
+        idx = 0
+        while idx < len(lines):
+            line = lines[idx]
+            if len(line) == 0:
+                idx += 1
+                continue
+            action_idx = line.find(action_tag)
+            if action_idx == -1:
+                idx += 1
+                continue
+            elif advTime in line:
+                idx += 1
+                continue
+            else:
+                action_text = line
+                # Group 0: Entire match
+                # Group 1: Time
+                match = re.search(r'\[(\d*\.?d*)\(.*\)\]', action_text)
+                if match is None:
+                    print("ERROR: Could not parse actions")
+                    return actions
+                action_time = float(match.group(1))
+                action_text = action_text[(action_idx+len(action_tag)):].lstrip()
+
+                # Find blank line at end of action
+                while (idx + 1) < len(lines) and len(lines[idx+1].strip()) != 0:
+                    idx += 1
+                    line = lines[idx]
+                    action_text = ''.join([action_text, line])
+
+                # Check to see if it should be omitted
+                keep_action = True
+                for o in omit:
+                    if o in action_text:
+                        keep_action = False
+                        break
+                if not keep_action:
+                    idx += 1
+                    continue
+
+                action_text = pretty_print(action_text, ePrettyPrintType.Action)
+
+                # Remove leading spaces on each line
+                action_text = '\n'.join([s.strip() for s in action_text.splitlines()])
+
+                actions.append(LogActionEvent(action_time, action_text, "ACTION"))
+
+            idx += 1
+
+    return actions
