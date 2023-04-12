@@ -263,7 +263,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
             print(f'ERROR: Computed results did not provide expected result "{y_header}"')
             continue
 
-        _plot_header([computed_source, expected_source])
+        _plot_header([expected_source, computed_source])
 
     # Plot anything not in expected data
     for y_header in computed_df.columns[1:]:
@@ -420,12 +420,26 @@ def create_plot(plot_sources: [SEPlotSource],
                 line_lbl = y_label
 
             if ps.has_line_format():
-                lns.extend(ax.plot(x_header, y_header, ps.get_line_format(), data=df, label=line_lbl))
+                lns.extend(ax.plot(
+                    x_header,
+                    y_header,
+                    ps.get_line_format(),
+                    data=df,
+                    label=line_lbl,
+                    linewidth=ps.get_line_width(),
+                ))
                 color = ps.get_line_format()[-1]
             else:
                 c = next(fmt_cycler)
                 color = c['color']
-                lns.extend(ax.plot(x_header, y_header, **c, data=df, label=line_lbl))
+                lns.extend(ax.plot(
+                    x_header,
+                    y_header,
+                    **c,
+                    data=df,
+                    label=line_lbl,
+                    linewidth=ps.get_line_width(),
+                ))
 
             if plot_config.get_fill_area():
                 ax.fill_between(x_header, y_header, data=df, facecolor=color)

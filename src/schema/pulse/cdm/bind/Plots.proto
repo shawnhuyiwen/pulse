@@ -80,11 +80,12 @@ message PlotSourceData
 {
   string                              CSVData                   = 1;  /**<< @brief The path and filename of the data file. */
 
-  optional string                     Label                     = 4;  /**<< @brief If provided, label to be used in legend. */
-  optional string                     LineFormat                = 5;  /**<< @brief Plot this source with this format. */
-  optional int32                      StartRow                  = 6;  /**<< @brief Specify the starting row number of the CSV data to include in plot. */
-  optional int32                      EndRow                    = 7;  /**<< @brief Specify the ending row number of the CSV data to include in plot. */
-  optional string                     LogFile                   = 8;  /**<< @brief Specify log file if it does not following usual naming conventions/location. */
+  optional string                     Label                     = 2;  /**<< @brief If provided, label to be used in legend. */
+  optional string                     LineFormat                = 3;  /**<< @brief Plot this source with this format. */
+  optional double                     LineWidth                 = 4;   /**<< @brief Plot this source with this linewidth. */
+  optional int32                      StartRow                  = 5;  /**<< @brief Specify the starting row number of the CSV data to include in plot. */
+  optional int32                      EndRow                    = 6;  /**<< @brief Specify the ending row number of the CSV data to include in plot. */
+  optional string                     LogFile                   = 7;  /**<< @brief Specify log file if it does not following usual naming conventions/location. */
 }
 
 /** @brief Data used to configure x vs y plots. */

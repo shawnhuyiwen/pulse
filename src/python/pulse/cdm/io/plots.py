@@ -163,6 +163,8 @@ def serialize_plot_source_to_bind(src: SEPlotSource, dst: PlotSourceData):
         dst.CSVData = src.get_csv_data()
     if src.has_line_format():
         dst.LineFormat = src.get_line_format()
+    if src.has_line_width():
+        dst.LineWidth = src.get_line_width()
     if src.has_label():
         dst.Label = src.get_label()
     if src.has_start_row():
@@ -175,6 +177,8 @@ def serialize_plot_source_from_bind(src: PlotSourceData, dst: SEPlotSource):
     dst.set_csv_data(src.CSVData)
     if src.HasField("LineFormat"):
         dst.set_line_format(src.LineFormat)
+    if src.HasField("LineWidth"):
+        dst.set_line_width(src.LineWidth)
     if src.HasField("Label"):
         dst.set_label(src.Label)
     if src.HasField("StartRow"):

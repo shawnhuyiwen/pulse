@@ -491,13 +491,14 @@ class SEPlotConfig():
 
 class SEPlotSource():
     __slots__ = ["_csv_data", "_log_file", "_df", "_label",
-                 "_line_format", "_start_row", "_end_row"]
+                 "_line_format", "_line_width", "_start_row", "_end_row"]
 
     def __init__(self):
         self._csv_data = None
         self._log_file = None
         self._label = None
         self._line_format = ""
+        self._line_width = None
         self._start_row = None
         self._end_row = None
 
@@ -546,6 +547,15 @@ class SEPlotSource():
         return len(self._line_format) > 0
     def invalidate_line_format(self):
         self._line_format = ""
+
+    def get_line_width(self):
+        return self._line_width
+    def set_line_width(self, width: float):
+        self._line_width = width
+    def has_line_width(self):
+        return self._line_width is not None
+    def invalidate_line_width(self):
+        self._line_width = None
 
     def get_start_row(self):
         return self._start_row
