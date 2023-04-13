@@ -389,6 +389,8 @@ def serialize_patient_configuration_from_bind(src: PatientConfigurationData, dst
 
 # Data Requests and Manager
 def serialize_data_request_to_bind(src: SEDataRequest, dst: DataRequestData):
+    if src.has_action_name():
+        dst.ActionName = src.get_action_name()
     if src.has_compartment_name():
         dst.CompartmentName = src.get_compartment_name()
     if src.has_substance_name():

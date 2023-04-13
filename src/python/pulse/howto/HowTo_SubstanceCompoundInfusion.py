@@ -2,17 +2,24 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.engine import eSerializationFormat
-from pulse.cdm.patient_actions import SESubstanceCompoundInfusion, eSubstance_Administration
-from pulse.cdm.scalars import MassPerVolumeUnit, VolumePerTimeUnit, VolumeUnit, SEScalarVolume
+from pulse.cdm.patient_actions import SESubstanceCompoundInfusion
+from pulse.cdm.scalars import VolumePerTimeUnit, VolumeUnit
 from pulse.engine.PulseEngine import PulseEngine
+from pulse.cdm.engine import SEDataRequest, SEDataRequestManager
 
 def HowTo_CompoundSubstanceInfusion():
     pulse = PulseEngine()
     pulse.set_log_filename("./test_results/howto/HowTo_SubstanceCompoundInfusion.py.log")
     pulse.log_to_console(True)
 
-    # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.json", None):
+    data_requests = [
+        SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL),
+        SEDataRequest.create_physiology_request("CardiacOutput", unit=VolumePerTimeUnit.L_Per_min),
+        SEDataRequest.create_action_substance_request("SubstanceCompoundInfusion", "Blood", "BagVolume", unit=VolumeUnit.mL)
+    ]
+    data_mgr = SEDataRequestManager(data_requests)
+
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", data_mgr):
         print("Unable to load initial state file")
         return
 
@@ -29,9 +36,10 @@ def HowTo_CompoundSubstanceInfusion():
     pulse.process_action(substance_compound)
 
     # Advance some time and print out the vitals
-    pulse.advance_time_s(30)
-    results = pulse.pull_data()
-    print(results)
+    for i in range(6):
+        pulse.advance_time_s(5)
+        results = pulse.pull_data()
+        print(results)
 
 HowTo_CompoundSubstanceInfusion()
 

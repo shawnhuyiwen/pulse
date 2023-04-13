@@ -371,9 +371,9 @@ class eDataRequest_category(Enum):
     MechanicalVentilator = 14
 
 class SEDataRequest:
-    __slots__ = ['_category', '_compartment_name', '_substance_name', '_property_name', '_unit']
+    __slots__ = ['_category', '_action_name', '_compartment_name', '_substance_name', '_property_name', '_unit']
 
-    def __init__(self, category: eDataRequest_category, compartment:str=None, substance:str=None, property:str=None, unit:SEScalarUnit=None):
+    def __init__(self, category: eDataRequest_category, action:str=None, compartment:str=None, substance:str=None, property:str=None, unit:SEScalarUnit=None):
         if category is None:
             raise Exception("Must provide a Data Request Category")
         if property is None:
@@ -386,6 +386,7 @@ class SEDataRequest:
         if (substance is None and category is eDataRequest_category.Substance):
             raise Exception("Must provide a Substance Name for Substance Data Requests")
         self._category = category
+        self._action_name = action
         self._compartment_name = compartment
         self._substance_name = substance
         self._property_name = property
@@ -396,6 +397,8 @@ class SEDataRequest:
 
     def __repr__(self):
         out_string = ""
+        if self.has_action_name():
+            out_string += "{} - ".format(self._action_name)
         if self.has_compartment_name():
             out_string += "{} - ".format(self._compartment_name)
         if self.has_substance_name():
@@ -415,6 +418,17 @@ class SEDataRequest:
     @classmethod
     def create_environment_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.Environment, property=property,  unit=unit)
+
+    @classmethod
+    def create_action_request(cls, action:str, property:str, unit:SEScalarUnit=None):
+        return cls(eDataRequest_category.Action, action=action, property=property, unit=unit)
+    @classmethod
+    def create_action_compartment_request(cls, action:str, compartment:str, property:str, unit:SEScalarUnit=None):
+        return cls(eDataRequest_category.Action, action=action, compartment=compartment, property=property, unit=unit)
+    @classmethod
+    def create_action_substance_request(cls, action:str, substance:str, property: str, unit: SEScalarUnit = None):
+        return cls(eDataRequest_category.Action, action=action, substance=substance, property=property, unit=unit)
+
     @classmethod
     def create_gas_compartment_request(cls, compartment:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.GasCompartment, compartment=compartment, property=property,  unit=unit)
@@ -438,6 +452,9 @@ class SEDataRequest:
     @classmethod
     def create_thermal_compartment_request(cls, compartment:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.ThermalCompartment, compartment=compartment, property=property,  unit=unit)
+
+    def create_tissue_request(cls, compartment:str, property:str, unit:SEScalarUnit=None):
+        return cls(eDataRequest_category.TissueCompartment, compartment=compartment, property=property,  unit=unit)
 
     @classmethod
     def create_substance_request(cls, substance:str, property:str, unit:SEScalarUnit=None):
@@ -466,6 +483,10 @@ class SEDataRequest:
         return self._compartment_name is not None
     def get_compartment_name(self):
         return self._compartment_name
+    def has_action_name(self):
+        return self._action_name is not None
+    def get_action_name(self):
+        return self._action_name
     def has_substance_name(self):
         return self._substance_name is not None
     def get_substance_name(self):

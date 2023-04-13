@@ -326,6 +326,20 @@ namespace Pulse.CDM
       return dr;
     }
 
+    public static SEDataRequest CreateAnesthesiaMachineDataRequest(string property)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.AnesthesiaMachine);
+      dr.PropertyName = property;
+      return dr;
+    }
+    public static SEDataRequest CreateAnesthesiaMachineDataRequest(string property, Unit unit)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.AnesthesiaMachine);
+      dr.PropertyName = property;
+      dr.Unit = unit;
+      return dr;
+    }
+
     public static SEDataRequest CreateECGDataRequest(string property)
     {
       SEDataRequest dr = new SEDataRequest(eDataRequest_Category.ECG);
@@ -335,6 +349,34 @@ namespace Pulse.CDM
     public static SEDataRequest CreateECGDataRequest(string property, Unit unit)
     {
       SEDataRequest dr = new SEDataRequest(eDataRequest_Category.ECG);
+      dr.PropertyName = property;
+      dr.Unit = unit;
+      return dr;
+    }
+
+    public static SEDataRequest CreateECMODataRequest(string property)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.ECMO);
+      dr.PropertyName = property;
+      return dr;
+    }
+    public static SEDataRequest CreateECMODataRequest(string property, Unit unit)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.ECMO);
+      dr.PropertyName = property;
+      dr.Unit = unit;
+      return dr;
+    }
+
+    public static SEDataRequest CreateInhalerDataRequest(string property)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.Inhaler);
+      dr.PropertyName = property;
+      return dr;
+    }
+    public static SEDataRequest CreateInhalerDataRequest(string property, Unit unit)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.Inhaler);
       dr.PropertyName = property;
       dr.Unit = unit;
       return dr;
