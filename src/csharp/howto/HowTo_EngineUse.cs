@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Pulse;
 using Pulse.CDM;
 
@@ -74,7 +73,8 @@ namespace HowTo_UseEngine
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
       // In addition to getting this data back via this API
       // You can have Pulse write the data you have requested to a CSV file
-      data_mgr.SetResultsFilename("./test_results/howto/HowTo_EngineUse.cs.csv");
+      string csvFilename = "./test_results/howto/HowTo_EngineUse.cs.csv";
+      data_mgr.SetResultsFilename(csvFilename);
       // Create a reference to a double[] that will contain the data returned from Pulse
       double[] data_values;
       // data_values[0] is ALWAYS the simulation time in seconds
@@ -354,6 +354,11 @@ namespace HowTo_UseEngine
         // And write it out to the console
         data_mgr.WriteData(data_values);
       }
+
+      // Close out the engine so we can open our csv file
+      pulse.Clear();
+      string text = File.ReadAllText(csvFilename);
+      Console.WriteLine(text);
     }
   }
 }

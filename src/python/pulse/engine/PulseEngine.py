@@ -47,6 +47,9 @@ class PulseEngine:
         self._spare_time_s = 0
         self._dt_s = self.__pulse.get_timestep("s")
 
+    def clear(self):
+        self.__pulse.clear();
+
     def serialize_from_file(self, state_file: str,
                                   data_request_mgr: SEDataRequestManager):
         # Process requests and setup our results structure

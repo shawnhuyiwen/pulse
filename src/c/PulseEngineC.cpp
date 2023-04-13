@@ -77,6 +77,12 @@ C_EXPORT bool C_CALL ExecuteScenario(const char* sceOpts, int format)
 }
 
 extern "C"
+C_EXPORT void C_CALL Clear(PhysiologyEngineThunk * thunk)
+{
+  thunk->Clear();
+}
+
+extern "C"
 C_EXPORT bool C_CALL SerializeFromFile(PhysiologyEngineThunk * thunk, const char* filename, const char* data_requests, int data_requests_format)
 {
   return thunk->SerializeFromFile(filename==nullptr?"":filename, data_requests==nullptr?"":data_requests, (eSerializationFormat)data_requests_format);

@@ -19,6 +19,8 @@ public:
   PhysiologyEngineThunk(const std::string& dataDir = "./");
   virtual ~PhysiologyEngineThunk();
 
+  virtual void Clear();
+
   //virtual void SetConfigurationOverride(std::string const& config)=0; // Not Implemented
 
   bool SerializeFromFile(std::string const& filename, std::string const& data_requests, eSerializationFormat data_requests_format);

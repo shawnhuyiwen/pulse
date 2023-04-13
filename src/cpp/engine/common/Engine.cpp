@@ -67,6 +67,11 @@ namespace pulse
     return GetController().InitializeEngine(patient_configuration);
   }
 
+  void Engine::Clear()
+  {
+    GetController().Clear();
+  }
+
   bool Engine::SetConfigurationOverride(const SEEngineConfiguration* config)
   {
     return GetController().SetConfigurationOverride(config);

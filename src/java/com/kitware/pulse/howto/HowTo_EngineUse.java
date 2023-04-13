@@ -356,6 +356,11 @@ public class HowTo_EngineUse
       Log.error("Failed to get patient assessment");
     Log.info("Red Blood Count "+cbc.getRedBloodCellCount());
     Log.info("White Blood Count "+cbc.getWhiteBloodCellCount());
+    
+    // Release any files
+    // We can keep using this engine if we want
+    // We just need to reinitialize it
+    pe.clear();
 
     // Be nice to your memory and deallocate the native memory associated with this engine if you are done with it
     pe.cleanUp();

@@ -41,5 +41,7 @@ def HowTo_CompoundSubstanceInfusion():
         results = pulse.pull_data()
         print(results)
 
+    pulse.clear()
+
 HowTo_CompoundSubstanceInfusion()
 

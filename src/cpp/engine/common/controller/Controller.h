@@ -251,6 +251,8 @@ namespace pulse
     virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration);
     virtual bool IsReady() const;
 
+    virtual void Clear();
+
     virtual bool SetConfigurationOverride(const SEEngineConfiguration* config);
 
     virtual void SetSimulationTime(const SEScalarTime& time);

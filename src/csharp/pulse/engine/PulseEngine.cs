@@ -51,7 +51,12 @@ namespace Pulse
     protected abstract IntPtr BaseAllocate(int model, string data_dir);
 
     protected abstract void BaseDeallocate();
-    
+
+    protected abstract void BaseClear();
+    public void Clear()
+    {
+      BaseClear();
+    }
 
     protected abstract double BaseGetTimeStep(string unit);
     public double GetTimeStep_s()
@@ -367,6 +372,13 @@ namespace Pulse
     protected override void BaseDeallocate()
     {
       Deallocate(pulse_cptr);
+    }
+
+    [DllImport(Attribute)]
+    private static extern void Clear(IntPtr pulse);
+    protected override void BaseClear()
+    {
+      Clear(pulse_cptr);
     }
 
     [DllImport(Attribute)]

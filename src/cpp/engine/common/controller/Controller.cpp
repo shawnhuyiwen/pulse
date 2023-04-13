@@ -283,6 +283,7 @@ namespace pulse
 
   bool Controller::InitializeEngine(const SEPatientConfiguration& patient_configuration)
   {
+    Clear();
     Info("Initializing engine");
     LogBuildInfo();
 
@@ -406,10 +407,6 @@ namespace pulse
       }
     }
 
-    m_Actions->Clear();
-    m_Conditions->Clear();
-    m_EventManager->Clear();
-
     // This will also Initialize the environment
     // Due to needing the initial environment values for circuits to construct properly
     Info("Creating Circuits and Compartments");
@@ -499,6 +496,25 @@ namespace pulse
       return false;
     }
     return true;
+  }
+
+  void Controller::Clear()
+  {
+    m_State = EngineState::NotReady;
+    m_Actions->Clear();
+    m_Conditions->Clear();
+    m_EventManager->Clear();
+
+    m_AirwayMode = eAirwayMode::Free;
+    m_Intubation = eSwitch::Off;
+    if (m_EngineTrack)
+      m_EngineTrack->ResetFile();
+
+    m_CurrentTime.SetValue(0, TimeUnit::s);
+    m_SimulationTime.SetValue(0, TimeUnit::s);
+    m_SpareAdvanceTime_s = 0;
+
+    Info("Clearing engine");
   }
 
   void Controller::CheckIntubation()

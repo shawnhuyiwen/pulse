@@ -93,6 +93,12 @@ public class PulseEngine
     nativeObj=nativeAllocate(dataDir, m.ordinal());
     timeStep_s = nativeGetTimeStep(nativeObj,"s");
   }
+  
+  // Release any files
+  public void clear()
+  {
+    nativeClear(nativeObj);
+  }
 
   public void finalize()
   {
@@ -539,6 +545,7 @@ public class PulseEngine
   protected native double nativeGetTimeStep(long nativeObj, String unit);
   static protected native String nativeGetVersion();
   static protected native String nativeGetHash();
+  static protected native void nativeClear(long nativeObj);
   
   protected native boolean nativeSerializeFromFile(long nativeObj, String stateFile, String dataRequests, int dataRequestsFormat);
   protected native boolean nativeSerializeToFile(long nativeObj, String stateFile);

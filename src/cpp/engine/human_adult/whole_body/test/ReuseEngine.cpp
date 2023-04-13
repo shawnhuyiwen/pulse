@@ -125,6 +125,7 @@ namespace pulse { namespace human_adult_whole_body
     {
       testCase.AddFailure("Second stabilization not equal to first stabilization :d5");
     }
+    m_Logger->Info("Finished with "+std::to_string(testCase.GetFailures().size())+ " Failures");
     testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.json");
   }
 END_NAMESPACE_EX

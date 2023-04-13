@@ -34,6 +34,8 @@ namespace pulse
     virtual bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m) override;
     virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration) override;
 
+    virtual void Clear() override;
+
     virtual bool SetConfigurationOverride(const SEEngineConfiguration* config) override;
 
     virtual const SEConditionManager& GetConditionManager() const override;

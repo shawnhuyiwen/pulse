@@ -36,6 +36,11 @@ PhysiologyEngineThunk::~PhysiologyEngineThunk()
   delete[] m_requestedData;
 }
 
+void PhysiologyEngineThunk::Clear()
+{
+  m_engine->Clear();
+}
+
 bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, eSerializationFormat data_requests_format)
 {
   if (!m_engine->SerializeFromFile(filename))

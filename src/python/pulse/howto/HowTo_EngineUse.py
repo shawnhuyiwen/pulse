@@ -215,5 +215,9 @@ def HowTo_UseEngine():
     results = pulse.pull_data()
     data_req_mgr.to_console(results)
 
+    # When we are done with the engine,
+    # we can clear the engine to release any files it's been writing to
+    pulse.clear()
+
 HowTo_UseEngine()
 

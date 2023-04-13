@@ -75,6 +75,15 @@ JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeDelete(JN
   SAFE_DELETE(engineJNI);
 }
 
+extern "C"
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeClear(JNIEnv * env, jobject obj, jlong ptr)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+  engineJNI->Clear();
+}
+
 //////////////////////
 // SCENARIO SUPPORT //
 //////////////////////
