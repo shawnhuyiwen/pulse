@@ -120,7 +120,6 @@ bool SEEnvironment::ProcessChange(SEInitialEnvironmentalConditions& change, SESu
     std::string cfg_file = change.GetEnvironmentalConditionsFile();
     if (!change.GetEnvironmentalConditions().SerializeFromFile(cfg_file, subMgr))
     {
-      /// \error Unable to read Configuration Action file
       Error("Could not read provided SEInitialEnvironment file");
       return false;
     }
@@ -142,7 +141,6 @@ bool SEEnvironment::ProcessChange(SEChangeEnvironmentalConditions& change, SESub
     std::string cfg_file = change.GetEnvironmentalConditionsFile();
     if (!change.GetEnvironmentalConditions().SerializeFromFile(cfg_file, subMgr))
     {
-      /// \error Unable to read Configuration Action file
       Error("Could not read provided Environmental Conditions file");
       return false;
     }

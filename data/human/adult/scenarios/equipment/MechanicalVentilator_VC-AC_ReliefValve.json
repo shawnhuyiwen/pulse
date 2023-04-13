@@ -1,6 +1,6 @@
 {
-  "Name": "MechanicalVentilator_VC-AC_Healthy",
-  "Description": "Apply a VC-AC mode ventilator to a healthy patient.",
+  "Name": "MechanicalVentilator_VC-AC_ReliefValve",
+  "Description": "Apply a VC-AC mode ventilator to a healthy patient and intentionally trigger the relief valve.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
     "StandardDataRequests.json",

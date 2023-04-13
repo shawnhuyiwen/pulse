@@ -1,5 +1,5 @@
 {
-  "Name": "BagValveMaskVariedConfiguration",
+  "Name": "BagValveMaskApnea",
   "Description": "Use the bag valve mask on a patient with apnea.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [

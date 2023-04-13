@@ -66,6 +66,9 @@ void CommonDataModelTest::FillFunctionMap()
 {
   //Fill a map that ties unit test names to their actual functions
   cdmMap.insert(std::make_pair("BasicCircuitTest", &CommonDataModelTest::BasicCircuitTest));
+  cdmMap.insert(std::make_pair("MultiphysicsElectricalCircuitTest", &CommonDataModelTest::MultiphysicsElectricalCircuitTest));
+  cdmMap.insert(std::make_pair("MultiphysicsFluidCircuitTest", &CommonDataModelTest::MultiphysicsFluidCircuitTest));
+  cdmMap.insert(std::make_pair("MultiphysicsThermalCircuitTest", &CommonDataModelTest::MultiphysicsThermalCircuitTest));
 
   cdmMap.insert(std::make_pair("SeriesRCDCTest", &CommonDataModelTest::SeriesRCDCTest));
   cdmMap.insert(std::make_pair("SeriesRCSINTest", &CommonDataModelTest::SeriesRCSINTest));

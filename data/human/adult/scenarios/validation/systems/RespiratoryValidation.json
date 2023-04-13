@@ -1,7 +1,7 @@
 { "Scenario":
   {
     "Name": "RespiratoryValidation",
-    "Description": "Validation of Respiratory Ssytem data.",
+    "Description": "Validation of Respiratory Sytem data.",
     "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager":
     {

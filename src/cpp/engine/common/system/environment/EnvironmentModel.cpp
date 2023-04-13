@@ -173,7 +173,6 @@ namespace pulse
       }
       if (std::abs(1.0 - totalFraction) > 1e-6) //Allow for a little bit of numerical error
       {
-        /// \error Fatal: Total ambient/environment gas volume fractions must sum to 1.0.
         std::stringstream ss;
         ss << "Total ambient/environment gas volume fractions must sum to 1.0. Current total fraction is " << totalFraction;
         Fatal(ss);
@@ -324,7 +323,6 @@ namespace pulse
       SEActiveConditioning& ah = ta.GetActiveHeating();
       if (ah.HasSurfaceArea() && ah.HasSurfaceAreaFraction())
       {
-        ///\error Warning: SurfaceArea and SurfaceAreaFraction are both set. The largest fraction will be used.
         Warning("SurfaceArea and SurfaceAreaFraction are both set. The largest fraction will be used.");
         dEffectiveAreaFraction = MAX(ah.GetSurfaceArea(AreaUnit::m2) / dSurfaceArea_m2, ah.GetSurfaceAreaFraction().GetValue());
         ah.GetSurfaceAreaFraction().SetValue(dEffectiveAreaFraction);
@@ -340,7 +338,6 @@ namespace pulse
       }
       else
       {
-        ///\error Warning: Neither SurfaceArea nor SurfaceAreaFraction are set. A fraction of 1 will be used.
         Warning("Neither SurfaceArea nor SurfaceAreaFraction are set. A fraction of 1 will be used.");
         dEffectiveAreaFraction = 1.0;
         ah.GetSurfaceAreaFraction().SetValue(dEffectiveAreaFraction);
@@ -348,7 +345,6 @@ namespace pulse
 
       if (dEffectiveAreaFraction > 1.0)
       {
-        ///\error Warning: Thermal application effective area exceeds the total skin surface area. A fraction of 1 will be used.
         Warning("Thermal application effective area exceeds the total skin surface area. A fraction of 1 will be used.");
         dEffectiveAreaFraction = 1.0;
         ah.GetSurfaceAreaFraction().SetValue(dEffectiveAreaFraction);
@@ -363,7 +359,6 @@ namespace pulse
       SEActiveConditioning& ac = ta.GetActiveCooling();
       if (ac.HasSurfaceArea() && ac.HasSurfaceAreaFraction())
       {
-        ///\error Warning: SurfaceArea and SurfaceAreaFraction are both set. The largest fraction will be used.
         Warning("SurfaceArea and SurfaceAreaFraction are both set. The largest fraction will be used.");
         dEffectiveAreaFraction = MAX(ac.GetSurfaceArea(AreaUnit::m2) / dSurfaceArea_m2, ac.GetSurfaceAreaFraction().GetValue());
         ac.GetSurfaceAreaFraction().SetValue(dEffectiveAreaFraction);
@@ -379,7 +374,6 @@ namespace pulse
       }
       else
       {
-        ///\error Warning: Neither SurfaceArea nor SurfaceAreaFraction are set. A fraction of 1 will be used.
         Warning("Neither SurfaceArea nor SurfaceAreaFraction are set. A fraction of 1 will be used.");
         dEffectiveAreaFraction = 1.0;
         ac.GetSurfaceAreaFraction().SetValue(dEffectiveAreaFraction);
@@ -387,7 +381,6 @@ namespace pulse
 
       if (dEffectiveAreaFraction > 1.0)
       {
-        ///\error Warning: Thermal application effective area exceeds the total skin surface area. A fraction of 1 will be used.
         Warning("Thermal application effective area exceeds the total skin surface area. A fraction of 1 will be used.");
         dEffectiveAreaFraction = 1.0;
         ac.GetSurfaceAreaFraction().SetValue(dEffectiveAreaFraction);
@@ -407,7 +400,6 @@ namespace pulse
       SEAppliedTemperature& ap = ta.GetAppliedTemperature();
       if (ap.HasSurfaceArea() && ap.HasSurfaceAreaFraction())
       {
-        ///\error Warning: AppliedSurfaceArea and AppliedSurfaceAreaFraction are both set. The largest fraction will be used.
         Warning("AppliedSurfaceArea and AppliedSurfaceAreaFraction are both set. The largest fraction will be used.");
         dEffectiveAreaFraction = MAX(ap.GetSurfaceArea(AreaUnit::m2) / dSurfaceArea_m2, ap.GetSurfaceAreaFraction().GetValue());
         ap.GetSurfaceAreaFraction().SetValue(dEffectiveAreaFraction);
@@ -423,7 +415,6 @@ namespace pulse
       }
       else
       {
-        ///\error Warning: Neither AppliedSurfaceArea nor AppliedSurfaceAreaFraction are set. A fraction of 1 will be used.
         Warning("Neither AppliedSurfaceArea nor AppliedSurfaceAreaFraction are set. A fraction of 1 will be used.");
         dEffectiveAreaFraction = 1.0;
         ap.GetSurfaceAreaFraction().SetValue(dEffectiveAreaFraction);
@@ -431,7 +422,6 @@ namespace pulse
 
       if (dEffectiveAreaFraction > 1.0)
       {
-        ///\error Warning: Thermal application effective area exceeds the total skin surface area. A fraction of 1 will be used.
         Warning("Thermal application effective area exceeds the total skin surface area. A fraction of 1 will be used.");
         dEffectiveAreaFraction = 1.0;
         ap.GetSurfaceAreaFraction().SetValue(dEffectiveAreaFraction);

@@ -96,7 +96,7 @@ System Design
 Background and Scope
 --------------------
 
-### Existing
+### Previous Research
 
 The %Respiratory Model has its roots in the mathematical model of
 Yashuri Fukui and N. Ty Smith @cite FukuiSmith1981hybrid . The researchers
@@ -107,7 +107,7 @@ The %Respiratory Model in the engine is an
 extension of the work by Fukui and Smith. This model was developed and released
 by Advanced Simulation Corporation as part of the simulator, Body Simulation for
 Anesthesia&trade;. This later formed the backbone of the HumanSim&trade; physiology engine @cite Clipp2012Humansim . 
-The basic elements of the %Respiratory System were advanced by the BioGears program before being forked and
+The basic elements of the legacy %Respiratory System were advanced by the BioGears program before being forked and
 further developed and improved to allow realistic mechanical responses to pathological conditions.
 
 ### Approach
@@ -1198,12 +1198,12 @@ When positive pressure ventilation is applied (i.e., mechanical ventilator or an
  <tr><td>Fatigue Factor</td><td>Respiratory</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.87</td><td>0.76</td><td>0.64</td></tr>
 </table>
 
-Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure 17 shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD.
+Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure 17 shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD. The conscious respiration action was used to exhale to the expiratory reserve volume and inhale to the inspiratory capacity.
 
 @htmlonly
 <center>
-<a href="./Images/Respiratory/FlowVolumeCurves.png">
-<img src="./Images/Respiratory/FlowVolumeCurves.png" width="800"></a>
+<a href="./plots/Respiratory/FlowVolumeCurves.jpg">
+<img src="./plots/Respiratory/FlowVolumeCurves.jpg" width="800"></a>
 <br>
 </center>
 @endhtmlonly
@@ -1213,8 +1213,8 @@ Modifications to respiratory circuit resistances and compliances can further be 
 
 @htmlonly
 <center>
-<a href="./Images/Respiratory/SpirometryVolumeCurves.png">
-<img src="./Images/Respiratory/SpirometryVolumeCurves.png" width="800"></a>
+<a href="./plots/Respiratory/SpirometryVolumeCurves.jpg">
+<img src="./plots/Respiratory/SpirometryVolumeCurves.jpg" width="800"></a>
 <br>
 </center>
 @endhtmlonly
@@ -1476,19 +1476,31 @@ The %Respiratory System was validated quantitatively and qualitatively under res
 Validation - Resting Physiologic State
 --------------------------------------
 
-The %Respiratory Model outputs a number of system-level and compartment-level resting physiologic parameters. The tables below compare the values of system- and compartment-level parameters obtained from the model with referenced values. The outputs from the model correspond to the system- and compartment-level respiratory related values of the standard patient (77kg adult male)  under resting physiologic conditions. As shown in Table 3, the majority of the physiological variables show a good match with the literature. The outputs for the major respiratory variables, such as respiration rate, tidal volume, and pulmonary ventilation specifically match well with the reference data. 
+The %Respiratory Model outputs a number of system-level and compartment-level resting physiologic parameters. The tables below compare the values of system- and compartment-level parameters obtained from the model with referenced values. The outputs from the model correspond to the system- and compartment-level respiratory related values of the standard male and female patients under resting physiologic conditions. As shown in Table 3, the majority of the physiological variables show a good match with the literature. The outputs for the major respiratory variables, such as respiration rate, tidal volume, and pulmonary ventilation specifically match well with the reference data. 
 
 <center>
 <i>Table 3. Validation of the resting physiologic state of the %Respiratory System. The table shows comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data. The deviations in end tidal carbon dioxide fraction and transpulmonary pressure can be attributed to the tuned parameters used in the model that are selected to meet the major system level physiological parameters.</i>
 </center><br>
 
+<b>Standard Male</b>
+
 @insert ./test_results/tables/Respiratory-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/Respiratory-StandardFemaleValidationTable.md
 
 <center>
 <i>Table 4. Validation table for the resting physiologic states. The table shows comparison of compartment-level outputs from the engine to referenced values. The majority of the variables show good match with the validation data. There are significant deviations in the carina flow and the dead space volumes. Future versions will address these issues.</i>
 </center><br>
 
+<b>Standard Male</b>
+
 @insert ./test_results/tables/RespiratoryCompartments-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/RespiratoryCompartments-StandardFemaleValidationTable.md
 
 @anchor respiratory-scenario
 Scenario Validation

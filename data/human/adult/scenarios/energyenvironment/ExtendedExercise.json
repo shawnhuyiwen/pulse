@@ -1,5 +1,5 @@
 {
-  "Name": "ExerciseStages",
+  "Name": "ExtendedExercise",
   "Description": "Tests exercise physiology by increasing intensity.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [

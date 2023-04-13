@@ -35,7 +35,7 @@ The %Environment system is used to meet the following requirements:
 - Solar and surrounding material (i.e. walls) considerations
 - Active heating and cooling
 
-### Existing Research
+### Previous Research
 One of the most comprehensive analysis of human interaction with typical thermal environments is contained within the American Society of Heating, Refrigerating, and Air-Conditioning Engineers (ASHRAE) Handbook - specifically the Thermal Comfort chapter @cite handbook2013fundamentals. The International Organization for Standardization (ISO) standard 7730:2005: Ergonomics of the Thermal %Environment contains additional data and analyses @cite ISOPDF. Both of these publications are focused on occupant thermal comfort for indoor environment planning and thus make assumptions that are not valid for some of the extreme environments required by the engine. Data and analyses from these publications were heavily leveraged during development of the environment system. Other existing research includes the high-level heat transfer analysis focused on medical and biological applications reported in Ref. @cite shitzer1985heat, as well as experimental and computational explorations of thermoregulation @cite mccutchan1951respiratory @cite oliveira2008measuring @cite de1997convective @cite fiala1999computer.
 
 ### Approach

@@ -1,7 +1,7 @@
 { "Scenario":
   {
-    "Name": "EnergyValidation",
-    "Description": "Validation of Energy data.",
+    "Name": "EndocrineValidation",
+    "Description": "Validation of Endocrine data.",
     "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager":
     { 

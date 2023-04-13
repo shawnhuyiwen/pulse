@@ -1,6 +1,6 @@
 {
   "Name": "CarbonMonoxideExtreme",
-  "Description": "Exposure to carbon monoxide at 200ppm.",
+  "Description": "Exposure to carbon monoxide at 5000ppm.",
   "PatientConfiguration": {
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{

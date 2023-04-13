@@ -54,7 +54,6 @@ bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& act
     return true;
   }
 
-  /// \error Unsupported Action
   Error("Unsupported Environment Action");
   return false;
 }

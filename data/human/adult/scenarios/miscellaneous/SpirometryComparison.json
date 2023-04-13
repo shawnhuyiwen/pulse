@@ -1,5 +1,5 @@
 {
-  "Name": "Spirometry",
+  "Name": "SpirometryComparison",
   "Description": "Perform a spirometry breath.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
@@ -53,8 +53,6 @@
         "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.0 }}
       }}
     },
-
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" }}}},
 
     { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
       {

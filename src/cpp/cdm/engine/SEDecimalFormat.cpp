@@ -9,8 +9,8 @@
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
 {
   Clear();
-  if (dfault != nullptr) 
-    Set(*dfault); 
+  if (dfault != nullptr)
+    Set(*dfault);
 }
 
 SEDecimalFormat::~SEDecimalFormat()

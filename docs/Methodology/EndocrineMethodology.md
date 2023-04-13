@@ -114,7 +114,7 @@ Results and Conclusions
 Validation - Resting Physiologic State
 --------------------------------------
 
-In the engine, the hormone epinephrine is the same substance as the synthetic epinephrine available for injection. This generic epinephrine substance was validated as part of the drugs validation detailed in the @ref drugs-validation-pharmacodynamic "Drugs Validation's Table&nbsp;1". At resting physiological levels, epinephrine has no pharmacodynamic effects.
+In the engine, the hormone epinephrine is the same substance as the synthetic epinephrine available for injection. This generic epinephrine substance was validated as part of the drugs validation detailed in the @ref drugs-validation-pharmacodynamic "Drugs Validation's Table 1". At resting physiological levels, epinephrine has no pharmacodynamic effects.
 
 Validation - Actions
 --------------------------------------

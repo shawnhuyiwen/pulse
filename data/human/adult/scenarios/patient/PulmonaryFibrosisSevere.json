@@ -1,5 +1,5 @@
 {
-  "Name": "SeverPulmonaryFibrosis",
+  "Name": "PulmonaryFibrosisSevere",
   "Description": "Severe pulmonary fibrosis in both lungs.",
   "PatientConfiguration": {
     "PatientFile": "StandardMale.json",

@@ -16,7 +16,7 @@ Introduction
 ### Renal Physiology
 
 The renal (or urinary) system's primary job is filtering the blood to remove waste and manage
-fluid volume, which helps the body maintain homeostasis.  
+fluid volume, which helps the body maintain homeostasis.
 
 Figure 1 shows the entire system and is labeled with the following:
 
@@ -42,17 +42,17 @@ Figure 1. This is an illustration of the human renal system.  The bounds of the 
 </i>
 </center><br>
 
-After the blood enters the kidneys through the renal arteries, it is distributed into the nephrons through the branching afferent arteriole network. From the arterioles, the blood then travels into the glomerular capillaries. The capillary wall's permeability coupled with the pressure difference across the permeable layer allows filtration of about 20 percent @cite hall2011guyton of the incoming blood into the Bowman's space and downstream into the tubules, vas rectum and, eventually, the collecting duct where the fluid travels through the ureters and into the bladder in the form of urine. 
+After the blood enters the kidneys through the renal arteries, it is distributed into the nephrons through the branching afferent arteriole network. From the arterioles, the blood then travels into the glomerular capillaries. The capillary wall's permeability coupled with the pressure difference across the permeable layer allows filtration of about 20 percent @cite hall2011guyton of the incoming blood into the Bowman's space and downstream into the tubules, vas rectum and, eventually, the collecting duct where the fluid travels through the ureters and into the bladder in the form of urine.
 
-The average glomerular filtration rate (GFR) in a human is around 120 mL/min @cite valtin1995renal between both kidneys. The filtered fluid primarily consists of the smaller particles in the blood, as a general rule less than 10 nm in diameter @cite valtin1995renal. This filtered fluid will eventually become urine; however, most of the fluid will be reabsorbed back into the blood to preserve substance and fluid levels in the body. Some substances, such as creatinine, are not reabsorbed, making these good a clinical markers of GFR. 
+The average glomerular filtration rate (GFR) in a human is around 120 mL/min @cite valtin1995renal between both kidneys. The filtered fluid primarily consists of the smaller particles in the blood, as a general rule less than 10 nm in diameter @cite valtin1995renal. This filtered fluid will eventually become urine; however, most of the fluid will be reabsorbed back into the blood to preserve substance and fluid levels in the body. Some substances, such as creatinine, are not reabsorbed, making these good a clinical markers of GFR.
 
 Pressure and GFR are tightly regulated through the tubuloglomerular feedback mechanism of the kidney. This mechanism allows for an increase or decrease in the diameter of the arteries on either side of the glomerular capillaries, effectively regulating down stream fluid flow and protecting the fragile capillaries of the glomerulus.
 
-Once filtered, reabsorption and secretion both occur along the length of the tubules into the collecting ducts. In this area, the body reabsorbs many of the substances and, on average, over 99% of the water back into the blood @cite hall2011guyton. Reabsorption is heavily dependent on the sodium concentration of the blood, the downstream pressure at the afferent arteriole, and osmotic and oncotic pressure gradients along the tubular cell walls and intra-vascular space. The kidneys influence the osmolarity of the urine by adjusting the amount of sodium and water excreted to the bladder. Secretion allows for further filtration of the blood by the kidneys via active transport of substances back into the tubules from the peritubular capillaries. All of these processes are tightly regulated and allow for careful management of substances levels within the entire body. 
+Once filtered, reabsorption and secretion both occur along the length of the tubules into the collecting ducts. In this area, the body reabsorbs many of the substances and, on average, over 99% of the water back into the blood @cite hall2011guyton. Reabsorption is heavily dependent on the sodium concentration of the blood, the downstream pressure at the afferent arteriole, and osmotic and oncotic pressure gradients along the tubular cell walls and intra-vascular space. The kidneys influence the osmolarity of the urine by adjusting the amount of sodium and water excreted to the bladder. Secretion allows for further filtration of the blood by the kidneys via active transport of substances back into the tubules from the peritubular capillaries. All of these processes are tightly regulated and allow for careful management of substances levels within the entire body.
 Any water or substance that is not reabsorbed is moved to the bladder as urine through the collecting ducts.
 
-By regulating the substance content of the blood, the kidneys are responsible for maintaining blood pH and 
-nitrogen content over long periods of time. Nitrogen waste from the liver is excreted from the kidneys as urea, one of the primary constituents of urine. Bicarbonate is used by the blood as a buffer against much of the acidic content of the body. The kidneys are able to reabsorb virtually all of the filtered bicarbonate and even reclaim bicarbonate that has been used to buffer acids that are filtered into the renal tubules @cite valtin1995renal. 
+By regulating the substance content of the blood, the kidneys are responsible for maintaining blood pH and
+nitrogen content over long periods of time. Nitrogen waste from the liver is excreted from the kidneys as urea, one of the primary constituents of urine. Bicarbonate is used by the blood as a buffer against much of the acidic content of the body. The kidneys are able to reabsorb virtually all of the filtered bicarbonate and even reclaim bicarbonate that has been used to buffer acids that are filtered into the renal tubules @cite valtin1995renal.
 
 ### Renal Modeling
 
@@ -63,7 +63,7 @@ The %Renal model lumps each kidney into a single nephron (Figure 2). The  fluid 
 <i>
 Figure 2. The basic anatomical structure of the nephron. The blood is filtered into the Bowman's capsule from the Glomerular Capillaries. Most of the fluid is then reabsorbed into Peritubluar Capillaries.  The remaining fluid and substances continue through the tubules and are exreted into the bladder. @cite Madhero882010Nephron
 </i>
-</center><br>  
+</center><br>
 @anchor renal-system
 System Design
 =============
@@ -93,27 +93,27 @@ The %Renal system needs to meet the following requirements in the engine:
 	- Extensible and flexible model
 	- Maintain conservation of mass and homeostasis
 
-### Existing
+### Previous Research
 
-There have been numerous approaches to renal modeling in the past. The most significant results stem from a region-based modeling 
-approach that discretizes the depth and allows varying permeability along the length of the nephron @cite layton2011mathematical. 
-Focusing on the region encompassing the collecting duct allows for consideration of the flow in the tubules as 
+There have been numerous approaches to renal modeling in the past. The most significant results stem from a region-based modeling
+approach that discretizes the depth and allows varying permeability along the length of the nephron @cite layton2011mathematical.
+Focusing on the region encompassing the collecting duct allows for consideration of the flow in the tubules as
 well as interactions with the interstitial space. This space plays a key role in the re-absorption process and is modeled with striking detail.
- This model has been shown to be an extremely accurate representation of the urine concentrating mechanism along the length of the 
- short and long nephron and has been shown to accurately model the two feedback mechanisms that control glomerular filtration and 
- blood flow: the myogenic response and the tubuloglomerular feedback. This model uses a region-based approach to model a single 
+ This model has been shown to be an extremely accurate representation of the urine concentrating mechanism along the length of the
+ short and long nephron and has been shown to accurately model the two feedback mechanisms that control glomerular filtration and
+ blood flow: the myogenic response and the tubuloglomerular feedback. This model uses a region-based approach to model a single
  collecting duct, then it scales results up to a system-wide representation. The idea of representing the kidney as a functional
- nephron is something that many other researchers in the past have used to accomplish very promising results regarding kidney functionality 
- @cite moss2009computational, @cite moss2014hormonal, @cite stephenson1976model. 
+ nephron is something that many other researchers in the past have used to accomplish very promising results regarding kidney functionality
+ @cite moss2009computational, @cite moss2014hormonal, @cite stephenson1976model.
 
 
 In each of these efforts the nephron is broken into its distinct sections and the reabsorption of substances and fluid is calculated
-at each point. Each calculation is done in series until the filtered fluid reaches the collecting ducts and exits as urine. By assuming 
+at each point. Each calculation is done in series until the filtered fluid reaches the collecting ducts and exits as urine. By assuming
 the results carry over to the other nephrons in the kidney, these models are able to create realistic urine outputs under most conditions.
 While these models can show the tubular transport of substances and fluid in great detail, some do not directly show the renal
 hemodynamics at work to control glomerular pressure and GFR. In addition, many of these results are steady state rather than time-dependent, which limits the range of applications and outputs.
 
-Many models use the Starling equation (Equation 1) to calculate the fluid flow between the tubules and blood. While this is generally considered to be an accurate representation of the fluid flow, this approach assumes a constant oncotic pressure. This makes the hydrostatic pressures the only dynamic inputs to the Starling equation. The accuracy of this approache can be enhanced by accounting for differences in the substance content in vascular compartments in the glomerular capillaries and deriving the respective oncotic pressures, which allows for a better representation of the pressure differential that drives the flow. 
+Many models use the Starling equation (Equation 1) to calculate the fluid flow between the tubules and blood. While this is generally considered to be an accurate representation of the fluid flow, this approach assumes a constant oncotic pressure. This makes the hydrostatic pressures the only dynamic inputs to the Starling equation. The accuracy of this approache can be enhanced by accounting for differences in the substance content in vascular compartments in the glomerular capillaries and deriving the respective oncotic pressures, which allows for a better representation of the pressure differential that drives the flow.
 
 \f[{J_v} = {K_f}\left( {\left[ {{P_c} - {P_i}} \right] - \sigma \left[ {{\pi _c} - {\pi _i}} \right]} \right)\f]
 <center>
@@ -125,14 +125,14 @@ J<sub>v</sub> represents net fluid flow, P<sub>c</sub> and P<sub>i</sub> represe
 &pi;<sub>c</sub> and &pi;<sub>i</sub> are the capillary and interstitial oncotic pressures, respectively, K<sub>f</sub> is the filtration coefficient, and &sigma; is the reflection coefficient. The equation uses a V=IR approach to derive the flow from the total pressure differential and the resistance, which is represented by the filtration and reflection coefficients.
 
 There are other existing models that show the hemodynamics present within the kidney. The model shown by Moss @cite moss2009computational uses a network of nephrons and a fluid
-circuit to represent the kidney. The fluid circuit can affect the delivery of blood to the various glomerular capillaries by changing the resistance that represents the afferent 
+circuit to represent the kidney. The fluid circuit can affect the delivery of blood to the various glomerular capillaries by changing the resistance that represents the afferent
 arteriole. This allows the model to represent the physiological feedback from changes in sodium reabsorption, which can have notable effects on renal blood flow. The fidelity
 of this sort of model is very flexible, as it is entirely dependent on the detail put into the nephron. Unfortunately, as the complexity of the nephron model or the
 desired size of the network increases, it can become computationally intensive. This can cause problems when attempting to use this approach as part of a real-time model.
 
 ### Approach
 
-The %Renal model includes both the upper and lower urinary tracts.  The urine formation in the kidneys is simulated using a single lumped nephron model, which is the internal functional element shown as #2 in Figure 1. The computational representation of the system includes the renal artery that feeds into the afferent arteriole. Filtration takes place through the glomerular capillaries, and re-absorption occurs through the tubules into the peritubular capillaries. The peritubular capillaries connect into the vena cava, allowing transport back into the cardiovascular system. The ureter and bladder make up the rest of the kidney model in the engine. This model of the renal system allows for tubuloglomerular feedback and re-absorption feedback. These mechanisms allow for diuresis under heavy pressure loads and filtrate regulation under variable pressure scenarios. 
+The %Renal model includes both the upper and lower urinary tracts.  The urine formation in the kidneys is simulated using a single lumped nephron model, which is the internal functional element shown as #2 in Figure 1. The computational representation of the system includes the renal artery that feeds into the afferent arteriole. Filtration takes place through the glomerular capillaries, and re-absorption occurs through the tubules into the peritubular capillaries. The peritubular capillaries connect into the vena cava, allowing transport back into the cardiovascular system. The ureter and bladder make up the rest of the kidney model in the engine. This model of the renal system allows for tubuloglomerular feedback and re-absorption feedback. These mechanisms allow for diuresis under heavy pressure loads and filtrate regulation under variable pressure scenarios.
 
 The %Renal fluid circuit is inserted in the the circulatory system and replaces a calibrated three-element (two resistances and one compliance) Windkessel model that is used for %Cardiovascular validation.  In this way, the standalone circuit at a resting physiologic state matches from a total fluid mechanics standpoint.
 
@@ -332,7 +332,7 @@ Figure 7. The membrane fluid filtration for both glomerular filtration and perit
 
 #### Ultrafiltration
 
-Individual substance transport from the glomerular capillaries to the bowmans capsules is directly proportional to the fluid glomerular filtration rate and filterability value based on molecular size and charge.  The glomerular capillary membrane is thicker than most other capillaries, but it is also much more porous and filters fluid at a high rate @cite guyton2006medical.  Ultrafiltration is a largely passive mechanism.  
+Individual substance transport from the glomerular capillaries to the bowmans capsules is directly proportional to the fluid glomerular filtration rate and filterability value based on molecular size and charge.  The glomerular capillary membrane is thicker than most other capillaries, but it is also much more porous and filters fluid at a high rate @cite guyton2006medical.  Ultrafiltration is a largely passive mechanism.
 
 Empirical data was used to determine a generic relationship between molecular weight and molecular radius.  Values for water, glucose, inulin, myoglobin, hemoglobin, and albumin were used to determine the best fit shown in Figure 8 @cite rhoades2003medical.
 
@@ -361,7 +361,7 @@ Reabsorption works in much the same way as glomerular filtration, with additiona
 Pressure natriuresis and diuresis are simulated in the %Renal model through reabsorption premeability modifiers. In the kidneys, as arterial pressure increases, shear stresses are developed along the cell walls. These stresses induce the release of nitric oxide, which is diffused downstream to the tubules of the nephron. This serves to decrease the sodium reabsorption rate through select entry pathways @cite navar1999kidney. This decrease in sodium resabsorptioin decreases the osmotic gradient along this fluid path, consequently leading to a coupled decrease in fluid reabsorption. The engine does not currently support nitric oxide, so we model this mechanism by coupling the fluid permeability characteristics of the tubules as function of arterial pressure. This allows for the connection to downstream pressure changes and sodium/water reabsorption. A second order polynomial (See Equation 7) is fit to the data taken from @cite guyton2006medical that scales the tubules' fluid permeability as a function of arterial pressure. This permeability then directly affects the resistance along the reabsorption pathway, leading to a decrease or increase in water/sodium transport. Diruetic administration can also inhibit the reabsorption by modifying the tubular lumen permeabilty as a function of plasma concentration of Furosemide, @ref DrugsMethodology.
 
 <center><a href="./plots/Renal/MAP_vs_UPR.jpg"><img src="./plots/Renal/MAP_vs_UPR.jpg" width="600"></a></center>
-<center> 
+<center>
 <i>Figure 10 shows the urine production rate as a function of the mean arterial pressure. Blue is experimental data and red is simulated data. Diuresis takes place in response to increased blood pressure, in agreement with renal functionality.</i>
 </center><br>
 
@@ -372,7 +372,7 @@ Pressure natriuresis and diuresis are simulated in the %Renal model through reab
 </center><br>
 
 ##### Diuretic Response
-In addition to alterations in permeability due to ion concentration and perfusion pressure, the renal system's reabsorption pathway can also be effected by diuretic concentrations in the blood plasma. These concentrations directly effect the tubular permeability, simulating Furosmide binding to the Na-K-2Cl symporter. This effect is accounted for by calculating the response due to plasma concentrations in the Drug methodology. This permeability modifier is then stored and accessed in the %Renal system each time step to calculate the reabsorption pathway resistance: 
+In addition to alterations in permeability due to ion concentration and perfusion pressure, the renal system's reabsorption pathway can also be effected by diuretic concentrations in the blood plasma. These concentrations directly effect the tubular permeability, simulating Furosmide binding to the Na-K-2Cl symporter. This effect is accounted for by calculating the response due to plasma concentrations in the Drug methodology. This permeability modifier is then stored and accessed in the %Renal system each time step to calculate the reabsorption pathway resistance:
 
 \f[{k_p}_{i+1} =  {k_p}_i * K_{mod}(C_p) \f]
 <center>
@@ -381,8 +381,8 @@ In addition to alterations in permeability due to ion concentration and perfusio
 Here *K<sub>mod</sub>(C<sub>p</sub>)* is the modification coefficient calculated as a hill type functional response to Furosemide blood plasma concentration, *C<sub>p</sub>*.
 
 
-### Secretion 
-Flow of substances can be directed from the peritubular capillaries into the tubules through secretion. As fluid travels along the tubules and into the collecting ducts of the nephron, various stages of the journey either reabsorb or secret substances and water back into and out of the fluid. One of the most important tasks of the renal system is handling of potassium levels in the blood stream. Secretion is one of the main ways that the renal system handles this task with active transport mechanisms located along the tubular cell wall. The engine simulates this active handling of potassium by allowing for secretion into the ureter from peritubular capillaries. Mass is calculated and tightly regulated by the renal system by actively moving any mass above a certain threshold directly into the urine. The engine does not currently support disturbances to the permeable layer and so shifts in potassium levels in the body will not currently be possible. 
+### Secretion
+Flow of substances can be directed from the peritubular capillaries into the tubules through secretion. As fluid travels along the tubules and into the collecting ducts of the nephron, various stages of the journey either reabsorb or secret substances and water back into and out of the fluid. One of the most important tasks of the renal system is handling of potassium levels in the blood stream. Secretion is one of the main ways that the renal system handles this task with active transport mechanisms located along the tubular cell wall. The engine simulates this active handling of potassium by allowing for secretion into the ureter from peritubular capillaries. Mass is calculated and tightly regulated by the renal system by actively moving any mass above a certain threshold directly into the urine. The engine does not currently support disturbances to the permeable layer and so shifts in potassium levels in the body will not currently be possible.
 
 #### Bladder and Excretion
 
@@ -425,7 +425,7 @@ Figure 12. The circle shows the location used to determine the sodium value, and
 </center>
 <center>
 <i>
-Figure 13. The plots show the flow response to variations in mean arterial pressure: blue indicates experimental data and red indicates engine simulation data. Autoregulatory plateau is seen in GFR and RBF. 
+Figure 13. The plots show the flow response to variations in mean arterial pressure: blue indicates experimental data and red indicates engine simulation data. Autoregulatory plateau is seen in GFR and RBF.
 </i>
 </center><br>
 
@@ -490,7 +490,7 @@ Actions
 Urination empties the bladder. This can be called as an action or will automatically occur with the functional incontinence event. This action decreases the urethra resistance to allow the bladder to empty to 1 mL.  The fluid mechanics and transport are done generically by the circuit solver and transporter respectively.
 
 <center><a href="./plots/Renal/4hr_Urination.jpg"><img src="./plots/Renal/4hr_Urination.jpg" width="800"></a></center>
-<center> 
+<center>
 <i>Figure 15. Bladder volume over time is shown during a 4 hour simulation. Once the bladder reaches the maximum allowable volume, 400mL, the patient will experience functional incontinence.</i>
 </center><br>
 
@@ -525,18 +525,25 @@ Validation of the urine panel is done by analyzing at the resting physiologic qu
 <br><center>
 <i>Table 3. Healthy urine color is determined by the osmolality of the urine. The colors used in the engine were derived from @cite kovacs1999urine . </i>
 </center>
-|Urine Osmolality                     |Urine Color              | 
+|Urine Osmolality                     |Urine Color              |
 |------------------------             |------------------------ |
 |UrineOsmolality <= 400 mOsm/kg		  |Pale Yellow	            |
 |400 < UrineOsmolality <=750 mOsm/kg  |Yellow		            |
 |UrineOsmolality > 750 mOsm/kg        |Light Brown              |
 
 <br><center>
-<i>Table 4. Urinalysis is conducted as described by Roxe @cite walker1990clinical . In the current scope of the engine, there are no scenarios where blood, glucose, ketones, or 
+<i>Table 4. Urinalysis is conducted as described by Roxe @cite walker1990clinical . In the current scope of the engine, there are no scenarios where blood, glucose, ketones, or
 proteins are expected in the urine in significant quantities, which is confirmed below. Specific gravity and color are each dependent on the osmolarity of the urine and are within
 expected values for a healthy individual at rest.</i>
 </center>
+
+<b>Standard Male</b>
+
 @insert ./test_results/tables/Urinalysis-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/Urinalysis-StandardFemaleValidationTable.md
 
 Results and Conclusions
 =======================
@@ -548,27 +555,45 @@ Validation - Resting Physiologic State
 Validation results for system and compartment quantities for a resting standard patient are listed in Tables 5 and 6. System-level quantities show favorable agreement with validation values. The pressure value discrepancies in urine compartments can be largely explained by the %Renal model's lack of a specific extracellular space that affects both the hydrostatic and osmotic pressures.
 
 <br><center>
-*Table 5. Validation of the resting physiologic state system-level outputs from the engine compared 
+*Table 5. Validation of the resting physiologic state system-level outputs from the engine compared
 to referenced values.*
 </center>
 
+<b>Standard Male</b>
+
 @insert ./test_results/tables/Renal-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/Renal-StandardFemaleValidationTable.md
 
 <br><center>
 *Table 6. Validation of the resting physiologic state comparison of compartment-level outputs from the engine
 to referenced values.*
 </center>
 
+<b>Standard Male</b>
+
 @insert ./test_results/tables/RenalCompartments-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/RenalCompartments-StandardFemaleValidationTable.md
 
 Validation results for substance parameters that are determined and/or applied by the %Renal system are shown in Table 7.  These values are highly dependent on substance parameters and show favorable overall agreement for the resting standard patient. Sodium is especially critical for the osmoreceptor and tubuloglomerular feedback mechanisms.
 
 <br><center>
-*Table 7. Validation of the resting physiologic state substance parameter outputs from the engine compared 
+*Table 7. Validation of the resting physiologic state substance parameter outputs from the engine compared
 to referenced values.*
 </center>
 
+<b>Standard Male</b>
+
 @insert ./test_results/tables/RenalSubstances-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/RenalSubstances-StandardFemaleValidationTable.md
 
 @anchor renal-actionconditionvalidation
 Validation - Actions and Conditions
@@ -577,7 +602,7 @@ Validation - Actions and Conditions
 <center>
 <i>
 Table 8. There are seven scenarios that test renal capabilities, saline ingestion, water ingestion, unilateral
-and bilateral stenosis, Two severities of hemorrhage, and high altitude environment change. Each scenario is designed to test the mechanical functionality of the renal system, its feedback mechanisms that control filtration and re-absorption, or the system's substance handling. We have a total of 35 green, 6 yellow, and 0 red parameters among the 3 
+and bilateral stenosis, Two severities of hemorrhage, and high altitude environment change. Each scenario is designed to test the mechanical functionality of the renal system, its feedback mechanisms that control filtration and re-absorption, or the system's substance handling. We have a total of 35 green, 6 yellow, and 0 red parameters among the 3
 scenarios indicating a very good agreement with the validation data.
 </i>
 </center>
@@ -594,7 +619,7 @@ scenarios indicating a very good agreement with the validation data.
 
 ### Hemorrhage - Action
 
-The renal system regulates glomerular filtration and renal blood flow through the tubuloglomerular feedback mechanism. This mechanism is modeled through constriction and dilation of the afferent arteriole as a function of sodium flow rate into the tubules. This mechanism is tested through two different hemorrhage scenarios. As the patient bleeds, blood volume and mean arterial pressure decrease, causing a reduction in blood flow to the renal system. As this decrease happens, the TGF system tries to compensate by dilating the afferent arteriole, reducing the resistance to flow into the glomerular capillaries. This balances the filtrate up to a point, but as blood volume and pressure continue to decrease, renal blood flow and glomerular filtration rate see reductions in line with past research @cite corcoran1943effects. This is more pronounced as the hemorrhage is allowed to persist. Qualitatively, the renal system in engine displays the mechanical trends seen in past research. 
+The renal system regulates glomerular filtration and renal blood flow through the tubuloglomerular feedback mechanism. This mechanism is modeled through constriction and dilation of the afferent arteriole as a function of sodium flow rate into the tubules. This mechanism is tested through two different hemorrhage scenarios. As the patient bleeds, blood volume and mean arterial pressure decrease, causing a reduction in blood flow to the renal system. As this decrease happens, the TGF system tries to compensate by dilating the afferent arteriole, reducing the resistance to flow into the glomerular capillaries. This balances the filtrate up to a point, but as blood volume and pressure continue to decrease, renal blood flow and glomerular filtration rate see reductions in line with past research @cite corcoran1943effects. This is more pronounced as the hemorrhage is allowed to persist. Qualitatively, the renal system in engine displays the mechanical trends seen in past research.
 
 Table 9 shows the effect seen in the %Renal system. For a complete write-up of the hemorrhage scenarios, see the @ref CardiovascularMethodology.
 
@@ -609,7 +634,7 @@ Quantification of the renal system during and after the bleed ends are displayed
 |	Initiate 140 mL/min Hemorrhage	|		|	30	|	600	|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|<span class="success">	Decrease @cite corcoran1943effects	</span>|
 |	Stop Hemorrhage	|		|	620	|	1000	|<span class="success">	Slight Increase @cite corcoran1943effects	</span>|<span class="success">	Steady @cite corcoran1943effects	</span>|<span class="success">	Slight Increase @cite corcoran1943effects	</span>|<span class="success">	Steady @cite corcoran1943effects	</span>|
 
-For the class III hemorrhage, the renal function displays the same trends but with a further reduction in glomerular filtration and renal blood flow due to the duration of the bleed action. 
+For the class III hemorrhage, the renal function displays the same trends but with a further reduction in glomerular filtration and renal blood flow due to the duration of the bleed action.
 
 <center>
 <i>
@@ -633,16 +658,16 @@ Quantification of the renal system during and after the bleed ends are displayed
     <td><a href="./plots/Renal/HemorrhageArterioleResistance.jpg"><img src="./plots/Renal/HemorrhageArterioleResistance.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/Renal/HemorrhageClass4NoFluidLegend.jpg"><img src="./plots/Renal/HemorrhageClass4NoFluidLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/Renal/HemorrhageClass3NoFluidLegend.jpg"><img src="./plots/Renal/HemorrhageClass3NoFluidLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
 <center><i>Figure 16. In this scenario the patient is given a class III hemorrhage, which causes changes in MAP as the bleeding progresses.
-The top left figure shows the mean arterial pressure response to the hemorrhage. The top right and bottom left figures display the glomerular filtration and renal blood flow  
+The top left figure shows the mean arterial pressure response to the hemorrhage. The top right and bottom left figures display the glomerular filtration and renal blood flow
 dropping with the pressure drop. This response is mitigated through dilation of the afferent arteriole, seen in the bottom right figure.</i>
 </center><br>
 
-### High Altitude - Action 
+### High Altitude - Action
 
 After a rapid change in altitude, epinephrine is released in response to the O2 deficit in the myocardium. This causes an increase in mean
 arterial pressure, which triggers a renal tubuloglomerular feedback response. The afferent arteriole resistance increases in an attempt to maintain
@@ -681,7 +706,7 @@ are attenuated as the afferent arteriole resistance increases.
 </center>
 <center><i>
 Figure 17. In this scenario, the patient environment is changed to simulate the effects of altitude. The acute response increases MAP,
-as shown in the top left figure. The top right and bottom left figures show the mechanical affects of this pressure change in the glomerular filtration rate and the renal blood flow, respectively.  The final figure shows the afferent arteriole resistance increasing by about 30% to accommodate the changes in input pressure. 
+as shown in the top left figure. The top right and bottom left figures show the mechanical affects of this pressure change in the glomerular filtration rate and the renal blood flow, respectively.  The final figure shows the afferent arteriole resistance increasing by about 30% to accommodate the changes in input pressure.
 </i>
 </center><br>
 
@@ -689,8 +714,8 @@ as shown in the top left figure. The top right and bottom left figures show the 
 
 The salt ingestion scenario simulates the patient drinking 1 L of seawater. Since the osmolarity of seawater exceeds the concentrating capacity of the
 human renal system @cite hall2011guyton, this provides a relevant edge case that pushes the kidneys to the limit of their ability to clear the excess
-sodium. A 30 minute condition is applied to allow some time to pass for digestion before the effects are analyzed. After the ingestion of seawater, there is a significant change 
-in the concentration of sodium in the blood. Since the engine does not currently model the fluid shift seen from the intracellular to extracellular space in response 
+sodium. A 30 minute condition is applied to allow some time to pass for digestion before the effects are analyzed. After the ingestion of seawater, there is a significant change
+in the concentration of sodium in the blood. Since the engine does not currently model the fluid shift seen from the intracellular to extracellular space in response
 to changes in osmolarity, this causes a drastic drop in urine production rate as seen in Table 12 @cite hall2011guyton. The resulting urine
 becomes hyperosmotic relative to the plasma and contains a high concentration of sodium.
 
@@ -705,7 +730,7 @@ Table 12. Urine production rate stays steady. Kidney doesn't quite respond accor
 
 ### Water Ingestion - Action
 
-The water ingestion scenario simulates the patient drinking 1 liter of water with no other nutrients included. This causes a lowering of blood plasma concentration. This reaction leads to a decrease in the permeability of the tubules leading to an increase in urine production rate. The renal system shows a marked increase of dilute urine in line with that seen in a patient @cite baldes1934effect. 
+The water ingestion scenario simulates the patient drinking 1 liter of water with no other nutrients included. This causes a lowering of blood plasma concentration. This reaction leads to a decrease in the permeability of the tubules leading to an increase in urine production rate. The renal system shows a marked increase of dilute urine in line with that seen in a patient @cite baldes1934effect.
 
 <center>
 <i>
@@ -725,7 +750,7 @@ The engine does not currently support this functionality, although scenarios can
 Dehydration conditions demonstrate the %Renal system's capability to conserve substances. As the blood volume is lowered, the production rate of urine is decreased
 to a minimum by reabsorbing as much of the filtered water as possible. The outputs of the urine content are dependent on what food has been consumed during the dehydration
 period. As the osmolarity of the plasma increases due to the drop in water volume, the renal system compensates by conserving as much water as possible @cite hall2011guyton.
-This is accompanied by a drop in sodium excretion as it is reabsorbed to create a strong osmotic gradient to reabsorb the water. The renal methodology has no direct input in 
+This is accompanied by a drop in sodium excretion as it is reabsorbed to create a strong osmotic gradient to reabsorb the water. The renal methodology has no direct input in
 how dehydration is implemented, aside from clearing substances from the blood according to the time dictated by the consume meal condition and their clearance rates.
 
 For other effects of dehydration on physiology see @ref EnergyMethodology.
@@ -734,7 +759,7 @@ For other effects of dehydration on physiology see @ref EnergyMethodology.
 <i>Table 14. %Renal behavior changes during dehydration. The excretion of substances slows as the water is conserved. There is also a notable
 decrease in sodium excretion and urine sodium concentration in keeping with the validation data. </i>
 </center>
-|Parameter                    |Normal Values             |Dehydration              | 
+|Parameter                    |Normal Values             |Dehydration              |
 |------------------------             |------------------------ |------------------------ |
 |Urine Production Rate (mL/min))		  |	  1.1          | 0.07                |
 |Urine Sodium Excretion Rate (mg/min) |		  2.4          |     0.65                  |
@@ -743,8 +768,8 @@ decrease in sodium excretion and urine sodium concentration in keeping with the 
 ### Starvation
 The engine does not currently support this functionality, although scenarios can be made and run for days at a time without nutrient intake, simulating starvation.
 
-When nutrients from food are restricted, the kidneys attempt to conserve substances in the blood, which leads to decreases in urinary concentrations. This is accomplished 
-by increasing reabsorptive capacity where it is possible to, namely with sodium. The starvation scenario provides the patient with enough water to last the 4 day starvation 
+When nutrients from food are restricted, the kidneys attempt to conserve substances in the blood, which leads to decreases in urinary concentrations. This is accomplished
+by increasing reabsorptive capacity where it is possible to, namely with sodium. The starvation scenario provides the patient with enough water to last the 4 day starvation
 period, which leads to decreasing concentrations of substances in the blood. The %renal methodology has no direct input in how starvation is implemented, aside from clearing substances
 from the blood according to the time dictated by the consume meal condition.
 
@@ -768,7 +793,7 @@ The %Renal Stenosis condition is validated against two different scenarios, test
 
 <center>
 <i>
-Table 16. Direct affects of blood flow and glomerular filtration are seen in the stenosis condition. All cardiovascular effects meet validation except that blood volume decreases caused by release of aldesterone and angiotensin 2. 
+Table 16. Direct affects of blood flow and glomerular filtration are seen in the stenosis condition. All cardiovascular effects meet validation except that blood volume decreases caused by release of aldesterone and angiotensin 2.
 </i>
 </center>
 |	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Blood Volume (mL)	|	Systemic Vascular Resistance (mmHg/mL/s)	|	Cardiac Output (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Renal Blood Flow (mL/min)	|	GFR (mL/min)	|
@@ -776,12 +801,12 @@ Table 16. Direct affects of blood flow and glomerular filtration are seen in the
 |	Renal Stenosis 	|	60% unilarteral occlusion of kidneys 	|	120	|<span class="warning">	Increase @cite klabunde2011cardiovascular	</span>|<span class="success">	Increase @cite klabunde2011cardiovascular	</span>|<span class="success">	Mild decrease @cite anderson1990development	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Decrease @cite textor2011atherosclerotic	</span>|<span class="success">	Decrease @cite textor2011atherosclerotic	</span>|
 
 
-The severe bilateral stenosis condition tests the effects of kidney function due to a 90 percent increase in renal artery resistance on both kidneys. Like the unilateral condition, the kidney and cardiovascular function meet validation. A more pronounced decrease in renal blood flow and glomerular filtration rate can be seen due to the increased severity of the stenosis. 
+The severe bilateral stenosis condition tests the effects of kidney function due to a 90 percent increase in renal artery resistance on both kidneys. Like the unilateral condition, the kidney and cardiovascular function meet validation. A more pronounced decrease in renal blood flow and glomerular filtration rate can be seen due to the increased severity of the stenosis.
 
 <center>
 <i>
 Table 17. There is good agreement in response to the 90% bilateral stenosis. The effect on pressure is significant enough
-to meet validation. The blood volume is unaffected. The systemic vascular resistance increases as expected along with the corresponding 
+to meet validation. The blood volume is unaffected. The systemic vascular resistance increases as expected along with the corresponding
 decrease in cardiac output. The renal blood flow and GFR each decrease as expected.
 </i>
 </center>
@@ -831,7 +856,7 @@ Acronyms
 --------
 
 BUN - Blood Urea Nitrogen
-	
+
 GFR - Glomerular Filtration Rate
 
 IV - Intravenous
@@ -878,7 +903,7 @@ Compartments
 		* LeftBowmansCapsules
 		* LeftTubules
 	* LeftRenalVein
-	
+
 * RightKidney
 	* RightRenalArtery
 	* RightNephron

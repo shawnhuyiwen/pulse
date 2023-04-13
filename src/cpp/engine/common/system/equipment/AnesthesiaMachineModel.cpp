@@ -464,7 +464,6 @@ namespace pulse
       }
       else if (dBottle1Volume_L <= 0.0) //Empty
       {
-        /// \event %AnesthesiaMachine: Oxygen bottle 1 is exhausted. There is no longer any oxygen to provide via the anesthesia machine.
         m_data.GetEvents().SetEvent(eEvent::AnesthesiaMachineOxygenBottleOneExhausted, true, m_data.GetSimulationTime());
         dBottle1Volume_L = 0.0;
       }
@@ -479,7 +478,6 @@ namespace pulse
       }
       else if (dBottle2Volume_L <= 0.0)
       {
-        /// \event %AnesthesiaMachine: Oxygen bottle 2 is exhausted. There is no longer any oxygen to provide via the anesthesia machine.
         m_data.GetEvents().SetEvent(eEvent::AnesthesiaMachineOxygenBottleTwoExhausted, true, m_data.GetSimulationTime());
         dBottle2Volume_L = 0.0;
       }
@@ -705,7 +703,6 @@ namespace pulse
     //Check to see if it reached the pressure threshold
     if (!m_data.GetEvents().IsEventActive(eEvent::AnesthesiaMachineReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == eGate::Closed)
     {
-      /// \event %AnesthesiaMachine: Relief Valve is active. The pressure setting has been exceeded.
       m_data.GetEvents().SetEvent(eEvent::AnesthesiaMachineReliefValveActive, true, m_data.GetSimulationTime());
     }
     else if (m_data.GetEvents().IsEventActive(eEvent::AnesthesiaMachineReliefValveActive) && m_pSelectorToReliefValve->GetNextValve() == eGate::Open)

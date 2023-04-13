@@ -1,6 +1,6 @@
 {
   "Name": "LobarPneumoniaSevereRightLung",
-  "Description": "Moderate Lobar Pneumonia in both lungs.",
+  "Description": "Severe Lobar Pneumonia in the entire right lungs.",
   "PatientConfiguration": {
     "PatientFile": "StandardMale.json",
     "Conditions": { "AnyCondition": [{

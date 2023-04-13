@@ -106,31 +106,10 @@ around a stable resting physiologic state, with the ability to
 model pathophysiology through insults and intervention action calls.
 Many of the system circuit elements are modified based on substance
 concentrations and external action (i.e., insult and intervention)
-modifiers.
-
-The Anesthesia Machine is directly connected to the %Respiratory System
-through an inter-circuit connection. The current implementation creates
+modifiers. The %Respiratory System transfers substances back and forth to the
+%Cardiovascular System using Alveoli Transfer. Equipment circuits are directly connected to other systems through an inter-circuit connection. The current implementation creates
 a combined circuit for analysis; therefore, the combined circuit is calculated as one
-large circuit with a single fluid. %Substances can be administered by
-inhalation directly to the %Respiratory System or through a connected
-Anesthesia Machine through the vaporizer component.
-
-The %Respiratory System transfers substances back and forth to the
-%Cardiovascular System using Alveoli Transfer. The only direct connections
-between the two systems are simple modifiers to the heart rate and a
-cardiovascular resistance value during the tension pneumothorax insult.
-The %Cardiovascular System is also tied to the %Endocrine System and %ECG.
-%Substances can enter directly into the %Cardiovascular System through
-bolus injections or the administration of an IV. 
-
-Interactions between systems, such as alveoli transfer and diffusion between the extravascular and vascular space are modeled in the System Interactions methodology. This ensures each system is responsible for only its own behavior while capturing the behavior that occurs between systems.
-
-<a href="./Images/System/SystemFlow.png"><img src="./Images/System/SystemFlow.png" width="600"></a>
-<center>
-*Figure 2. Overall the engine data flow diagram showing all of the
-systems. Dashed lines are only present for certain actions.
-Non-italicized elements are defined as classes in the engine.*
-</center><br>
+large circuit with a single fluid. %Substance transport also occurs in combined compartment and link graphs.
 
 ### Timing
 
@@ -157,11 +136,11 @@ maintains three time steps for elements and parameters. These times are:
 @anchor system-stabilization
 ### Stabilization
 
-The engine stabilizes with a multi-step process. The engine must be initialized and reach a stable state prior to modifying the patient condition. This is completed by using a dynamic stabilization protocol to execute the engine until a specified set of criteria are met, then any patient chronic conditions are applied. These conditions modify patient parameters and model values to represent the new patient state. The engine must restabilize using the dynamic protocol to achieve a stable state. This process is outlined in Figure 3.
+The engine stabilizes with a multi-step process. The engine must be initialized and reach a stable state prior to modifying the patient condition. This is completed by using a dynamic stabilization protocol to execute the engine until a specified set of criteria are met, then any patient chronic conditions are applied. These conditions modify patient parameters and model values to represent the new patient state. The engine must restabilize using the dynamic protocol to achieve a stable state. This process is outlined in Figure 2.
 
 <a href="./Images/System/Stabilization.png"><img src="./Images/System/Stabilization.png" width="550"></a>
 <center> 
-<i>Figure 3. Overall the engine stabilization protocol. This highlights the multi-step process required to initialize either a healthy or chronically ill patient prior to executing a scenario.</i>
+<i>Figure 2. Overall the engine stabilization protocol. This highlights the multi-step process required to initialize either a healthy or chronically ill patient prior to executing a scenario.</i>
 </center><br>
 
 #### Dynamic Stabilization
@@ -238,7 +217,7 @@ preparation for the upcoming Preprocess call.
 
 <a href="./Images/System/SystemDataFlow.png"><img src="./Images/System/SystemDataFlow.png"></a>
 <center>
-*Figure 4. This shows the repetitive three-step process used each time
+*Figure 3. This shows the repetitive three-step process used each time
 step to determine the system states. These three processes are mirrored
 in each system's code and are sequentially called by the engine.*
 </center><br>
@@ -259,15 +238,15 @@ Externally available data is defined within the engine in three major ways:
 	-	Data collected and packaged to resemble a report or analysis that might be ordered by a physician
 	-	Intended to give general patient overviews
 	-	Calculated on demand
-	-	Example: pulmonary function test
+	-	Example: Complete Blood Count
 
 The engine modeling approach takes the human body and conceptually divides it into various fluid compartments that represents a real division in terms of how portions of the body's water, solutes, and suspended elements are segregated @cite rhoades2012medical.  Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In the engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts.
 	
-Compartments are implemented as conceptual physical divisions of the body.  Anatomical data can be pulled from each compartment through optional node and path mapping. Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts. Figure 5 shows an example of how compartments can be defined in the %Cardiovascular System.
+Compartments are implemented as conceptual physical divisions of the body.  Anatomical data can be pulled from each compartment through optional node and path mapping. Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts. Figure 4 shows an example of how compartments can be defined in the %Cardiovascular System.
 
 <a href="./Images/System/CompartmentExample.png"><img src="./Images/System/CompartmentExample.png"></a>
 <center>
-<i>Figure 5. This is an example of possible %Cardiovascular System compartments.  This is for explanation purposes only and not necessarily indicative of how things are really defined.  See the @ref CardiovascularMethodology documentation for how they are really defined.</i>
+<i>Figure 4. This is an example of possible %Cardiovascular System compartments.  This is for explanation purposes only and not necessarily indicative of how things are really defined.  See the @ref CardiovascularMethodology documentation for how they are really defined.</i>
 </center><br>
 
 Users can customize scenarios by modifying a variety of file types. For example, patients, substances, compound substances, and environments can all be modified
@@ -316,7 +295,7 @@ Although the tidal volume is not shown for these scenarios, it should be noted t
 
 ### Cynthia
 
-The Cynthia scenario begins with the administration of midazolam at 50&nbsp;seconds with a full severity airway obstruction occurring at 110&nbsp;seconds. At 260&nbsp;seconds a ventilator mask is placed on Cynthia. Twenty seconds later, the airway obstruction is removed and 30&nbsp;milligrams of ketamine are administered via a bolus injection. Rocuronium is administered one minute later, and Cynthia is intubated 40&nbsp;seconds after that. The Cynthia scenario shows excellent agreement with the qualitative and expected SME trends. However, there is a minor inconsistency in the systolic and diastolic pressure decrease following the administration of midazolam.  The SME validation predicted a 15-25% decrease in systolic/diastolic pressures following the administration; however, the observed decrease was approximately 10%. This decrease was considered acceptable since other references predicted varying degrees of pressure decrease.
+The Cynthia scenario begins with the administration of midazolam at 50 seconds with a full severity airway obstruction occurring at 110 seconds. At 260 seconds a ventilator mask is placed on Cynthia. Twenty seconds later, the airway obstruction is removed and 30 milligrams of ketamine are administered via a bolus injection. Rocuronium is administered one minute later, and Cynthia is intubated 40 seconds after that. The Cynthia scenario shows excellent agreement with the qualitative and expected SME trends. However, there is a minor inconsistency in the systolic and diastolic pressure decrease following the administration of midazolam.  The SME validation predicted a 15-25% decrease in systolic/diastolic pressures following the administration; however, the observed decrease was approximately 10%. This decrease was considered acceptable since other references predicted varying degrees of pressure decrease.
 
 <center>
 <table border="0">
@@ -333,7 +312,7 @@ The Cynthia scenario begins with the administration of midazolam at 50&nbsp;seco
 </tr>
 </table>
 </center>
-<center><i>Figure 6. Select outputs from the Cynthia combined effects scenario.</i></center>
+<center><i>Figure 5. Select outputs from the Cynthia combined effects scenario.</i></center>
 
 <center><br>
 *Table 7. The Cynthia scenario displays the effects of sequential midazolam administration, airway obstruction, ventilator mask, ketamine and rocuronium administration, and intubation. This scenario shows some good agreement with the expected qualitative and SME trends.*
@@ -350,7 +329,7 @@ The Cynthia scenario begins with the administration of midazolam at 50&nbsp;seco
 
 
 ### Gus
-A ventilator mask is applied to Gus at 50&nbsp;seconds, and succinylcholine is injected one minute later. After an additional minute, an unsuccessful intubation occurs, leading to the endotracheal tube residing within the esophagus. After two minutes the tube is removed and correctly set in the trachea. The produced results show excellent agreement with the expected validation trends. 
+A ventilator mask is applied to Gus at 50 seconds, and succinylcholine is injected one minute later. After an additional minute, an unsuccessful intubation occurs, leading to the endotracheal tube residing within the esophagus. After two minutes the tube is removed and correctly set in the trachea. The produced results show excellent agreement with the expected validation trends. 
 
 <center>
 <table border="0">
@@ -367,7 +346,7 @@ A ventilator mask is applied to Gus at 50&nbsp;seconds, and succinylcholine is i
 </tr>
 </table>
 </center>
-<center><i>Figure 7. Select outputs from the Gus combined effects scenario.</i></center>
+<center><i>Figure 6. Select outputs from the Gus combined effects scenario.</i></center>
 
 <center><br>
 *Table 8. The Gus scenario displays the effects of sequential ventilator mask application, succinylcholine injection, esophageal intubation and then a successful endotracheal intubation. This scenario shows good agreement with the SME and qualitative validation.*
@@ -382,7 +361,7 @@ A ventilator mask is applied to Gus at 50&nbsp;seconds, and succinylcholine is i
 
 ### Hassan
 
-At the beginning of the scenario, a ventilator mask is applied to Hassan. He then receives bolus injections of ketamine and succinylcholine. This leads to an increase in the heart rate and arterial pressures due to the ketamine injection. The respiration rate begins to decrease as the patient begins to lose consciousness. After the succinylcholine injection, there is a decrease in the heart rate and arterial pressures. In addition, the respiration rate falls to zero due to the neuromuscular block. At 180&nbsp;seconds, an endotracheal tube is set into the right bronchi, leading to only one lung being ventilated. This leads to a minor reduction in the oxygen saturation. Due to the reduced oxygen intake, the heart rate and arterial pressures begin to increase to compensate. The tube is reset into the trachea and the vital signs begin to return to normal. All of these trends follow the expected validation trends.
+At the beginning of the scenario, a ventilator mask is applied to Hassan. He then receives bolus injections of ketamine and succinylcholine. This leads to an increase in the heart rate and arterial pressures due to the ketamine injection. The respiration rate begins to decrease as the patient begins to lose consciousness. After the succinylcholine injection, there is a decrease in the heart rate and arterial pressures. In addition, the respiration rate falls to zero due to the neuromuscular block. At 180 seconds, an endotracheal tube is set into the right bronchi, leading to only one lung being ventilated. This leads to a minor reduction in the oxygen saturation. Due to the reduced oxygen intake, the heart rate and arterial pressures begin to increase to compensate. The tube is reset into the trachea and the vital signs begin to return to normal. All of these trends follow the expected validation trends.
 
 <center>
 <table border="0">
@@ -399,7 +378,7 @@ At the beginning of the scenario, a ventilator mask is applied to Hassan. He the
 </tr>
 </table>
 </center>
-<center><i>Figure 8. Select outputs from the Hassan combined effects scenario.</i></center>
+<center><i>Figure 7. Select outputs from the Hassan combined effects scenario.</i></center>
 
 <center><br>
 *Table 9. Hassan displays the effects of a right mainstem intubation after the patient has been injected with ketamine and succinylcholine. The engine output shows complete agreement with the validation trends.*
@@ -414,7 +393,7 @@ At the beginning of the scenario, a ventilator mask is applied to Hassan. He the
 |	Correct tube placement	|	Reset the intubation tube	|	220	|	400	|<span class="success">	NC, If above result in a Mild Increase, will return to normal @cite dukeSME	</span>|<span class="success">	NC, If above result in a Mild Increase, will return to normal @cite dukeSME	</span>|<span class="success">	NC, If above result in a Mild Increase, will return to normal @cite dukeSME	</span>|<span class="success">	16	</span>|<span class="success">	Begins to increase to a normal level >97% @cite dukeSME	</span>|
 
 ### Joel
-The Joel scenario begins with a full severity airway obstruction at 50&nbsp;seconds. This leads to decreasing oxygen saturation and increasing heart rate and arterial pressures due to the sympathetic (endocrine) response. At 170&nbsp;seconds, the obstruction is removed and the vital signs begin to return to normal. A ventilator mask is applied to Joel at 230&nbsp;seconds, and he receives a 27&nbsp;mg bolus injection of etomidate at 290&nbsp;seconds. This leads to decreasing arterial pressure. At 310&nbsp;seconds, a bolus injection of succinylcholine occurs before an endoctracheal tube is set 30&nbsp;seconds later. The administration of succinylcholine leads to immediate decreases in heart rate, arterial pressures, and oxygen saturation. After the intubation occurs, the oxygen saturation begins to return to normal due to adequate ventilation. All of these results show strong agreement with the subject matter expert's expected trends.
+The Joel scenario begins with a full severity airway obstruction at 50 seconds. This leads to decreasing oxygen saturation and increasing heart rate and arterial pressures due to the sympathetic (endocrine) response. At 170 seconds, the obstruction is removed and the vital signs begin to return to normal. A ventilator mask is applied to Joel at 230 seconds, and he receives a 27 mg bolus injection of etomidate at 290 seconds. This leads to decreasing arterial pressure. At 310 seconds, a bolus injection of succinylcholine occurs before an endoctracheal tube is set 30 seconds later. The administration of succinylcholine leads to immediate decreases in heart rate, arterial pressures, and oxygen saturation. After the intubation occurs, the oxygen saturation begins to return to normal due to adequate ventilation. All of these results show strong agreement with the subject matter expert's expected trends.
 
 <center>
 <table border="0">
@@ -431,7 +410,7 @@ The Joel scenario begins with a full severity airway obstruction at 50&nbsp;seco
 </tr>
 </table>
 </center>
-<center><i>Figure 9. Select outputs from the Joel combined effects scenario.</i></center>
+<center><i>Figure 8. Select outputs from the Joel combined effects scenario.</i></center>
 
 <center><br>
 *Table 10. The Joel scenario displays the effects of sequential airway obstruction, ventilator mask application, etomidate administration, succinylcholine administration, and intubation. The engine results show excellent agreement with the validation trends.*
@@ -447,7 +426,7 @@ The Joel scenario begins with a full severity airway obstruction at 50&nbsp;seco
 |	Intubate	|		|	275	|	475	|<span class="success">	NC @cite dukeSME	</span>|<span class="success">	NC @cite dukeSME	</span>|<span class="success">	NC @cite dukeSME	</span>|<span class="success">	NC @cite dukeSME	</span>|<span class="success">	Begins to increase to a normal level >97% @cite PaulGBarash2009	</span>|
 
 ### Nathan
-Nathan receives a bolus injection of fentanyl at a dose of 150&nbsp;micrograms at a scenario time of 50&nbsp;seconds, and a ventilator mask is placed at 140&nbsp;seconds. Due to the administration of fentanyl, there is an observed decrease in the heart rate, arterial pressures and respiration rate. There is very good agreement with the expected trends during this time period. The The respiration rate is expected to decrease by 15-25%; however, the observed increase is approximately 10%. This was acceptable due to the trend expressed in other validation resources. The oxygen wall connection loses pressure at 230&nbsp;seconds. This leads to decreasing oxygen saturation and increasing heart rate and arterial pressures due to the epinephrine response. Following this, the connection is reset to a secondary oxygen tank, and the vital signs return to normal. This behavior matches the validation trends.
+Nathan receives a bolus injection of fentanyl at a dose of 150 micrograms at a scenario time of 50 seconds, and a ventilator mask is placed at 140 seconds. Due to the administration of fentanyl, there is an observed decrease in the heart rate, arterial pressures and respiration rate. There is very good agreement with the expected trends during this time period. The The respiration rate is expected to decrease by 15-25%; however, the observed increase is approximately 10%. This was acceptable due to the trend expressed in other validation resources. The oxygen wall connection loses pressure at 230 seconds. This leads to decreasing oxygen saturation and increasing heart rate and arterial pressures due to the epinephrine response. Following this, the connection is reset to a secondary oxygen tank, and the vital signs return to normal. This behavior matches the validation trends.
 
 <center>
 <table border="0">
@@ -464,7 +443,7 @@ Nathan receives a bolus injection of fentanyl at a dose of 150&nbsp;micrograms a
 </tr>
 </table>
 </center>
-<center><i>Figure 10. Select outputs from the Nathan combined effects scenario.</i></center>
+<center><i>Figure 9. Select outputs from the Nathan combined effects scenario.</i></center>
 
 <center><br>
 *Table 8. The Nathan scenario displays the effects of sequential bolus fentanyl injection, ventilator mask application, and oxygen wall pressure loss. The engine results show strong agreement with the validation trends.*
@@ -514,7 +493,7 @@ A team of soldiers is conducting a patrol when an explosive device detonates, in
 </tr>
 </table>
 </center>
-<center><i>Figure 11. Select outputs from the Combat Multitrauma showcase scenario.</i></center>
+<center><i>Figure 10. Select outputs from the Combat Multitrauma showcase scenario.</i></center>
 
 ### Asthma Attack
 
@@ -536,7 +515,7 @@ A 40 year old female with a history of asthma is having an asthma attack. She ar
 </tr>
 </table>
 </center>
-<center><i>Figure 12. The pulmonary function test for the asthma patient shows overall good agreement with the expected results. The residual volume may appear lower than expected. @cite bergeronSME</i></center>
+<center><i>Figure 11. The pulmonary function test for the asthma patient shows overall good agreement with the expected results. The residual volume may appear lower than expected. @cite bergeronSME</i></center>
 
 <center>
 <table border="0">
@@ -553,7 +532,7 @@ A 40 year old female with a history of asthma is having an asthma attack. She ar
 </tr>
 </table>
 </center>
-<center><i>Figure 13. Select outputs from the Asthma Attack showcase scenario.</i></center>
+<center><i>Figure 12. Select outputs from the Asthma Attack showcase scenario.</i></center>
 
 ### Heat Stroke
 
@@ -587,7 +566,7 @@ A 25 year old male is hiking towards a rock formation to begin a recreational fr
 </tr>
 </table>
 </center>
-<center><i>Figure 14. Select outputs from the Heat Stroke showcase scenario.</i></center>
+<center><i>Figure 13. Select outputs from the Heat Stroke showcase scenario.</i></center>
 
 ### Environment Exposure
 

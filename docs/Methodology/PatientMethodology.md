@@ -49,15 +49,17 @@ Features and Capabilities
 |	Sex	|	Required	|	\f[M = Male,F = Female\f]	|	 -	|	 -	|	This is the only parameter required to be explicitly set.	|
 |	Age	|	Optional	|	\f[A[yr] = 44\f]	|	18 yr	|	65 yr	|	No pediatric or geriatric modeling.	|
 |	Ideal Weight	|	Optional	|	\f[Iw[kg] = \left\{ {\begin{array}{*{20}{c}} {{\rm{50}}{\rm{.0  +  2}}{\rm{.3}}\left( {{\rm{H[in]  -  60}}} \right),\;M}\\ {{\rm{45}}{\rm{.5  +  2}}{\rm{.3}}\left( {{\rm{H[in]  -  60}}} \right),\;F} \end{array}} \right.\f]	|	 -	|	 -	|	@cite green2017green	|
-|	Weight	|	Optional	|	\f[W[kg] = 21.75H{[m]^2}\f]	|	Bmi = 16 kg/m<sup>2</sup>	|	Bmi = 30 kg/m<sup>2</sup>	|	Bmi = Body Mass Index = W[kg]/H[m]<sup>2</sup>. 21.75 kg/m<sup>2</sup> is standard. No severly Underweight or Obese. @cite World2006bmi	|
+|	Weight	|	Optional	|	\f[W[kg] = 21.75H{[m]^2}\f]	|	 -	|	 -	|		|
 |	Height	|	Optional	|	\f[{\rm{H[cm] = }}\left\{ {\begin{array}{*{20}{c}} {{\rm{177}},\;M}\\ {{\rm{163}},\;F} \end{array}} \right.\f]	|	M = 163 cm, F = 151 cm	|	M = 190 cm, F = 175.5 cm	|	Min = 3rd percentile, Max = 97th percentile, Standard = 50th percentile. @cite Centers2016clinical	|
-|	Body Fat Fraction	|	Optional	|	\f[{\rm{Ff[cm] = }}\left\{ {\begin{array}{*{20}{c}} {{\rm{0}}{\rm{.21}},\;M}\\ {0.28,\;F} \end{array}} \right.\f]	|	M = 0.25, F = 0.32	|	M = 0.02, F = 0.10	|	No obese and not less than essential fat. @cite muth2009what	|
-|	Carina To Teeth Distance	|	Optional	|	\f[{\rm{Ctd[cm] = }}\left\{ {\begin{array}{*{20}{c}} {{\rm{11}}{\rm{.413  +  (0}}{\rm{.072 H[cm])  -  3}},\;M}\\ {{\rm{13}}{\rm{.555  +  (0}}{\rm{.056 H[cm])  -  3}},\;F} \end{array}} \right.\f]	|	 -	|	 -	|	@cite gomez2016estimation	|
+|	Body Mass Index	|	Optional	|	\f[BMI[{\rm{kg/}}{m^2}] = W[kg]/{\rm{H[m}}{{\rm{]}}^2}\f]	|	16 kg/m<sup>2</sup>	|	30 kg/m<sup>2</sup>	|	No severly Underweight or Obese. @cite World2006bmi	|
+|	Body Fat Fraction	|	Optional	|	\f[{\rm{Ff[cm] = }}\left\{ {\begin{array}{*{20}{c}} {{\rm{0}}{\rm{.21}},\;M}\\ {0.28,\;F} \end{array}} \right.\f]	|	M = 0.02, F = 0.10	|	M = 0.25, F = 0.32	|	No obese and not less than essential fat. @cite muth2009what	|
 |	Blood Volume Baseline	|	Optional	|	\f[Bv[mL] = 65.6W{[kg]^{1.02}}\f]	|	Bv * 0.85	|	Bv * 1.15	|	Above Stage 1 Hypovolemia. @cite Morgan2006Clinical	|
 |	Basal Metabolic Rate	|	Optional	|	\f[{\rm{Bmr[kcal/day] = }}\left\{ {\begin{array}{*{20}{c}} {{\rm{88}}{\rm{.632  +  3}}{\rm{.397W[kg]  +  4}}{\rm{.799H[cm]  -  5}}{\rm{.677A[yr]}},\;M}\\ {{\rm{447}}{\rm{.593  +  9}}{\rm{.247W[kg]  +  3}}{\rm{.098H[cm]  -  4}}{\rm{.330A[yr]}},\;F} \end{array}} \right.\f]	|	 -	|	 -	|	@cite roza1984metabolic	|
 |	Heart Rate Baseline	|	Optional	|	\f[Hr[bpm] = 72\f]	|	50 bpm	|	110 bpm	|	Bradycardia < 60 bpm & Tachycardia > 100 bpm.	|
 |	Systolic Arterial Pressure Baseline	|	Optional	|	\f[Sys[mmHg] = 114\f]	|	90 mmHg	|	120 mmHg	|	No hypotension or hypertension. 	|
 |	Diastolic Arterial Pressure Baseline	|	Optional	|	\f[Dia[mmHg] = 73.5\f]	|	60 mmHg	|	80 mmHg	|	No hypotension or hypertension. Includes pressure fraction check: Dia > 0.75 Sys.	|
+|	Pulse Pressure Pressure Baseline	|	Optional	|	\f[Pp[mmHg] = Sys[mmHg] - Dia[mmHg]\f]	|	0.25 * Sys	|	 -	|		|
+|	Mean Arterial Pressure	|	Optional	|	\f[Map = \frac{1}{3}Sys + \frac{2}{3}Dia\f]	|	 -	|	 -	|	@cite guyton2006medical	|
 |	Respiration Rate Baseline	|	Optional	|	\f[Rr[bpm] = 12\f]	|	8 bpm	|	20 bpm	|		|
 |	Alveoli Surface Area	|	Optional	|	\f[Asa[{m^2}] = \frac{{{\rm{Tlc[L]}}}}{{6.17}} \times {\rm{70}}\f]	|	 -	|	 -	|	Calculated using standard Tlc (6.17 L) @cite ganong1995review and standard Asa (70 m2) @cite roberts2000gaseous.	|
 |	Right Lung Ratio	|	Optional	|	\f[Rlr = 0.525\f]	|	0.5	|	0.6	|		|
@@ -69,13 +71,11 @@ Features and Capabilities
 |	Residual Volume	|	Optional	|	\f[Rv[mL] = 16Iw[kg]\f]	|	 -	|	 -	|	@cite ganong1995review	|
 |	Lean Body Mass	|	Unallowed	|	\f[Lbm = W(1 - Ff)\f]	|	 -	|	 -	|		|
 |	Body Density	|	Unallowed	|	\f[Bd = {{\left( {\frac{{4.95}}{{Ff + 4.5}} + \frac{{4.57}}{{Ff + 4.142}}} \right)} \mathord{\left/  {\vphantom {{\left( {\frac{{4.95}}{{Ff + 4.5}} + \frac{{4.57}}{{Ff + 4.142}}} \right)} 2}} \right.  \kern-\nulldelimiterspace} 2}\f]	|	 -	|	 -	|	Average of Siri @cite siri1961body and Brozek @cite brovzek1963densitometric equations.	|
-|	Mean Arterial Pressure	|	Unallowed	|	\f[Map = \frac{1}{3}Sys + \frac{2}{3}Dia\f]	|	 -	|	 -	|	@cite guyton2006medical	|
 |	Tidal Volume Baseline	|	Unallowed	|	\f[Tv[mL] = 37Iw[kg] - Frc[mL]\f]	|	 -	|	 -	|	@cite ganong1995review	|
 |	Expiratory Reserve Volume	|	Unallowed	|	\f[Erv = Frc - Rv\f]	|	 -	|	 -	|	@cite ganong1995review	|
 |	Inspiratory Capacity	|	Unallowed	|	\f[Ic = Tlc - Frc\f]	|	 -	|	 -	|	@cite ganong1995review	|
 |	Inspriatory Reserve Volume	|	Unallowed	|	\f[Irv = Ic - Tv\f]	|	 -	|	 -	|	@cite ganong1995review	|
 |	Vital Capacity	|	Unallowed	|	\f[Vc - Tlc - Rv\f]	|	 -	|	 -	|	@cite ganong1995review	|
-
 
 ### Stabilization
 

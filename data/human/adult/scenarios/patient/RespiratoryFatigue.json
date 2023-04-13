@@ -1,6 +1,6 @@
 {
-  "Name": "Lobar Pneumonia Exacerbation",
-  "Description": "",
+  "Name": "RespiratoryFatigue",
+  "Description": "Apply respiratory fatigue at varying severities.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
     "StandardDataRequests.json",

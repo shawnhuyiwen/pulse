@@ -245,7 +245,7 @@ class SEConditionManager():
         if self.has_initial_environmental_conditions():
             return False;
         return True;
-    
+
     def has_acute_respiratory_distress_syndrome(self):
         return False if self._ards is None else self._ards.is_valid()
     def get_acute_respiratory_distress_syndrome(self):
