@@ -259,10 +259,6 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
 
     # Plot all expected columns
     for y_header in expected_df.columns[1:]:
-        if y_header not in computed_df.columns:
-            print(f'ERROR: Computed results did not provide expected result "{y_header}"')
-            continue
-
         _plot_header([expected_source, computed_source])
 
     # Plot anything not in expected data

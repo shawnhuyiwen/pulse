@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 import pandas as pd
+import numpy as np
 
 def read_csv_into_df(csv_filename: str, replace_slashes: bool=False):
     df = pd.read_csv(csv_filename)
@@ -14,6 +15,7 @@ def read_csv_into_df(csv_filename: str, replace_slashes: bool=False):
 
     return df
 
+
 def compute_means(csv_filename: str, headers: [str], start_row=0, end_row=-1):
     means = []
 
@@ -22,3 +24,13 @@ def compute_means(csv_filename: str, headers: [str], start_row=0, end_row=-1):
     means = df[headers].mean().values.tolist()
 
     return means
+
+
+def remove_empty_cols(df: pd.DataFrame):
+    drop_cols = []
+    for c in df.columns:
+        if df[c].replace(r'^-1\.\$$', np.nan, regex=True).isna().all():
+            drop_cols.append(c)
+    if drop_cols:
+        return df.drop(columns=drop_cols)
+    return df
