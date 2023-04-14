@@ -10,7 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
+import com.kitware.pulse.cdm.scenario.SEScenario;
 import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.engine.bind.Enums.eModelType;
 import com.kitware.pulse.utilities.FileUtils;
@@ -378,8 +380,23 @@ public class SETestConfiguration
       output+="Results"+ext;
       //example : ./Scenarios/Validation/Patient-ValidationResults.csv
     }
+    
     job.baselineFiles.add(baseline);
     job.computedFiles.add(output);
+    if(new File(baseline).exists() == false && patientFiles == null)
+    {
+      try
+      {
+        // The baseline does not exist
+        // but the baseline file could be for a specific patient
+        // so let's add the patient file if the scenario is using one
+        SEScenario sce = new SEScenario();
+        sce.readFile(job.scenarioDirectory+job.name);
+        if(sce.hasPatientConfiguration() && sce.getPatientConfiguration().hasPatientFile())
+          this.patientFiles = sce.getPatientConfiguration().getPatientFile();
+      }
+      catch (InvalidProtocolBufferException e){} // Carry on, we'll just plot the computed
+    }
   }
 
   protected void deleteTestResults(String hint)

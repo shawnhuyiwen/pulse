@@ -15,7 +15,7 @@ def HowTo_CompoundSubstanceInfusion():
     data_requests = [
         SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL),
         SEDataRequest.create_physiology_request("CardiacOutput", unit=VolumePerTimeUnit.L_Per_min),
-        SEDataRequest.create_action_substance_request("SubstanceCompoundInfusion", "Blood", "BagVolume", unit=VolumeUnit.mL)
+        SEDataRequest.create_action_request("SubstanceCompoundInfusion", "BagVolume", unit=VolumeUnit.mL)
     ]
     data_mgr = SEDataRequestManager(data_requests)
 
