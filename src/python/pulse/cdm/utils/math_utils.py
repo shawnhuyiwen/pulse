@@ -1,6 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import logging
 import numpy as np
 
 
@@ -8,7 +9,7 @@ def percent_tolerance(expected: float, calculated: float, epsilon: float):
     # Check for 'invalid' numbers
     if np.isnan(expected) or np.isnan(calculated) or \
        np.isinf(expected) or np.isinf(calculated):
-        print(f"While finding percent tolerance from values 'expected' = {expected} and " \
+        logging.warning(f"While finding percent tolerance from values 'expected' = {expected} and " \
                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
 
     # Special cases
@@ -38,7 +39,7 @@ def percent_difference(expected: float, calculated: float, epsilon: float):
     # Check for 'invalid' numbers
     if np.isnan(expected) or np.isnan(calculated) or \
        np.isinf(expected) or np.isinf(calculated):
-        print(f"While finding percent difference from values 'expected' = {expected} and " \
+        logging.warning(f"While finding percent difference from values 'expected' = {expected} and " \
                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
 
     # Special cases

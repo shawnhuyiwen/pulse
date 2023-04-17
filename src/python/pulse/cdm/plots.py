@@ -4,6 +4,7 @@
 from enum import Enum
 from typing import List, Optional, Set, Tuple
 from copy import deepcopy
+import logging
 import os
 import pandas as pd
 
@@ -19,7 +20,8 @@ class SEImageProperties():
     __slots__ = ["_dimension_mode", "_dim_dict", "_file_format", "_height_inch", "_width_inch", "_dpi"]
 
     def __init__(self, dimension_mode: eDimensionMode=eDimensionMode.Default, file_format: str=".jpg",
-                 height_inch: Optional[float]=None, width_inch: Optional[float]=None, dpi: int=100):
+        height_inch: Optional[float]=None, width_inch: Optional[float]=None, dpi: int=100
+    ):
         self._dimension_mode = dimension_mode
         self._file_format = file_format
         self._height_inch = height_inch
@@ -114,9 +116,10 @@ class SEPlotConfig():
                   "_sci_limits", "_tick_style", "_title", "_x_label", "_x_bounds", "_y_label",
                   "_y_bounds", "_y2_label", "_y2_bounds", "_zero_axis"]
 
-    def __init__(self, set_defaults=False):
+    def __init__(self, set_defaults: bool=False):
         self.clear()
-        self.set_defaults()
+        if set_defaults:
+            self.set_defaults()
 
     def __repr__(self):
         return f'SEPlotConfig({self._disabled}, {self._fill_area}, {self._font_size}, {self._gridlines}, ' \
@@ -206,6 +209,49 @@ class SEPlotConfig():
         if self._y2_bounds is None:
             self._y2_bounds = SEBounds()
 
+    def set_values(self, disabled: Optional[bool]=None, fill_area: Optional[bool]=None, font_size: Optional[int]=None,
+        gridlines: Optional[bool]=None, image_properties: Optional[SEImageProperties]=None, legend_font_size: Optional[int]=None,
+        legend_mode: Optional[eLegendMode]=None, log_axis: Optional[bool]=None, omit_actions_with: Optional[List[str]]=None,
+        omit_events_with: Optional[List[str]]=None, output_path_override: Optional[str]=None,
+        percent_of_baseline_mode: Optional[ePercentageOfBaselineMode]=None, plot_actions: Optional[bool]=None,
+        plot_events: Optional[bool]=None, sci_limits: Optional[Tuple[int, int]]=None, tick_style: Optional[eTickStyle]=None,
+        zero_axis: Optional[bool]=None
+    ):
+        if disabled is not None:
+            self._disabled = disabled
+        if fill_area is not None:
+            self._fill_area = fill_area
+        if font_size is not None:
+            self._font_size = font_size
+        if gridlines is not None:
+            self._gridlines = gridlines
+        if image_properties is not None:
+            self.set_image_properties(image_properties)
+        if legend_font_size is not None:
+            self._legend_font_size = legend_font_size
+        if legend_mode is not None:
+            self._legend_mode = legend_mode
+        if log_axis is not None:
+            self._log_axis = log_axis
+        if omit_actions_with is not None:
+            self._omit_actions_with = list(omit_actions_with)
+        if omit_events_with is not None:
+            self._omit_events_with = list(omit_events_with)
+        if output_path_override is not None:
+            self._output_path_override = output_path_override
+        if percent_of_baseline_mode is not None:
+            self._percent_of_baseline_mode = percent_of_baseline_mode
+        if plot_actions is not None:
+            self._plot_actions = plot_actions
+        if plot_events is not None:
+            self._plot_events = plot_events
+        if sci_limits is not None:
+            self._sci_limits = sci_limits
+        if tick_style is not None:
+            self._tick_style = tick_style
+        if zero_axis is not None:
+            self._zero_axis = zero_axis
+
     def merge_configs(self, src):
         src = deepcopy(src)
         if src._disabled is not None:
@@ -260,51 +306,6 @@ class SEPlotConfig():
             self._y2_label = src._y2_label
         if src._y2_bounds is not None:
             self._y2_bounds = src._y2_bounds
-
-    def set_values(self, disabled: Optional[bool]=None, fill_area: Optional[bool]=None, font_size: Optional[int]=None,
-                    gridlines: Optional[bool]=None, image_properties: Optional[SEImageProperties]=None,
-                    legend_font_size: Optional[int]=None, legend_mode: Optional[eLegendMode]=None,
-                    log_axis: Optional[bool]=None, omit_actions_with: Optional[List[str]]=None,
-                    omit_events_with: Optional[List[str]]=None, output_path_override: Optional[str]=None,
-                    percent_of_baseline_mode: Optional[ePercentageOfBaselineMode]=None,
-                    plot_actions: Optional[bool]=None, plot_events: Optional[bool]=None,
-                    sci_limits: Optional[Tuple[int, int]]=None, tick_style: Optional[eTickStyle]=None,
-                    zero_axis: Optional[bool]=None
-    ):
-        if disabled is not None:
-            self._disabled = disabled
-        if fill_area is not None:
-            self._fill_area = fill_area
-        if font_size is not None:
-            self._font_size = font_size
-        if gridlines is not None:
-            self._gridlines = gridlines
-        if image_properties is not None:
-            self._image_properties = deepcopy(image_properties)
-        if legend_font_size is not None:
-            self._legend_font_size = legend_font_size
-        if legend_mode is not None:
-            self._legend_mode = legend_mode
-        if log_axis is not None:
-            self._log_axis = log_axis
-        if omit_actions_with is not None:
-            self._omit_actions_with = omit_actions_with
-        if omit_events_with is not None:
-            self._omit_events_with = omit_events_with
-        if output_path_override is not None:
-            self._output_path_override = output_path_override
-        if percent_of_baseline_mode is not None:
-            self._percent_of_baseline_mode = percent_of_baseline_mode
-        if plot_actions is not None:
-            self._plot_actions = plot_actions
-        if plot_events is not None:
-            self._plot_events = plot_events
-        if sci_limits is not None:
-            self._sci_limits = sci_limits
-        if tick_style is not None:
-            self._tick_style = tick_style
-        if zero_axis is not None:
-            self._zero_axis = zero_axis
 
     def get_disabled(self):
         return self._disabled
@@ -541,8 +542,9 @@ class SEPlotSource():
                  "_line_format", "_line_width", "_start_row", "_end_row"]
 
     def __init__(self, csv_data: Optional[str]=None, log_file: Optional[str]=None, label: Optional[str]=None,
-                 line_format: Optional[str]=None, line_width: Optional[float]=None, start_row: Optional[int]=None,
-                 end_row: Optional[int]=None):
+        line_format: Optional[str]=None, line_width: Optional[float]=None, start_row: Optional[int]=None,
+        end_row: Optional[int]=None
+    ):
         self._csv_data = csv_data
         self._log_file = log_file
         self._label = label
@@ -628,7 +630,7 @@ class SEPlotSource():
         return filepath
     def _read_csv_into_df(self):
         if not self.has_csv_data():
-            print("ERROR: No CSV data provided")
+            logging.error("No CSV data provided")
             return
 
         # Perform replacement if needed
@@ -637,7 +639,7 @@ class SEPlotSource():
         if os.path.exists(self._csv_data):
             self._df = read_csv_into_df(self._csv_data, replace_slashes=False)
         else:
-            print(f"ERROR: File not found: {self._csv_data}")
+            logging.error(f"File not found: {self._csv_data}")
 
 class SESeries():
     __slots__ = ["_plot_config", "_output_filename", "_title",
@@ -646,23 +648,24 @@ class SESeries():
                  "_y2_label", "_y2_bounds"]
 
     def __init__(self, config: Optional[SEPlotConfig]=None, output_filename: str="", title: Optional[str]=None,
-                 x_header: Optional[str]=None, x_label: Optional[str]=None, x_bounds: SEBounds=SEBounds(),
-                 x2_header: Optional[str]=None, y_headers: List[str]=[], y_label: Optional[str]=None,
-                 y_bounds: SEBounds=SEBounds(), y2_headers: List[str]=[], y2_label: Optional[str]=None,
-                 y2_bounds: SEBounds=SEBounds()):
+        x_header: Optional[str]=None, x_label: Optional[str]=None, x_bounds: SEBounds=SEBounds(),
+        x2_header: Optional[str]=None, y_headers: List[str]=[], y_label: Optional[str]=None,
+        y_bounds: SEBounds=SEBounds(), y2_headers: List[str]=[], y2_label: Optional[str]=None,
+        y2_bounds: SEBounds=SEBounds()
+    ):
         self._plot_config = config
         self._output_filename = output_filename
         self._title = title
         self._x_header = x_header
         self._x_label = x_label
-        self._x_bounds = x_bounds
+        self._x_bounds = deepcopy(x_bounds)
         self._x2_header = x2_header
-        self._y_headers = y_headers
+        self._y_headers = list(y_headers)
         self._y_label = y_label
-        self._y_bounds = y_bounds
-        self._y2_headers = y2_headers
+        self._y_bounds = deepcopy(y_bounds)
+        self._y2_headers = list(y2_headers)
         self._y2_label = y2_label
-        self._y2_bounds = y2_bounds
+        self._y2_bounds = deepcopy(y2_bounds)
 
     def get_plot_config(self):
         if self._plot_config is None:
@@ -792,11 +795,12 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
     __slots__ = ["_plot_sources", "_series", "_validation_source"]
 
     def __init__(self, config: Optional[SEPlotConfig]=None, plot_sources: List[SEPlotSource]=[],
-                 series: List[SESeries]=[], validation_source: Optional[SEPlotSource]=None):
+        series: List[SESeries]=[], validation_source: Optional[SEPlotSource]=None
+    ):
         super().__init__(config)
 
-        self._plot_sources = plot_sources
-        self._series = series
+        self._plot_sources = list(plot_sources)
+        self._series = list(series)
         self._validation_source = validation_source
 
     def get_plot_sources(self):
@@ -835,12 +839,13 @@ class SEComparePlotter(SEPlotter):
     __slots__ = ["_computed_source", "_expected_source", "_failures"]
 
     def __init__(self, config: Optional[SEPlotConfig]=None, computed_source: Optional[SEPlotSource]=None,
-                 expected_source: Optional[SEPlotSource]=None, failures: Set[str]=set()):
+        expected_source: Optional[SEPlotSource]=None, failures: Set[str]=set()
+    ):
         super().__init__(config)
 
         self._computed_source = computed_source
         self._expected_source = expected_source
-        self._failures = failures
+        self._failures = set(failures)
 
     def get_computed_source(self):
         return self._computed_source

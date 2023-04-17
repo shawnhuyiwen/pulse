@@ -1,6 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import logging
 import os
 import shutil
 import sys
@@ -22,11 +23,11 @@ class CSVComparison(SETestReport):
 
     def compare(self, expected_file_path: str, computed_file_path):
         if not os.path.isfile(expected_file_path):
-            print(f"ERROR: Expected file does not exist {expected_csv}")
-            print(f"INFO: I am going to try to plot the computed.")
+            logging.error(f"Expected file does not exist {expected_csv}")
+            logging.info(f"I am going to try to plot the computed.")
             # TODO: check for zip file
         if not os.path.isfile(computed_file_path):
-            print(f"ERROR: Computed file does not exist {computed_file_path}")
+            logging.error(f"Computed file does not exist {computed_file_path}")
 
         report = f"{computed_file_path[:-4]}/{os.path.basename(computed_file_path)[:-4]}Report.json"
         self.set_full_report_path(report)
@@ -35,7 +36,7 @@ class CSVComparison(SETestReport):
         try:
             shutil.rmtree(self.report_dir)
         except OSError as e:
-            print(f"WARNING: Could not remove old report directory: {self.report_dir}")
+            logging.warning(f"Could not remove old report directory: {self.report_dir}")
         os.makedirs(self.report_dir)
 
         # Create the test case
@@ -45,6 +46,9 @@ class CSVComparison(SETestReport):
 
         # Use log file and directory from computed source
         log_file = computed_file_path[:-len("Results.csv")] + ".log"
+        if not os.path.isfile(log_file):
+            log_file = None
+            logging.warning(f"Could not locate log file: {computed_file_path}")
 
         total_errors = 0
 
@@ -60,13 +64,13 @@ class CSVComparison(SETestReport):
         expected_df = expected.get_data_frame()
         computed_df = computed.get_data_frame()
         if len(expected_df.columns) != len(computed_df.columns):
-            print(f"WARNING: Number of results is difference, expected ({expected_file_path}) " \
+            logging.warning(f"Number of results is difference, expected ({expected_file_path}) " \
                   f"{len(expected_df.columns)} but computed ({computed_file_path}) is {len(computed_df.columns)}")
 
         for y_header in expected_df.columns:
             if y_header not in computed_df.columns:
                 total_errors += 1
-                print(f'ERROR: Computed results did not provide expected result "{y_header}"')
+                logging.error(f'Computed results did not provide expected result "{y_header}"')
 
         # Actually compare CSVs
         error_summary = compare_dfs(expected_df, computed_df, self.error_limit)
@@ -112,13 +116,15 @@ def get_error_info(x: pd.Series, error_limit: float=2.0):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
     expected_csv = None
     computed_csv = None
     output_directory = None
     error_limit = 2.0
 
     if len(sys.argv) < 2:
-        print("ERROR: Expected inputs : [expected results file path] [computed results file path] [output directory] [percent tolerance]")
+        logging.error("Expected inputs : [expected results file path] [computed results file path] [output directory] [percent tolerance]")
         sys.exit(1)
     else:
         if sys.argv[1].endswith(".csv"):
@@ -139,7 +145,7 @@ if __name__ == "__main__":
         error_limit = float(sys.argv[next_arg])
         next_arg += 1
 
-    print(f"INFO: Comparing {expected_csv} to {computed_csv}")
+    logging.info(f"Comparing {expected_csv} to {computed_csv}")
     c = CSVComparison()
     c.error_limit = error_limit
     c.compare(expected_csv, computed_csv)

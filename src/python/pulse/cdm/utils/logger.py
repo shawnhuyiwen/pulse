@@ -3,6 +3,7 @@
 
 from enum import Enum
 from typing import List, NamedTuple, Set
+import logging
 import re
 
 from pulse.cdm.engine import SEAction
@@ -156,7 +157,7 @@ def parse_actions(log_file: str, omit: List[str] = []):
                 # Group 1: Time
                 match = re.search(r'\[(\d*\.?d*)\(.*\)\]', action_text)
                 if match is None:
-                    print("ERROR: Could not parse actions")
+                    logging.error("Could not parse actions")
                     return actions
                 action_time = float(match.group(1))
                 action_text = action_text[(action_idx+len(action_tag)):].lstrip()

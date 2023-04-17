@@ -1,6 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import logging
 import os
 import re
 import sys
@@ -28,7 +29,7 @@ def create_plots(plots_file: str, benchmark: bool = False):
         elif isinstance(p, SEComparePlotter):
             compare_plotter(p, benchmark)
         else:
-            print(f"ERROR: Unknown plotter type: {p}")
+            logging.error(f"Unknown plotter type: {p}")
 
 
 def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: bool = False):
@@ -36,7 +37,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         start = timer()
 
     if not plotter.has_plot_sources():
-        print("ERROR: No plot source provided")
+        logging.error("No plot source provided")
         return
     sources = plotter.get_plot_sources()
     validation_source = plotter.get_validation_source()
@@ -118,7 +119,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
                 if series.has_y_headers():
                     title = generate_title(x_header, series.get_y_headers()[0])
                 else:
-                    print("ERROR: Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
+                    logging.error("Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
                     continue
             config.set_output_filename(generate_filename(title))
 
@@ -139,16 +140,16 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         ):
             save_current_plot(output_filepath, config.get_image_properties())
         else:
-            print(f"ERROR: Failed to create plot {output_filepath}")
+            logging.error(f"Failed to create plot {output_filepath}")
         clear_current_plot()
 
         if benchmark:
             end_series = timer()
-            print(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
+            logging.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
 
     if benchmark:
         end = timer()
-        print(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
+        logging.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
 def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
@@ -176,13 +177,13 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
                 break
     if x_header is None:
         if not computed_df.empty:
-            print(f"ERROR: There is no data in the expected file? I will plot what you computed...")
+            logging.error("There is no data in the expected file? I will plot what you computed...")
             for c in computed_df.columns:
                 if re.search('^Time', c):
                     x_header = c
                     break
         else:
-            print(f"ERROR: Both expected and computed files seem to be empty?")
+            logging.error("Both expected and computed files seem to be empty?")
             return
 
     # Action Event Legend
@@ -198,7 +199,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
     ):
         save_current_plot(output_filepath, config.get_image_properties())
     else:
-        print(f"ERROR: Failed to create legend {output_filepath}")
+        logging.error(f"Failed to create legend {output_filepath}")
         config.set_plot_actions(False)
         config.set_plot_events(False)
     clear_current_plot()
@@ -246,7 +247,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         ):
             save_current_plot(output_filepath, config.get_image_properties(), facecolor=color)
         else:
-            print(f"ERROR: Failed to create plot {output_filepath}")
+            logging.error(f"Failed to create plot {output_filepath}")
 
         # Reset
         clear_current_plot()
@@ -255,10 +256,13 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
 
         if benchmark:
             end_series = timer()
-            print(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
+            logging.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
 
     # Plot all expected columns
     for y_header in expected_df.columns[1:]:
+        if y_header not in computed_df.columns:
+            continue
+
         _plot_header([expected_source, computed_source])
 
     # Plot anything not in expected data
@@ -270,7 +274,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
 
     if benchmark:
         end = timer()
-        print(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
+        logging.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
 def generate_title(x_header: str, y_header: str):
@@ -307,7 +311,7 @@ def percentage_of_baseline(baseline_mode: ePercentageOfBaselineMode,
         if y2_headers:
             ycols.extend(y2_headers)
     elif baseline_mode != ePercentageOfBaselineMode.Off:
-        print(f"Unknown percentage of baseline mode: {baseline_mode}")
+        logging.warning(f"Unknown percentage of baseline mode: {baseline_mode}")
         return False
     df[xcols] = df[xcols].apply(lambda x: (1-(x / x[0])) * 100.0)
     df[ycols] = df[ycols].apply(lambda x: x * 100.0 / x[0])
@@ -434,7 +438,7 @@ def create_plot(plot_sources: [SEPlotSource],
                     **c,
                     data=df,
                     label=line_lbl,
-                    linewidth=ps.get_line_width(),
+                    #linewidth=ps.get_line_width(),
                 ))
 
             if plot_config.get_fill_area():
@@ -447,7 +451,7 @@ def create_plot(plot_sources: [SEPlotSource],
         baseline_mode = plot_config.get_percent_of_baseline_mode()
         df = ps.get_data_frame()
         if df.empty:
-            print(f"ERROR: Data frame is empty: {ps.get_csv_data()}")
+            logging.error(f"Data frame is empty: {ps.get_csv_data()}")
             continue
         if not percentage_of_baseline(baseline_mode,
                                       df,
@@ -501,14 +505,14 @@ def create_plot(plot_sources: [SEPlotSource],
                 color = next(action_event_fmt_cycler)['color']
                 ax3.axvline(x=ae.time, color = color, label = f"{ae.category}:{ae.text}\nt={ae.time}")
         else:
-            print(f"ERROR: Could not find corresponding log file: {ps.get_csv_data()}")
+            logging.error(f"Could not find corresponding log file: {ps.get_csv_data()}")
             return False
 
     # Plot validation data if needed
     if validation_source:
         df = validation_source.get_data_frame()
         if df.empty:
-            print(f"ERROR: Data frame is empty: {validation_source.get_csv_data()}")
+            logging.error(f"Data frame is empty: {validation_source.get_csv_data()}")
         elif y2_headers:
             color = _plot_headers(ax2, validation_source, df, x2_header, y2_headers, y2_label)
 
@@ -589,7 +593,7 @@ def create_plot(plot_sources: [SEPlotSource],
 
 
 def save_current_plot(filename: str, image_props: SEImageProperties, facecolor: Optional[str] = None):
-    print(f"Saving plot {filename}")
+    logging.info(f"Saving plot {filename}")
     figure = plt.gcf()
     # Doing tight layout twice helps prevent legends getting cut off
     plt.tight_layout()
@@ -604,6 +608,8 @@ def clear_current_plot():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
     benchmark = False
     plot_config = None
 
@@ -616,7 +622,7 @@ if __name__ == "__main__":
         benchmark = True
 
     if plot_config is None:
-        print("Please provide a valid json configuration")
+        logging.error("Please provide a valid json configuration")
     else:
         if benchmark:
             start = timer()
@@ -625,4 +631,4 @@ if __name__ == "__main__":
 
         if benchmark:
             end = timer()
-            print(f'Total Execution Time: {timedelta(seconds=end - start)}')
+            logging.info(f'Total Execution Time: {timedelta(seconds=end - start)}')
