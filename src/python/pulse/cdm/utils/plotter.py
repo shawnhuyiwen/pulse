@@ -204,8 +204,12 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         config.set_plot_events(False)
     clear_current_plot()
 
+    class _eColorMode(Enum):
+        Default = 0
+        Pass = 1
+        Fail = 2
     # Helper function to plot every header against x_header
-    def _plot_header(sources: List[SEPlotSource]):
+    def _plot_header(sources: List[SEPlotSource], color_mode: _eColorMode=_eColorMode.Default):
         if benchmark:
             start_series = timer()
 
@@ -226,7 +230,6 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
             config.set_x_label(x_label)
 
         # Update background color based on fail/pass
-        color = "lime"
         dark_bg_params = {
             "legend.facecolor" : "dimgrey",
             "text.color" : "w",
@@ -235,7 +238,11 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
             "axes.labelcolor" : "w",
             "axes.edgecolor" : "w"
         }
-        if y_header in plotter.get_failures():
+        if color_mode == _eColorMode.Default:
+            color = "w"
+        elif color_mode == _eColorMode.Pass:
+            color = "lime"
+        elif color_mode == _eColorMode.Fail:
             plt.rcParams.update(dark_bg_params)
             color = "red"
 
@@ -263,14 +270,18 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         if y_header not in computed_df.columns:
             continue
 
-        _plot_header([expected_source, computed_source])
+        if y_header in plotter.get_failures():
+            mode = _eColorMode.Fail
+        else:
+            mode = _eColorMode.Pass
+        _plot_header([expected_source, computed_source], color_mode=mode)
 
     # Plot anything not in expected data
     for y_header in computed_df.columns[1:]:
         if y_header in expected_df.columns:
             continue
 
-        _plot_header([computed_source])
+        _plot_header([computed_source], color_mode=_eColorMode.Default)
 
     if benchmark:
         end = timer()

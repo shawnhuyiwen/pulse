@@ -5,10 +5,10 @@ import logging
 import numpy as np
 
 
-def percent_tolerance(expected: float, calculated: float, epsilon: float):
+def percent_tolerance(expected: float, calculated: float, epsilon: float, verbose: bool=True):
     # Check for 'invalid' numbers
-    if np.isnan(expected) or np.isnan(calculated) or \
-       np.isinf(expected) or np.isinf(calculated):
+    if verbose and (np.isnan(expected) or np.isnan(calculated) or \
+       np.isinf(expected) or np.isinf(calculated)):
         logging.warning(f"While finding percent tolerance from values 'expected' = {expected} and " \
                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
 
@@ -35,10 +35,10 @@ def generate_percent_tolerance_span(expected: float, calculated: float, epsilon:
     return generate_percent_span(percent, precision)
 
 
-def percent_difference(expected: float, calculated: float, epsilon: float):
+def percent_difference(expected: float, calculated: float, epsilon: float, verbose: bool=True):
     # Check for 'invalid' numbers
-    if np.isnan(expected) or np.isnan(calculated) or \
-       np.isinf(expected) or np.isinf(calculated):
+    if verbose and (np.isnan(expected) or np.isnan(calculated) or \
+       np.isinf(expected) or np.isinf(calculated)):
         logging.warning(f"While finding percent difference from values 'expected' = {expected} and " \
                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
 

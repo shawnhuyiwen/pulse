@@ -96,7 +96,7 @@ class CSVComparison(SETestReport):
 
 
 def series_percent_difference(x: pd.Series, y: pd.Series, epsilon: float):
-    return pd.Series([percent_difference(xi, yi, epsilon) for xi, yi in zip(x,y)])
+    return pd.Series([percent_difference(xi, yi, epsilon, verbose=False) for xi, yi in zip(x,y)])
 
 
 def compare_dfs(df1: pd.DataFrame, df2: pd.DataFrame, error_limit: float):
