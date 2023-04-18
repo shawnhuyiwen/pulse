@@ -3,12 +3,10 @@
 
 import logging
 import os
-import sys
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
 from pulse.cdm.scalars import TimeUnit
-from pulse.cdm.engine import ILoggerForward
 
 
 class SETestCase():
@@ -65,6 +63,7 @@ class SETestCaseHandler(logging.Handler):
 
     def set_test_case(self, tc: SETestCase):
         self.test_case = tc
+
 
 class SETestSuite():
     __slots__ = ["name", "performed", "requirements", "test_cases", "active_case", "active_case_listener"]
