@@ -143,9 +143,10 @@ message ImagePropertyData
   /** @brief Dimension modes. */
   enum eDimensionMode
   {
-    Default                                                     = 0; /**<< @brief Use pre-defined dimension defaults, MxN. */
-    Square                                                      = 1; /**<< @brief MxM dimensions. */
-    Legend                                                      = 2; /**<< @bried 2MxP dimensions. */
+    Default                                                     = 0;  /**<< @brief Use pre-defined dimension defaults, MxN. */
+    Square                                                      = 1;  /**<< @brief MxM dimensions. */
+    Legend                                                      = 2;  /**<< @brief 2MxP dimensions. */
+    Unbound                                                     = 3;  /**<< @brief Unspecified dimensions. */
   }
 
   optional eDimensionMode             DimensionMode             = 1;  /**<< @brief  Specify the desired image dimension mode. Any provided height/width values will take prority. */

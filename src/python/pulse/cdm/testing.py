@@ -1,18 +1,23 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import logging
 import os
+import sys
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
 from pulse.cdm.scalars import TimeUnit
+from pulse.cdm.engine import ILoggerForward
+
 
 class SETestCase():
     __slots__ = ["name", "duration", "failures", "eq_opts"]
 
     def __init__(self):
+        self.duration = None
+        self.clear()
         # TODO: SEEqualOptions
-        pass
 
     def clear(self):
         self.name = None
@@ -42,10 +47,31 @@ class SETestCase():
         return list(self.failures)
 
 
+class SETestCaseHandler(logging.Handler):
+    __slots__ = ["test_case"]
+
+    def __init__(self):
+        super().__init__()
+
+        self.test_case = None
+
+    def emit(self, record: logging.LogRecord):
+        if self.test_case:
+            if record.levelno == logging.ERROR or record.levelno == logging.FATAL:
+                self.test_case.add_failure(record.msg)
+
+    def clear(self):
+        self.test_case = None
+
+    def set_test_case(self, tc: SETestCase):
+        self.test_case = tc
+
 class SETestSuite():
     __slots__ = ["name", "performed", "requirements", "test_cases", "active_case", "active_case_listener"]
 
     def __init__(self):
+        self.active_case_listener = SETestCaseHandler()
+        logging.getLogger().addHandler(self.active_case_listener)
         self.clear()
 
     def clear(self):
@@ -54,7 +80,7 @@ class SETestSuite():
         self.requirements = []
         self.test_cases = []
         self.active_case = None
-        #TODO: Test case listener
+        self.active_case_listener.clear()
 
     def get_name(self):
         return self.name
@@ -88,15 +114,19 @@ class SETestSuite():
     def start_case(self, name: str):
         self.active_case = self.create_test_case()
         self.active_case.set_name(name)
+        self.active_case_listener.set_test_case(self.active_case)
         return self.active_case
 
     def get_active_case(self):
         return self.active_case
 
+    def end_case(self):
+        self.active_case_listener.clear()
+
     def get_num_errors(self):
         errs = 0
         for tc in self.test_cases:
-            if not tc.get_failures():
+            if tc.has_failures():
                 errs += 1
         return errs
 
@@ -193,13 +223,6 @@ class SETestReport():
 
     def add_test_suite(self, ts: SETestSuite):
         self.test_suites.append(ts)
-
-    def write(self):
-        write(self.report_dir)
-    def write(self, toDirectory: Optional[str]):
-        if not toDirectory:
-            toDirectory = "./"
-        self.write_file(toDirectory + self.file_name)
 
     def to_html(self, title: str):
         return to_html(title, None)

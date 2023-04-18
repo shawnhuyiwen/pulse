@@ -4,7 +4,7 @@
 from typing import List
 
 from pulse.cdm.properties import SEFunction
-from pulse.cdm.bind.Properties_pb2 import FunctionData
+from pulse.cdm.bind.Properties_pb2 import FunctionData, DoubleArrayData
 
 def serialize_function_to_bind(src: SEFunction, dst: FunctionData):
     serialize_double_array_to_bind(src.get_dependent(), dst.Dependent)

@@ -197,7 +197,9 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         x_header,
         [],
     ):
-        save_current_plot(output_filepath, config.get_image_properties())
+        im_props = deepcopy(config.get_image_properties())
+        im_props.set_dimension_mode(eDimensionMode.Unbound)
+        save_current_plot(output_filepath, im_props)
     else:
         logging.error(f"Failed to create legend {output_filepath}")
         config.set_plot_actions(False)
@@ -358,7 +360,8 @@ def create_plot(plot_sources: [SEPlotSource],
 
     # Labels and title
     fig, ax1 = plt.subplots()
-    fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
+    if plot_config.get_image_properties().get_width_inch() is not None:
+        fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
     x_label = ""
     if plot_config.has_x_label():
         x_label = plot_config.get_x_label()
@@ -596,7 +599,8 @@ def create_plot(plot_sources: [SEPlotSource],
 
         if plot_config.get_legend_mode() == eLegendMode.OnlyActionEventLegend:
             legend_fig, legend_ax = plt.subplots()
-            legend_fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
+            if plot_config.get_image_properties().get_width_inch() is not None:
+                legend_fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
             legend_ax.axis(False)
             legend_ax.legend(ax3.lines, lbls, loc='center', ncol = min(max_ncols, len(lbls)), fontsize=plot_config.get_legend_font_size())
 
@@ -606,11 +610,14 @@ def create_plot(plot_sources: [SEPlotSource],
 def save_current_plot(filename: str, image_props: SEImageProperties, facecolor: Optional[str] = None):
     logging.info(f"Saving plot {filename}")
     figure = plt.gcf()
-    # Doing tight layout twice helps prevent legends getting cut off
-    plt.tight_layout()
-    figure.set_size_inches(image_props.get_width_inch(), image_props.get_height_inch())
-    plt.tight_layout()
-    figure.savefig(filename, dpi=image_props.get_dpi(), facecolor=facecolor)
+    if image_props.get_width_inch() is not None:
+        # Doing tight layout twice helps prevent legends getting cut off
+        plt.tight_layout()
+        figure.set_size_inches(image_props.get_width_inch(), image_props.get_height_inch())
+        plt.tight_layout()
+        figure.savefig(filename, dpi=image_props.get_dpi(), facecolor=facecolor)
+    else:
+        figure.savefig(filename, dpi=image_props.get_dpi(), facecolor=facecolor, bbox_inches='tight')
 
 
 def clear_current_plot():

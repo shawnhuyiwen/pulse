@@ -16,6 +16,7 @@ class eDimensionMode(Enum):
     Default = 0
     Square = 1
     Legend = 2
+    Unbound = 3
 class SEImageProperties():
     __slots__ = ["_dimension_mode", "_dim_dict", "_file_format", "_height_inch", "_width_inch", "_dpi"]
 
@@ -29,9 +30,10 @@ class SEImageProperties():
         self._dpi = dpi
 
         self._dim_dict = {
-            eDimensionMode.Default: { "h": 8, "w": 16 },
-            eDimensionMode.Square:  { "h": 8, "w": 8  },
-            eDimensionMode.Legend:  { "h": 2, "w": 32 }
+            eDimensionMode.Default:  { "h": 8, "w": 16 },
+            eDimensionMode.Square:   { "h": 8, "w": 8  },
+            eDimensionMode.Legend:   { "h": 2, "w": 32 },
+            eDimensionMode.Unbound:  { "h": None, "w": None}
         }
 
     def get_dimension_mode(self):
