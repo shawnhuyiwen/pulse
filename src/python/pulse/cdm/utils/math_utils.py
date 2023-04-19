@@ -5,11 +5,14 @@ import logging
 import numpy as np
 
 
+_pulse_logger = logging.getLogger('pulse')
+
+
 def percent_tolerance(expected: float, calculated: float, epsilon: float, verbose: bool=True):
     # Check for 'invalid' numbers
     if verbose and (np.isnan(expected) or np.isnan(calculated) or \
        np.isinf(expected) or np.isinf(calculated)):
-        logging.warning(f"While finding percent tolerance from values 'expected' = {expected} and " \
+        _pulse_logger.warning(f"While finding percent tolerance from values 'expected' = {expected} and " \
                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
 
     # Special cases
@@ -39,7 +42,7 @@ def percent_difference(expected: float, calculated: float, epsilon: float, verbo
     # Check for 'invalid' numbers
     if verbose and (np.isnan(expected) or np.isnan(calculated) or \
        np.isinf(expected) or np.isinf(calculated)):
-        logging.warning(f"While finding percent difference from values 'expected' = {expected} and " \
+        _pulse_logger.warning(f"While finding percent difference from values 'expected' = {expected} and " \
                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
 
     # Special cases

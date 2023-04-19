@@ -17,6 +17,10 @@ from pulse.cdm.utils.plotter import compare_plotter
 from pulse.cdm.testing import SETestReport
 from pulse.cdm.io.testing import serialize_test_report_to_file
 
+
+_pulse_logger = logging.getLogger('pulse')
+
+
 class CSVComparison(SETestReport):
     __slots__ = ["error_limit"]
 
@@ -26,11 +30,11 @@ class CSVComparison(SETestReport):
 
     def compare(self, expected_file_path: str, computed_file_path):
         if not os.path.isfile(expected_file_path):
-            logging.error(f"Expected file does not exist {expected_csv}")
-            logging.info(f"I am going to try to plot the computed.")
+            _pulse_logger.error(f"Expected file does not exist {expected_csv}")
+            _pulse_logger.info(f"I am going to try to plot the computed.")
             # TODO: check for zip file
         if not os.path.isfile(computed_file_path):
-            logging.error(f"Computed file does not exist {computed_file_path}")
+            _pulse_logger.error(f"Computed file does not exist {computed_file_path}")
 
         report = f"{computed_file_path[:-4]}/{os.path.basename(computed_file_path)[:-4]}Report.json"
         self.set_full_report_path(report)
@@ -39,7 +43,7 @@ class CSVComparison(SETestReport):
         try:
             shutil.rmtree(self.report_dir)
         except OSError as e:
-            logging.warning(f"Could not remove old report directory: {self.report_dir}")
+            _pulse_logger.warning(f"Could not remove old report directory: {self.report_dir}")
         os.makedirs(self.report_dir)
 
         # Create the test case
@@ -51,7 +55,7 @@ class CSVComparison(SETestReport):
         log_file = computed_file_path[:-len("Results.csv")] + ".log"
         if not os.path.isfile(log_file):
             log_file = None
-            logging.warning(f"Could not locate log file: {computed_file_path}")
+            _pulse_logger.warning(f"Could not locate log file: {computed_file_path}")
 
         # Prepare plot sources so we can open csvs just once
         expected = SEPlotSource(
@@ -67,12 +71,12 @@ class CSVComparison(SETestReport):
         # Check for header differences
         total_errors = 0
         if len(expected_df.columns) != len(computed_df.columns):
-            logging.warning(f"Number of results is difference, expected ({expected_file_path}) " \
+            _pulse_logger.warning(f"Number of results is difference, expected ({expected_file_path}) " \
                   f"{len(expected_df.columns)} but computed ({computed_file_path}) is {len(computed_df.columns)}")
         for y_header in expected_df.columns:
             if y_header not in computed_df.columns:
                 total_errors += 1
-                logging.error(f'Computed results did not provide expected result "{y_header}"')
+                _pulse_logger.error(f'Computed results did not provide expected result "{y_header}"')
 
         # Get times/first column
         first_col_is_time = expected_df.columns[0].lower().startswith("time")
@@ -85,7 +89,7 @@ class CSVComparison(SETestReport):
         min_rows = len(expected_df.index)
         if len(expected_df.index) != len(computed_df.index):
             total_errors += 1
-            logging.error(f"Computed ({computed_file_path}) is not the same length as expected")
+            _pulse_logger.error(f"Computed ({computed_file_path}) is not the same length as expected")
 
             min_rows = min(len(expected_df.index), len(computed_df.index)) - 1
             expected_df_trunc = expected_df_trunc.loc[:min_rows]
@@ -106,27 +110,27 @@ class CSVComparison(SETestReport):
                 for t, ex, c, err in zip(times, expected_df_trunc[f], computed_df_trunc[f], compare_df[f]):
                     if err > self.error_limit:
                         if not first_col_is_time:
-                            logging.error(f"{f} does not match expected {ex} != computed {c} [{err}%]")
+                            _pulse_logger.error(f"{f} does not match expected {ex} != computed {c} [{err}%]")
                         else:
-                            logging.error(f"{f} @Time {t}: expected {ex} != computed {c} [{err}%]")
+                            _pulse_logger.error(f"{f} @Time {t}: expected {ex} != computed {c} [{err}%]")
 
         # Log all error summary info
-        logging.info(f"Compared {len(expected_df_trunc.index)} total times")
+        _pulse_logger.info(f"Compared {len(expected_df_trunc.index)} total times")
         def _time(idx: int):
             return times.iloc[int(idx)]
         if total_errors > 0:
-            logging.error(f"{total_errors} total errors found")
+            _pulse_logger.error(f"{total_errors} total errors found")
             for f in failures:
                 e = error_summary[f]
                 errPercent = 100 * e.loc['total'] / (e['last row'] + 1 - e['first row'])
-                logging.error(f"{f} has a total of {int(e.loc['total'])} errors between times [{_time(e.loc['first row'])}, {_time(e.loc['last row'])}]\n" \
+                _pulse_logger.error(f"{f} has a total of {int(e.loc['total'])} errors between times [{_time(e.loc['first row'])}, {_time(e.loc['last row'])}]\n" \
                               f"-  {errPercent:.2f}% of timesteps have errors between these times\n" \
                               f"-  min error : @Time {_time(e.loc['min row'])}: expected {e.loc['min expected']} != computed {e.loc['min computed']} [{e.loc['min']}%]\n" \
                               f"-  max error : @Time {_time(e.loc['max row'])}: expected {e.loc['max expected']} != computed {e.loc['max computed']} [{e.loc['max']}%]" )
         if suite.get_active_case().has_failures():
-            logging.error(f"{computed_file_path} Comparison failed!!")
+            _pulse_logger.error(f"{computed_file_path} Comparison failed!!")
         else:
-            logging.info(f"{computed_file_path} Comparison SUCCESS!!")
+            _pulse_logger.info(f"{computed_file_path} Comparison SUCCESS!!")
 
         # Write out results
         suite.end_case()
@@ -207,7 +211,7 @@ if __name__ == "__main__":
     error_limit = 2.0
 
     if len(sys.argv) < 2:
-        logging.error("Expected inputs : [expected results file path] [computed results file path] [output directory] [percent tolerance]")
+        _pulse_logger.error("Expected inputs : [expected results file path] [computed results file path] [output directory] [percent tolerance]")
         sys.exit(1)
     else:
         if sys.argv[1].endswith(".csv"):
@@ -228,6 +232,6 @@ if __name__ == "__main__":
         error_limit = float(sys.argv[next_arg])
         next_arg += 1
 
-    logging.info(f"Comparing {expected_csv} to {computed_csv}")
+    _pulse_logger.info(f"Comparing {expected_csv} to {computed_csv}")
     c = CSVComparison(error_limit=error_limit)
     c.compare(expected_csv, computed_csv)

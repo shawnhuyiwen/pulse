@@ -12,6 +12,10 @@ from pulse.cdm.scalars import SEScalar, SEScalarLength
 from pulse.cdm.utils.file_utils import get_dir_from_run_config
 from pulse.cdm.utils.csv_utils import read_csv_into_df
 
+
+_pulse_logger = logging.getLogger('pulse')
+
+
 class eDimensionMode(Enum):
     Default = 0
     Square = 1
@@ -632,7 +636,7 @@ class SEPlotSource():
         return filepath
     def _read_csv_into_df(self):
         if not self.has_csv_data():
-            logging.error("No CSV data provided")
+            _pulse_logger.error("No CSV data provided")
             return
 
         # Perform replacement if needed
@@ -641,7 +645,7 @@ class SEPlotSource():
         if os.path.exists(self._csv_data):
             self._df = read_csv_into_df(self._csv_data, replace_slashes=False)
         else:
-            logging.error(f"File not found: {self._csv_data}")
+            _pulse_logger.error(f"File not found: {self._csv_data}")
 
 class SESeries():
     __slots__ = ["_plot_config", "_output_filename", "_title",

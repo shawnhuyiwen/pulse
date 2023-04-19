@@ -9,6 +9,9 @@ from typing import Dict, List, Optional
 from pulse.cdm.scalars import TimeUnit
 
 
+_pulse_logger = logging.getLogger('pulse')
+
+
 class SETestCase():
     __slots__ = ["name", "duration", "failures", "eq_opts"]
 
@@ -70,7 +73,7 @@ class SETestSuite():
     def __init__(self):
         self.active_case_listener = SETestCaseHandler()
         self.active_case_listener.setLevel(logging.ERROR)
-        logging.getLogger().addHandler(self.active_case_listener)
+        _pulse_logger.addHandler(self.active_case_listener)
         self.clear()
 
     def clear(self):

@@ -20,6 +20,9 @@ from pulse.cdm.utils.file_utils import get_config_dir
 from pulse.cdm.utils.logger import LogActionEvent, parse_actions, parse_events
 
 
+_pulse_logger = logging.getLogger('pulse')
+
+
 def create_plots(plots_file: str, benchmark: bool = False):
     plotters = []
     serialize_plotter_list_from_file(plots_file, plotters)
@@ -29,7 +32,7 @@ def create_plots(plots_file: str, benchmark: bool = False):
         elif isinstance(p, SEComparePlotter):
             compare_plotter(p, benchmark)
         else:
-            logging.error(f"Unknown plotter type: {p}")
+            _pulse_logger.error(f"Unknown plotter type: {p}")
 
 
 def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: bool = False):
@@ -37,7 +40,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         start = timer()
 
     if not plotter.has_plot_sources():
-        logging.error("No plot source provided")
+        _pulse_logger.error("No plot source provided")
         return
     sources = plotter.get_plot_sources()
     validation_source = plotter.get_validation_source()
@@ -119,7 +122,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
                 if series.has_y_headers():
                     title = generate_title(x_header, series.get_y_headers()[0])
                 else:
-                    logging.error("Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
+                    _pulse_logger.error("Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
                     continue
             config.set_output_filename(generate_filename(title))
 
@@ -140,16 +143,16 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         ):
             save_current_plot(output_filepath, config.get_image_properties())
         else:
-            logging.error(f"Failed to create plot {output_filepath}")
+            _pulse_logger.error(f"Failed to create plot {output_filepath}")
         clear_current_plot()
 
         if benchmark:
             end_series = timer()
-            logging.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
+            _pulse_logger.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
 
     if benchmark:
         end = timer()
-        logging.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
+        _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
 def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
@@ -177,13 +180,13 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
                 break
     if x_header is None:
         if not computed_df.empty:
-            logging.error("There is no data in the expected file? I will plot what you computed...")
+            _pulse_logger.error("There is no data in the expected file? I will plot what you computed...")
             for c in computed_df.columns:
                 if re.search('^Time', c):
                     x_header = c
                     break
         else:
-            logging.error("Both expected and computed files seem to be empty?")
+            _pulse_logger.error("Both expected and computed files seem to be empty?")
             return
 
     # Action Event Legend
@@ -201,7 +204,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         im_props.set_dimension_mode(eDimensionMode.Unbound)
         save_current_plot(output_filepath, im_props)
     else:
-        logging.error(f"Failed to create legend {output_filepath}")
+        _pulse_logger.error(f"Failed to create legend {output_filepath}")
         config.set_plot_actions(False)
         config.set_plot_events(False)
     clear_current_plot()
@@ -256,7 +259,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         ):
             save_current_plot(output_filepath, config.get_image_properties(), facecolor=color)
         else:
-            logging.error(f"Failed to create plot {output_filepath}")
+            _pulse_logger.error(f"Failed to create plot {output_filepath}")
 
         # Reset
         clear_current_plot()
@@ -265,7 +268,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
 
         if benchmark:
             end_series = timer()
-            logging.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
+            _pulse_logger.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
 
     # Plot all expected columns
     for y_header in expected_df.columns[1:]:
@@ -287,7 +290,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
 
     if benchmark:
         end = timer()
-        logging.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
+        _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
 def generate_title(x_header: str, y_header: str):
@@ -324,7 +327,7 @@ def percentage_of_baseline(baseline_mode: ePercentageOfBaselineMode,
         if y2_headers:
             ycols.extend(y2_headers)
     elif baseline_mode != ePercentageOfBaselineMode.Off:
-        logging.warning(f"Unknown percentage of baseline mode: {baseline_mode}")
+        _pulse_logger.warning(f"Unknown percentage of baseline mode: {baseline_mode}")
         return False
     df[xcols] = df[xcols].apply(lambda x: (1-(x / x[0])) * 100.0)
     df[ycols] = df[ycols].apply(lambda x: x * 100.0 / x[0])
@@ -465,7 +468,7 @@ def create_plot(plot_sources: [SEPlotSource],
         baseline_mode = plot_config.get_percent_of_baseline_mode()
         df = ps.get_data_frame()
         if df.empty:
-            logging.error(f"Data frame is empty: {ps.get_csv_data()}")
+            _pulse_logger.error(f"Data frame is empty: {ps.get_csv_data()}")
             continue
         if not percentage_of_baseline(baseline_mode,
                                       df,
@@ -519,14 +522,14 @@ def create_plot(plot_sources: [SEPlotSource],
                 color = next(action_event_fmt_cycler)['color']
                 ax3.axvline(x=ae.time, color = color, label = f"{ae.category}:{ae.text}\nt={ae.time}")
         else:
-            logging.error(f"Could not find corresponding log file: {ps.get_csv_data()}")
+            _pulse_logger.error(f"Could not find corresponding log file: {ps.get_csv_data()}")
             return False
 
     # Plot validation data if needed
     if validation_source:
         df = validation_source.get_data_frame()
         if df.empty:
-            logging.error(f"Data frame is empty: {validation_source.get_csv_data()}")
+            _pulse_logger.error(f"Data frame is empty: {validation_source.get_csv_data()}")
         elif y2_headers:
             color = _plot_headers(ax2, validation_source, df, x2_header, y2_headers, y2_label)
 
@@ -608,7 +611,7 @@ def create_plot(plot_sources: [SEPlotSource],
 
 
 def save_current_plot(filename: str, image_props: SEImageProperties, facecolor: Optional[str] = None):
-    logging.info(f"Saving plot {filename}")
+    _pulse_logger.info(f"Saving plot {filename}")
     figure = plt.gcf()
     if image_props.get_width_inch() is not None:
         # Doing tight layout twice helps prevent legends getting cut off
@@ -640,7 +643,7 @@ if __name__ == "__main__":
         benchmark = True
 
     if plot_config is None:
-        logging.error("Please provide a valid json configuration")
+        _pulse_logger.error("Please provide a valid json configuration")
     else:
         if benchmark:
             start = timer()
@@ -649,4 +652,4 @@ if __name__ == "__main__":
 
         if benchmark:
             end = timer()
-            logging.info(f'Total Execution Time: {timedelta(seconds=end - start)}')
+            _pulse_logger.info(f'Total Execution Time: {timedelta(seconds=end - start)}')
