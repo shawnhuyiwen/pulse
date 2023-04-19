@@ -55,8 +55,7 @@ class SETestCaseHandler(logging.Handler):
 
     def emit(self, record: logging.LogRecord):
         if self.test_case:
-            if record.levelno == logging.ERROR or record.levelno == logging.FATAL:
-                self.test_case.add_failure(record.msg)
+            self.test_case.add_failure(record.msg)
 
     def clear(self):
         self.test_case = None
@@ -70,6 +69,7 @@ class SETestSuite():
 
     def __init__(self):
         self.active_case_listener = SETestCaseHandler()
+        self.active_case_listener.setLevel(logging.ERROR)
         logging.getLogger().addHandler(self.active_case_listener)
         self.clear()
 
