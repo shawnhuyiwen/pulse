@@ -97,6 +97,7 @@ message ComparePlotterData
   PlotSourceData                      ComputedSource            = 3;
   PlotSourceData                      ExpectedSource            = 4;
   repeated string                     Failures                  = 5;  /**<< @brief Headers that were deemed as failure during comparison. */
+  map<string, double>                 RMSValues                 = 6;  /**<< @brief Root Mean Square (RMS) values computed during comparison. */
 }
 
 /** @brief Data used to configure x vs y plots. */
@@ -143,9 +144,10 @@ message ImagePropertyData
   /** @brief Dimension modes. */
   enum eDimensionMode
   {
-    Default                                                     = 0; /**<< @brief Use pre-defined dimension defaults, MxN. */
-    Square                                                      = 1; /**<< @brief MxM dimensions. */
-    Legend                                                      = 2; /**<< @bried 2MxP dimensions. */
+    Default                                                     = 0;  /**<< @brief Use pre-defined dimension defaults, MxN. */
+    Square                                                      = 1;  /**<< @brief MxM dimensions. */
+    Legend                                                      = 2;  /**<< @brief 2MxP dimensions. */
+    Unbound                                                     = 3;  /**<< @brief Unspecified dimensions. */
   }
 
   optional eDimensionMode             DimensionMode             = 1;  /**<< @brief  Specify the desired image dimension mode. Any provided height/width values will take prority. */

@@ -1,6 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import logging
 import os
 import re
 import sys
@@ -19,6 +20,9 @@ from pulse.cdm.utils.file_utils import get_config_dir
 from pulse.cdm.utils.logger import LogActionEvent, parse_actions, parse_events
 
 
+_pulse_logger = logging.getLogger('pulse')
+
+
 def create_plots(plots_file: str, benchmark: bool = False):
     plotters = []
     serialize_plotter_list_from_file(plots_file, plotters)
@@ -28,7 +32,7 @@ def create_plots(plots_file: str, benchmark: bool = False):
         elif isinstance(p, SEComparePlotter):
             compare_plotter(p, benchmark)
         else:
-            print(f"ERROR: Unknown plotter type: {p}")
+            _pulse_logger.error(f"Unknown plotter type: {p}")
 
 
 def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: bool = False):
@@ -36,7 +40,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         start = timer()
 
     if not plotter.has_plot_sources():
-        print("ERROR: No plot source provided")
+        _pulse_logger.error("No plot source provided")
         return
     sources = plotter.get_plot_sources()
     validation_source = plotter.get_validation_source()
@@ -118,7 +122,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
                 if series.has_y_headers():
                     title = generate_title(x_header, series.get_y_headers()[0])
                 else:
-                    print("ERROR: Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
+                    _pulse_logger.error("Plot has no title nor output filename and one cannot be generated (is this just a legend?)")
                     continue
             config.set_output_filename(generate_filename(title))
 
@@ -139,16 +143,16 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         ):
             save_current_plot(output_filepath, config.get_image_properties())
         else:
-            print(f"ERROR: Failed to create plot {output_filepath}")
+            _pulse_logger.error(f"Failed to create plot {output_filepath}")
         clear_current_plot()
 
         if benchmark:
             end_series = timer()
-            print(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
+            _pulse_logger.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
 
     if benchmark:
         end = timer()
-        print(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
+        _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
 def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
@@ -176,13 +180,13 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
                 break
     if x_header is None:
         if not computed_df.empty:
-            print(f"ERROR: There is no data in the expected file? I will plot what you computed...")
+            _pulse_logger.error("There is no data in the expected file? I will plot what you computed...")
             for c in computed_df.columns:
                 if re.search('^Time', c):
                     x_header = c
                     break
         else:
-            print(f"ERROR: Both expected and computed files seem to be empty?")
+            _pulse_logger.error("Both expected and computed files seem to be empty?")
             return
 
     # Action Event Legend
@@ -196,15 +200,21 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         x_header,
         [],
     ):
-        save_current_plot(output_filepath, config.get_image_properties())
+        im_props = deepcopy(config.get_image_properties())
+        im_props.set_dimension_mode(eDimensionMode.Unbound)
+        save_current_plot(output_filepath, im_props)
     else:
-        print(f"ERROR: Failed to create legend {output_filepath}")
+        _pulse_logger.error(f"Failed to create legend {output_filepath}")
         config.set_plot_actions(False)
         config.set_plot_events(False)
     clear_current_plot()
 
+    class _eColorMode(Enum):
+        Default = 0
+        Pass = 1
+        Fail = 2
     # Helper function to plot every header against x_header
-    def _plot_header(sources: List[SEPlotSource]):
+    def _plot_header(sources: List[SEPlotSource], color_mode: _eColorMode=_eColorMode.Default):
         if benchmark:
             start_series = timer()
 
@@ -225,7 +235,6 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
             config.set_x_label(x_label)
 
         # Update background color based on fail/pass
-        color = "lime"
         dark_bg_params = {
             "legend.facecolor" : "dimgrey",
             "text.color" : "w",
@@ -234,7 +243,11 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
             "axes.labelcolor" : "w",
             "axes.edgecolor" : "w"
         }
-        if y_header in plotter.get_failures():
+        if color_mode == _eColorMode.Default:
+            color = "w"
+        elif color_mode == _eColorMode.Pass:
+            color = "lime"
+        elif color_mode == _eColorMode.Fail:
             plt.rcParams.update(dark_bg_params)
             color = "red"
 
@@ -246,7 +259,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         ):
             save_current_plot(output_filepath, config.get_image_properties(), facecolor=color)
         else:
-            print(f"ERROR: Failed to create plot {output_filepath}")
+            _pulse_logger.error(f"Failed to create plot {output_filepath}")
 
         # Reset
         clear_current_plot()
@@ -255,26 +268,38 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
 
         if benchmark:
             end_series = timer()
-            print(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
+            _pulse_logger.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
 
     # Plot all expected columns
+    rms_values = plotter.get_rms_values()
     for y_header in expected_df.columns[1:]:
         if y_header not in computed_df.columns:
-            print(f'ERROR: Computed results did not provide expected result "{y_header}"')
             continue
 
-        _plot_header([expected_source, computed_source])
+        if y_header in plotter.get_failures():
+            mode = _eColorMode.Fail
+        else:
+            mode = _eColorMode.Pass
+
+        computed_label = computed_source.get_label()
+        if y_header in rms_values:
+            computed_source.set_label(f"{computed_label} (RMS = {rms_values[y_header]:.4f})")
+
+        _plot_header([expected_source, computed_source], color_mode=mode)
+
+        # Restore label to original value
+        computed_source.set_label(computed_label)
 
     # Plot anything not in expected data
     for y_header in computed_df.columns[1:]:
         if y_header in expected_df.columns:
             continue
 
-        _plot_header([computed_source])
+        _plot_header([computed_source], color_mode=_eColorMode.Default)
 
     if benchmark:
         end = timer()
-        print(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
+        _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
 def generate_title(x_header: str, y_header: str):
@@ -311,7 +336,7 @@ def percentage_of_baseline(baseline_mode: ePercentageOfBaselineMode,
         if y2_headers:
             ycols.extend(y2_headers)
     elif baseline_mode != ePercentageOfBaselineMode.Off:
-        print(f"Unknown percentage of baseline mode: {baseline_mode}")
+        _pulse_logger.warning(f"Unknown percentage of baseline mode: {baseline_mode}")
         return False
     df[xcols] = df[xcols].apply(lambda x: (1-(x / x[0])) * 100.0)
     df[ycols] = df[ycols].apply(lambda x: x * 100.0 / x[0])
@@ -347,7 +372,8 @@ def create_plot(plot_sources: [SEPlotSource],
 
     # Labels and title
     fig, ax1 = plt.subplots()
-    fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
+    if plot_config.get_image_properties().get_width_inch() is not None:
+        fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
     x_label = ""
     if plot_config.has_x_label():
         x_label = plot_config.get_x_label()
@@ -438,7 +464,7 @@ def create_plot(plot_sources: [SEPlotSource],
                     **c,
                     data=df,
                     label=line_lbl,
-                    linewidth=ps.get_line_width(),
+                    #linewidth=ps.get_line_width(),
                 ))
 
             if plot_config.get_fill_area():
@@ -451,7 +477,7 @@ def create_plot(plot_sources: [SEPlotSource],
         baseline_mode = plot_config.get_percent_of_baseline_mode()
         df = ps.get_data_frame()
         if df.empty:
-            print(f"ERROR: Data frame is empty: {ps.get_csv_data()}")
+            _pulse_logger.error(f"Data frame is empty: {ps.get_csv_data()}")
             continue
         if not percentage_of_baseline(baseline_mode,
                                       df,
@@ -505,14 +531,14 @@ def create_plot(plot_sources: [SEPlotSource],
                 color = next(action_event_fmt_cycler)['color']
                 ax3.axvline(x=ae.time, color = color, label = f"{ae.category}:{ae.text}\nt={ae.time}")
         else:
-            print(f"ERROR: Could not find corresponding log file: {ps.get_csv_data()}")
+            _pulse_logger.error(f"Could not find corresponding log file: {ps.get_csv_data()}")
             return False
 
     # Plot validation data if needed
     if validation_source:
         df = validation_source.get_data_frame()
         if df.empty:
-            print(f"ERROR: Data frame is empty: {validation_source.get_csv_data()}")
+            _pulse_logger.error(f"Data frame is empty: {validation_source.get_csv_data()}")
         elif y2_headers:
             color = _plot_headers(ax2, validation_source, df, x2_header, y2_headers, y2_label)
 
@@ -585,7 +611,8 @@ def create_plot(plot_sources: [SEPlotSource],
 
         if plot_config.get_legend_mode() == eLegendMode.OnlyActionEventLegend:
             legend_fig, legend_ax = plt.subplots()
-            legend_fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
+            if plot_config.get_image_properties().get_width_inch() is not None:
+                legend_fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
             legend_ax.axis(False)
             legend_ax.legend(ax3.lines, lbls, loc='center', ncol = min(max_ncols, len(lbls)), fontsize=plot_config.get_legend_font_size())
 
@@ -593,13 +620,16 @@ def create_plot(plot_sources: [SEPlotSource],
 
 
 def save_current_plot(filename: str, image_props: SEImageProperties, facecolor: Optional[str] = None):
-    print(f"Saving plot {filename}")
+    _pulse_logger.info(f"Saving plot {filename}")
     figure = plt.gcf()
-    # Doing tight layout twice helps prevent legends getting cut off
-    plt.tight_layout()
-    figure.set_size_inches(image_props.get_width_inch(), image_props.get_height_inch())
-    plt.tight_layout()
-    figure.savefig(filename, dpi=image_props.get_dpi(), facecolor=facecolor)
+    if image_props.get_width_inch() is not None:
+        # Doing tight layout twice helps prevent legends getting cut off
+        plt.tight_layout()
+        figure.set_size_inches(image_props.get_width_inch(), image_props.get_height_inch())
+        plt.tight_layout()
+        figure.savefig(filename, dpi=image_props.get_dpi(), facecolor=facecolor)
+    else:
+        figure.savefig(filename, dpi=image_props.get_dpi(), facecolor=facecolor, bbox_inches='tight')
 
 
 def clear_current_plot():
@@ -608,6 +638,8 @@ def clear_current_plot():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
     benchmark = False
     plot_config = None
 
@@ -620,7 +652,7 @@ if __name__ == "__main__":
         benchmark = True
 
     if plot_config is None:
-        print("Please provide a valid json configuration")
+        _pulse_logger.error("Please provide a valid json configuration")
     else:
         if benchmark:
             start = timer()
@@ -629,4 +661,4 @@ if __name__ == "__main__":
 
         if benchmark:
             end = timer()
-            print(f'Total Execution Time: {timedelta(seconds=end - start)}')
+            _pulse_logger.info(f'Total Execution Time: {timedelta(seconds=end - start)}')

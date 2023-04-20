@@ -1,12 +1,18 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
-import math
 
-def percent_tolerance(expected: float, calculated: float, epsilon: float):
+import logging
+import numpy as np
+
+
+_pulse_logger = logging.getLogger('pulse')
+
+
+def percent_tolerance(expected: float, calculated: float, epsilon: float, verbose: bool=True):
     # Check for 'invalid' numbers
-    if math.isnan(expected) or math.isnan(calculated) or \
-       math.isinf(expected) or math.isinf(calculated):
-        print(f"While finding percent tolerance from values 'expected' = {expected} and " \
+    if verbose and (np.isnan(expected) or np.isnan(calculated) or \
+       np.isinf(expected) or np.isinf(calculated)):
+        _pulse_logger.warning(f"While finding percent tolerance from values 'expected' = {expected} and " \
                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
 
     # Special cases
@@ -25,16 +31,18 @@ def percent_tolerance(expected: float, calculated: float, epsilon: float):
     else:
         return abs(calculated - expected) / expected * 100.0
 
+
 def generate_percent_tolerance_span(expected: float, calculated: float, epsilon: float, precision: int = 1):
     percent = percent_tolerance(expected, calculated, epsilon)
 
     return generate_percent_span(percent, precision)
 
-def percent_difference(expected: float, calculated: float, epsilon: float):
+
+def percent_difference(expected: float, calculated: float, epsilon: float, verbose: bool=True):
     # Check for 'invalid' numbers
-    if math.isnan(expected) or math.isnan(calculated) or \
-       math.isinf(expected) or math.isinf(calculated):
-        print(f"While finding percent difference from values 'expected' = {expected} and " \
+    if verbose and (np.isnan(expected) or np.isnan(calculated) or \
+       np.isinf(expected) or np.isinf(calculated)):
+        _pulse_logger.warning(f"While finding percent difference from values 'expected' = {expected} and " \
                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
 
     # Special cases
@@ -54,10 +62,12 @@ def percent_difference(expected: float, calculated: float, epsilon: float):
 
         return abs(difference / average) * 100.0
 
+
 def generate_percent_difference_span(expected: float, calculated: float, epsilon: float, precision: int = 1):
     percent = percent_difference(expected, calculated, epsilon)
 
     return generate_percentage_span(percent, precision)
+
 
 def generate_percentage_span(percentage, precision):
     if percentage <= 10:
