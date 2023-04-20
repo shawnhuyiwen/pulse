@@ -97,6 +97,7 @@ message ComparePlotterData
   PlotSourceData                      ComputedSource            = 3;
   PlotSourceData                      ExpectedSource            = 4;
   repeated string                     Failures                  = 5;  /**<< @brief Headers that were deemed as failure during comparison. */
+  map<string, double>                 RMSValues                 = 6;  /**<< @brief Root Mean Square (RMS) values computed during comparison. */
 }
 
 /** @brief Data used to configure x vs y plots. */

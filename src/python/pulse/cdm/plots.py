@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
-from typing import List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 from copy import deepcopy
 import logging
 import os
@@ -842,16 +842,17 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
 
 
 class SEComparePlotter(SEPlotter):
-    __slots__ = ["_computed_source", "_expected_source", "_failures"]
+    __slots__ = ["_computed_source", "_expected_source", "_failures", "_rms"]
 
     def __init__(self, config: Optional[SEPlotConfig]=None, computed_source: Optional[SEPlotSource]=None,
-        expected_source: Optional[SEPlotSource]=None, failures: Set[str]=set()
+        expected_source: Optional[SEPlotSource]=None, failures: Set[str]=set(), rms: Dict[str, float]={}
     ):
         super().__init__(config)
 
         self._computed_source = computed_source
         self._expected_source = expected_source
         self._failures = set(failures)
+        self._rms = dict(rms)
 
     def get_computed_source(self):
         return self._computed_source
@@ -879,3 +880,12 @@ class SEComparePlotter(SEPlotter):
         return len(self._failures) > 0
     def invalidate_failures(self):
         self._failures = set()
+
+    def get_rms_values(self):
+        return self._rms
+    def add_rms_value(self, header: str, value: float):
+        self._rms[header] = value
+    def has_rms_values(self):
+        return len(self._rms) > 0
+    def invalidate_rms_values(self):
+        self._rms = {}

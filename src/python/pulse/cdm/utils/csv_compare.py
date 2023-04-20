@@ -98,6 +98,7 @@ class CSVComparison(SETestReport):
         # Actually compare CSVs
         compare_df = expected_df_trunc.combine(computed_df_trunc, lambda x, y: series_percent_difference(x, y, epsilon=1e-10))
         error_summary = compare_df.apply(lambda x: get_error_info(x, expected_df_trunc, computed_df_trunc, self.error_limit))
+        rms = {h: r for h, r in zip(error_summary.columns, error_summary.loc['rms'])}
         failures = [column for column in error_summary.columns if error_summary.loc['total'][column] > 0]
         error_summary = error_summary[failures]
 
@@ -149,6 +150,7 @@ class CSVComparison(SETestReport):
             expected_source=expected,
             computed_source=computed,
             failures=set(failures),
+            rms=rms,
         )
         compare_plotter(plotter)
 
@@ -157,11 +159,15 @@ def series_percent_difference(x: pd.Series, y: pd.Series, epsilon: float):
     return pd.Series([percent_difference(xi, yi, epsilon, verbose=False) for xi, yi in zip(x,y)])
 
 
-def get_error_info(x: pd.Series, expected: pd.DataFrame, computed: pd.DataFrame, threshold: float=2.0):
+def compute_rms(diff: pd.Series):
+    return np.sqrt( np.sum( np.square(diff) ) / diff.size )
+
+
+def get_error_info(diff: pd.Series, expected: pd.DataFrame, computed: pd.DataFrame, threshold: float=2.0):
     summary = {}
 
     # Filter by threshold
-    filtered = x[x > threshold]
+    filtered = diff[diff > threshold]
 
     if filtered.empty:  # No errors above threshold
         summary = {
@@ -178,26 +184,28 @@ def get_error_info(x: pd.Series, expected: pd.DataFrame, computed: pd.DataFrame,
             "total": 0,
         }
     else:
-        expected_s = expected[x.name]
-        computed_s = computed[x.name]
+        expected_s = expected[diff.name]
+        computed_s = computed[diff.name]
 
         summary["first row"] = filtered.index[0]
         summary["last row"] = filtered.index[-1]
 
         max_row = filtered.idxmax()
         summary["max row"] = max_row
-        summary["max"] = x[max_row]
+        summary["max"] = diff[max_row]
         summary["max expected"] = expected_s[max_row] if max_row < expected_s.size else np.nan
         summary["max computed"] = computed_s[max_row] if max_row < computed_s.size else np.nan
 
         min_row = filtered.idxmin()
         summary["min row"] = min_row
-        summary["min"] = x[min_row]
+        summary["min"] = diff[min_row]
         summary["min expected"] = expected_s[min_row] if min_row < expected_s.size else np.nan
         summary["min computed"] = computed_s[min_row] if min_row < computed_s.size else np.nan
 
         # Num errors > threshold
         summary["total"] = filtered.count()
+
+    summary["rms"] = compute_rms(diff)
 
     return pd.Series(summary.values(), summary.keys())
 

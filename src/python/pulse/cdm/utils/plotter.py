@@ -271,6 +271,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
             _pulse_logger.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
 
     # Plot all expected columns
+    rms_values = plotter.get_rms_values()
     for y_header in expected_df.columns[1:]:
         if y_header not in computed_df.columns:
             continue
@@ -279,7 +280,15 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
             mode = _eColorMode.Fail
         else:
             mode = _eColorMode.Pass
+
+        computed_label = computed_source.get_label()
+        if y_header in rms_values:
+            computed_source.set_label(f"{computed_label} (RMS = {rms_values[y_header]:.4f})")
+
         _plot_header([expected_source, computed_source], color_mode=mode)
+
+        # Restore label to original value
+        computed_source.set_label(computed_label)
 
     # Plot anything not in expected data
     for y_header in computed_df.columns[1:]:
