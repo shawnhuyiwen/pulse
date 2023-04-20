@@ -22,11 +22,13 @@ _pulse_logger = logging.getLogger('pulse')
 
 
 class CSVComparison(SETestReport):
-    __slots__ = ["error_limit"]
+    __slots__ = ["error_limit", "plot_events", "report_differences"]
 
-    def __init__(self, error_limit: float=2.0):
+    def __init__(self, error_limit: float=2.0, plot_events: bool=False, report_differences=False):
         super().__init__()
         self.error_limit = error_limit
+        self.plot_events = plot_events
+        self.report_differences = report_differences
 
     def compare(self, expected_file_path: str, computed_file_path):
         if not os.path.isfile(expected_file_path):
@@ -104,9 +106,7 @@ class CSVComparison(SETestReport):
 
         total_errors += int(error_summary.loc['total'].sum())
 
-        # TODO: get report differences value
-        report_differences = False
-        if report_differences:
+        if self.report_differences:
             for f in failures:
                 for t, ex, c, err in zip(times, expected_df_trunc[f], computed_df_trunc[f], compare_df[f]):
                     if err > self.error_limit:
@@ -143,7 +143,7 @@ class CSVComparison(SETestReport):
             gridlines=True,
             output_path_override=self.report_dir,
             plot_actions=True,
-            plot_events=True,
+            plot_events=self.plot_events,
         )
         plotter = SEComparePlotter(
             config=config,
@@ -215,31 +215,31 @@ if __name__ == "__main__":
 
     expected_csv = None
     computed_csv = None
-    output_directory = None
     error_limit = 2.0
+    plot_events = False
+    report_differences = False
 
-    if len(sys.argv) < 2:
-        _pulse_logger.error("Expected inputs : [expected results file path] [computed results file path] [output directory] [percent tolerance]")
+    if len(sys.argv) < 3:
+        _pulse_logger.error("Expected inputs : <expected results file path> <computed results file path> [plot events] [report differences] [error limit]")
         sys.exit(1)
-    else:
-        if sys.argv[1].endswith(".csv"):
-            expected_csv = sys.argv[1]
-            computed_csv = sys.argv[2]
-            next_arg = 3
-        else:
-            # Treat this as a scenario name and attempt to locate it
-            expected_csv = f"{get_verification_dir()}/scenarios/{sys.argv[1]}Results.csv"
-            computed_csv = f"./test_results/scenarios/{sys.argv[1]}Results.csv"
-            next_arg = 2
 
-    if len(sys.argv) > next_arg:
-        output_directory = sys.argv[next_arg]
-        next_arg += 1
+    expected_csv = sys.argv[1]
+    computed_csv = sys.argv[2]
 
-    if len(sys.argv) > next_arg:
-        error_limit = float(sys.argv[next_arg])
-        next_arg += 1
+    if len(sys.argv) > 3:
+        plot_events = bool(sys.argv[3])
+
+    if len(sys.argv) > 4:
+        report_differences = bool(sys.argv[4])
+
+    if len(sys.argv) > 5:
+        error_limit = float(sys.argv[5])
 
     _pulse_logger.info(f"Comparing {expected_csv} to {computed_csv}")
-    c = CSVComparison(error_limit=error_limit)
+    c = CSVComparison(
+        error_limit=error_limit,
+        plot_events=plot_events,
+        report_differences=report_differences,
+
+    )
     c.compare(expected_csv, computed_csv)
