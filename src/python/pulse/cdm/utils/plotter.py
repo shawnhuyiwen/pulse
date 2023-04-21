@@ -4,6 +4,7 @@
 import logging
 import os
 import re
+import shutil
 import sys
 import matplotlib.pyplot as plt
 from matplotlib import colors as mcolors
@@ -155,6 +156,113 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
+def csv_plotter(csv: str, benchmark: bool = False):
+    if benchmark:
+        start = timer()
+
+    if not os.path.isfile(csv):
+        _pulse_logger.error(f"CSV does not exist {csv}")
+
+    output_dir = f"{csv[:-4]}_plots"
+
+    # Remove and recreate directory
+    try:
+        shutil.rmtree(output_dir)
+    except OSError as e:
+        _pulse_logger.warning(f"Could not remove old report directory: {output_dir}")
+    os.makedirs(output_dir)
+
+    # Create plot source so we can open csv just once
+    ps = SEPlotSource(csv_data=csv, line_format="-k")
+    df = ps.get_data_frame()
+
+    # Need to compare against time
+    x_header = None
+    if not df.empty:
+         for c in df.columns:
+            if re.search('^Time', c):
+                x_header = c
+                break
+    if x_header is None:
+        _pulse_logger.error("Time is missing from the CSV file")
+        return
+
+    config = SEPlotConfig(set_defaults=True)
+    config.set_values(
+        gridlines=True,
+        output_path_override=output_dir,
+        plot_actions=True,
+        plot_events=False,
+    )
+
+    # Action Event Legend
+    config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
+    output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
+    output_filepath = os.path.join(output_dir, output_filename)
+    if create_plot(
+        [ps],
+        config,
+        x_header,
+        [],
+    ):
+        im_props = deepcopy(config.get_image_properties())
+        im_props.set_dimension_mode(eDimensionMode.Unbound)
+        save_current_plot(output_filepath, im_props)
+    else:
+        _pulse_logger.error(f"Failed to create legend {output_filepath}")
+        config.set_plot_actions(False)
+        config.set_plot_events(False)
+    clear_current_plot()
+
+    # Plot every header against time
+    def _plot_header(sources: List[SEPlotSource]):
+        if benchmark:
+            start_series = timer()
+
+        config.set_title(generate_title(x_header, y_header))
+        config.set_output_filename(generate_filename(config.get_title()))
+        config.set_legend_mode(eLegendMode.HideActionEventLegend)
+
+        output_filename = config.get_output_filename()
+        if not os.path.splitext(output_filename)[1]:
+            output_filename += config.get_image_properties().get_file_format()
+        output_filepath = os.path.join(output_dir, output_filename)
+
+        x_label = " ".join(
+            [f"{s.get_label() if s.has_label() else y_header} is NaN"
+                for s in sources if s.get_data_frame()[y_header].isna().all()]
+        )
+        if x_label:
+            config.set_x_label(x_label)
+
+        if create_plot(
+            sources,
+            config,
+            x_header,
+            [y_header],
+        ):
+            save_current_plot(output_filepath, config.get_image_properties())
+        else:
+            _pulse_logger.error(f"Failed to create plot {output_filepath}")
+
+        # Reset
+        clear_current_plot()
+        config.invalidate_x_label()
+
+        if benchmark:
+            end_series = timer()
+            _pulse_logger.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
+    for y_header in df.columns:
+        if y_header == x_header:
+            continue
+        _plot_header([ps])
+
+    if benchmark:
+        end = timer()
+        _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
+
+
+
 def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
     if benchmark:
         start = timer()
@@ -272,7 +380,9 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
 
     # Plot all expected columns
     rms_values = plotter.get_rms_values()
-    for y_header in expected_df.columns[1:]:
+    for y_header in expected_df.columns:
+        if y_header == x_header:
+            continue
         if y_header not in computed_df.columns:
             continue
 
@@ -291,7 +401,9 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         computed_source.set_label(computed_label)
 
     # Plot anything not in expected data
-    for y_header in computed_df.columns[1:]:
+    for y_header in computed_df.columns:
+        if y_header == x_header:
+            continue
         if y_header in expected_df.columns:
             continue
 
@@ -641,24 +753,31 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
     benchmark = False
-    plot_config = None
+    plot_file = None
 
     if len(sys.argv) > 1:
         if os.path.isfile(sys.argv[1]):
-          plot_config = sys.argv[1]
+          plot_file = sys.argv[1]
         elif os.path.isfile(get_config_dir()+sys.argv[1]):
-          plot_config = get_config_dir()+sys.argv[1]
+          plot_file = get_config_dir()+sys.argv[1]
     if len(sys.argv) > 2 and (sys.argv[2] == '--benchmark' or sys.argv[2] == '-b'):
         benchmark = True
 
-    if plot_config is None:
-        _pulse_logger.error("Please provide a valid json configuration")
+    if plot_file is None:
+        _pulse_logger.error("Please provide a valid plot file (JSON or CSV)")
+        sys.exit(1)
+
+    if benchmark:
+        start = timer()
+
+    if plot_file.lower().endswith(".json"):
+        create_plots(plot_file, benchmark)
+    elif plot_file.lower().endswith(".csv"):
+        csv_plotter(plot_file, benchmark)
     else:
-        if benchmark:
-            start = timer()
+        _pulse_logger.error("Unknown plot file type. Please provide a JSON plot configuration or a CSV data file.")
+        sys.exit(1)
 
-        create_plots(plot_config, benchmark)
-
-        if benchmark:
-            end = timer()
-            _pulse_logger.info(f'Total Execution Time: {timedelta(seconds=end - start)}')
+    if benchmark:
+        end = timer()
+        _pulse_logger.info(f'Total Execution Time: {timedelta(seconds=end - start)}')

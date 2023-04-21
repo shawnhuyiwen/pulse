@@ -54,9 +54,13 @@ class CSVComparison(SETestReport):
         suite.start_case(self.name)
 
         # Use log file and directory from computed source
+        plot_actions = True
+        plot_events = self.plot_events
         log_file = computed_file_path[:-len("Results.csv")] + ".log"
         if not os.path.isfile(log_file):
             log_file = None
+            plot_actions = False
+            plot_events = False
             _pulse_logger.warning(f"Could not locate log file: {computed_file_path}")
 
         # Prepare plot sources so we can open csvs just once
@@ -142,8 +146,8 @@ class CSVComparison(SETestReport):
         config.set_values(
             gridlines=True,
             output_path_override=self.report_dir,
-            plot_actions=True,
-            plot_events=self.plot_events,
+            plot_actions=plot_actions,
+            plot_events=plot_events,
         )
         plotter = SEComparePlotter(
             config=config,
