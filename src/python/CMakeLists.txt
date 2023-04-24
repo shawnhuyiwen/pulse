@@ -1,3 +1,8 @@
+# Always Install python files, there is pure python functionality we use in development
+install(DIRECTORY ${CMAKE_BINARY_DIR}/src/python/pulse DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/src/python/google DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/python/pulse DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
+
 if(NOT Pulse_PYTHON_API)
   return()
 endif()
@@ -34,6 +39,3 @@ install(TARGETS PyPulse
 
 set_target_properties (PyPulse PROPERTIES FOLDER ${PROJECT_NAME})
 
-install(DIRECTORY ${CMAKE_BINARY_DIR}/src/python/pulse DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/src/python/google DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/python/pulse DESTINATION ${CMAKE_INSTALL_PREFIX}/python)

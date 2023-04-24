@@ -20,10 +20,11 @@ public class SETestJob extends LogListener
   public String                name;
   public boolean               skipExecution = false;
   public boolean               skipPlot = false;
+  public boolean               javaComparison = false;
   public boolean               knownFailure = false;
   public SETestDriver.Executor executor = null;
   public boolean               isAssessment = false;
-  public boolean               PlottableResults = false;
+  public boolean               plottableResults = false;
   public PlotType              plotType = PlotType.FastPlot;//Only plot every nth data point
   public double                percentDifference;
   public List<String>          scenarioFiles = new ArrayList<>();
@@ -48,7 +49,8 @@ public class SETestJob extends LogListener
     copy.skipPlot = this.skipPlot;
     copy.knownFailure = this.knownFailure;
     copy.executor = this.executor;
-    copy.PlottableResults = this.PlottableResults;
+    copy.javaComparison = this.javaComparison;
+    copy.plottableResults = this.plottableResults;
     copy.plotType = this.plotType;
     copy.percentDifference = this.percentDifference;
     copy.scenarioFiles.addAll(this.scenarioFiles);

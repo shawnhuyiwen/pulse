@@ -5,6 +5,7 @@ package com.kitware.pulse.cdm.testing;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -98,7 +99,7 @@ public class SETestDriver
         {
           if(job.state == SETestJob.State.Executed)
           {
-            if(job.PlottableResults && !job.skipPlot)
+            if(job.plottableResults && !job.skipPlot)
             {
               CompareThread cThread = this.new CompareThread();
               job.state = SETestJob.State.Comparing;
@@ -158,7 +159,7 @@ public class SETestDriver
     {
       for(String toCompute : job.computedFiles)
       {
-        if(job.PlottableResults)
+        if(job.plottableResults)
         {
           if(job.name.endsWith(".json"))//This should be a scenario file, different naming convention
           {
@@ -214,94 +215,131 @@ public class SETestDriver
     @Override
     public void run()
     {
-      if(job.PlottableResults && !job.skipPlot)
+      if(job.plottableResults && !job.skipPlot)
       {
         for(int i=0; i<job.baselineFiles.size(); i++)
         {
-          CSVComparison compare = new CSVComparison();
-          compare.limit = job.percentDifference;
-          compare.reportDifferences = false;
-          compare.setFullReportPath(job.reportFiles.get(i));
-          if(new File(job.computedFiles.get(i)).exists())
+          if(!job.javaComparison)
           {
-            Set<String> failures = null;
-            if(new File(job.baselineFiles.get(i)).exists())
+            Log.info("Using python comparison");
+            try
             {
-              try {
-                failures = compare.compare(job.baselineFiles.get(i), job.computedFiles.get(i));
-              }catch(Exception ex){ failures=null; }
-              if(failures==null)// Something bad happened in running this test...
-                compare.createErrorSuite(job.name,"Could not compare these files for some reason: "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
-            }
-            else
-            {
-              compare.createErrorSuite(job.name,"Basline file not found : "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
-            }
-            
-            try {
-              compare.write();
-            } catch (InvalidProtocolBufferException e) {
-              Log.error("Unable to write comparison report");
-              Log.error(e.getMessage());
-            }
-           
-            if((job.plotType == PlotType.FastPlotErrors || job.plotType == PlotType.FullPlotErrors) && (failures==null || failures.isEmpty()))
-            {
-              Log.info("No plots for "+job.computedFiles.get(i));
-            }
-            else
-            {
-              CSVComparePlotter plotter = new CSVComparePlotter();
-              plotter.plotType = job.plotType;
-              plotter.plot(job.baselineFiles.get(i), job.computedFiles.get(i), failures);
-              /*
-              PlotDriver driver = new PlotDriver();
-              if(job.plotType == PlotType.FastPlot)
-              {
-                driver.preload = true;
-                driver.onlyPlotFailures = false;
-                driver.abbreviateContents = 5;
+              ProcessBuilder processBuilder = new ProcessBuilder("python", "../python/pulse/cdm/utils/csv_compare.py",
+                  job.baselineFiles.get(i), job.computedFiles.get(i)); // TODO Pass job.percentDifference
+              processBuilder.redirectErrorStream(true);
+              Process process = processBuilder.start();
+              
+              String line;
+              BufferedReader input = new BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
+              while ((line = input.readLine()) != null) {
+                Log.info(line);
               }
-              else if(job.plotType == PlotType.FullPlot)
-              {
-                driver.preload = true;
-                driver.onlyPlotFailures = false;
-                driver.abbreviateContents = 0;
-              }
-              else if(job.plotType == PlotType.FastPlotErrors)
-              {
-                driver.preload = true;
-                driver.onlyPlotFailures = true;
-                driver.abbreviateContents = 5;
-              }
-              else if(job.plotType == PlotType.FullPlotErrors)
-              {
-                driver.preload = true;
-                driver.onlyPlotFailures = true;
-                driver.abbreviateContents = 0;
-              }
-              else if(job.plotType == PlotType.MemoryFastPlot)
-              {
-                driver.preload = false;
-                driver.onlyPlotFailures = false;
-                driver.abbreviateContents = 0;
-              }
-              if(driver.preload)
-              {
-                if(!driver.preloadData(job.baselineFiles.get(i), job.computedFiles.get(i)))
-                  continue;
-              }
-              if(job.executor.getClass().getName().indexOf("Scenario")!=-1)
-                driver.isScenario = true;
 
-              driver.generateCompareJobs(job.baselineFiles.get(i), job.computedFiles.get(i), failures);
-              driver.execute();
-               */
+              int exitCode = process.waitFor();
+              if(exitCode != 0)
+                job.error("Comparison failed via return code.");
+              else
+              {
+                // Confirm our report exists
+                if( new File(job.reportFiles.get(i)).exists() == false)
+                {
+                  job.error("Comparison report:"+job.reportFiles.get(i)+" was not found.");
+                }
+              }
+            }
+            catch(Exception ex)
+            {
+              job.error("Comparison failed: "+ex.getMessage());
             }
           }
           else
           {
-            Log.error("Couldn't read file "+job.computedFiles.get(i));
+            Log.info("Using java comparison");
+            CSVComparison compare = new CSVComparison();
+            compare.limit = job.percentDifference;
+            compare.reportDifferences = false;
+            compare.setFullReportPath(job.reportFiles.get(i));
+            if(new File(job.computedFiles.get(i)).exists())
+            {
+              Set<String> failures = null;
+              if(new File(job.baselineFiles.get(i)).exists())
+              {
+                try {
+                  failures = compare.compare(job.baselineFiles.get(i), job.computedFiles.get(i));
+                }catch(Exception ex){ failures=null; }
+                if(failures==null)// Something bad happened in running this test...
+                  compare.createErrorSuite(job.name,"Could not compare these files for some reason: "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
+              }
+              else
+              {
+                compare.createErrorSuite(job.name,"Basline file not found : "+job.baselineFiles.get(i)+" and " + job.computedFiles.get(i));
+              }
+              
+              try {
+                compare.write();
+              } catch (InvalidProtocolBufferException e) {
+                Log.error("Unable to write comparison report");
+                Log.error(e.getMessage());
+              }
+             
+              if((job.plotType == PlotType.FastPlotErrors || job.plotType == PlotType.FullPlotErrors) && (failures==null || failures.isEmpty()))
+              {
+                Log.info("No plots for "+job.computedFiles.get(i));
+              }
+              else
+              {
+                CSVComparePlotter plotter = new CSVComparePlotter();
+                plotter.plotType = job.plotType;
+                plotter.plot(job.baselineFiles.get(i), job.computedFiles.get(i), failures);
+                /*
+                PlotDriver driver = new PlotDriver();
+                if(job.plotType == PlotType.FastPlot)
+                {
+                  driver.preload = true;
+                  driver.onlyPlotFailures = false;
+                  driver.abbreviateContents = 5;
+                }
+                else if(job.plotType == PlotType.FullPlot)
+                {
+                  driver.preload = true;
+                  driver.onlyPlotFailures = false;
+                  driver.abbreviateContents = 0;
+                }
+                else if(job.plotType == PlotType.FastPlotErrors)
+                {
+                  driver.preload = true;
+                  driver.onlyPlotFailures = true;
+                  driver.abbreviateContents = 5;
+                }
+                else if(job.plotType == PlotType.FullPlotErrors)
+                {
+                  driver.preload = true;
+                  driver.onlyPlotFailures = true;
+                  driver.abbreviateContents = 0;
+                }
+                else if(job.plotType == PlotType.MemoryFastPlot)
+                {
+                  driver.preload = false;
+                  driver.onlyPlotFailures = false;
+                  driver.abbreviateContents = 0;
+                }
+                if(driver.preload)
+                {
+                  if(!driver.preloadData(job.baselineFiles.get(i), job.computedFiles.get(i)))
+                    continue;
+                }
+                if(job.executor.getClass().getName().indexOf("Scenario")!=-1)
+                  driver.isScenario = true;
+  
+                driver.generateCompareJobs(job.baselineFiles.get(i), job.computedFiles.get(i), failures);
+                driver.execute();
+                 */
+              }
+            }
+            else
+            {
+              Log.error("Couldn't read file "+job.computedFiles.get(i));
+            }
           }
         }
       }
