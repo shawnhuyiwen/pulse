@@ -79,8 +79,6 @@ namespace pulse
 
     //Actions
     void Pneumothorax();
-    void DoLeftNeedleDecompression(double dFlowResistance);
-    void DoRightNeedleDecompression(double dFlowResistance);
     void MechanicalVentilation();
     void SupplementalOxygen();
     // Driver
@@ -252,8 +250,8 @@ namespace pulse
     SEFluidCircuitPath* m_EnvironmentToRightChestLeak;
     SEFluidCircuitPath* m_LeftAlveoliLeakToLeftPleural;
     SEFluidCircuitPath* m_RightAlveoliLeakToRightPleural;
-    SEFluidCircuitPath* m_LeftPleuralToEnvironment;
-    SEFluidCircuitPath* m_RightPleuralToEnvironment;
+    SEFluidCircuitPath* m_LeftNeedleToLeftPleural;
+    SEFluidCircuitPath* m_RightNeedleToRightPleural;
     SEFluidCircuitPath* m_LeftAlveoliToLeftPleuralConnection;
     SEFluidCircuitPath* m_RightAlveoliToRightPleuralConnection;
     SEFluidCircuitPath* m_LeftPulmonaryCapillary;

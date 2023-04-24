@@ -192,8 +192,8 @@ namespace pulse
     m_EnvironmentToRightChestLeak = nullptr;
     m_LeftAlveoliLeakToLeftPleural = nullptr;
     m_RightAlveoliLeakToRightPleural = nullptr;
-    m_LeftPleuralToEnvironment = nullptr;
-    m_RightPleuralToEnvironment = nullptr;
+    m_LeftNeedleToLeftPleural = nullptr;
+    m_RightNeedleToRightPleural = nullptr;
     m_LeftAlveoliToLeftPleuralConnection = nullptr;
     m_RightAlveoliToRightPleuralConnection = nullptr;
     m_LeftPulmonaryCapillary = nullptr;
@@ -451,8 +451,8 @@ namespace pulse
     m_EnvironmentToRightChestLeak = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRightChestLeak);
     m_LeftAlveoliLeakToLeftPleural = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAlveoliLeakToLeftPleural);
     m_RightAlveoliLeakToRightPleural = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAlveoliLeakToRightPleural);
-    m_LeftPleuralToEnvironment = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftPleuralToEnvironment);
-    m_RightPleuralToEnvironment = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightPleuralToEnvironment);
+    m_LeftNeedleToLeftPleural = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftNeedleToLeftPleural);
+    m_RightNeedleToRightPleural = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightNeedleToRightPleural);
     m_RightAlveoliToRightPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAlveoliToRightPleuralConnection);
     m_LeftAlveoliToLeftPleuralConnection = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
     m_ConnectionToAirway = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::ConnectionToAirway);
@@ -1610,7 +1610,7 @@ namespace pulse
 
         if (m_PatientActions->HasLeftNeedleDecompression())
         {
-          DoLeftNeedleDecompression(NeedleResistance_cmH2O_s_Per_L);
+          m_LeftNeedleToLeftPleural->GetNextResistance().SetValue(NeedleResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         }
       }
 
@@ -1628,7 +1628,7 @@ namespace pulse
 
         if (m_PatientActions->HasRightNeedleDecompression())
         {
-          DoRightNeedleDecompression(NeedleResistance_cmH2O_s_Per_L);
+          m_RightNeedleToRightPleural->GetNextResistance().SetValue(NeedleResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         }
         m_EnvironmentToRightChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       }
@@ -1647,7 +1647,7 @@ namespace pulse
 
         if (m_PatientActions->HasLeftNeedleDecompression())
         {
-          DoLeftNeedleDecompression(NeedleResistance_cmH2O_s_Per_L);
+          m_LeftNeedleToLeftPleural->GetNextResistance().SetValue(NeedleResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         }
       }
 
@@ -1665,7 +1665,7 @@ namespace pulse
 
         if (m_PatientActions->HasRightNeedleDecompression())
         {
-          DoRightNeedleDecompression(NeedleResistance_cmH2O_s_Per_L);
+          m_RightNeedleToRightPleural->GetNextResistance().SetValue(NeedleResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         }
       }
 
@@ -1710,42 +1710,6 @@ namespace pulse
         return;
       }
     }
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Left Side Needle Decompression
-  ///
-  /// \param  dPressureTimePerVolume - Resistance value for air flow through the needle
-  ///
-  /// \details
-  /// Used for left side needle decompression. this is an intervention (action) used to treat left 
-  /// side tension pneumothorax
-  //--------------------------------------------------------------------------------------------------
-  void RespiratoryModel::DoLeftNeedleDecompression(double dPressureTimePerVolume)
-  {
-    //Leak flow resistance that is scaled in proportion to Lung resistance, depending on severity
-    double dScalingFactor = 0.5; //Tuning parameter to allow gas flow due to needle decompression using lung resistance as reference
-    double dPressureTimePerVolumeLeftNeedle = dScalingFactor * dPressureTimePerVolume;
-    m_LeftPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeLeftNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Right Side Needle Decompression
-  ///
-  /// \param  dPressureTimePerVolume - Resistance value for air flow through the needle
-  ///
-  /// \details
-  /// Used for right side needle decompression. this is an intervention (action) used to treat right
-  /// side tension pneumothorax
-  //--------------------------------------------------------------------------------------------------
-  void RespiratoryModel::DoRightNeedleDecompression(double dPressureTimePerVolume)
-  {
-    //Leak flow resistance that is scaled in proportion to Lung resistance, depending on severity
-    double dScalingFactor = 0.5; //Tuning parameter to allow gas flow due to needle decompression using lung resistance as reference
-    double dPressureTimePerVolumeRightNeedle = dScalingFactor * dPressureTimePerVolume;
-    m_RightPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeRightNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
 
   //--------------------------------------------------------------------------------------------------
