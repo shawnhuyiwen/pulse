@@ -17,6 +17,7 @@ import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.engine.bind.Enums.eModelType;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
+import com.kitware.pulse.utilities.PythonUtils;
 import com.kitware.pulse.utilities.RunConfiguration;
 import com.kitware.pulse.utilities.csv.plots.CSVComparePlotter.PlotType;
 
@@ -34,7 +35,8 @@ public class SETestConfiguration
   protected String patientFiles;
   protected boolean executeJobs=true;
   protected boolean plotResults=true;
-  protected boolean javaComparison=false;
+  protected boolean pythonComparison=true;
+  protected PythonUtils python = null;
 
   protected Map<String,String> macros = new HashMap<>();
   protected Map<String,Class<? extends SETestDriver.Executor>> executors = new HashMap<>();
@@ -139,7 +141,9 @@ public class SETestConfiguration
         if(key.equalsIgnoreCase("CompareWith"))
         {
           if(value.startsWith("Java"))
-            javaComparison=true; 
+            pythonComparison=false;
+          else
+            python = new PythonUtils();
           continue; 
         }
         if(key.equalsIgnoreCase("Executor"))
@@ -192,7 +196,8 @@ public class SETestConfiguration
         this.jobs.add(job);
         job.name = key.trim();
         job.percentDifference = this.percentDifference;
-        job.javaComparison = this.javaComparison;
+        if(this.python != null && this.python.isActive())
+          job.python = this.python;
 
         String[] directives = value.trim().split(" ");
         for(String directive : directives)

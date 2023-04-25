@@ -224,20 +224,20 @@ if __name__ == "__main__":
     report_differences = False
 
     if len(sys.argv) < 3:
-        _pulse_logger.error("Expected inputs : <expected results file path> <computed results file path> [plot events] [report differences] [error limit]")
+        _pulse_logger.error("Expected inputs : <expected results file path> <computed results file path> [error limit] [plot events] [report differences]")
         sys.exit(1)
 
     expected_csv = sys.argv[1]
     computed_csv = sys.argv[2]
 
     if len(sys.argv) > 3:
-        plot_events = bool(sys.argv[3])
+        error_limit = float(sys.argv[3])
 
     if len(sys.argv) > 4:
-        report_differences = bool(sys.argv[4])
+        plot_events = bool(sys.argv[4])
 
     if len(sys.argv) > 5:
-        error_limit = float(sys.argv[5])
+        report_differences = bool(sys.argv[5])
 
     _pulse_logger.info(f"Comparing {expected_csv} to {computed_csv}")
     c = CSVComparison(

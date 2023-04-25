@@ -219,24 +219,13 @@ public class SETestDriver
       {
         for(int i=0; i<job.baselineFiles.size(); i++)
         {
-          if(!job.javaComparison)
+          if(job.python != null)
           {
             Log.info("Using python comparison");
             try
             {
-              ProcessBuilder processBuilder = new ProcessBuilder("python", "../python/pulse/cdm/utils/csv_compare.py",
-                  job.baselineFiles.get(i), job.computedFiles.get(i)); // TODO Pass job.percentDifference
-              processBuilder.redirectErrorStream(true);
-              Process process = processBuilder.start();
-              
-              String line;
-              BufferedReader input = new BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
-              while ((line = input.readLine()) != null) {
-                Log.info(line);
-              }
-
-              int exitCode = process.waitFor();
-              if(exitCode != 0)
+              if(job.python.runPython("../python/pulse/cdm/utils/csv_compare.py",
+                  job.baselineFiles.get(i), job.computedFiles.get(i), String.valueOf(job.percentDifference)) != 0)
                 job.error("Comparison failed via return code.");
               else
               {
