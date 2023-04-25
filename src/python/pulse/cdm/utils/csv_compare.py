@@ -13,7 +13,7 @@ from pulse.cdm.utils.csv_utils import read_csv_into_df
 from pulse.cdm.utils.file_utils import get_verification_dir
 from pulse.cdm.utils.math_utils import percent_difference
 from pulse.cdm.plots import SEComparePlotter, SEPlotConfig, SEPlotSource
-from pulse.cdm.utils.plotter import compare_plotter
+from pulse.cdm.utils.plotter import compare_plotter, csv_plotter
 from pulse.cdm.testing import SETestReport
 from pulse.cdm.io.testing import serialize_test_report_to_file
 
@@ -31,7 +31,9 @@ class CSVComparison(SETestReport):
         self.report_differences = report_differences
 
     def compare(self, expected_file_path: str, computed_file_path):
+        expected_exists = True
         if not os.path.isfile(expected_file_path):
+            expected_exists = False
             _pulse_logger.error(f"Expected file does not exist {expected_csv}")
             _pulse_logger.info(f"I am going to try to plot the computed.")
             # TODO: check for zip file
@@ -70,14 +72,14 @@ class CSVComparison(SETestReport):
             line_width=4.0,
             label="Expected",
             log_file=log_file)
+        expected_df = expected.get_data_frame() if expected_exists else pd.DataFrame()
         computed = SEPlotSource(csv_data=computed_file_path, line_format="-r", label="Computed")
-        expected_df = expected.get_data_frame()
         computed_df = computed.get_data_frame()
 
         # Check for header differences
         total_errors = 0
         if len(expected_df.columns) != len(computed_df.columns):
-            _pulse_logger.warning(f"Number of results is difference, expected ({expected_file_path}) " \
+            _pulse_logger.warning(f"Number of results is different, expected ({expected_file_path}) " \
                   f"{len(expected_df.columns)} but computed ({computed_file_path}) is {len(computed_df.columns)}")
         for y_header in expected_df.columns:
             if y_header not in computed_df.columns:
@@ -85,8 +87,12 @@ class CSVComparison(SETestReport):
                 _pulse_logger.error(f'Computed results did not provide expected result "{y_header}"')
 
         # Get times/first column
-        first_col_is_time = expected_df.columns[0].lower().startswith("time")
-        times = expected_df.iloc[:,0] if first_col_is_time else pd.Series(expected_df.index)
+        if expected_exists:
+            first_col_is_time = expected_df.columns[0].lower().startswith("time")
+            times = expected_df.iloc[:,0] if first_col_is_time else pd.Series(expected_df.index)
+        else:
+            first_col_is_time = computed_df.columns[0].lower().startswith("time")
+            times = computed_df.iloc[:,0] if first_col_is_time else pd.Series(computed_df.index)
 
         # For report, only compare when both dataframes have values so truncate dfs while preserving
         # original dfs for plotting
@@ -102,40 +108,44 @@ class CSVComparison(SETestReport):
             computed_df_trunc = computed_df_trunc.loc[:min_rows]
 
         # Actually compare CSVs
-        compare_df = expected_df_trunc.combine(computed_df_trunc, lambda x, y: series_percent_difference(x, y, epsilon=1e-10))
-        error_summary = compare_df.apply(lambda x: get_error_info(x, expected_df_trunc, computed_df_trunc, self.error_limit))
-        rms = {h: r for h, r in zip(error_summary.columns, error_summary.loc['rms'])}
-        failures = [column for column in error_summary.columns if error_summary.loc['total'][column] > 0]
-        error_summary = error_summary[failures]
+        if expected_exists:
+            compare_df = expected_df_trunc.combine(computed_df_trunc, lambda x, y: series_percent_difference(x, y, epsilon=1e-10))
+            error_summary = compare_df.apply(lambda x: get_error_info(x, expected_df_trunc, computed_df_trunc, self.error_limit))
+            rms = {h: r for h, r in zip(error_summary.columns, error_summary.loc['rms'])}
+            failures = [column for column in error_summary.columns if error_summary.loc['total'][column] > 0]
+            error_summary = error_summary[failures]
 
-        total_errors += int(error_summary.loc['total'].sum())
+            total_errors += int(error_summary.loc['total'].sum())
 
-        if self.report_differences:
-            for f in failures:
-                for t, ex, c, err in zip(times, expected_df_trunc[f], computed_df_trunc[f], compare_df[f]):
-                    if err > self.error_limit:
-                        if not first_col_is_time:
-                            _pulse_logger.error(f"{f} does not match expected {ex} != computed {c} [{err}%]")
-                        else:
-                            _pulse_logger.error(f"{f} @Time {t}: expected {ex} != computed {c} [{err}%]")
+            if self.report_differences:
+                for f in failures:
+                    for t, ex, c, err in zip(times, expected_df_trunc[f], computed_df_trunc[f], compare_df[f]):
+                        if err > self.error_limit:
+                            if not first_col_is_time:
+                                _pulse_logger.error(f"{f} does not match expected {ex} != computed {c} [{err}%]")
+                            else:
+                                _pulse_logger.error(f"{f} @Time {t}: expected {ex} != computed {c} [{err}%]")
 
-        # Log all error summary info
-        _pulse_logger.info(f"Compared {len(expected_df_trunc.index)} total times")
-        def _time(idx: int):
-            return times.iloc[int(idx)]
-        if total_errors > 0:
-            _pulse_logger.error(f"{total_errors} total errors found")
-            for f in failures:
-                e = error_summary[f]
-                errPercent = 100 * e.loc['total'] / (e['last row'] + 1 - e['first row'])
-                _pulse_logger.error(f"{f} has a total of {int(e.loc['total'])} errors between times [{_time(e.loc['first row'])}, {_time(e.loc['last row'])}]\n" \
-                              f"-  {errPercent:.2f}% of timesteps have errors between these times\n" \
-                              f"-  min error : @Time {_time(e.loc['min row'])}: expected {e.loc['min expected']} != computed {e.loc['min computed']} [{e.loc['min']}%]\n" \
-                              f"-  max error : @Time {_time(e.loc['max row'])}: expected {e.loc['max expected']} != computed {e.loc['max computed']} [{e.loc['max']}%]" )
-        if suite.get_active_case().has_failures():
-            _pulse_logger.error(f"{computed_file_path} Comparison failed!!")
+            # Log all error summary info
+            _pulse_logger.info(f"Compared {len(expected_df_trunc.index)} total times")
+            def _time(idx: int):
+                return times.iloc[int(idx)]
+            if total_errors > 0:
+                _pulse_logger.error(f"{total_errors} total errors found")
+                for f in failures:
+                    e = error_summary[f]
+                    errPercent = 100 * e.loc['total'] / (e['last row'] + 1 - e['first row'])
+                    _pulse_logger.error(f"{f} has a total of {int(e.loc['total'])} errors between times [{_time(e.loc['first row'])}, {_time(e.loc['last row'])}]\n" \
+                                f"-  {errPercent:.2f}% of timesteps have errors between these times\n" \
+                                f"-  min error : @Time {_time(e.loc['min row'])}: expected {e.loc['min expected']} != computed {e.loc['min computed']} [{e.loc['min']}%]\n" \
+                                f"-  max error : @Time {_time(e.loc['max row'])}: expected {e.loc['max expected']} != computed {e.loc['max computed']} [{e.loc['max']}%]" )
+            if suite.get_active_case().has_failures():
+                _pulse_logger.error(f"{computed_file_path} Comparison failed!!")
+            else:
+                _pulse_logger.info(f"{computed_file_path} Comparison SUCCESS!!")
         else:
-            _pulse_logger.info(f"{computed_file_path} Comparison SUCCESS!!")
+            failures = set()
+            rms = {}
 
         # Write out results
         suite.end_case()
