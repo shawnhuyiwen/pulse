@@ -215,8 +215,10 @@ namespace pulse
 
     DEFINE_STATIC_STRING(LeftAlveoliLeak);
     DEFINE_STATIC_STRING(LeftChestLeak);
+    DEFINE_STATIC_STRING(LeftNeedle);
     DEFINE_STATIC_STRING(RightAlveoliLeak);
     DEFINE_STATIC_STRING(RightChestLeak);
+    DEFINE_STATIC_STRING(RightNeedle);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -241,8 +243,10 @@ namespace pulse
         _values.push_back(RightPleuralCavity);
         _values.push_back(LeftAlveoliLeak);
         _values.push_back(LeftChestLeak);
+        _values.push_back(LeftNeedle);
         _values.push_back(RightAlveoliLeak);
         _values.push_back(RightChestLeak);
+        _values.push_back(RightNeedle);
       }
       return _values;
     }
@@ -281,11 +285,13 @@ namespace pulse
     DEFINE_STATIC_STRING(LeftAlveoliLeakToLeftPleural);
     DEFINE_STATIC_STRING(LeftAlveoliToLeftAlveoliLeak);
     DEFINE_STATIC_STRING(LeftChestLeakToLeftPleural);
-    DEFINE_STATIC_STRING(LeftPleuralToEnvironment);
+    DEFINE_STATIC_STRING(LeftNeedleToLeftPleural);
+    DEFINE_STATIC_STRING(EnvironmentToLeftNeedle);
     DEFINE_STATIC_STRING(RightAlveoliLeakToRightPleural);
     DEFINE_STATIC_STRING(RightAlveoliToRightAlveoliLeak);
     DEFINE_STATIC_STRING(RightChestLeakToRightPleural);
-    DEFINE_STATIC_STRING(RightPleuralToEnvironment);
+    DEFINE_STATIC_STRING(RightNeedleToRightPleural);
+    DEFINE_STATIC_STRING(EnvironmentToRightNeedle);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -308,11 +314,13 @@ namespace pulse
         _values.push_back(LeftAlveoliLeakToLeftPleural);
         _values.push_back(LeftAlveoliToLeftAlveoliLeak);
         _values.push_back(LeftChestLeakToLeftPleural);
-        _values.push_back(LeftPleuralToEnvironment);
+        _values.push_back(LeftNeedleToLeftPleural);
+        _values.push_back(EnvironmentToLeftNeedle);
         _values.push_back(RightAlveoliLeakToRightPleural);
         _values.push_back(RightAlveoliToRightAlveoliLeak);
         _values.push_back(RightChestLeakToRightPleural);
-        _values.push_back(RightPleuralToEnvironment);
+        _values.push_back(RightNeedleToRightPleural);
+        _values.push_back(EnvironmentToRightNeedle);
       }
       return _values;
     }
