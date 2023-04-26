@@ -840,12 +840,19 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
     def invalidate_validation_source(self):
         self._validation_source = None
 
-
+class ePlotType(Enum):
+    NoPlot = 0
+    FullPlot = 1
+    FullPlotErrors = 2
+    FastPlot = 3
+    FastPlotErrors = 4
+    MemoryFastPlot = 5
 class SEComparePlotter(SEPlotter):
-    __slots__ = ["_computed_source", "_expected_source", "_failures", "_rms"]
+    __slots__ = ["_computed_source", "_expected_source", "_failures", "_rms", "_plot_type"]
 
     def __init__(self, config: Optional[SEPlotConfig]=None, computed_source: Optional[SEPlotSource]=None,
-        expected_source: Optional[SEPlotSource]=None, failures: Set[str]=set(), rms: Dict[str, float]={}
+        expected_source: Optional[SEPlotSource]=None, failures: Set[str]=set(), rms: Dict[str, float]={},
+        plot_type: ePlotType=ePlotType.FastPlot
     ):
         super().__init__(config)
 
@@ -853,6 +860,12 @@ class SEComparePlotter(SEPlotter):
         self._expected_source = expected_source
         self._failures = set(failures)
         self._rms = dict(rms)
+        self._plot_type = plot_type
+
+    def get_plot_type(self):
+        return self._plot_type
+    def set_plot_type(self, ptype: ePlotType):
+        self._plot_type = ptype
 
     def get_computed_source(self):
         return self._computed_source

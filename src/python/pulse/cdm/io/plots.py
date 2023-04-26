@@ -305,6 +305,7 @@ def serialize_compare_plotter_to_bind(src: SEComparePlotter, dst: ComparePlotter
         failureData = dst.Failures.append(f)
     for h, r in src.get_rms_values().items():
         dst.RMSValues[h] = r
+    dst.PlotType = src.get_plot_type().value
 def serialize_compare_plotter_from_bind(
     src: ComparePlotterData,
     dst: SEComparePlotter,
@@ -327,4 +328,6 @@ def serialize_compare_plotter_from_bind(
         dst.add_failure(failureData)
 
     for header in src.RMSValues:
-        src.add_rms_value(header, src.RMSValues[header])
+        dst.add_rms_value(header, src.RMSValues[header])
+
+    dst.set_plot_type(ePlotType(src.PlotType))

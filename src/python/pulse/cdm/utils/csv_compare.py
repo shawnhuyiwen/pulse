@@ -12,8 +12,8 @@ from typing import Optional
 from pulse.cdm.utils.csv_utils import read_csv_into_df
 from pulse.cdm.utils.file_utils import get_verification_dir
 from pulse.cdm.utils.math_utils import percent_difference
-from pulse.cdm.plots import SEComparePlotter, SEPlotConfig, SEPlotSource
-from pulse.cdm.utils.plotter import compare_plotter, csv_plotter
+from pulse.cdm.plots import SEComparePlotter, SEPlotConfig, SEPlotSource, ePlotType
+from pulse.cdm.utils.plotter import compare_plotter
 from pulse.cdm.testing import SETestReport
 from pulse.cdm.io.testing import serialize_test_report_to_file
 
@@ -22,12 +22,19 @@ _pulse_logger = logging.getLogger('pulse')
 
 
 class CSVComparison(SETestReport):
-    __slots__ = ["error_limit", "plot_events", "report_differences"]
+    __slots__ = ["error_limit", "plot_events", "plot_type", "report_differences"]
 
-    def __init__(self, error_limit: float=2.0, plot_events: bool=False, report_differences=False):
+    def __init__(
+        self,
+        error_limit: float=2.0,
+        plot_events: bool=False,
+        plot_type: ePlotType=ePlotType.FastPlot,
+        report_differences=False
+    ):
         super().__init__()
         self.error_limit = error_limit
         self.plot_events = plot_events
+        self.plot_type = plot_type
         self.report_differences = report_differences
 
     def compare(self, expected_file_path: str, computed_file_path):
@@ -154,21 +161,23 @@ class CSVComparison(SETestReport):
         serialize_test_report_to_file(self, self.report_dir + self.file_name)
 
         # Create plots
-        config = SEPlotConfig(set_defaults=True)
-        config.set_values(
-            gridlines=True,
-            output_path_override=self.report_dir,
-            plot_actions=plot_actions,
-            plot_events=plot_events,
-        )
-        plotter = SEComparePlotter(
-            config=config,
-            expected_source=expected,
-            computed_source=computed,
-            failures=set(failures),
-            rms=rms,
-        )
-        compare_plotter(plotter)
+        if self.plot_type != ePlotType.NoPlot:
+            config = SEPlotConfig(set_defaults=True)
+            config.set_values(
+                gridlines=True,
+                output_path_override=self.report_dir,
+                plot_actions=plot_actions,
+                plot_events=plot_events,
+            )
+            plotter = SEComparePlotter(
+                config=config,
+                expected_source=expected,
+                computed_source=computed,
+                failures=set(failures),
+                rms=rms,
+                plot_type=self.plot_type,
+            )
+            compare_plotter(plotter)
 
 
 def series_percent_difference(x: pd.Series, y: pd.Series, epsilon: float):
@@ -232,11 +241,12 @@ if __name__ == "__main__":
     expected_csv = None
     computed_csv = None
     error_limit = 2.0
+    plot_type=ePlotType.FastPlot
     plot_events = False
     report_differences = False
 
     if len(sys.argv) < 3:
-        _pulse_logger.error("Expected inputs : <expected results file path> <computed results file path> [error limit] [plot events] [report differences]")
+        _pulse_logger.error("Expected inputs : <expected results file path> <computed results file path> [error limit] [plot type] [plot events] [report differences]")
         sys.exit(1)
 
     expected_csv = sys.argv[1]
@@ -246,16 +256,19 @@ if __name__ == "__main__":
         error_limit = float(sys.argv[3])
 
     if len(sys.argv) > 4:
-        plot_events = bool(sys.argv[4])
+        plot_type = ePlotType[sys.argv[4]]
 
     if len(sys.argv) > 5:
-        report_differences = bool(sys.argv[5])
+        plot_events = bool(sys.argv[5])
+
+    if len(sys.argv) > 6:
+        report_differences = bool(sys.argv[6])
 
     _pulse_logger.info(f"Comparing {expected_csv} to {computed_csv}")
     c = CSVComparison(
         error_limit=error_limit,
+        plot_type=plot_type,
         plot_events=plot_events,
         report_differences=report_differences,
-
     )
     c.compare(expected_csv, computed_csv)

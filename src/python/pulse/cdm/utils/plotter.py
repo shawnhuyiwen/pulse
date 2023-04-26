@@ -272,6 +272,11 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
     expected_source = plotter.get_expected_source()
     expected_df = expected_source.get_data_frame()
 
+    if ((plotter.get_plot_type() == ePlotType.FastPlotErrors or plotter.get_plot_type() == ePlotType.FullPlotErrors) \
+            and len(plotter.get_failures()) == 0):  # Only plotting failures and no failures to plot
+        _pulse_logger.info(f"No plots for {computed_source.get_csv_data()}.")
+        return
+
     # Create output directory if it does not exist
     output_path = "./"
     if plotter.get_plot_config().has_output_path_override():
@@ -389,6 +394,8 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         if y_header in plotter.get_failures():
             mode = _eColorMode.Fail
         else:
+            if plotter.get_plot_type() == ePlotType.FastPlotErrors or plotter.get_plot_type() == ePlotType.FullPlotErrors:
+                continue  # Only plot errors
             mode = _eColorMode.Pass
 
         computed_label = computed_source.get_label()
