@@ -85,7 +85,8 @@ message PlotSourceData
   optional double                     LineWidth                 = 4;   /**<< @brief Plot this source with this linewidth. */
   optional int32                      StartRow                  = 5;  /**<< @brief Specify the starting row number of the CSV data to include in plot. */
   optional int32                      EndRow                    = 6;  /**<< @brief Specify the ending row number of the CSV data to include in plot. */
-  optional string                     LogFile                   = 7;  /**<< @brief Specify log file if it does not following usual naming conventions/location. */
+  optional int32                      RowSkip                   = 7;  /**<< @brief If specified, only every "RowSkip-th" (nth) row of the CSV data will be read. */
+  optional string                     LogFile                   = 8;  /**<< @brief Specify log file if it does not following usual naming conventions/location. */
 }
 
 /** @brief Data used to configure x vs y plots. */

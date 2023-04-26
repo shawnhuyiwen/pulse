@@ -171,6 +171,8 @@ def serialize_plot_source_to_bind(src: SEPlotSource, dst: PlotSourceData):
         dst.StartRow = src.get_start_row()
     if src.has_end_row():
         dst.EndRow = src.get_end_row()
+    if src.has_row_skip():
+        dst.RowSkip = src.get_row_skip()
     if src.has_log_file():
         dst.LogFile = src.get_log_file()
 def serialize_plot_source_from_bind(src: PlotSourceData, dst: SEPlotSource):
@@ -185,6 +187,8 @@ def serialize_plot_source_from_bind(src: PlotSourceData, dst: SEPlotSource):
         dst.set_start_row(src.StartRow)
     if src.HasField("EndRow"):
         dst.set_end_row(src.EndRow)
+    if src.HasField("RowSkip"):
+        dst.set_row_skip(src.RowSkip)
     if src.HasField("LogFile"):
         dst.set_log_file(src.LogFile)
 

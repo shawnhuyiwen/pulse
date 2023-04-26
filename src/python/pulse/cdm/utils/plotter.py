@@ -13,12 +13,10 @@ from timeit import default_timer as timer
 from datetime import timedelta
 from typing import List, Optional
 from textwrap import TextWrapper
-from operator import attrgetter
 
 from pulse.cdm.plots import *
 from pulse.cdm.io.plots import serialize_plotter_list_from_file
 from pulse.cdm.utils.file_utils import get_config_dir
-from pulse.cdm.utils.logger import LogActionEvent, parse_actions, parse_events
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -196,23 +194,36 @@ def csv_plotter(csv: str, benchmark: bool = False):
     )
 
     # Action Event Legend
-    config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
-    output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
-    output_filepath = os.path.join(output_dir, output_filename)
-    if create_plot(
-        [ps],
-        config,
-        x_header,
-        [],
-    ):
-        im_props = deepcopy(config.get_image_properties())
-        im_props.set_dimension_mode(eDimensionMode.Unbound)
-        save_current_plot(output_filepath, im_props)
-    else:
-        _pulse_logger.error(f"Failed to create legend {output_filepath}")
-        config.set_plot_actions(False)
-        config.set_plot_events(False)
-    clear_current_plot()
+    if config.get_plot_actions() or config.get_plot_events():
+        legend_success = True
+        if ps.parse_actions_events(
+            actions=config.get_plot_actions(),
+            events=config.get_plot_events(),
+            omit_actions_with=config.get_omit_actions_with(),
+            omit_events_with=config.get_omit_events_with()
+        ):
+            config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
+            output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
+            output_filepath = os.path.join(output_dir, output_filename)
+            if create_plot(
+                [ps],
+                config,
+                x_header,
+                [],
+            ):
+                im_props = deepcopy(config.get_image_properties())
+                im_props.set_dimension_mode(eDimensionMode.Unbound)
+                save_current_plot(output_filepath, im_props)
+            else:
+                legend_success = False
+            clear_current_plot()
+        else:
+            legend_success = False
+        if not legend_success:
+            _pulse_logger.error(f"Failed to create legend {output_filepath}")
+            config.set_plot_actions(False)
+            config.set_plot_events(False)
+
 
     # Plot every header against time
     def _plot_header(sources: List[SEPlotSource]):
@@ -272,8 +283,9 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
     expected_source = plotter.get_expected_source()
     expected_df = expected_source.get_data_frame()
 
-    if ((plotter.get_plot_type() == ePlotType.FastPlotErrors or plotter.get_plot_type() == ePlotType.FullPlotErrors) \
-            and len(plotter.get_failures()) == 0):  # Only plotting failures and no failures to plot
+    if ((plotter.get_plot_type() == ePlotType.FastPlotErrors or \
+            plotter.get_plot_type() == ePlotType.FullPlotErrors) and \
+            len(plotter.get_failures()) == 0):  # Only plotting failures and no failures to plot
         _pulse_logger.info(f"No plots for {computed_source.get_csv_data()}.")
         return
 
@@ -304,23 +316,38 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
 
     # Action Event Legend
     config = plotter.get_plot_config()
-    config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
-    output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
-    output_filepath = os.path.join(output_path, output_filename)
-    if create_plot(
-        [computed_source],
-        config,
-        x_header,
-        [],
-    ):
-        im_props = deepcopy(config.get_image_properties())
-        im_props.set_dimension_mode(eDimensionMode.Unbound)
-        save_current_plot(output_filepath, im_props)
-    else:
-        _pulse_logger.error(f"Failed to create legend {output_filepath}")
-        config.set_plot_actions(False)
-        config.set_plot_events(False)
-    clear_current_plot()
+    actions_events = []
+    if config.get_plot_actions() or config.get_plot_events():
+        legend_success = True
+        if computed_source.parse_actions_events(
+            actions=config.get_plot_actions(),
+            events=config.get_plot_events(),
+            omit_actions_with=config.get_omit_actions_with(),
+            omit_events_with=config.get_omit_events_with()
+        ):
+            expected_source.set_actions_events(computed_source.get_actions_events())
+
+            config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
+            output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
+            output_filepath = os.path.join(output_path, output_filename)
+            if create_plot(
+                [computed_source],
+                config,
+                x_header,
+                [],
+            ):
+                im_props = deepcopy(config.get_image_properties())
+                im_props.set_dimension_mode(eDimensionMode.Unbound)
+                save_current_plot(output_filepath, im_props)
+            else:
+                legend_success = False
+            clear_current_plot()
+        else:
+            legend_success = False
+        if not legend_success:
+            pulse_logger.error(f"Failed to create legend {output_filepath}")
+            config.set_plot_actions(False)
+            config.set_plot_events(False)
 
     class _eColorMode(Enum):
         Default = 0
@@ -622,36 +649,20 @@ def create_plot(plot_sources: [SEPlotSource],
     # Plot any actions or events if requested
     ps = plot_sources[0]
     if plot_config.get_plot_events() or plot_config.get_plot_actions():
-        # Find log file containing information
-        log_file = None
-        if ps.has_log_file():
-            log_file = ps.get_log_file()
-        else:
-            if ps.has_csv_data():
-                idx = ps.get_csv_data().rfind("Results.csv")
-                if idx == -1:
-                    idx = ps.get_csv_data().rfind(".csv")
-                log_file = ps.get_csv_data()[:idx] + ".log"
+        # Parse actions/events if needed
+        if not ps.has_actions_events():
+            if not ps.parse_actions_events(
+                actions=plot_config.get_plot_actions(),
+                events=plot_config.get_plot_events(),
+                omit_actions_with=plot_config.get_omit_actions_with(),
+                omit_events_with=plot_config.get_omit_events_with()
+            ):
+                return False
 
-        if log_file and os.path.exists(log_file):
-            actions_events = []
-
-            # Get events
-            if plot_config.get_plot_events():
-                actions_events.extend(parse_events(log_file, plot_config.get_omit_events_with()))
-
-            # Get actions
-            if plot_config.get_plot_actions():
-                actions_events.extend(parse_actions(log_file, plot_config.get_omit_actions_with()))
-
-            # Sort and plot all actions and events
-            actions_events = sorted(actions_events, key=attrgetter('time'))
-            for ae in actions_events:
-                color = next(action_event_fmt_cycler)['color']
-                ax3.axvline(x=ae.time, color = color, label = f"{ae.category}:{ae.text}\nt={ae.time}")
-        else:
-            _pulse_logger.error(f"Could not find corresponding log file: {ps.get_csv_data()}")
-            return False
+        # Plot all actions and events
+        for ae in ps.get_actions_events():
+            color = next(action_event_fmt_cycler)['color']
+            ax3.axvline(x=ae.time, color = color, label = f"{ae.category}:{ae.text}\nt={ae.time}")
 
     # Plot validation data if needed
     if validation_source:

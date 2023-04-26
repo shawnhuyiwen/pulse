@@ -68,25 +68,20 @@ class CSVComparison(SETestReport):
             total_errors += 1
             _pulse_logger.error(f"Computed ({computed_file_path}) is not the same length as expected")
 
-        # Use log file and directory from computed source
-        plot_actions = True
-        plot_events = self.plot_events
-        log_file = computed_file_path[:-len("Results.csv")] + ".log"
-        if not os.path.isfile(log_file):
-            log_file = None
-            plot_actions = False
-            plot_events = False
-            _pulse_logger.warning(f"Could not locate log file: {computed_file_path}")
-
         # Prepare plot sources so we can open csvs just once
+        row_skip = None
+        if (self.plot_type == ePlotType.FastPlot or self.plot_type == ePlotType.FastPlotErrors or \
+                self.plot_type == ePlotType.MemoryFastPlot):
+            row_skip = 5
         expected = SEPlotSource(
             csv_data=expected_file_path,
             line_format="-k",
             line_width=4.0,
             label="Expected",
-            log_file=log_file)
+            row_skip=row_skip
+        )
         expected_df = expected.get_data_frame() if expected_exists else pd.DataFrame()
-        computed = SEPlotSource(csv_data=computed_file_path, line_format="-r", label="Computed")
+        computed = SEPlotSource(csv_data=computed_file_path, line_format="-r", label="Computed", row_skip=row_skip)
         computed_df = computed.get_data_frame()
 
         # Check for header differences
@@ -166,8 +161,8 @@ class CSVComparison(SETestReport):
             config.set_values(
                 gridlines=True,
                 output_path_override=self.report_dir,
-                plot_actions=plot_actions,
-                plot_events=plot_events,
+                plot_actions=True,
+                plot_events=self.plot_events,
             )
             plotter = SEComparePlotter(
                 config=config,
