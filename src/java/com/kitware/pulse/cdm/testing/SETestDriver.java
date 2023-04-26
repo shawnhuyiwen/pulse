@@ -225,7 +225,7 @@ public class SETestDriver
             try
             {
               if(job.python.runPython("../python/pulse/cdm/utils/csv_compare.py",
-                  job.baselineFiles.get(i), job.computedFiles.get(i), String.valueOf(job.percentDifference)) != 0)
+                  job.baselineFiles.get(i), job.computedFiles.get(i), String.valueOf(job.percentDifference), job.plotType.toString()) != 0)
                 job.error("Comparison failed via return code.");
               else
               {
