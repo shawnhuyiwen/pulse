@@ -35,10 +35,10 @@ class CSVComparison(SETestReport):
         if not os.path.isfile(expected_file_path):
             expected_exists = False
             _pulse_logger.error(f"Expected file does not exist {expected_csv}")
-            _pulse_logger.info(f"I am going to try to plot the computed.")
             # TODO: check for zip file
         if not os.path.isfile(computed_file_path):
             _pulse_logger.error(f"Computed file does not exist {computed_file_path}")
+            return
 
         report = f"{computed_file_path[:-4]}/{os.path.basename(computed_file_path)[:-4]}Report.json"
         self.set_full_report_path(report)
@@ -51,9 +51,15 @@ class CSVComparison(SETestReport):
         os.makedirs(self.report_dir)
 
         # Create the test case
+        total_errors = 0
         suite = self.create_test_suite()
         suite.set_name(self.name)
         suite.start_case(self.name)
+
+        # Get an error in the log
+        if not expected_exists:
+            total_errors += 1
+            _pulse_logger.error(f"Computed ({computed_file_path}) is not the same length as expected")
 
         # Use log file and directory from computed source
         plot_actions = True
@@ -77,7 +83,6 @@ class CSVComparison(SETestReport):
         computed_df = computed.get_data_frame()
 
         # Check for header differences
-        total_errors = 0
         if len(expected_df.columns) != len(computed_df.columns):
             _pulse_logger.warning(f"Number of results is different, expected ({expected_file_path}) " \
                   f"{len(expected_df.columns)} but computed ({computed_file_path}) is {len(computed_df.columns)}")
@@ -86,29 +91,25 @@ class CSVComparison(SETestReport):
                 total_errors += 1
                 _pulse_logger.error(f'Computed results did not provide expected result "{y_header}"')
 
-        # Get times/first column
-        if expected_exists:
-            first_col_is_time = expected_df.columns[0].lower().startswith("time")
-            times = expected_df.iloc[:,0] if first_col_is_time else pd.Series(expected_df.index)
-        else:
-            first_col_is_time = computed_df.columns[0].lower().startswith("time")
-            times = computed_df.iloc[:,0] if first_col_is_time else pd.Series(computed_df.index)
-
-        # For report, only compare when both dataframes have values so truncate dfs while preserving
-        # original dfs for plotting
-        expected_df_trunc = expected_df
-        computed_df_trunc = computed_df
-        min_rows = len(expected_df.index)
-        if len(expected_df.index) != len(computed_df.index):
-            total_errors += 1
-            _pulse_logger.error(f"Computed ({computed_file_path}) is not the same length as expected")
-
-            min_rows = min(len(expected_df.index), len(computed_df.index)) - 1
-            expected_df_trunc = expected_df_trunc.loc[:min_rows]
-            computed_df_trunc = computed_df_trunc.loc[:min_rows]
-
         # Actually compare CSVs
         if expected_exists:
+            # For report, only compare when both dataframes have values so truncate dfs while preserving
+            # original dfs for plotting
+            expected_df_trunc = expected_df
+            computed_df_trunc = computed_df
+            min_rows = len(expected_df.index)
+            if len(expected_df.index) != len(computed_df.index):
+                total_errors += 1
+                _pulse_logger.error(f"Computed ({computed_file_path}) is not the same length as expected")
+
+                min_rows = min(len(expected_df.index), len(computed_df.index)) - 1
+                expected_df_trunc = expected_df_trunc.loc[:min_rows]
+                computed_df_trunc = computed_df_trunc.loc[:min_rows]
+
+            # Get times/first column
+            first_col_is_time = expected_df.columns[0].lower().startswith("time")
+            times = expected_df.iloc[:,0] if first_col_is_time else pd.Series(expected_df.index)
+
             compare_df = expected_df_trunc.combine(computed_df_trunc, lambda x, y: series_percent_difference(x, y, epsilon=1e-10))
             error_summary = compare_df.apply(lambda x: get_error_info(x, expected_df_trunc, computed_df_trunc, self.error_limit))
             rms = {h: r for h, r in zip(error_summary.columns, error_summary.loc['rms'])}
@@ -139,13 +140,14 @@ class CSVComparison(SETestReport):
                                 f"-  {errPercent:.2f}% of timesteps have errors between these times\n" \
                                 f"-  min error : @Time {_time(e.loc['min row'])}: expected {e.loc['min expected']} != computed {e.loc['min computed']} [{e.loc['min']}%]\n" \
                                 f"-  max error : @Time {_time(e.loc['max row'])}: expected {e.loc['max expected']} != computed {e.loc['max computed']} [{e.loc['max']}%]" )
-            if suite.get_active_case().has_failures():
-                _pulse_logger.error(f"{computed_file_path} Comparison failed!!")
-            else:
-                _pulse_logger.info(f"{computed_file_path} Comparison SUCCESS!!")
         else:
             failures = set()
             rms = {}
+
+        if suite.get_active_case().has_failures():
+            _pulse_logger.error(f"{computed_file_path} Comparison failed!!")
+        else:
+            _pulse_logger.info(f"{computed_file_path} Comparison SUCCESS!!")
 
         # Write out results
         suite.end_case()
