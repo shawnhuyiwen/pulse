@@ -7,6 +7,7 @@ import re
 import shutil
 import sys
 import matplotlib.pyplot as plt
+import matplotlib.style as mplstyle
 from matplotlib import colors as mcolors
 from cycler import cycler
 from timeit import default_timer as timer
@@ -197,21 +198,31 @@ def csv_plotter(csv: str, benchmark: bool = False):
     if config.get_plot_actions() or config.get_plot_events():
         legend_success = True
         if ps.parse_actions_events():
-            config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
-            output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
-            output_filepath = os.path.join(output_dir, output_filename)
-            if create_plot(
-                [ps],
-                config,
-                x_header,
-                [],
-            ):
-                im_props = deepcopy(config.get_image_properties())
-                im_props.set_dimension_mode(eDimensionMode.Unbound)
-                save_current_plot(output_filepath, im_props)
+            ae = ps.get_actions_events(
+                plot_actions=config.get_plot_actions(),
+                plot_events=config.get_plot_events(),
+                omit_actions_with=config.get_omit_actions_with(),
+                omit_events_with=config.get_omit_events_with()
+            )
+            if ae:
+                config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
+                output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
+                output_filepath = os.path.join(output_dir, output_filename)
+                if create_plot(
+                    [ps],
+                    config,
+                    x_header,
+                    [],
+                ):
+                    im_props = deepcopy(config.get_image_properties())
+                    im_props.set_dimension_mode(eDimensionMode.Unbound)
+                    save_current_plot(output_filepath, im_props)
+                else:
+                    legend_success = False
+                clear_current_plot()
             else:
-                legend_success = False
-            clear_current_plot()
+                config.set_plot_actions(False)
+                config.set_plot_events(False)
         else:
             legend_success = False
         if not legend_success:
@@ -314,23 +325,33 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
     if config.get_plot_actions() or config.get_plot_events():
         legend_success = True
         if computed_source.parse_actions_events():
-            expected_source.set_actions_events(computed_source.get_actions_events())
+            ae = computed_source.get_actions_events(
+                plot_actions=config.get_plot_actions(),
+                plot_events=config.get_plot_events(),
+                omit_actions_with=config.get_omit_actions_with(),
+                omit_events_with=config.get_omit_events_with()
+            )
+            if ae:
+                expected_source.set_actions_events(ae)
 
-            config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
-            output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
-            output_filepath = os.path.join(output_path, output_filename)
-            if create_plot(
-                [computed_source],
-                config,
-                x_header,
-                [],
-            ):
-                im_props = deepcopy(config.get_image_properties())
-                im_props.set_dimension_mode(eDimensionMode.Unbound)
-                save_current_plot(output_filepath, im_props)
-            else:
-                legend_success = False
-            clear_current_plot()
+                config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
+                output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
+                output_filepath = os.path.join(output_path, output_filename)
+                if create_plot(
+                    [computed_source],
+                    config,
+                    x_header,
+                    [],
+                ):
+                    im_props = deepcopy(config.get_image_properties())
+                    im_props.set_dimension_mode(eDimensionMode.Unbound)
+                    save_current_plot(output_filepath, im_props)
+                else:
+                    legend_success = False
+                clear_current_plot()
+            else: # No actions/events to plot
+                config.set_plot_actions(False)
+                config.set_plot_events(False)
         else:
             legend_success = False
         if not legend_success:
@@ -493,6 +514,8 @@ def create_plot(plot_sources: [SEPlotSource],
                 x2_header: Optional[str] = None,
                 y2_headers: Optional[List[str]] = [],
                 validation_source: Optional[SEPlotSource] = None):
+    # Slightly faster plotting, but may potentially result in a quality loss
+    mplstyle.use('fast')
 
     # To support line formats across axes
     setup_fmt_cycler = cycler(linestyle=['-', '--', '-.', ':']) * cycler(color=['r', 'b', 'g', 'y', 'm', 'c'])
