@@ -1415,6 +1415,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.Concentration, dst.GetConcentration());
       if (src.Dose != null)
         PBProperty.Load(src.Dose, dst.GetDose());
+      if (src.AdministrationDuration != null)
+        PBProperty.Load(src.AdministrationDuration, dst.GetAdminDuration());
 
     }
     public static pulse.cdm.bind.SubstanceBolusData Unload(SESubstanceBolus src)
@@ -1434,6 +1436,8 @@ namespace Pulse.CDM
         dst.Concentration = PBProperty.Unload(src.GetConcentration());
       if (src.HasDose())
         dst.Dose = PBProperty.Unload(src.GetDose());
+      if (src.HasAdminDuration())
+        dst.AdministrationDuration = PBProperty.Unload(src.GetAdminDuration());
     }
     #endregion
 

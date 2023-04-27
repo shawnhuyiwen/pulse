@@ -57,7 +57,7 @@ namespace HowTo_Hemorrhage
       SEHemorrhage hemo = new SEHemorrhage();
       hemo.SetComment("I am a comment");
       hemo.GetSeverity().SetValue(0.75);
-      hemo.GetFlowRate().SetValue(1, VolumePerTimeUnit.mL_Per_s);
+      //hemo.GetFlowRate().SetValue(1, VolumePerTimeUnit.mL_Per_s);
       hemo.SetCompartment(eHemorrhage_Compartment.RightLeg);
       pulse.ProcessAction(hemo);
 
@@ -70,6 +70,14 @@ namespace HowTo_Hemorrhage
       hemo.GetSeverity().SetValue(0.0);
       hemo.SetCompartment(eHemorrhage_Compartment.RightLeg);
       pulse.ProcessAction(hemo);
+
+      SESubstanceBolus bolus = new SESubstanceBolus();
+      bolus.SetSubstance("Morphine");
+      bolus.GetConcentration().SetValue(5000, MassPerVolumeUnit.ug_Per_mL);
+      bolus.GetDose().SetValue(10, VolumeUnit.mL);
+      bolus.SetAdminRoute(eSubstanceAdministration_Route.Intravenous);
+      bolus.GetAdminDuration().SetValue(20, TimeUnit.s);
+      pulse.ProcessAction(bolus);
 
       pulse.AdvanceTime_s(240);
       // Get the values of the data you requested at this time
