@@ -12,7 +12,7 @@ import pandas as pd
 from pulse.cdm.scalars import SEScalar, SEScalarLength
 from pulse.cdm.utils.file_utils import get_dir_from_run_config
 from pulse.cdm.utils.csv_utils import read_csv_into_df
-from pulse.cdm.utils.logger import LogActionEvent, parse_actions, parse_events
+from pulse.cdm.utils.logger import eActionEventCategory, LogActionEvent, parse_actions, parse_events
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -584,8 +584,7 @@ class SEPlotSource():
     def invalidate_log_file(self):
         self._log_file = None
 
-    def parse_actions_events(self, actions: bool=True, events: bool=True,
-        omit_actions_with: List[str]=[], omit_events_with: List[str]=[]):
+    def parse_actions_events(self):
         # Attempt to find log file if not given
         if not self._log_file:
             if self._csv_data:
@@ -599,21 +598,35 @@ class SEPlotSource():
             _pulse_logger.error(f"Could not find corresponding log file: {self._csv_data}")
             return False
 
-        self._actions_events = []
-
-        # Get actions
-        if actions:
-            self._actions_events.extend(parse_actions(self._log_file, omit_actions_with))
-
-        # Get events
-        if events:
-            self._actions_events.extend(parse_events(self._log_file, omit_events_with))
+        self._actions_events = parse_actions(self._log_file)
+        self._actions_events.extend(parse_events(self._log_file))
 
         self._actions_events = sorted(self._actions_events, key=attrgetter('time'))
 
         return True
-    def get_actions_events(self):
-        return self._actions_events
+    def get_actions_events(self, plot_actions: bool=True, plot_events: bool=True,
+            omit_actions_with: List[str]=[], omit_events_with: List[str]=[]):
+
+        filtered = []
+        for ae in self._actions_events:
+            if plot_actions and ae.category == eActionEventCategory.ACTION:
+                keep = True
+                for o in omit_actions_with:
+                    if o in ae.text:
+                        keep = False
+                        break
+                if keep:
+                    filtered.append(ae)
+            elif plot_events and ae.category == eActionEventCategory.EVENT:
+                keep = True
+                for o in omit_events_with:
+                    if o in ae.text:
+                        keep = False
+                        break
+                if keep:
+                    filtered.append(ae)
+
+        return filtered
     def set_actions_events(self, actions_events: List[LogActionEvent]):
         self._actions_events = sorted(actions_events, key=attrgetter('time'))
     def has_actions_events(self):

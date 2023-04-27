@@ -256,7 +256,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 4:
         plot_type = ePlotType[sys.argv[4]]
 
-    true_vals = ["true", "t", "1", "yes", "y"]
+    true_vals = ["true", "t", "1", "yes", "y", "on"]
     if len(sys.argv) > 5:
         plot_actions = (sys.argv[5].lower() in true_vals)
 

@@ -196,12 +196,7 @@ def csv_plotter(csv: str, benchmark: bool = False):
     # Action Event Legend
     if config.get_plot_actions() or config.get_plot_events():
         legend_success = True
-        if ps.parse_actions_events(
-            actions=config.get_plot_actions(),
-            events=config.get_plot_events(),
-            omit_actions_with=config.get_omit_actions_with(),
-            omit_events_with=config.get_omit_events_with()
-        ):
+        if ps.parse_actions_events():
             config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
             output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
             output_filepath = os.path.join(output_dir, output_filename)
@@ -316,15 +311,9 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
 
     # Action Event Legend
     config = plotter.get_plot_config()
-    actions_events = []
     if config.get_plot_actions() or config.get_plot_events():
         legend_success = True
-        if computed_source.parse_actions_events(
-            actions=config.get_plot_actions(),
-            events=config.get_plot_events(),
-            omit_actions_with=config.get_omit_actions_with(),
-            omit_events_with=config.get_omit_events_with()
-        ):
+        if computed_source.parse_actions_events():
             expected_source.set_actions_events(computed_source.get_actions_events())
 
             config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
@@ -651,18 +640,18 @@ def create_plot(plot_sources: [SEPlotSource],
     if plot_config.get_plot_events() or plot_config.get_plot_actions():
         # Parse actions/events if needed
         if not ps.has_actions_events():
-            if not ps.parse_actions_events(
-                actions=plot_config.get_plot_actions(),
-                events=plot_config.get_plot_events(),
-                omit_actions_with=plot_config.get_omit_actions_with(),
-                omit_events_with=plot_config.get_omit_events_with()
-            ):
+            if not ps.parse_actions_events():
                 return False
 
         # Plot all actions and events
-        for ae in ps.get_actions_events():
+        for ae in ps.get_actions_events(
+            plot_actions=plot_config.get_plot_actions(),
+            plot_events=plot_config.get_plot_events(),
+            omit_actions_with=plot_config.get_omit_actions_with(),
+            omit_events_with=plot_config.get_omit_events_with()
+        ):
             color = next(action_event_fmt_cycler)['color']
-            ax3.axvline(x=ae.time, color = color, label = f"{ae.category}:{ae.text}\nt={ae.time}")
+            ax3.axvline(x=ae.time, color = color, label = f"{ae.category.name}:{ae.text}\nt={ae.time}")
 
     # Plot validation data if needed
     if validation_source:

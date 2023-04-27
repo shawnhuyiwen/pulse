@@ -36,12 +36,6 @@ class ePrettyPrintType(Enum):
     Action = 0
     Condition = 1
 def pretty_print(string: str, print_type: ePrettyPrintType, preserve_camel_case: bool = False):
-    typeTag = ""
-    if print_type == ePrettyPrintType.Action:
-        typeTag = "Action"
-    elif print_type == ePrettyPrintType.Condition:
-        typeTage = "Condtion"
-
     ret = ""
     string = string.replace('"', '')
     string = string.replace('{', '')
@@ -59,7 +53,7 @@ def pretty_print(string: str, print_type: ePrettyPrintType, preserve_camel_case:
         if len(line) == 0:
             idx += 1
             continue
-        if typeTag in line:
+        if print_type.name in line:
             idx += 1
             continue
         if "ReadOnly" in line:
@@ -99,11 +93,13 @@ def pretty_print(string: str, print_type: ePrettyPrintType, preserve_camel_case:
 
     return ret
 
-
+class eActionEventCategory(Enum):
+    ACTION = 0
+    EVENT = 1
 class LogActionEvent(NamedTuple):
     time: float
     text: str
-    category: str
+    category: eActionEventCategory
 def parse_events(log_file: str, omit: List[str] = []):
     event_tag = "[Event]"
     events = []
@@ -132,7 +128,7 @@ def parse_events(log_file: str, omit: List[str] = []):
                 if not keep_event:
                     continue
 
-                events.append(LogActionEvent(event_time, event_text, "EVENT"))
+                events.append(LogActionEvent(event_time, event_text, eActionEventCategory.EVENT))
 
     return events
 def parse_actions(log_file: str, omit: List[str] = []):
@@ -187,7 +183,7 @@ def parse_actions(log_file: str, omit: List[str] = []):
                 # Remove leading spaces on each line
                 action_text = '\n'.join([s.strip() for s in action_text.splitlines()])
 
-                actions.append(LogActionEvent(action_time, action_text, "ACTION"))
+                actions.append(LogActionEvent(action_time, action_text, eActionEventCategory.ACTION))
 
             idx += 1
 

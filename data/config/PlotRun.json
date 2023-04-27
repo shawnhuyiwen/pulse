@@ -1323,7 +1323,7 @@
         "PlotConfig":
         {
           "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Respiratory/",
-          "PlotActions": true, "OmitActionsWith": [ "ConsciousRespiration", "\"Value\": 0," ]
+          "PlotActions": true, "OmitActionsWith": [ "Conscious Respiration", "Severity\n" ]
         },
         "PlotSource":
         [
