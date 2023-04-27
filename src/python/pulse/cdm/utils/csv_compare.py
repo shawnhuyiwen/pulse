@@ -22,17 +22,19 @@ _pulse_logger = logging.getLogger('pulse')
 
 
 class CSVComparison(SETestReport):
-    __slots__ = ["error_limit", "plot_events", "plot_type", "report_differences"]
+    __slots__ = ["error_limit", "plot_actions", "plot_events", "plot_type", "report_differences"]
 
     def __init__(
         self,
         error_limit: float=2.0,
+        plot_actions: bool=True,
         plot_events: bool=False,
         plot_type: ePlotType=ePlotType.FastPlot,
         report_differences=False
     ):
         super().__init__()
         self.error_limit = error_limit
+        self.plot_actions = plot_actions
         self.plot_events = plot_events
         self.plot_type = plot_type
         self.report_differences = report_differences
@@ -161,7 +163,7 @@ class CSVComparison(SETestReport):
             config.set_values(
                 gridlines=True,
                 output_path_override=self.report_dir,
-                plot_actions=True,
+                plot_actions=self.plot_actions,
                 plot_events=self.plot_events,
             )
             plotter = SEComparePlotter(
@@ -237,11 +239,12 @@ if __name__ == "__main__":
     computed_csv = None
     error_limit = 2.0
     plot_type=ePlotType.FastPlot
+    plot_actions = True
     plot_events = False
     report_differences = False
 
     if len(sys.argv) < 3:
-        _pulse_logger.error("Expected inputs : <expected results file path> <computed results file path> [error limit] [plot type] [plot events] [report differences]")
+        _pulse_logger.error("Expected inputs : <expected results file path> <computed results file path> [error limit] [plot type] [plot actions] [plot events] [report differences]")
         sys.exit(1)
 
     expected_csv = sys.argv[1]
@@ -253,16 +256,21 @@ if __name__ == "__main__":
     if len(sys.argv) > 4:
         plot_type = ePlotType[sys.argv[4]]
 
+    true_vals = ["true", "t", "1", "yes", "y"]
     if len(sys.argv) > 5:
-        plot_events = bool(sys.argv[5])
+        plot_actions = (sys.argv[5].lower() in true_vals)
 
     if len(sys.argv) > 6:
-        report_differences = bool(sys.argv[6])
+        plot_events = (sys.argv[6].lower() in true_vals)
+
+    if len(sys.argv) > 7:
+        report_differences = (sys.argv[7].lower() in true_vals)
 
     _pulse_logger.info(f"Comparing {expected_csv} to {computed_csv}")
     c = CSVComparison(
         error_limit=error_limit,
         plot_type=plot_type,
+        plot_actions=plot_actions,
         plot_events=plot_events,
         report_differences=report_differences,
     )
