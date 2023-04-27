@@ -289,6 +289,10 @@ namespace pulse
     // Default/Optimal Respiratory
     virtual void SetupRespiratory();
 
+    // Optional Expanded Respiratory and Cardiovascular Circuit Setup Methods
+    virtual void SetupExpandedPulmonaryRespiratory();
+    virtual void SetupExpandedPulmonaryCardiovascular();
+
     // Default/Optimal Equipment
     virtual void SetupAnesthesiaMachine();
     virtual void SetupBagValveMask();

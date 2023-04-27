@@ -349,6 +349,8 @@ namespace pulse
         PBProperty::Load(config.ventilationtidalvolumeintercept(), dst.GetVentilationTidalVolumeIntercept());
       if (config.has_ventilatoryocclusionpressure())
         PBProperty::Load(config.ventilatoryocclusionpressure(), dst.GetVentilatoryOcclusionPressure());
+      if (config.useexpandedrespiratory() != CDM_BIND::eSwitch::NullSwitch)
+        dst.UseExpandedRespiratory((eSwitch)config.useexpandedrespiratory());
     }
 
     // Tissue
@@ -607,6 +609,7 @@ namespace pulse
       resp->set_allocated_ventilationtidalvolumeintercept(PBProperty::Unload(*src.m_VentilationTidalVolumeIntercept));
     if (src.HasVentilatoryOcclusionPressure())
       resp->set_allocated_ventilatoryocclusionpressure(PBProperty::Unload(*src.m_VentilatoryOcclusionPressure));
+    resp->set_useexpandedrespiratory((CDM_BIND::eSwitch)src.m_UseExpandedRespiratory);
 
     // Tissue
     PULSE_BIND::ConfigurationData_TissueConfigurationData* tissue = dst.mutable_tissueconfiguration();

@@ -611,17 +611,20 @@ public:
   virtual SEScalarPressure& GetVentilatoryOcclusionPressure();
   virtual double GetVentilatoryOcclusionPressure(const PressureUnit& unit) const;
 
+  virtual eSwitch UseExpandedRespiratory() const { return m_UseExpandedRespiratory; }
+  virtual void UseExpandedRespiratory(eSwitch s);
 
 protected:
-  SEScalarPressure* m_CentralControllerCO2PressureSetPoint;
-  SEScalar* m_CentralVentilatoryControllerGain;
-  SEScalarTime* m_MinimumAllowableInpiratoryAndExpiratoryPeriod;
-  SEScalarVolume* m_MinimumAllowableTidalVolume;
-  SEScalarPressure* m_PeripheralControllerCO2PressureSetPoint;
-  SEScalar* m_PeripheralVentilatoryControllerGain;
-  SEScalarVolumePerTime* m_PulmonaryVentilationRateMaximum;
-  SEScalarVolume* m_VentilationTidalVolumeIntercept;
-  SEScalarPressure* m_VentilatoryOcclusionPressure;;
+  SEScalarPressure*       m_CentralControllerCO2PressureSetPoint;
+  SEScalar*               m_CentralVentilatoryControllerGain;
+  SEScalarTime*           m_MinimumAllowableInpiratoryAndExpiratoryPeriod;
+  SEScalarVolume*         m_MinimumAllowableTidalVolume;
+  SEScalarPressure*       m_PeripheralControllerCO2PressureSetPoint;
+  SEScalar*               m_PeripheralVentilatoryControllerGain;
+  SEScalarVolumePerTime*  m_PulmonaryVentilationRateMaximum;
+  SEScalarVolume*         m_VentilationTidalVolumeIntercept;
+  SEScalarPressure*       m_VentilatoryOcclusionPressure;
+  eSwitch                 m_UseExpandedRespiratory;
 
   /////////////
   /** Tissue */

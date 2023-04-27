@@ -26,6 +26,7 @@ std::vector<std::string> pulse::ChymeCompartment::_values;
 //std::vector<std::string> pulse::ChymeLink::_values;
 std::vector<std::string> pulse::PulmonaryCompartment::_values;
 std::vector<std::string> pulse::PulmonaryLink::_values;
+std::vector<std::string> pulse::ExpandedPulmonaryCompartment::_values;
 std::vector<std::string> pulse::TissueCompartment::_values;
 std::vector<std::string> pulse::ExtravascularCompartment::_values;
 std::vector<std::string> pulse::TemperatureCompartment::_values;
@@ -95,6 +96,8 @@ namespace pulse
     m_ChymeLeafCompartments.clear();
     m_PulmonaryCompartments.clear();
     m_PulmonaryLeafCompartments.clear();
+    m_ExpandedPulmonaryCompartments.clear();
+    m_ExpandedPulmonaryLeafCompartments.clear();
     m_TissueCompartments.clear();
     m_TissueLeafCompartments.clear();
     m_UrineCompartments.clear();
@@ -169,6 +172,7 @@ for (const std::string& name : pulse::Expanded##bin##Compartment::GetValues()) \
     // Anatomy
     SORT_CMPTS(Chyme, Liquid);
     SORT_CMPTS(Pulmonary, Gas);
+    SORT_CMPTS(ExpandedPulmonary, Gas);
     SORT_CMPTS(Temperature, Thermal);
     if (m_data.GetConfiguration().IsTissueEnabled())
     {

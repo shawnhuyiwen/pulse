@@ -103,29 +103,24 @@ namespace pulse
     bool   m_BreathingCycle;
     bool   m_NotBreathing;
     double m_TopBreathTotalVolume_L;
-    double m_TopBreathAlveoliVolume_L;
-    double m_TopBreathPleuralVolume_L;
-    double m_TopBreathAlveoliPressure_cmH2O;
-    double m_TopBreathDriverPressure_cmH2O;
-    double m_TopBreathPleuralPressure_cmH2O;
     double m_LastCardiacCycleBloodPH;
     double m_TopCarinaO2;
     double m_TopBreathElapsedTime_min;
     double m_BottomBreathElapsedTime_min;
     double m_BottomBreathTotalVolume_L;
-    double m_BottomBreathAlveoliVolume_L;
-    double m_BottomBreathPleuralVolume_L;
     double m_BottomBreathAlveoliPressure_cmH2O;
-    double m_BottomBreathDriverPressure_cmH2O;
-    double m_BottomBreathPleuralPressure_cmH2O;
     double m_PeakAlveolarPressure_cmH2O;
     double m_MaximalAlveolarPressure_cmH2O;
     SERunningAverage* m_BloodPHRunningAverage;
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
-    double m_BottomBreathLeftAcinarZoneVolume_L;
-    double m_BottomBreathRightAcinarZoneVolume_L;
-    double m_TopBreathLeftAcinarZoneVolume_L;
-    double m_TopBreathRightAcinarZoneVolume_L;
+
+    //jbw - Add to serialization
+    //Needed for expanded pulmonary methodology
+    std::vector<double> m_LeftTopBreathAcinarZoneVolumes_L;
+    std::vector<double> m_RightTopBreathAcinarZoneVolumes_L;
+    std::vector<double> m_LeftBottomBreathAcinarZoneVolumes_L;
+    std::vector<double> m_RightBottomBreathAcinarZoneVolumes_L;
+    double m_previousPleuralVolume_L;
 
     // Respiratory Driver
     double m_ArterialO2PartialPressure_mmHg;
@@ -195,6 +190,8 @@ namespace pulse
     SEGasCompartment* m_RightLung;
     SEGasCompartment* m_LeftAlveoli;
     SEGasCompartment* m_RightAlveoli;
+    SEGasCompartment* m_AnatomicDeadSpace;
+    SEGasCompartment* m_Alveoli;
     SEGasSubstanceQuantity* m_CarinaO2;
     SEGasSubstanceQuantity* m_LeftAlveoliO2;
     SEGasSubstanceQuantity* m_RightAlveoliO2;

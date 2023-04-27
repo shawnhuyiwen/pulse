@@ -378,7 +378,7 @@ namespace pulse
     // Now, Let's see if there is anything to merge into our base configuration
     Info("Merging OnDisk Configuration");
     PulseConfiguration cFile(GetLogger());
-    cFile.SerializeFromFile("Configuration.json", *m_Substances);
+    cFile.SerializeFromFile("PulseConfiguration.json", *m_Substances);
     m_Config->Merge(cFile, *m_Substances);
 
     // Now, override anything with a configuration provided by the user or scenario

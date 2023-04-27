@@ -66,7 +66,7 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   m_RightHeartElastanceMaximum = nullptr;
   m_RightHeartElastanceMinimum = nullptr;
   m_StandardPulmonaryCapillaryCoverage = nullptr;
-  m_UseExpandedVasculature = eSwitch::Off;
+  m_UseExpandedVasculature = eSwitch::NullSwitch;
   m_TuneCardiovascularCircuit = eSwitch::On;
   m_CardiovascularTuningFile = "";
 
@@ -172,6 +172,7 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   m_PulmonaryVentilationRateMaximum = nullptr;
   m_VentilationTidalVolumeIntercept = nullptr;
   m_VentilatoryOcclusionPressure = nullptr;
+  m_UseExpandedRespiratory = eSwitch::NullSwitch;
 
   // Tissue
   m_TissueEnabled = eSwitch::On;
@@ -197,7 +198,7 @@ PulseConfiguration::~PulseConfiguration()
   SAFE_DELETE(m_RightHeartElastanceMaximum);
   SAFE_DELETE(m_RightHeartElastanceMinimum);
   SAFE_DELETE(m_StandardPulmonaryCapillaryCoverage);
-  m_UseExpandedVasculature = eSwitch::Off;
+  m_UseExpandedVasculature = eSwitch::NullSwitch;
   m_TuneCardiovascularCircuit = eSwitch::On;
   m_CardiovascularTuningFile = "";
 
@@ -297,6 +298,7 @@ PulseConfiguration::~PulseConfiguration()
   SAFE_DELETE(m_PulmonaryVentilationRateMaximum);
   SAFE_DELETE(m_VentilationTidalVolumeIntercept);
   SAFE_DELETE(m_VentilatoryOcclusionPressure);
+  m_UseExpandedRespiratory = eSwitch::NullSwitch;
 
   //Tissue
 }
@@ -323,7 +325,7 @@ void PulseConfiguration::Clear()
   INVALIDATE_PROPERTY(m_RightHeartElastanceMaximum);
   INVALIDATE_PROPERTY(m_RightHeartElastanceMinimum);
   INVALIDATE_PROPERTY(m_StandardPulmonaryCapillaryCoverage);
-  m_UseExpandedVasculature = eSwitch::Off;
+  m_UseExpandedVasculature = eSwitch::NullSwitch;
   m_TuneCardiovascularCircuit = eSwitch::On;
   m_CardiovascularTuningFile = "";
 
@@ -431,6 +433,7 @@ void PulseConfiguration::Clear()
   INVALIDATE_PROPERTY(m_PulmonaryVentilationRateMaximum);
   INVALIDATE_PROPERTY(m_VentilationTidalVolumeIntercept);
   INVALIDATE_PROPERTY(m_VentilatoryOcclusionPressure);
+  m_UseExpandedRespiratory = eSwitch::NullSwitch;
 
   //Tissue
   m_TissueEnabled = eSwitch::On;
@@ -480,7 +483,7 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
     if(!GetDynamicStabilization().SerializeFromFile(dataDir + "/config/DynamicStabilization.json"))
       Error("Unable to read " + dataDir + "/config/DynamicStabilization.json");
     //if(!GetTimedStabilization().SerializeFromFile(dataDir+"/config/TimedStabilization.json"))
-    //  Error("Unable to read " + dataDir + "/config/DynamicStabilization.json");
+    //  Error("Unable to read " + dataDir + "/config/TimedStabilization.json");
   }
   //GetDynamicStabilization().TrackStabilization(eSwitch::On);// Hard coded override for debugging
 
@@ -624,6 +627,7 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   GetPulmonaryVentilationRateMaximum().SetValue(150.0, VolumePerTimeUnit::L_Per_min);
   GetVentilationTidalVolumeIntercept().SetValue(0.3, VolumeUnit::L);
   GetVentilatoryOcclusionPressure().SetValue(0.75, PressureUnit::cmH2O); //This increases the absolute max driver pressure
+  UseExpandedRespiratory(eSwitch::Off);
 
   // Tissue
   m_TissueEnabled = eSwitch::On;
@@ -839,6 +843,8 @@ double PulseConfiguration::GetLeftHeartElastanceMinimum(const PressurePerVolumeU
 
 void PulseConfiguration::UseExpandedVasculature(eSwitch s)
 {
+  if (s == eSwitch::NullSwitch)
+    return;
   m_UseExpandedVasculature = s;
   // Circuit Modifiers
   if (m_UseExpandedVasculature == eSwitch::On)
@@ -2318,4 +2324,11 @@ double PulseConfiguration::GetVentilationTidalVolumeIntercept(const VolumeUnit& 
   if (m_VentilationTidalVolumeIntercept == nullptr)
     return SEScalar::dNaN();
   return m_VentilationTidalVolumeIntercept->GetValue(unit);
+}
+
+void PulseConfiguration::UseExpandedRespiratory(eSwitch s)
+{
+  if (s == eSwitch::NullSwitch)
+    return;
+  m_UseExpandedRespiratory = s;
 }

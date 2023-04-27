@@ -218,6 +218,14 @@ namespace pulse
     DEFINE_STATIC_STRING(StomachToEnvironment);
   };
 
+  class ExpandedRespiratoryNode
+  {
+  };
+
+  class ExpandedRespiratoryPath
+  {
+  };
+
   //////////////////////////////////////
   // Anesthesia Machine Circuit Enums //
   //////////////////////////////////////

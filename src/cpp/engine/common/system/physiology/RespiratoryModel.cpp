@@ -138,6 +138,8 @@ namespace pulse
     m_RightLung = nullptr;
     m_LeftAlveoli = nullptr;
     m_RightAlveoli = nullptr;
+    m_AnatomicDeadSpace = nullptr;
+    m_Alveoli = nullptr;
     m_CarinaO2 = nullptr;
     m_LeftAlveoliO2 = nullptr;
     m_RightAlveoliO2 = nullptr;
@@ -231,27 +233,14 @@ namespace pulse
     //Vital signs
     m_NotBreathing = false;
     m_TopBreathTotalVolume_L = 0.0;
-    m_TopBreathAlveoliVolume_L = 0.0;
-    m_TopBreathPleuralVolume_L = 0.0;
-    m_TopBreathPleuralPressure_cmH2O = 0.0;
-    m_TopBreathAlveoliPressure_cmH2O = 0.0;
-    m_TopBreathDriverPressure_cmH2O = 0.0;
     m_LastCardiacCycleBloodPH = 7.4;
     m_TopCarinaO2 = 0.2;
     m_TopBreathElapsedTime_min = 0.0;
     m_BottomBreathElapsedTime_min = 0.0;
     m_BottomBreathTotalVolume_L = 0.0;
-    m_BottomBreathAlveoliVolume_L = m_BottomBreathTotalVolume_L;
-    m_BottomBreathPleuralVolume_L = 0.0;
-    m_BottomBreathPleuralPressure_cmH2O = 0.0;
     m_BottomBreathAlveoliPressure_cmH2O = 0.0;
-    m_BottomBreathDriverPressure_cmH2O = 0.0;
     m_PeakAlveolarPressure_cmH2O = 0.0;
     m_MaximalAlveolarPressure_cmH2O = 0.0;
-    m_BottomBreathLeftAcinarZoneVolume_L = 0.0;
-    m_BottomBreathRightAcinarZoneVolume_L = 0.0;
-    m_TopBreathLeftAcinarZoneVolume_L = 0.0;
-    m_TopBreathRightAcinarZoneVolume_L = 0.0;
 
     //Driver
     m_ElapsedBreathingCycleTime_min = 0.0;
@@ -360,6 +349,43 @@ namespace pulse
       m_ArterialCO2PartialPressure_mmHg = m_AortaCO2->GetPartialPressure(PressureUnit::mmHg);
     }
 
+    //Initialize the initial patient diffusion surfice area on each alveoli compartment
+    double alveoliDiffusionArea_cm2 = m_data.GetInitialPatient().GetAlveoliSurfaceArea(AreaUnit::cm2);
+    double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+    double leftLungRatio = 1.0 - rightLungRatio;
+    double rightAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * rightLungRatio;
+    double leftAlveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * leftLungRatio;
+
+    m_previousPleuralVolume_L = 0.0;
+
+    if (m_LeftAlveoli->HasChildren())
+    {
+      double totalVolume_L = m_LeftAlveoli->GetVolume(VolumeUnit::L);
+      for (auto leaf : m_LeftAlveoli->GetLeaves())
+      {
+        double leafVolume_L = leaf->GetVolume(VolumeUnit::L);
+        leaf->GetDiffusionSurfaceArea().SetValue(leftAlveoliDiffusionArea_cm2 * leafVolume_L / totalVolume_L, AreaUnit::cm2);
+      }
+    }
+    else
+    {
+      m_LeftAlveoli->GetDiffusionSurfaceArea().SetValue(leftAlveoliDiffusionArea_cm2, AreaUnit::cm2);
+    }
+
+    if (m_RightAlveoli->HasChildren())
+    {
+      double totalVolume_L = m_RightAlveoli->GetVolume(VolumeUnit::L);
+      for (auto leaf : m_RightAlveoli->GetLeaves())
+      {
+        double leafVolume_L = leaf->GetVolume(VolumeUnit::L);
+        leaf->GetDiffusionSurfaceArea().SetValue(rightAlveoliDiffusionArea_cm2 * leafVolume_L / totalVolume_L, AreaUnit::cm2);
+      }
+    }
+    else
+    {
+      m_RightAlveoli->GetDiffusionSurfaceArea().SetValue(rightAlveoliDiffusionArea_cm2, AreaUnit::cm2);
+    }
+
     //Get the substances to a good starting point
     TuneCircuit();
   }
@@ -413,6 +439,8 @@ namespace pulse
     m_CarinaO2 = m_Carina->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     m_LeftAlveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAlveoli);
     m_RightAlveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveoli);
+    m_AnatomicDeadSpace = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::AnatomicDeadSpace);
+    m_Alveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Alveoli);
     m_LeftAlveoliO2 = m_LeftAlveoli->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     m_RightAlveoliO2 = m_RightAlveoli->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     // Compartments for aerosol effects
@@ -499,17 +527,10 @@ namespace pulse
   ///
   /// \details
   /// Initializes respiratory conditions if any are present.
-  ///  <UL>
-  ///   <LI>COPD</LI>
-  ///   <LI>Lobar Pneumonia</LI>
-  ///   <LI>ImpairedAlveolarExchange</LI>
-  ///   <LI>Pulmonary Fibrosis< / LI>
-  ///  </UL>
   ///
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::AtSteadyState()
   {
-    /// \todo figure out how to save an initial healthy/baseline patient definition and another current patient definition
     //Experimentally determined  
     double tidalVolumeBaseline_L = GetTidalVolume(VolumeUnit::L);
     //Calculated
@@ -525,7 +546,7 @@ namespace pulse
       //Note: Respiratory conditions are applied each timestep to handle combined effects properly
 
       //Update healthy patient volumes
-      //Tidal Volume is experimentatlly determined and is dependent on other patient settings
+      //Tidal Volume is experimentally determined and is dependent on other patient settings
       //Inspiratory Reserve Volume is calcualted from Tidal Volume
       m_data.GetCurrentPatient().GetTidalVolumeBaseline().SetValue(tidalVolumeBaseline_L, VolumeUnit::L);
       m_data.GetCurrentPatient().GetInspiratoryReserveVolume().SetValue(inspiratoryReserveVolume_L, VolumeUnit::L);
@@ -1203,8 +1224,8 @@ namespace pulse
       }
 
   #ifdef TUNING
-      m_ArterialO2PartialPressure_mmHg = 95.0;
-      m_ArterialCO2PartialPressure_mmHg = 40.0;
+      m_ArterialO2PartialPressure_mmHg = 100.0;
+      m_ArterialCO2PartialPressure_mmHg = 42.0;
   #endif
     }
 
@@ -2121,6 +2142,8 @@ namespace pulse
     //Record values each time-step
     std::stringstream ss;
 
+    double previousLungVolume_L = GetTotalLungVolume(VolumeUnit::L);
+
     //Total Respiratory Volume - this should not include the Pleural Space
     double totalLungVolume_L = m_Lungs->GetVolume(VolumeUnit::L);
     GetTotalLungVolume().SetValue(totalLungVolume_L, VolumeUnit::L);
@@ -2135,21 +2158,17 @@ namespace pulse
     GetAlveolarDeadSpace().SetValue(AlveolarDeadSpace_L, VolumeUnit::L);
     GetPhysiologicDeadSpace().SetValue(AnatomicDeadSpace_L + AlveolarDeadSpace_L, VolumeUnit::L);
 
-    double tracheaFlow_L_Per_s = m_PharynxToCarina->GetNextFlow().GetValue(VolumePerTimeUnit::L_Per_s);
+    double tracheaFlow_L_Per_s = m_PharynxToCarina->GetNextFlow(VolumePerTimeUnit::L_Per_s);
     double previousInspiratoryFlow_L_Per_s = GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s);
     GetInspiratoryFlow().SetValue(tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
     GetExpiratoryFlow().SetValue(-tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
 
     /// \cite kacmarek2016egan page 227-228 ---------------------------------------------------
-    double airwayOpeningPressure_cmH2O = m_AirwayNode->GetPressure(PressureUnit::cmH2O);
-    double leftAlveoliPressure_cmH2O = m_LeftAlveoliNode->GetNextPressure().GetValue(PressureUnit::cmH2O);
-    double rightAlveoliPressure_cmH2O = m_RightAlveoliNode->GetNextPressure().GetValue(PressureUnit::cmH2O);
-    double alveolarPressure_cmH2O = (leftAlveoliPressure_cmH2O + rightAlveoliPressure_cmH2O) / 2.0; //Average of L and R
-    double leftPleuralPressure_cmH2O = m_LeftPleuralNode->GetNextPressure().GetValue(PressureUnit::cmH2O);
-    double rightPleuralPressure_cmH2O = m_RightPleuralNode->GetNextPressure().GetValue(PressureUnit::cmH2O);
-    double pleuralPressure_cmH2O = (leftPleuralPressure_cmH2O + rightPleuralPressure_cmH2O) / 2.0; //Average of L and R
+    double airwayOpeningPressure_cmH2O = m_AirwayNode->GetNextPressure(PressureUnit::cmH2O);
+    double alveolarPressure_cmH2O = m_Alveoli->GetPressure(PressureUnit::cmH2O);
+    double pleuralPressure_cmH2O = m_PleuralCavity->GetPressure(PressureUnit::cmH2O);
     double musclePressure_cmH2O = m_RespiratoryMuscleNode->GetNextPressure(PressureUnit::cmH2O);
-    double bodySurfacePressure_cmH2O = m_AmbientNode->GetPressure(PressureUnit::cmH2O);
+    double bodySurfacePressure_cmH2O = m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
 
     double transrespiratoryPressure_cmH2O = airwayOpeningPressure_cmH2O - bodySurfacePressure_cmH2O;
     double transairwayPressure_cmH2O = airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O;
@@ -2158,6 +2177,11 @@ namespace pulse
     double transthoracicPressure_cmH2O = alveolarPressure_cmH2O - bodySurfacePressure_cmH2O;
     double transChestWallPressure_cmH2O = pleuralPressure_cmH2O - bodySurfacePressure_cmH2O;
     double transMusclePressure_cmH2O = musclePressure_cmH2O - bodySurfacePressure_cmH2O;
+
+    double previousTransalveolarPressure_cmH2O = GetTransalveolarPressure(PressureUnit::cmH2O);
+    double previousTransplueralPressure_cmH2O = GetTransChestWallPressure(PressureUnit::cmH2O) - GetTransMusclePressure(PressureUnit::cmH2O);
+    double previousTransdriverPressure_cmH2O = GetTransrespiratoryPressure(PressureUnit::cmH2O) - GetTransMusclePressure(PressureUnit::cmH2O);
+    double previousTranscompliancePressure_cmH2O = GetTransthoracicPressure(PressureUnit::cmH2O) - GetTransMusclePressure(PressureUnit::cmH2O);
 
     GetAirwayPressure().SetValue(airwayOpeningPressure_cmH2O, PressureUnit::cmH2O);
     GetRespiratoryMusclePressure().SetValue(musclePressure_cmH2O, PressureUnit::cmH2O);
@@ -2181,72 +2205,64 @@ namespace pulse
       GetAlveolarArterialGradient().Invalidate();
     }
 
-    m_MeanAirwayPressure_cmH2O->Sample(airwayOpeningPressure_cmH2O - bodySurfacePressure_cmH2O);
+    m_MeanAirwayPressure_cmH2O->Sample(transrespiratoryPressure_cmH2O);
 
-    if (!SEScalar::IsZero(tracheaFlow_L_Per_s, ZERO_APPROX)) //Don't set it if it's ~0, since we can't divide by 0
+    if (abs(tracheaFlow_L_Per_s) > ZERO_APPROX)
     {
-      if (tracheaFlow_L_Per_s > 0.0)
+      double resistance_cmH2O_s_Per_L = (airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s;
+      if (resistance_cmH2O_s_Per_L > 0.0)
       {
-        GetInspiratoryPulmonaryResistance().SetValue(abs((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      }
-      else
-      {
-        GetExpiratoryPulmonaryResistance().SetValue(abs((airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        if (tracheaFlow_L_Per_s > 0.0)
+        {
+          GetInspiratoryPulmonaryResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        }
+        else
+        {
+          GetExpiratoryPulmonaryResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        }
       }
     }
 
     //Static Compliances based on simulated values
-    double leftAlveoliVolume_L = m_LeftAlveoliNode->GetNextVolume().GetValue(VolumeUnit::L);
-    double rightAlveoliVolume_L = m_RightAlveoliNode->GetNextVolume().GetValue(VolumeUnit::L);
-    double leftPleuralVolume_L = m_LeftPleuralNode->GetNextVolume().GetValue(VolumeUnit::L);
-    double rightPleuralVolume_L = m_RightPleuralNode->GetNextVolume().GetValue(VolumeUnit::L);
+    double lungVolumeChange_L = totalLungVolume_L - previousLungVolume_L;
 
-    double leftAlveoliVolumeChange_L = leftAlveoliVolume_L - m_LeftAlveoliNode->GetVolume().GetValue(VolumeUnit::L);
-    double rightAlveoliVolumeChange_L = rightAlveoliVolume_L - m_RightAlveoliNode->GetVolume().GetValue(VolumeUnit::L);
-    double leftPleuralVolumeChange_L = leftPleuralVolume_L - m_LeftPleuralNode->GetVolume().GetValue(VolumeUnit::L);
-    double rightPleuralVolumeChange_L = rightPleuralVolume_L - m_RightPleuralNode->GetVolume().GetValue(VolumeUnit::L);
+    double currentPleuralVolume_L = m_PleuralCavity->GetVolume(VolumeUnit::L);
+    double pleuralVolumeChange_L = currentPleuralVolume_L - m_previousPleuralVolume_L;
+    m_previousPleuralVolume_L = currentPleuralVolume_L;
 
-    double leftPressureDifference_cmH2O = leftAlveoliPressure_cmH2O - leftPleuralPressure_cmH2O;
-    double rightPressureDifference_cmH2O = rightAlveoliPressure_cmH2O - rightPleuralPressure_cmH2O;
-    double leftPreviousPressureDifference_cmH2O = m_LeftAlveoliNode->GetPressure().GetValue(PressureUnit::cmH2O) - m_LeftPleuralNode->GetPressure().GetValue(PressureUnit::cmH2O);
-    double rightPreviousPressureDifference_cmH2O = m_RightAlveoliNode->GetPressure().GetValue(PressureUnit::cmH2O) - m_RightPleuralNode->GetPressure().GetValue(PressureUnit::cmH2O);
+    double transplueralPressure_cmH2O = transChestWallPressure_cmH2O - transMusclePressure_cmH2O;
+    double transcompliancePressure_cmH2O = transthoracicPressure_cmH2O - transMusclePressure_cmH2O;
 
-    double leftPressureDifferenceChange_cmH2O = leftPressureDifference_cmH2O - leftPreviousPressureDifference_cmH2O;
-    double rightPressureDifferenceChange_cmH2O = rightPressureDifference_cmH2O - rightPreviousPressureDifference_cmH2O;
-
-    if (abs(leftPressureDifferenceChange_cmH2O) > ZERO_APPROX && abs(rightPressureDifferenceChange_cmH2O) > ZERO_APPROX)
+    double transalveolarPressureChange_cmH2O = transalveolarPressure_cmH2O - previousTransalveolarPressure_cmH2O;
+    if (abs(transalveolarPressureChange_cmH2O) > ZERO_APPROX)
     {
-      double lungCompliance_L_Per_cmH2O = leftAlveoliVolumeChange_L / leftPressureDifferenceChange_cmH2O + rightAlveoliVolumeChange_L / rightPressureDifferenceChange_cmH2O;
-      GetLungCompliance().SetValue(lungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+      double lungCompliance_L_Per_cmH2O = lungVolumeChange_L / transalveolarPressureChange_cmH2O;
+      if (lungCompliance_L_Per_cmH2O > ZERO_APPROX)
+      {
+        GetLungCompliance().SetValue(lungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+      }
     }
 
-    leftPressureDifference_cmH2O = leftPleuralPressure_cmH2O - musclePressure_cmH2O;
-    rightPressureDifference_cmH2O = rightPleuralPressure_cmH2O - musclePressure_cmH2O;
-    leftPreviousPressureDifference_cmH2O = m_LeftPleuralNode->GetPressure().GetValue(PressureUnit::cmH2O) - m_RespiratoryMuscleNode->GetPressure().GetValue(PressureUnit::cmH2O);
-    rightPreviousPressureDifference_cmH2O = m_RightPleuralNode->GetPressure().GetValue(PressureUnit::cmH2O) - m_RespiratoryMuscleNode->GetPressure().GetValue(PressureUnit::cmH2O);
-
-    leftPressureDifferenceChange_cmH2O = leftPressureDifference_cmH2O - leftPreviousPressureDifference_cmH2O;
-    rightPressureDifferenceChange_cmH2O = rightPressureDifference_cmH2O - rightPreviousPressureDifference_cmH2O;
-
-    if (abs(leftPressureDifferenceChange_cmH2O) > ZERO_APPROX && abs(rightPressureDifferenceChange_cmH2O) > ZERO_APPROX)
+    double transplueralPressureChange_cmH2O = transplueralPressure_cmH2O - previousTransplueralPressure_cmH2O;
+    if (abs(transplueralPressureChange_cmH2O) > ZERO_APPROX)
     {
-      double chestWallCompliance_L_Per_cmH2O = leftPleuralVolumeChange_L / leftPressureDifferenceChange_cmH2O + rightPleuralVolumeChange_L / rightPressureDifferenceChange_cmH2O;
-      GetChestWallCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+      double chestWallCompliance_L_Per_cmH2O = pleuralVolumeChange_L / transplueralPressureChange_cmH2O;
+      if (chestWallCompliance_L_Per_cmH2O > ZERO_APPROX)
+      {
+        GetChestWallCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+      }
     }
 
-    leftPressureDifference_cmH2O = leftAlveoliPressure_cmH2O - musclePressure_cmH2O;
-    rightPressureDifference_cmH2O = rightAlveoliPressure_cmH2O - musclePressure_cmH2O;
-    leftPreviousPressureDifference_cmH2O = m_LeftAlveoliNode->GetPressure().GetValue(PressureUnit::cmH2O) - m_RespiratoryMuscleNode->GetPressure().GetValue(PressureUnit::cmH2O);
-    rightPreviousPressureDifference_cmH2O = m_RightAlveoliNode->GetPressure().GetValue(PressureUnit::cmH2O) - m_RespiratoryMuscleNode->GetPressure().GetValue(PressureUnit::cmH2O);
-
-    leftPressureDifferenceChange_cmH2O = leftPressureDifference_cmH2O - leftPreviousPressureDifference_cmH2O;
-    rightPressureDifferenceChange_cmH2O = rightPressureDifference_cmH2O - rightPreviousPressureDifference_cmH2O;
-
-    if (abs(leftPressureDifferenceChange_cmH2O) > ZERO_APPROX && abs(rightPressureDifferenceChange_cmH2O) > ZERO_APPROX)
+    double transcompliancePressureChange_cmH2O = transcompliancePressure_cmH2O - previousTranscompliancePressure_cmH2O;
+    double flowVolumeChange_L = tracheaFlow_L_Per_s * m_data.GetTimeStep_s();
+    if (abs(transcompliancePressureChange_cmH2O) > ZERO_APPROX)
     {
-      double pulmonaryCompiance_L_Per_cmH2O = leftAlveoliVolumeChange_L / leftPressureDifferenceChange_cmH2O + rightAlveoliVolumeChange_L / rightPressureDifferenceChange_cmH2O;
-      GetPulmonaryCompliance().SetValue(pulmonaryCompiance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
-      GetPulmonaryElastance().SetValue(1.0 / pulmonaryCompiance_L_Per_cmH2O, PressurePerVolumeUnit::cmH2O_Per_L);
+      double pulmonaryCompliance_L_Per_cmH2O = flowVolumeChange_L / transcompliancePressureChange_cmH2O;
+      if (pulmonaryCompliance_L_Per_cmH2O > ZERO_APPROX)
+      {
+        GetPulmonaryCompliance().SetValue(pulmonaryCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+        GetPulmonaryElastance().SetValue(1.0 / pulmonaryCompliance_L_Per_cmH2O, PressurePerVolumeUnit::cmH2O_Per_L);
+      }
     }
 
     //It's a pain to figure out how to hold onto this data, so let's just set it at a sensitive transition point
@@ -2276,13 +2292,47 @@ namespace pulse
       {
         m_BottomBreathTotalVolume_L = totalLungVolume_L;
         m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
-        m_BottomBreathAlveoliVolume_L = leftAlveoliVolume_L + rightAlveoliVolume_L;
-        m_BottomBreathPleuralVolume_L = leftPleuralVolume_L + rightPleuralVolume_L;
-        m_BottomBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
         m_BottomBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
-        m_BottomBreathDriverPressure_cmH2O = musclePressure_cmH2O;
-        m_BottomBreathLeftAcinarZoneVolume_L = m_LeftAlveoli->GetVolume(VolumeUnit::L);
-        m_BottomBreathRightAcinarZoneVolume_L = m_RightAlveoli->GetVolume(VolumeUnit::L);
+        
+        if (m_LeftAlveoli->HasChildren())
+        {
+          for (unsigned int iter = 0; iter < m_LeftBottomBreathAcinarZoneVolumes_L.size(); iter++)
+          {
+            double acinarZoneVolume_L = m_LeftAlveoli->GetLeaves().at(iter)->GetVolume(VolumeUnit::L);
+            m_LeftBottomBreathAcinarZoneVolumes_L.at(iter) = acinarZoneVolume_L;
+          }
+        }
+        else
+        {
+          if (m_LeftBottomBreathAcinarZoneVolumes_L.empty())
+          {
+            m_LeftBottomBreathAcinarZoneVolumes_L.push_back(m_LeftAlveoli->GetVolume(VolumeUnit::L));
+          }
+          else
+          {
+            m_LeftBottomBreathAcinarZoneVolumes_L.at(0) = m_LeftAlveoli->GetVolume(VolumeUnit::L);
+          }
+        }
+
+        if (m_RightAlveoli->HasChildren())
+        {
+          for (unsigned int iter = 0; iter < m_RightBottomBreathAcinarZoneVolumes_L.size(); iter++)
+          {
+            double acinarZoneVolume_L = m_RightAlveoli->GetLeaves().at(iter)->GetVolume(VolumeUnit::L);
+            m_RightBottomBreathAcinarZoneVolumes_L.at(iter) = acinarZoneVolume_L;
+          }
+        }
+        else
+        {
+          if (m_RightBottomBreathAcinarZoneVolumes_L.empty())
+          {
+            m_RightBottomBreathAcinarZoneVolumes_L.push_back(m_RightAlveoli->GetVolume(VolumeUnit::L));
+          }
+          else
+          {
+            m_RightBottomBreathAcinarZoneVolumes_L.at(0) = m_RightAlveoli->GetVolume(VolumeUnit::L);
+          }
+        }
       }
 
       if (totalLungVolume_L - m_BottomBreathTotalVolume_L > m_MinimumAllowableTidalVolume_L //Volume has transitioned sufficiently
@@ -2313,44 +2363,95 @@ namespace pulse
         // Calculate Ventilations
         GetTotalPulmonaryVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
         GetSpecificVentilation().SetValue(TidalVolume_L / m_BottomBreathTotalVolume_L);
-        GetTotalAlveolarVentilation().SetValue(std::abs(m_TopBreathAlveoliVolume_L - m_BottomBreathAlveoliVolume_L) * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
         GetTotalDeadSpaceVentilation().SetValue((AnatomicDeadSpace_L + AlveolarDeadSpace_L) * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
 
         // Calculate Compartment Ventilations
+        double totalAlveolarVentilation_L_Per_min = 0.0;
         for (unsigned int iter = 0; iter < 2; iter++)
         {
           SEGasCompartment* acinarCompartment;
           SELiquidCompartment* acinarCapillaryCompartment;
-          double ventilation_L = 0.0;
+          std::vector<double>* TopBreathAcinarZoneVolumes_L;
+          std::vector<double>* BottomBreathAcinarZoneVolumes_L;
 
           if (iter == 0) // Left lung
           {
             acinarCompartment = m_LeftAlveoli;
             acinarCapillaryCompartment = m_LeftPulmonaryCapillaries;
-            ventilation_L = abs(m_TopBreathLeftAcinarZoneVolume_L - m_BottomBreathLeftAcinarZoneVolume_L);
+            TopBreathAcinarZoneVolumes_L = &m_LeftTopBreathAcinarZoneVolumes_L;
+            BottomBreathAcinarZoneVolumes_L = &m_LeftBottomBreathAcinarZoneVolumes_L;
           }
-          else // Right Lung
+          else // Right lung
           {
             acinarCompartment = m_RightAlveoli;
             acinarCapillaryCompartment = m_RightPulmonaryCapillaries;
-            ventilation_L = abs(m_TopBreathRightAcinarZoneVolume_L - m_BottomBreathRightAcinarZoneVolume_L);
+            TopBreathAcinarZoneVolumes_L = &m_RightTopBreathAcinarZoneVolumes_L;
+            BottomBreathAcinarZoneVolumes_L = &m_RightBottomBreathAcinarZoneVolumes_L;
           }
 
-          double ventilation_L_Per_min = ventilation_L * RespirationRate_Per_min;
-          acinarCompartment->GetVentilation().SetValue(ventilation_L_Per_min, VolumePerTimeUnit::L_Per_min);
-          if (m_data.HasCardiovascular())
+          unsigned int acinarZoneSize = 1;
+          if (acinarCompartment->HasChildren())
           {
-            double perfusion_L_Per_min = acinarCapillaryCompartment->GetPerfusion(VolumePerTimeUnit::L_Per_min);
-            if (perfusion_L_Per_min > ZERO_APPROX)
+            acinarZoneSize = acinarCompartment->GetLeaves().size();
+            if (TopBreathAcinarZoneVolumes_L->size() < acinarZoneSize)
             {
-              acinarCompartment->GetVentilationPerfusionRatio().SetValue(ventilation_L_Per_min / perfusion_L_Per_min);
+              TopBreathAcinarZoneVolumes_L->resize(acinarZoneSize, 0.0);
             }
-            else
+            if (BottomBreathAcinarZoneVolumes_L->size() < acinarZoneSize)
             {
-              acinarCompartment->GetVentilationPerfusionRatio().SetValue(0.0);
+              BottomBreathAcinarZoneVolumes_L->resize(acinarZoneSize, 0.0);
+            }
+            for (unsigned int iter = 0; iter < acinarZoneSize; iter++)
+            {
+              double ventilation_L_Per_min = (TopBreathAcinarZoneVolumes_L->at(iter) - BottomBreathAcinarZoneVolumes_L->at(iter)) * RespirationRate_Per_min;
+              totalAlveolarVentilation_L_Per_min += ventilation_L_Per_min;
+              acinarCompartment->GetLeaves().at(iter)->GetVentilation().SetValue(ventilation_L_Per_min, VolumePerTimeUnit::L_Per_min);
+
+              if (m_data.HasCardiovascular())
+              {
+                double perfusion_L_Per_min = acinarCapillaryCompartment->GetLeaves().at(iter)->GetPerfusion(VolumePerTimeUnit::mL_Per_s);
+                if (perfusion_L_Per_min > ZERO_APPROX)
+                {
+                  acinarCompartment->GetLeaves().at(iter)->GetVentilationPerfusionRatio().SetValue(ventilation_L_Per_min / perfusion_L_Per_min);
+                }
+                else
+                {
+                  acinarCompartment->GetLeaves().at(iter)->GetVentilationPerfusionRatio().SetValue(0.0);
+                }
+              }
+            }
+          }
+          else
+          {
+            if (TopBreathAcinarZoneVolumes_L->size() < acinarZoneSize)
+            {
+              TopBreathAcinarZoneVolumes_L->resize(acinarZoneSize, 0.0);
+            }
+            if (BottomBreathAcinarZoneVolumes_L->size() < acinarZoneSize)
+            {
+              BottomBreathAcinarZoneVolumes_L->resize(acinarZoneSize, 0.0);
+            }
+
+            double ventilation_L_Per_min = (TopBreathAcinarZoneVolumes_L->at(0) - BottomBreathAcinarZoneVolumes_L->at(0)) * RespirationRate_Per_min;
+            totalAlveolarVentilation_L_Per_min += ventilation_L_Per_min;
+            acinarCompartment->GetVentilation().SetValue(ventilation_L_Per_min, VolumePerTimeUnit::L_Per_min);
+
+            if (m_data.HasCardiovascular())
+            {
+              double perfusion_L_Per_min = acinarCapillaryCompartment->GetPerfusion(VolumePerTimeUnit::mL_Per_s);
+              if (perfusion_L_Per_min > ZERO_APPROX)
+              {
+                acinarCompartment->GetVentilationPerfusionRatio().SetValue(ventilation_L_Per_min / perfusion_L_Per_min);
+              }
+              else
+              {
+                acinarCompartment->GetVentilationPerfusionRatio().SetValue(0.0);
+              }
             }
           }
         }
+
+        GetTotalAlveolarVentilation().SetValue(totalAlveolarVentilation_L_Per_min, VolumePerTimeUnit::L_Per_min);
 
         //Calculate Ratios
         GetPhysiologicDeadSpaceTidalVolumeRatio().SetValue(GetPhysiologicDeadSpace(VolumeUnit::L) / TidalVolume_L);
@@ -2388,15 +2489,47 @@ namespace pulse
       {
         m_TopBreathTotalVolume_L = totalLungVolume_L;
         m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
-        m_TopBreathTotalVolume_L = totalLungVolume_L;
-        m_TopBreathAlveoliVolume_L = leftAlveoliVolume_L + rightAlveoliVolume_L;
-        m_TopBreathPleuralVolume_L = leftPleuralVolume_L + rightPleuralVolume_L;
-        m_TopBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
-        m_TopBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
-        m_TopBreathDriverPressure_cmH2O = musclePressure_cmH2O;
         m_TopCarinaO2 = m_CarinaO2->GetVolumeFraction().GetValue();
-        m_TopBreathLeftAcinarZoneVolume_L = m_LeftAlveoli->GetVolume(VolumeUnit::L);
-        m_TopBreathRightAcinarZoneVolume_L = m_RightAlveoli->GetVolume(VolumeUnit::L);
+
+        if (m_LeftAlveoli->HasChildren())
+        {
+          for (unsigned int iter = 0; iter < m_LeftTopBreathAcinarZoneVolumes_L.size(); iter++)
+          {
+            double acinarZoneVolume_L = m_LeftAlveoli->GetLeaves().at(iter)->GetVolume(VolumeUnit::L);
+            m_LeftTopBreathAcinarZoneVolumes_L.at(iter) = acinarZoneVolume_L;
+          }
+        }
+        else
+        {
+          if (m_LeftTopBreathAcinarZoneVolumes_L.empty())
+          {
+            m_LeftTopBreathAcinarZoneVolumes_L.push_back(m_LeftAlveoli->GetVolume(VolumeUnit::L));
+          }
+          else
+          {
+            m_LeftTopBreathAcinarZoneVolumes_L.at(0) = m_LeftAlveoli->GetVolume(VolumeUnit::L);
+          }
+        }
+
+        if (m_RightAlveoli->HasChildren())
+        {
+          for (unsigned int iter = 0; iter < m_RightTopBreathAcinarZoneVolumes_L.size(); iter++)
+          {
+            double acinarZoneVolume_L = m_RightAlveoli->GetLeaves().at(iter)->GetVolume(VolumeUnit::L);
+            m_RightTopBreathAcinarZoneVolumes_L.at(iter) = acinarZoneVolume_L;
+          }
+        }
+        else
+        {
+          if (m_RightTopBreathAcinarZoneVolumes_L.empty())
+          {
+            m_RightTopBreathAcinarZoneVolumes_L.push_back(m_RightAlveoli->GetVolume(VolumeUnit::L));
+          }
+          else
+          {
+            m_RightTopBreathAcinarZoneVolumes_L.at(0) = m_RightAlveoli->GetVolume(VolumeUnit::L);
+          }
+        }
       }
 
       m_PeakAlveolarPressure_cmH2O = MAX(m_PeakAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
@@ -2736,7 +2869,6 @@ namespace pulse
         double residualVolume_L = baselineCompliance_L_Per_cmH2O * lowerCorner_cmH2O + functionalResidualCapacity_L;
         double vitalCapacity_L = baselineCompliance_L_Per_cmH2O * upperCorner_cmH2O + functionalResidualCapacity_L;
 
-        healthyLungCompliance_L_Per_cmH2O = lungPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
         healthySideCompliance_L_Per_cmH2O = baselineCompliance_L_Per_cmH2O;
         healthyChestWallCompliance_L_Per_cmH2O = 1.0 / (1.0 / healthySideCompliance_L_Per_cmH2O - 1.0 / healthyLungCompliance_L_Per_cmH2O);
 
