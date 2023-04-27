@@ -1723,42 +1723,6 @@ namespace pulse
     }
   }
 
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Left Side Needle Decompression
-  ///
-  /// \param  dPressureTimePerVolume - Resistance value for air flow through the needle
-  ///
-  /// \details
-  /// Used for left side needle decompression. this is an intervention (action) used to treat left 
-  /// side tension pneumothorax
-  //--------------------------------------------------------------------------------------------------
-  void RespiratoryModel::DoLeftNeedleDecompression(double dPressureTimePerVolume)
-  {
-    //Leak flow resistance that is scaled in proportion to Lung resistance, depending on severity
-    double dScalingFactor = 0.5; //Tuning parameter to allow gas flow due to needle decompression using lung resistance as reference
-    double dPressureTimePerVolumeLeftNeedle = dScalingFactor * dPressureTimePerVolume;
-    m_LeftPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeLeftNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Right Side Needle Decompression
-  ///
-  /// \param  dPressureTimePerVolume - Resistance value for air flow through the needle
-  ///
-  /// \details
-  /// Used for right side needle decompression. this is an intervention (action) used to treat right
-  /// side tension pneumothorax
-  //--------------------------------------------------------------------------------------------------
-  void RespiratoryModel::DoRightNeedleDecompression(double dPressureTimePerVolume)
-  {
-    //Leak flow resistance that is scaled in proportion to Lung resistance, depending on severity
-    double dScalingFactor = 0.5; //Tuning parameter to allow gas flow due to needle decompression using lung resistance as reference
-    double dPressureTimePerVolumeRightNeedle = dScalingFactor * dPressureTimePerVolume;
-    m_RightPleuralToEnvironment->GetNextResistance().SetValue(dPressureTimePerVolumeRightNeedle, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  }
-
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Hemothorax
@@ -3868,10 +3832,6 @@ namespace pulse
         rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
       }
 
-      // Get the right and left lung ratios
-      double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
-      double leftLungRatio = 1.0 - rightLungRatio;
-
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
 
       // Calculate the surface area contributions for each lung
@@ -3918,10 +3878,6 @@ namespace pulse
         leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
         rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
       }
-
-      // Get the right and left lung ratios
-      double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
-      double leftLungRatio = 1.0 - rightLungRatio;
 
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
 
