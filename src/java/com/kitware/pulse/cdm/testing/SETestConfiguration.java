@@ -357,7 +357,9 @@ public class SETestConfiguration
     job.computedFiles.clear();
 
     String baseline;
+    String patientBaseline;
     String output;
+    String patientOutput;
     
     if(job.isAssessment)
     {
@@ -376,27 +378,43 @@ public class SETestConfiguration
       for(int i=0; i<dirs.length; i++)
         output+="/"+dirs[i];
       
-      baseline+="/"+dirs[dirs.length-1]+"Results"+ext;
+      baseline+="/"+dirs[dirs.length-1];
+      patientBaseline = baseline;
+      baseline+="Results"+ext;
+      patientOutput = output;
       output+="Results"+ext;
       //example : ./Scenarios/Validation/Patient-ValidationResults.csv
+      if(new File(baseline).exists() == false && patientFiles == null)
+      {
+        try
+        {
+          // The baseline does not exist
+          // but the baseline file could be for a specific patient
+          // so let's see if a baseline with patient name exists
+          String patientFile;
+          SEScenario sce = new SEScenario();
+          sce.readFile(job.scenarioDirectory+job.name);
+          if(sce.hasPatientConfiguration() && sce.getPatientConfiguration().hasPatientFile())
+          {
+            patientFile = sce.getPatientConfiguration().getPatientFile();
+            patientFile = patientFile.trim();
+            int start = patientFile.lastIndexOf("/");
+            patientFile = patientFile.substring(start==-1?0:start+1,patientFile.indexOf(sce_ext));
+            patientBaseline+="-"+patientFile+"Results"+ext;
+            if(new File(patientBaseline).exists())
+            {
+              baseline = patientBaseline;
+              output = patientOutput+"-"+patientFile+"Results"+ext;
+              job.patientFile = patientFile+sce_ext;
+            }
+          }
+        }
+        catch (InvalidProtocolBufferException e){} // Carry on, we'll just plot the computed
+      }
     }
     
     job.baselineFiles.add(baseline);
     job.computedFiles.add(output);
-    if(new File(baseline).exists() == false && patientFiles == null)
-    {
-      try
-      {
-        // The baseline does not exist
-        // but the baseline file could be for a specific patient
-        // so let's add the patient file if the scenario is using one
-        SEScenario sce = new SEScenario();
-        sce.readFile(job.scenarioDirectory+job.name);
-        if(sce.hasPatientConfiguration() && sce.getPatientConfiguration().hasPatientFile())
-          this.patientFiles = sce.getPatientConfiguration().getPatientFile();
-      }
-      catch (InvalidProtocolBufferException e){} // Carry on, we'll just plot the computed
-    }
   }
 
   protected void deleteTestResults(String hint)
