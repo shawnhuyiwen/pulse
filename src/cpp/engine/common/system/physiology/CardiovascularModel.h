@@ -91,6 +91,7 @@ namespace pulse
     /**/void PericardialEffusionPressureApplication();
     /**/void TraumaticBrainInjury();
     void UpdatePulmonaryCapillaries();
+    void CalculateHemothorax();
     //Respiratory effects
     void CalculatePleuralCavityVenousEffects();
 
@@ -183,6 +184,8 @@ namespace pulse
     SEFluidCircuitPath*              m_AortaToMyocardium;
     SEFluidCircuitPath*              m_AortaCompliancePath;
     SEFluidCircuitPath*              m_AortaResistancePath;
+    SEFluidCircuitNode*              m_LeftPulmonaryVeinsNode;
+    SEFluidCircuitNode*              m_RightPulmonaryVeinsNode;
 
     SEFluidCircuitPath*              m_VenaCavaCompliancePath;
 
@@ -193,6 +196,9 @@ namespace pulse
 
     SEFluidCircuitPath*              m_BrainToVenaCava;
     SEFluidCircuitPath*              m_MyocardiumToVenaCava;
+
+    SEFluidCircuitPath*              m_LeftPulmonaryVeinsLeak;
+    SEFluidCircuitPath*              m_RightPulmonaryVeinsLeak;
 
     SEFluidCircuitPath*              m_GndToPericardium;
     SEFluidCircuitPath*              m_PericardiumToGnd;

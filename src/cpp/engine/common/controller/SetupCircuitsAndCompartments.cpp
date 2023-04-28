@@ -3094,7 +3094,7 @@ namespace pulse
     EnvironmentToRightNeedle.GetPressureSourceBaseline().SetValue(IntrapleuralPressure_cmH2O * 0.6, PressureUnit::cmH2O);
     SEFluidCircuitPath& RightNeedleToRightPleural = cRespiratory.CreatePath(RightNeedle, RightPleural, pulse::RespiratoryPath::RightNeedleToRightPleural);
     RightNeedleToRightPleural.GetResistanceBaseline().SetValue(openResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    //Path for needle decompression - left side
+    // Path for needle decompression - left side
     SEFluidCircuitPath& EnvironmentToLeftNeedle = cRespiratory.CreatePath(Ambient, LeftNeedle, pulse::RespiratoryPath::EnvironmentToLeftNeedle);
     EnvironmentToLeftNeedle.GetPressureSourceBaseline().SetValue(IntrapleuralPressure_cmH2O * 0.6, PressureUnit::cmH2O);
     SEFluidCircuitPath& LeftNeedleToLeftPleural = cRespiratory.CreatePath(LeftNeedle, LeftPleural, pulse::RespiratoryPath::LeftNeedleToLeftPleural);

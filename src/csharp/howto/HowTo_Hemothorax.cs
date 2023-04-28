@@ -1,13 +1,12 @@
-/* Distributed under the Apache License, Version 2.0.
+﻿/* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
 using System;
 using System.Collections.Generic;
-using HowTo_UseEngine;
 using Pulse;
 using Pulse.CDM;
 
-namespace HowTo_Hemorrhage
+namespace HowTo_Hemothorax
 {
   class Example
   {
@@ -15,8 +14,7 @@ namespace HowTo_Hemorrhage
     {
       // Create our pulse engine
       PulseEngine pulse = new PulseEngine();
-      pulse.LogToConsole(false);// We don't want C++ writing to console
-      pulse.SetLogListener(new MyLogListener());
+      pulse.LogToConsole(true);// Easily view what is happening
 
       List<SEDataRequest> data_requests = new List<SEDataRequest>
       {
@@ -31,11 +29,11 @@ namespace HowTo_Hemorrhage
         SEDataRequest.CreatePhysiologyDataRequest("OxygenSaturation"),
         SEDataRequest.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit.mL_Per_min),
         SEDataRequest.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit.mL),
-        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightLeg", "FlowRate", VolumePerTimeUnit.mL_Per_min),
-        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightLeg", "TotalBloodLost", VolumeUnit.mL)
+        SEDataRequest.CreateActionDataRequest("LeftHemothorax", "FlowRate", VolumePerTimeUnit.mL_Per_min),
+        SEDataRequest.CreateActionDataRequest("LeftHemothorax", "TotalBloodVolume", VolumeUnit.mL)
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
-      data_mgr.SetResultsFilename("./test_results/howto/HowToHemorrhage.cs.csv");
+      data_mgr.SetResultsFilename("./test_results/howto/HowToHemothorax.cs.csv");
       // Create a reference to a double[] that will contain the data returned from Pulse
       double[] data_values;
       // data_values[0] is ALWAYS the simulation time in seconds
@@ -46,19 +44,26 @@ namespace HowTo_Hemorrhage
         Console.WriteLine("Error Initializing Pulse!");
         return;
       }
-      pulse.AdvanceTime_s(10);
+      pulse.AdvanceTime_s(50);
       // Get the values of the data you requested at this time
       data_values = pulse.PullData();
       // And write it out to the console
       data_mgr.WriteData(data_values);
 
-      // Create a Hemorrhage
+      // Create a Hemothorax
       // Set the severity (a fraction between 0 and 1)
-      SEHemorrhage hemo = new SEHemorrhage();
-      hemo.SetComment("I am a comment");
+      SEHemothorax hemo = new SEHemothorax();
       hemo.GetSeverity().SetValue(0.75);
-      //hemo.GetFlowRate().SetValue(1, VolumePerTimeUnit.mL_Per_s);
-      hemo.SetCompartment(eHemorrhage_Compartment.RightLeg);
+      // Optionally, You can set the flow rate of the hemothorax.
+      // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
+      // It is intended to interact with sensors or with something continuously monitoring physiology and updating the flow
+      //hemo.GetFlowRate().SetValue(20, VolumePerTimeUnit.mL_Per_min); //the flow rate of hemothorax
+      // When using using a flow rate, you can also optionally set a target volume for the hemothorax
+      //hemo.GetTargetVolume().SetValue(600, VolumeUnit.mL); //the target volume of the hemothorax
+
+      // It can be on the left or right side
+      hemo.SetSide(eSide.Left);
+      //hemo.SetSide(eSide.Right);
       pulse.ProcessAction(hemo);
 
       pulse.AdvanceTime_s(120);
@@ -67,19 +72,23 @@ namespace HowTo_Hemorrhage
       // And write it out to the console
       data_mgr.WriteData(data_values);
 
-      hemo.GetSeverity().SetValue(0.0);
-      hemo.SetCompartment(eHemorrhage_Compartment.RightLeg);
-      pulse.ProcessAction(hemo);
+      // Tube thoracostomy should help the patient out
+      SETubeThoracostomy tubeThoracostomy = new SETubeThoracostomy();
+      // Optionally, you can set the flow rate of the tube thoracostomy.
+      //tubeThoracostomy.GetFlowRate().SetValue(15, VolumePerTimeUnit.mL_Per_min);
 
-      SESubstanceBolus bolus = new SESubstanceBolus();
-      bolus.SetSubstance("Morphine");
-      bolus.GetConcentration().SetValue(5000, MassPerVolumeUnit.ug_Per_mL);
-      bolus.GetDose().SetValue(10, VolumeUnit.mL);
-      bolus.SetAdminRoute(eSubstanceAdministration_Route.Intravenous);
-      bolus.GetAdminDuration().SetValue(20, TimeUnit.s);
-      pulse.ProcessAction(bolus);
+      // You can set the flow rate to 0 when you would like to remove the intervention
+      tubeThoracostomy.GetFlowRate().SetValue(0, VolumePerTimeUnit.mL_Per_min);
 
-      pulse.AdvanceTime_s(240);
+      // It can be on the left or right side (it's a good idea to do it on the side of the hemothorax ;)
+      tubeThoracostomy.SetSide(eSide.Left);
+      //tubeThoracostomy.SetSide(eSide.Right);
+
+      tubeThoracostomy.GetFlowRate().SetValue(15, VolumePerTimeUnit.mL_Per_min);
+      pulse.ProcessAction(tubeThoracostomy);
+      Console.WriteLine("Giving the patient a tube thoracostomy");
+
+      pulse.AdvanceTime_s(400);
       // Get the values of the data you requested at this time
       data_values = pulse.PullData();
       // And write it out to the console

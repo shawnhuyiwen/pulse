@@ -25,6 +25,7 @@ add_executable_ex(HowToDriver
   HowTo-Exercise.cpp
   HowTo-ExpandedVasculature.cpp
   HowTo-Hemorrhage.cpp
+  HowTo-Hemothorax.cpp
   HowTo-LobarPneumonia.cpp
   HowTo-MechanicalVentilation.cpp
   HowTo-MechanicalVentilator.cpp

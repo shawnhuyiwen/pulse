@@ -290,6 +290,21 @@ def serialize_hemorrhage_from_bind(src: HemorrhageData, dst: SEHemorrhage):
 
 #################################################################
 
+def serialize_hemothorax_to_bind(src: SEHemothorax, dst: HemothoraxData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.Side = src.get_side().value
+    if src.has_severity():
+        serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+    if src.has_flow_rate():
+        serialize_scalar_volume_per_time_to_bind(src.get_flow_rate(), dst.FlowRate)
+    if src.has_target_volume():
+        serialize_scalar_volume_to_bind(src.get_target_volume(), dst.TargetVolume)
+
+def serialize_hemothorax_from_bind(src: HemothoraxData, dst: SEHemothorax):
+    raise Exception("serialize_hemothorax_from_bind not implemented")
+
+#################################################################
+
 def serialize_intubation_to_bind(src:SEIntubation, dst:IntubationData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     dst.Type = src.get_type().value
@@ -480,6 +495,17 @@ def serialize_tension_pneumothorax_to_bind(src: SETensionPneumothorax, dst: Tens
 def serialize_tension_pneumothorax_from_bind(src: TensionPneumothoraxData, dst: SETensionPneumothorax):
     serialize_patient_action_from_bind(src.PatientAction, dst)
     raise Exception("serialize_patient_action_from_bind not implemented")
+
+#################################################################
+
+def serialize_tube_thoracostomy_to_bind(src: SETubeThoracostomy, dst: TubeThoracostomyData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.Side = src.get_side().value
+    if src.has_flow_rate():
+        serialize_scalar_volume_per_time_to_bind(src.get_flow_rate(), dst.FlowRate)
+
+def serialize_hemothorax_from_bind(src: HemothoraxData, dst: SEHemothorax):
+    raise Exception("serialize_hemothorax_from_bind not implemented")
 
 #################################################################
 

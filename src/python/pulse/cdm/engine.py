@@ -57,24 +57,27 @@ class eEvent(Enum):
     IrreversibleState = 22
     Ketoacidosis = 23
     LacticAcidosis = 24
-    MaximumPulmonaryVentilationRate = 25
-    MetabolicAcidosis = 26
-    MetabolicAlkalosis = 27
-    ModerateHyperoxemia = 28
-    ModerateHypocapnia = 29
-    MyocardiumOxygenDeficit = 30
-    Natriuresis = 31
-    NutritionDepleted = 32
-    RenalHypoperfusion = 33
-    RespiratoryAcidosis = 34
-    RespiratoryAlkalosis = 35
-    SevereHyperoxemia = 36
-    SevereHypocapnia = 37
-    StartOfCardiacCycle = 38
-    StartOfExhale = 39
-    StartOfInhale = 40
-    Tachycardia = 41
-    Tachypnea = 42
+    MassiveHemothorax = 25
+    MaximumPulmonaryVentilationRate = 26
+    MediumHemothorax = 27
+    MetabolicAcidosis = 28
+    MetabolicAlkalosis = 29
+    MinimalHemothorax = 30
+    ModerateHyperoxemia = 31
+    ModerateHypocapnia = 32
+    MyocardiumOxygenDeficit = 33
+    Natriuresis = 34
+    NutritionDepleted = 35
+    RenalHypoperfusion = 36
+    RespiratoryAcidosis = 37
+    RespiratoryAlkalosis = 38
+    SevereHyperoxemia = 39
+    SevereHypocapnia = 40
+    StartOfCardiacCycle = 41
+    StartOfExhale = 42
+    StartOfInhale = 43
+    Tachycardia = 44
+    Tachypnea = 45
 
     # Equipment
     AnesthesiaMachineOxygenBottleOneExhausted = 1000
@@ -378,6 +381,8 @@ class SEDataRequest:
             raise Exception("Must provide a Data Request Category")
         if property is None:
             raise Exception("Must provide a Data Request Property Name")
+        if (action is None and category is eDataRequest_category.Action):
+            raise Exception("Must provide an Action Name for Action Data Requests");
         if (compartment is None and (category is eDataRequest_category.GasCompartment or
                                      category is eDataRequest_category.LiquidCompartment or
                                      category is eDataRequest_category.ThermalCompartment or
@@ -430,6 +435,15 @@ class SEDataRequest:
         return cls(eDataRequest_category.Action, action=action, substance=substance, property=property, unit=unit)
 
     @classmethod
+    def create_action_data_request(cls, action:str, property:str, unit:SEScalarUnit=None):
+        return cls(eDataRequest_category.Action, action=action, property=property, unit=unit)
+    @classmethod
+    def create_action_compartment_data_request(cls, action:str, compartment:str, property:str, unit:SEScalarUnit=None):
+        return cls(eDataRequest_category.Action, action=action, compartment=compartment, property=property, unit=unit)
+    @classmethod
+    def create_action_substance_data_request(cls, action:str, substance:str, property:str, unit:SEScalarUnit=None):
+        return cls(eDataRequest_category.Action, action=action, substance=substance, property=property, unit=unit)
+    @classmethod
     def create_gas_compartment_request(cls, compartment:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.GasCompartment, compartment=compartment, property=property,  unit=unit)
     @classmethod
@@ -479,6 +493,10 @@ class SEDataRequest:
     def get_category(self):
         return self._category
 
+    def has_action_name(self):
+        return self._action_name is not None
+    def get_action_name(self):
+        return self._action_name
     def has_compartment_name(self):
         return self._compartment_name is not None
     def get_compartment_name(self):

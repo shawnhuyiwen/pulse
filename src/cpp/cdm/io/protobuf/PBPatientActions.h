@@ -23,6 +23,7 @@ CDM_BIND_DECL2(ForcedExhale)
 CDM_BIND_DECL2(ForcedInhale)
 CDM_BIND_DECL2(ForcedPause)
 CDM_BIND_DECL2(Hemorrhage)
+CDM_BIND_DECL2(Hemothorax)
 CDM_BIND_DECL2(ImpairedAlveolarExchangeExacerbation)
 CDM_BIND_DECL2(Intubation)
 CDM_BIND_DECL2(LobarPneumoniaExacerbation)
@@ -39,6 +40,7 @@ CDM_BIND_DECL2(SubstanceCompoundInfusion)
 CDM_BIND_DECL2(SubstanceInfusion)
 CDM_BIND_DECL2(SupplementalOxygen)
 CDM_BIND_DECL2(TensionPneumothorax)
+CDM_BIND_DECL2(TubeThoracostomy)
 CDM_BIND_DECL2(Urinate)
 CDM_BIND_DECL2(UseInhaler)
 CDM_BIND_DECL(AnyPatientActionData)
@@ -174,6 +176,12 @@ public:
   static void Serialize(const SEHemorrhage& src, CDM_BIND::HemorrhageData& dst);
   static void Copy(const SEHemorrhage& src, SEHemorrhage& dst);
 
+  static void Load(const CDM_BIND::HemothoraxData& src, SEHemothorax& dst);
+  static CDM_BIND::HemothoraxData* Unload(const SEHemothorax& src);
+  static void Serialize(const CDM_BIND::HemothoraxData& src, SEHemothorax& dst);
+  static void Serialize(const SEHemothorax& src, CDM_BIND::HemothoraxData& dst);
+  static void Copy(const SEHemothorax& src, SEHemothorax& dst);
+
   static void Load(const CDM_BIND::ImpairedAlveolarExchangeExacerbationData& src, SEImpairedAlveolarExchangeExacerbation& dst);
   static CDM_BIND::ImpairedAlveolarExchangeExacerbationData* Unload(const SEImpairedAlveolarExchangeExacerbation& src);
   static void Serialize(const CDM_BIND::ImpairedAlveolarExchangeExacerbationData& src, SEImpairedAlveolarExchangeExacerbation& dst);
@@ -263,6 +271,12 @@ public:
   static void Serialize(const CDM_BIND::TensionPneumothoraxData& src, SETensionPneumothorax& dst);
   static void Serialize(const SETensionPneumothorax& src, CDM_BIND::TensionPneumothoraxData& dst);
   static void Copy(const SETensionPneumothorax& src, SETensionPneumothorax& dst);
+
+  static void Load(const CDM_BIND::TubeThoracostomyData& src, SETubeThoracostomy& dst);
+  static CDM_BIND::TubeThoracostomyData* Unload(const SETubeThoracostomy& src);
+  static void Serialize(const CDM_BIND::TubeThoracostomyData& src, SETubeThoracostomy& dst);
+  static void Serialize(const SETubeThoracostomy& src, CDM_BIND::TubeThoracostomyData& dst);
+  static void Copy(const SETubeThoracostomy& src, SETubeThoracostomy& dst);
 
   static void Load(const CDM_BIND::UrinateData& src, SEUrinate& dst);
   static CDM_BIND::UrinateData* Unload(const SEUrinate& src);

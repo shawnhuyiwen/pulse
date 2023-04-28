@@ -30,6 +30,7 @@ void HowToEnvironmentChange();
 void HowToExercise();
 void HowToExpandedVasculature();
 void HowToHemorrhage();
+void HowToHemothorax();
 void HowToLobarPneumonia();
 void HowToMechanicalVentilation();
 void HowToMechanicalVentilator();

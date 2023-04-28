@@ -54,6 +54,7 @@ set(PULSE_CSHARP_HOWTO_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Environment.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_ECMO.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Hemorrhage.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Hemothorax.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_MechanicalVentilator.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_PatientStates.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_RespiratoryMechanics.cs
@@ -123,6 +124,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEDyspnea.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEExercise.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEHemorrhage.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEHemothorax.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEIntubation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SELobarPneumoniaExacerbation.cs
@@ -138,6 +140,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SESubstanceInfusion.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SESupplementalOxygen.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SETensionPneumothorax.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SETubeThoracostomy.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEUrinate.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEArterialBloodGasTest.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SECompleteBloodCount.cs

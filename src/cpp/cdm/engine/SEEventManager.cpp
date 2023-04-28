@@ -110,11 +110,20 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::LacticAcidosis:
         m_ss << " Patient has LacticAcidosis";
         break;
+      case eEvent::MassiveHemothorax:
+        m_ss << " Patient has Massive Hemothorax";
+        break;
       case eEvent::MaximumPulmonaryVentilationRate:
         m_ss << " Patient's Respiratory Driver has exceeded the maximum target pulmonary ventilation rate, setting value to the maximum allowable rate";
         break;
+      case eEvent::MediumHemothorax:
+        m_ss << " Patient has Medium Hemothorax";
+        break;
       case eEvent::MetabolicAcidosis:
         m_ss << " The patient is in a state of metabolic acidosis";
+        break;
+      case eEvent::MinimalHemothorax:
+        m_ss << " Patient has Minimal Hemothorax";
         break;
       case eEvent::ModerateHyperoxemia:
         m_ss << " The patient is in a state of moderate hyperoxemia";
@@ -250,14 +259,23 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::LacticAcidosis:
         m_ss << " Patient no longer has LacticAcidosis";
         break;
+      case eEvent::MassiveHemothorax:
+        m_ss << " Patient no longer has Massive Hemothorax";
+        break;
       case eEvent::MaximumPulmonaryVentilationRate:
         m_ss << " Patient's Respiratory Driver is no longer exceeding the maximum target pulmonary ventilation rate";
+        break;
+      case eEvent::MediumHemothorax:
+        m_ss << " Patient no longer has Medium Hemothorax";
         break;
       case eEvent::MetabolicAcidosis:
         m_ss << " The patient is no longer in a state of metabolic acidosis";
         break;
       case eEvent::MetabolicAlkalosis:
         m_ss << " The patient is no longer in a state of metabolic alkalosis";
+        break;
+      case eEvent::MinimalHemothorax:
+        m_ss << " Patient no longer has Minimal Hemothorax";
         break;
       case eEvent::ModerateHyperoxemia:
         m_ss << " The patient is no longer in a state of moderate hyperoxemia";

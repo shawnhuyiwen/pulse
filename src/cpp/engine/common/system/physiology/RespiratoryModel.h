@@ -79,6 +79,7 @@ namespace pulse
 
     //Actions
     void Pneumothorax();
+    void Hemothorax();
     void MechanicalVentilation();
     void SupplementalOxygen();
     // Driver
@@ -187,6 +188,8 @@ namespace pulse
     SEGasCompartment* m_Environment;
     SEGasCompartment* m_Lungs;
     SEGasCompartment* m_PleuralCavity;
+    SEGasCompartment* m_LeftPleuralCavity;
+    SEGasCompartment* m_RightPleuralCavity;
     SEGasCompartment* m_Carina;
     SEGasCompartment* m_LeftLung;
     SEGasCompartment* m_RightLung;
@@ -218,7 +221,6 @@ namespace pulse
 
     // Circuits
     SEFluidCircuit* m_RespiratoryCircuit;
-    SEFluidCircuitCalculator* m_Calculator;
     // Nodes
     SEFluidCircuitNode* m_AirwayNode;
     SEFluidCircuitNode* m_LeftAlveoliNode;
@@ -261,7 +263,12 @@ namespace pulse
     SEFluidCircuitPath* m_ConnectionToAirway;
     SEFluidCircuitPath* m_GroundToConnection;
 
-    // Transport
+    SEFluidCircuitPath* m_LeftCardiovascularLeak;
+    SEFluidCircuitPath* m_RightCardiovascularLeak;
+    SEFluidCircuitPath* m_LeftRespirtoryLeak;
+    SEFluidCircuitPath* m_RightRespirtoryLeak;
+
+    SEFluidCircuitCalculator* m_Calculator;
     SEGasTransporter* m_GasTransporter;
     SELiquidTransporter* m_AerosolTransporter;
 

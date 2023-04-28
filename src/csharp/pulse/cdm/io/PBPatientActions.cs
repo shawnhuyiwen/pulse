@@ -111,6 +111,12 @@ namespace Pulse.CDM
         Serialize(any.Hemorrhage, h);
         return h;
       }
+      if (any.Hemothorax != null)
+      {
+        SEHemothorax h = new SEHemothorax();
+        Serialize(any.Hemothorax, h);
+        return h;
+      }
       if (any.ImpairedAlveolarExchangeExacerbation != null)
       {
         SEImpairedAlveolarExchangeExacerbation iae = new SEImpairedAlveolarExchangeExacerbation();
@@ -194,6 +200,12 @@ namespace Pulse.CDM
         SETensionPneumothorax tp = new SETensionPneumothorax();
         Serialize(any.TensionPneumothorax, tp);
         return tp;
+      }
+      if (any.TubeThoracostomy != null)
+      {
+        SETubeThoracostomy tt = new SETubeThoracostomy();
+        Serialize(any.TubeThoracostomy, tt);
+        return tt;
       }
       if (any.Urinate != null)
       {
@@ -293,6 +305,11 @@ namespace Pulse.CDM
         any.Hemorrhage = Unload((SEHemorrhage)action);
         return any;
       }
+      if (action.GetType().IsAssignableFrom(typeof(SEHemothorax)))
+      {
+        any.Hemothorax = Unload((SEHemothorax)action);
+        return any;
+      }
       if (action.GetType().IsAssignableFrom(typeof(SEImpairedAlveolarExchangeExacerbation)))
       {
         any.ImpairedAlveolarExchangeExacerbation = Unload((SEImpairedAlveolarExchangeExacerbation)action);
@@ -361,6 +378,11 @@ namespace Pulse.CDM
       if (action.GetType().IsAssignableFrom(typeof(SETensionPneumothorax)))
       {
         any.TensionPneumothorax = Unload((SETensionPneumothorax)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SETubeThoracostomy)))
+      {
+        any.TubeThoracostomy = Unload((SETubeThoracostomy)action);
         return any;
       }
       if (action.GetType().IsAssignableFrom(typeof(SEUrinate)))
@@ -915,7 +937,7 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.UseInhalerData src, SEUseInhaler dst)
     {
-     
+
     }
     public static pulse.cdm.bind.UseInhalerData Unload(SEUseInhaler src)
     {
@@ -925,7 +947,7 @@ namespace Pulse.CDM
     }
     public static void Serialize(SEUseInhaler src, pulse.cdm.bind.UseInhalerData dst)
     {
-      
+
     }
     #endregion
 
@@ -1048,6 +1070,39 @@ namespace Pulse.CDM
         dst.FlowRate = PBProperty.Unload(src.GetFlowRate());
       if (src.HasSeverity())
         dst.Severity = PBProperty.Unload(src.GetSeverity());
+    }
+    #endregion
+
+    #region SEHemothorax
+    public static void Load(pulse.cdm.bind.HemothoraxData src, SEHemothorax dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.HemothoraxData src, SEHemothorax dst)
+    {
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
+      dst.SetSide((eSide)(int)src.Side);
+      if (src.Severity != null)
+        PBProperty.Load(src.Severity, dst.GetSeverity());
+      if (src.FlowRate != null)
+        PBProperty.Load(src.FlowRate, dst.GetFlowRate());
+    }
+    public static pulse.cdm.bind.HemothoraxData Unload(SEHemothorax src)
+    {
+      pulse.cdm.bind.HemothoraxData dst = new pulse.cdm.bind.HemothoraxData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEHemothorax src, pulse.cdm.bind.HemothoraxData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      dst.Side = (pulse.cdm.bind.eSide)(int)src.GetSide();
+      if (src.HasSeverity())
+        dst.Severity = PBProperty.Unload(src.GetSeverity());
+      if (src.HasFlowRate())
+        dst.FlowRate = PBProperty.Unload(src.GetFlowRate());
     }
     #endregion
 
@@ -1360,6 +1415,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.Concentration, dst.GetConcentration());
       if (src.Dose != null)
         PBProperty.Load(src.Dose, dst.GetDose());
+      if (src.AdministrationDuration != null)
+        PBProperty.Load(src.AdministrationDuration, dst.GetAdminDuration());
 
     }
     public static pulse.cdm.bind.SubstanceBolusData Unload(SESubstanceBolus src)
@@ -1379,6 +1436,8 @@ namespace Pulse.CDM
         dst.Concentration = PBProperty.Unload(src.GetConcentration());
       if (src.HasDose())
         dst.Dose = PBProperty.Unload(src.GetDose());
+      if (src.HasAdminDuration())
+        dst.AdministrationDuration = PBProperty.Unload(src.GetAdminDuration());
     }
     #endregion
 
@@ -1516,6 +1575,35 @@ namespace Pulse.CDM
       dst.Side = (pulse.cdm.bind.eSide)(int)src.GetSide();
       if (src.HasSeverity())
         dst.Severity = PBProperty.Unload(src.GetSeverity());
+    }
+    #endregion
+
+    #region SETubeThoracostomy
+    public static void Load(pulse.cdm.bind.TubeThoracostomyData src, SETubeThoracostomy dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.TubeThoracostomyData src, SETubeThoracostomy dst)
+    {
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
+      dst.SetSide((eSide)(int)src.Side);
+      if (src.FlowRate != null)
+        PBProperty.Load(src.FlowRate, dst.GetFlowRate());
+    }
+    public static pulse.cdm.bind.TubeThoracostomyData Unload(SETubeThoracostomy src)
+    {
+      pulse.cdm.bind.TubeThoracostomyData dst = new pulse.cdm.bind.TubeThoracostomyData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SETubeThoracostomy src, pulse.cdm.bind.TubeThoracostomyData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      dst.Side = (pulse.cdm.bind.eSide)(int)src.GetSide();
+      if (src.HasFlowRate())
+        dst.FlowRate = PBProperty.Unload(src.GetFlowRate());
     }
     #endregion
 

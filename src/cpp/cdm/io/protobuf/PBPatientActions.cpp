@@ -34,6 +34,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEDyspnea.h"
 #include "cdm/patient/actions/SEExercise.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SEHemothorax.h"
 #include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
@@ -48,6 +49,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
 #include "cdm/patient/actions/SESupplementalOxygen.h"
 #include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SETubeThoracostomy.h"
 #include "cdm/patient/actions/SEUrinate.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceCompound.h"
@@ -810,6 +812,48 @@ void PBPatientAction::Copy(const SEHemorrhage& src, SEHemorrhage& dst)
   PBPatientAction::Serialize(data, dst);
 }
 
+void PBPatientAction::Load(const CDM_BIND::HemothoraxData& src, SEHemothorax& dst)
+{
+  dst.Clear();
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::HemothoraxData& src, SEHemothorax& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  dst.SetSide((eSide)src.side());
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+  if (src.has_flowrate())
+    PBProperty::Load(src.flowrate(), dst.GetFlowRate());
+  if (src.has_totalbloodvolume())
+    PBProperty::Load(src.totalbloodvolume(), dst.GetTotalBloodVolume());
+}
+CDM_BIND::HemothoraxData* PBPatientAction::Unload(const SEHemothorax& src)
+{
+  CDM_BIND::HemothoraxData* dst = new CDM_BIND::HemothoraxData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEHemothorax& src, CDM_BIND::HemothoraxData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSide())
+    dst.set_side((CDM_BIND::eSide)src.m_Side);
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+  if (src.HasFlowRate())
+    dst.set_allocated_flowrate(PBProperty::Unload(*src.m_FlowRate));
+  if (src.HasTotalBloodVolume())
+    dst.set_allocated_totalbloodvolume(PBProperty::Unload(*src.m_TotalBloodVolume));
+}
+void PBPatientAction::Copy(const SEHemothorax& src, SEHemothorax& dst)
+{
+  dst.Clear();
+  CDM_BIND::HemothoraxData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
 void PBPatientAction::Load(const CDM_BIND::ImpairedAlveolarExchangeExacerbationData& src, SEImpairedAlveolarExchangeExacerbation& dst)
 {
   dst.Clear();
@@ -1395,6 +1439,40 @@ void PBPatientAction::Copy(const SETensionPneumothorax& src, SETensionPneumothor
   PBPatientAction::Serialize(data, dst);
 }
 
+void PBPatientAction::Load(const CDM_BIND::TubeThoracostomyData& src, SETubeThoracostomy& dst)
+{
+  dst.Clear();
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::TubeThoracostomyData& src, SETubeThoracostomy& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  dst.SetSide((eSide)src.side());
+  if (src.has_flowrate())
+    PBProperty::Load(src.flowrate(), dst.GetFlowRate());
+}
+CDM_BIND::TubeThoracostomyData* PBPatientAction::Unload(const SETubeThoracostomy& src)
+{
+  CDM_BIND::TubeThoracostomyData* dst = new CDM_BIND::TubeThoracostomyData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SETubeThoracostomy& src, CDM_BIND::TubeThoracostomyData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSide())
+    dst.set_side((CDM_BIND::eSide)src.m_Side);
+  if (src.HasFlowRate())
+    dst.set_allocated_flowrate(PBProperty::Unload(*src.m_FlowRate));
+}
+void PBPatientAction::Copy(const SETubeThoracostomy& src, SETubeThoracostomy& dst)
+{
+  dst.Clear();
+  CDM_BIND::TubeThoracostomyData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
 void PBPatientAction::Load(const CDM_BIND::UrinateData& src, SEUrinate& dst)
 {
   dst.Clear();
@@ -1562,6 +1640,12 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.hemorrhage(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kHemothorax:
+  {
+    SEHemothorax* a = new SEHemothorax();
+    PBPatientAction::Load(any.hemothorax(), *a);
+    return a;
+  }
   case CDM_BIND::AnyPatientActionData::ActionCase::kImpairedAlveolarExchangeExacerbation:
   {
     SEImpairedAlveolarExchangeExacerbation* a = new SEImpairedAlveolarExchangeExacerbation();
@@ -1662,6 +1746,12 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
   {
     SETensionPneumothorax* a = new SETensionPneumothorax();
     PBPatientAction::Load(any.tensionpneumothorax(), *a);
+    return a;
+  }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kTubeThoracostomy:
+  {
+    SETubeThoracostomy* a = new SETubeThoracostomy();
+    PBPatientAction::Load(any.tubethoracostomy(), *a);
     return a;
   }
   case CDM_BIND::AnyPatientActionData::ActionCase::kUrinate:
@@ -1790,6 +1880,12 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
     any->set_allocated_hemorrhage(PBPatientAction::Unload(*h));
     return any;
   }
+  const SEHemothorax* hemo = dynamic_cast<const SEHemothorax*>(&action);
+  if (hemo != nullptr)
+  {
+    any->set_allocated_hemothorax(PBPatientAction::Unload(*hemo));
+    return any;
+  }
   const SEImpairedAlveolarExchangeExacerbation* imaee = dynamic_cast<const SEImpairedAlveolarExchangeExacerbation*>(&action);
   if (imaee != nullptr)
   {
@@ -1878,6 +1974,12 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
   if (tp != nullptr)
   {
     any->set_allocated_tensionpneumothorax(PBPatientAction::Unload(*tp));
+    return any;
+  }
+  const SETubeThoracostomy* tt = dynamic_cast<const SETubeThoracostomy*>(&action);
+  if (tt != nullptr)
+  {
+    any->set_allocated_tubethoracostomy(PBPatientAction::Unload(*tt));
     return any;
   }
   const SEUrinate* u = dynamic_cast<const SEUrinate*>(&action);
