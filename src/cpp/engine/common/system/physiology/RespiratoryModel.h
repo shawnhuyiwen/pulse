@@ -114,13 +114,12 @@ namespace pulse
     SERunningAverage* m_BloodPHRunningAverage;
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
 
-    //jbw - Add to serialization
     //Needed for expanded pulmonary methodology
     std::vector<double> m_LeftTopBreathAcinarZoneVolumes_L;
     std::vector<double> m_RightTopBreathAcinarZoneVolumes_L;
     std::vector<double> m_LeftBottomBreathAcinarZoneVolumes_L;
     std::vector<double> m_RightBottomBreathAcinarZoneVolumes_L;
-    double m_previousPleuralVolume_L;
+    double m_PreviousPleuralVolume_L;
 
     // Respiratory Driver
     double m_ArterialO2PartialPressure_mmHg;
@@ -152,8 +151,8 @@ namespace pulse
     bool m_ActiveConsciousRespirationCommand;
 
     // Disease States
-    double m_leftAlveoliDecrease_L;
-    double m_rightAlveoliDecrease_L;
+    double m_LeftAlveoliDecrease_L;
+    double m_RightAlveoliDecrease_L;
 
     // Overrides
     double m_RespiratoryResistanceOverride_cmH2O_s_Per_L;

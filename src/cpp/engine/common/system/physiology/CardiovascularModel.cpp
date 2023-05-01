@@ -203,6 +203,9 @@ namespace pulse
     m_CardiacCyclePulmonaryArteryPressure_mmHg->Invalidate();
     m_CardiacCycleCentralVenousPressure_mmHg->Invalidate();
     m_CardiacCycleSkinFlow_mL_Per_s->Invalidate();
+    m_LeftCardiacCyclePerfusionVolumes_mL.clear();
+    m_RightCardiacCyclePerfusionVolumes_mL.clear();
+
 
     m_HeartRateBaseline_Per_min->Invalidate();
     m_HeartComplianceModifier->Invalidate();
@@ -333,6 +336,9 @@ namespace pulse
   void CardiovascularModel::SetUp()
   {
     m_HemorrhageTrack.clear();
+
+    m_LeftCardiacCyclePerfusionVolumes_mL.clear();
+    m_RightCardiacCyclePerfusionVolumes_mL.clear();
 
     //Compartments
     m_Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
