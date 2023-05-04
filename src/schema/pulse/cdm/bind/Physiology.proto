@@ -306,7 +306,7 @@ message RespiratorySystemData
   ScalarVolumePerTimeData             ExpiratoryFlow                                 = 11;/**<< @brief Instantaneous airflow out of the lungs (negative value when inhaling).*/
   ScalarPressureTimePerVolumeData     ExpiratoryPulmonaryResistance                  = 12;/**<< @brief The total resistance to airflow through the lungs during exhalation. */
   ScalarVolumeData                    ExpiratoryTidalVolume                          = 13;/**<< @brief The volume of air moved into or out of the lungs during normal expiration.*/
-  Scalar0To1Data                      FractionOfInsipredOxygen                       = 14;/**<< @brief Fraction of Oxygen being taking into the body. */
+  Scalar0To1Data                      FractionOfInspiredOxygen                       = 14;/**<< @brief Fraction of Oxygen being taking into the body. */
   ScalarPressureData                  HorowitzIndex                                  = 15;/**<< @brief (AKA P/F Ratio) The ratio of arterial partial pressure O2 and the inspired O2. O2 level in blood vs. Concentration of O2 in a breath.*/
   ScalarPowerData                     ImposedPowerOfBreathing                        = 16;/**<< @brief Externally imposed work of breathing (e.g., from a ventilator).*/
   ScalarEnergyData                    ImposedWorkOfBreathing                         = 17;/**<< @brief Externally imposed power of breathing (e.g., from a ventilator).*/

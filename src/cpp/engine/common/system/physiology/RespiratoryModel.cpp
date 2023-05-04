@@ -283,7 +283,7 @@ namespace pulse
     GetRespirationRate().SetValue(RespirationRate_Per_min, FrequencyUnit::Per_min);
     GetInspiratoryExpiratoryRatio().SetValue(0.5);
     GetHorowitzIndex().SetValue(452.0, PressureUnit::mmHg);
-    GetFractionOfInsipredOxygen().SetValue(0.21);
+    GetFractionOfInspiredOxygen().SetValue(0.21);
     GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(0.0);
     GetOxygenationIndex().SetValue(0.0);
     GetOxygenSaturationIndex().SetValue(0.0, PressureUnit::cmH2O);
@@ -2414,7 +2414,7 @@ namespace pulse
 
         //We want the peak Carina O2 value - this should be the inspired value
         double FiO2 = m_TopCarinaO2;
-        GetFractionOfInsipredOxygen().SetValue(FiO2);
+        GetFractionOfInspiredOxygen().SetValue(FiO2);
         double meanAirwayPressure_mmHg = Convert(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O, PressureUnit::mmHg);
 
         if (m_data.HasCardiovascular())

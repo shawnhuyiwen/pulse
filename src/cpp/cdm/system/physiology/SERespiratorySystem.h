@@ -73,9 +73,9 @@ public:
   virtual SEScalarVolume& GetExpiratoryTidalVolume();
   virtual double GetExpiratoryTidalVolume(const VolumeUnit& unit) const;
 
-  virtual bool HasFractionOfInsipredOxygen() const;
-  virtual SEScalar0To1& GetFractionOfInsipredOxygen();
-  virtual double GetFractionOfInsipredOxygen() const;
+  virtual bool HasFractionOfInspiredOxygen() const;
+  virtual SEScalar0To1& GetFractionOfInspiredOxygen();
+  virtual double GetFractionOfInspiredOxygen() const;
 
   virtual bool HasImposedPowerOfBreathing() const;
   virtual SEScalarPower& GetImposedPowerOfBreathing();
@@ -278,7 +278,7 @@ protected:
   SEScalarVolumePerTime*         m_ExpiratoryFlow;
   SEScalarPressureTimePerVolume* m_ExpiratoryPulmonaryResistance;
   SEScalarVolume*                m_ExpiratoryTidalVolume;
-  SEScalar0To1*                  m_FractionOfInsipredOxygen;
+  SEScalar0To1*                  m_FractionOfInspiredOxygen;
   SEScalarPower*                 m_ImposedPowerOfBreathing;
   SEScalarEnergy*                m_ImposedWorkOfBreathing;
   SEScalar*                      m_InspiratoryExpiratoryRatio;
