@@ -32,7 +32,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_ExpiratoryFlow = nullptr;
   m_ExpiratoryPulmonaryResistance = nullptr;
   m_ExpiratoryTidalVolume = nullptr;
-  m_FractionOfInsipredOxygen = nullptr;
+  m_FractionOfInspiredOxygen = nullptr;
   m_ImposedPowerOfBreathing = nullptr;
   m_ImposedWorkOfBreathing = nullptr;
   m_InspiratoryExpiratoryRatio = nullptr;
@@ -98,7 +98,7 @@ SERespiratorySystem::~SERespiratorySystem()
   SAFE_DELETE(m_ExpiratoryFlow);
   SAFE_DELETE(m_ExpiratoryTidalVolume);
   SAFE_DELETE(m_ExpiratoryPulmonaryResistance);
-  SAFE_DELETE(m_FractionOfInsipredOxygen);
+  SAFE_DELETE(m_FractionOfInspiredOxygen);
   SAFE_DELETE(m_ImposedPowerOfBreathing);
   SAFE_DELETE(m_ImposedWorkOfBreathing);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
@@ -166,7 +166,7 @@ void SERespiratorySystem::Clear()
   INVALIDATE_PROPERTY(m_ExpiratoryFlow);
   INVALIDATE_PROPERTY(m_ExpiratoryPulmonaryResistance);
   INVALIDATE_PROPERTY(m_ExpiratoryTidalVolume);
-  INVALIDATE_PROPERTY(m_FractionOfInsipredOxygen);
+  INVALIDATE_PROPERTY(m_FractionOfInspiredOxygen);
   INVALIDATE_PROPERTY(m_ImposedPowerOfBreathing);
   INVALIDATE_PROPERTY(m_ImposedWorkOfBreathing);
   INVALIDATE_PROPERTY(m_InspiratoryExpiratoryRatio);
@@ -247,8 +247,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetExpiratoryPulmonaryResistance();
   if (name.compare("ExpiratoryTidalVolume") == 0)
     return &GetExpiratoryTidalVolume();
-  if (name.compare("FractionOfInsipredOxygen") == 0)
-    return &GetFractionOfInsipredOxygen();
+  if (name.compare("FractionOfInspiredOxygen") == 0)
+    return &GetFractionOfInspiredOxygen();
   if (name.compare("ImposedPowerOfBreathing") == 0)
     return &GetImposedPowerOfBreathing();
   if (name.compare("ImposedWorkOfBreathing") == 0)
@@ -584,21 +584,21 @@ double SERespiratorySystem::GetExpiratoryTidalVolume(const VolumeUnit& unit) con
   return m_ExpiratoryTidalVolume->GetValue(unit);
 }
 
-bool SERespiratorySystem::HasFractionOfInsipredOxygen() const
+bool SERespiratorySystem::HasFractionOfInspiredOxygen() const
 {
-  return m_FractionOfInsipredOxygen == nullptr ? false : m_FractionOfInsipredOxygen->IsValid();
+  return m_FractionOfInspiredOxygen == nullptr ? false : m_FractionOfInspiredOxygen->IsValid();
 }
-SEScalar0To1& SERespiratorySystem::GetFractionOfInsipredOxygen()
+SEScalar0To1& SERespiratorySystem::GetFractionOfInspiredOxygen()
 {
-  if (m_FractionOfInsipredOxygen == nullptr)
-    m_FractionOfInsipredOxygen = new SEScalar0To1();
-  return *m_FractionOfInsipredOxygen;
+  if (m_FractionOfInspiredOxygen == nullptr)
+    m_FractionOfInspiredOxygen = new SEScalar0To1();
+  return *m_FractionOfInspiredOxygen;
 }
-double SERespiratorySystem::GetFractionOfInsipredOxygen() const
+double SERespiratorySystem::GetFractionOfInspiredOxygen() const
 {
-  if (m_FractionOfInsipredOxygen == nullptr)
+  if (m_FractionOfInspiredOxygen == nullptr)
     return SEScalar::dNaN();
-  return m_FractionOfInsipredOxygen->GetValue();
+  return m_FractionOfInspiredOxygen->GetValue();
 }
 
 bool SERespiratorySystem::HasImposedPowerOfBreathing() const

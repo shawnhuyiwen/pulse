@@ -1009,8 +1009,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.expiratorypulmonaryresistance(), dst.GetExpiratoryPulmonaryResistance());
   if (src.has_expiratorytidalvolume())
     PBProperty::Load(src.expiratorytidalvolume(), dst.GetExpiratoryTidalVolume());
-  if (src.has_fractionofinsipredoxygen())
-    PBProperty::Load(src.fractionofinsipredoxygen(), dst.GetFractionOfInsipredOxygen());
+  if (src.has_fractionofinspiredoxygen())
+    PBProperty::Load(src.fractionofinspiredoxygen(), dst.GetFractionOfInspiredOxygen());
   if (src.has_imposedpowerofbreathing())
     PBProperty::Load(src.imposedpowerofbreathing(), dst.GetImposedPowerOfBreathing());
   if (src.has_imposedworkofbreathing())
@@ -1142,8 +1142,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_expiratorypulmonaryresistance(PBProperty::Unload(*src.m_ExpiratoryPulmonaryResistance));
   if (src.HasExpiratoryTidalVolume())
     dst.set_allocated_expiratorytidalvolume(PBProperty::Unload(*src.m_ExpiratoryTidalVolume));
-  if (src.HasFractionOfInsipredOxygen())
-    dst.set_allocated_fractionofinsipredoxygen(PBProperty::Unload(*src.m_FractionOfInsipredOxygen));
+  if (src.HasFractionOfInspiredOxygen())
+    dst.set_allocated_fractionofinspiredoxygen(PBProperty::Unload(*src.m_FractionOfInspiredOxygen));
   if (src.HasImposedPowerOfBreathing())
     dst.set_allocated_imposedpowerofbreathing(PBProperty::Unload(*src.m_ImposedPowerOfBreathing));
   if (src.HasImposedWorkOfBreathing())

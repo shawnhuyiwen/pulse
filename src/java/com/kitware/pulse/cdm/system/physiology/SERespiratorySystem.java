@@ -33,7 +33,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarVolumePerTime         expiratoryFlow;
   protected SEScalarPressureTimePerVolume expiratoryPulmonaryResistance;
   protected SEScalarVolume                expiratoryTidalVolume;
-  protected SEScalar0To1                  fractionOfInsipredOxygen;
+  protected SEScalar0To1                  fractionOfInspiredOxygen;
   protected SEScalarPower                 imposedPowerOfBreathing;
   protected SEScalarEnergy                imposedWorkOfBreathing;
   protected SEScalar                      inspiratoryExpiratoryRatio;
@@ -99,7 +99,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     expiratoryFlow = null;
     expiratoryPulmonaryResistance = null;
     expiratoryTidalVolume = null;
-    fractionOfInsipredOxygen = null;
+    fractionOfInspiredOxygen = null;
     imposedPowerOfBreathing = null;
     imposedWorkOfBreathing = null;
     inspiratoryExpiratoryRatio = null;
@@ -180,8 +180,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       expiratoryPulmonaryResistance.invalidate();
     if (expiratoryTidalVolume != null)
       expiratoryTidalVolume.invalidate();
-    if (fractionOfInsipredOxygen != null)
-      fractionOfInsipredOxygen.invalidate();
+    if (fractionOfInspiredOxygen != null)
+      fractionOfInspiredOxygen.invalidate();
     if (imposedPowerOfBreathing != null)
       imposedPowerOfBreathing.invalidate();
     if (imposedWorkOfBreathing != null)
@@ -307,8 +307,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarPressureTimePerVolume.load(src.getExpiratoryPulmonaryResistance(),dst.getExpiratoryPulmonaryResistance());
     if (src.hasExpiratoryTidalVolume())
       SEScalarVolume.load(src.getExpiratoryTidalVolume(),dst.getExpiratoryTidalVolume());
-    if (src.hasFractionOfInsipredOxygen())
-      SEScalar0To1.load(src.getFractionOfInsipredOxygen(),dst.getFractionOfInsipredOxygen()); 
+    if (src.hasFractionOfInspiredOxygen())
+      SEScalar0To1.load(src.getFractionOfInspiredOxygen(),dst.getFractionOfInspiredOxygen()); 
     if (src.hasImposedPowerOfBreathing())
       SEScalarPower.load(src.getImposedPowerOfBreathing(),dst.getImposedPowerOfBreathing()); 
     if (src.hasImposedWorkOfBreathing())
@@ -441,8 +441,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setExpiratoryPulmonaryResistance(SEScalarPressureTimePerVolume.unload(src.getExpiratoryPulmonaryResistance()));
     if (src.hasExpiratoryTidalVolume())
       dst.setExpiratoryTidalVolume(SEScalarVolume.unload(src.getExpiratoryTidalVolume()));
-    if (src.hasFractionOfInsipredOxygen())
-      dst.setFractionOfInsipredOxygen(SEScalar0To1.unload(src.getFractionOfInsipredOxygen()));
+    if (src.hasFractionOfInspiredOxygen())
+      dst.setFractionOfInspiredOxygen(SEScalar0To1.unload(src.getFractionOfInspiredOxygen()));
     if (src.hasImposedPowerOfBreathing())
       dst.setImposedPowerOfBreathing(SEScalarPower.unload(src.getImposedPowerOfBreathing()));
     if (src.hasImposedWorkOfBreathing())
@@ -694,15 +694,15 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     return expiratoryPulmonaryResistance;
   }
   
-  public boolean hasFractionOfInsipredOxygen()
+  public boolean hasFractionOfInspiredOxygen()
   {
-    return fractionOfInsipredOxygen == null ? false : fractionOfInsipredOxygen.isValid();
+    return fractionOfInspiredOxygen == null ? false : fractionOfInspiredOxygen.isValid();
   }
-  public SEScalar0To1 getFractionOfInsipredOxygen()
+  public SEScalar0To1 getFractionOfInspiredOxygen()
   {
-    if (fractionOfInsipredOxygen == null)
-      fractionOfInsipredOxygen = new SEScalar0To1();
-    return fractionOfInsipredOxygen;
+    if (fractionOfInspiredOxygen == null)
+      fractionOfInspiredOxygen = new SEScalar0To1();
+    return fractionOfInspiredOxygen;
   }
 
   public boolean hasImposedPowerOfBreathing()
