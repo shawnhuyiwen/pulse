@@ -8,6 +8,7 @@ import java.util.*;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -60,9 +61,11 @@ public class ValidationDataSetReader
       FileInputStream xlFile = new FileInputStream(xlsFile);
       try(XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile))
       {
+        FormulaEvaluator evaluator  = xlWBook.getCreationHelper().createFormulaEvaluator();
+        
         String system = "Cardiovascular";
         // TODO loop all the system/circuits we can optimize
-        if(!readSheet(xlWBook.getSheet(system)))
+        if(!readSheet(xlWBook.getSheet(system), evaluator))
         {
           Log.error("Unable to read "+system+" sheet");
         }
@@ -78,7 +81,7 @@ public class ValidationDataSetReader
     Log.info("Data Generation Complete");
   }
 
-  protected static boolean readSheet(XSSFSheet xlSheet)
+  protected static boolean readSheet(XSSFSheet xlSheet, FormulaEvaluator evaluator)
   {
     List<Double> values = new ArrayList<Double>();
     Map<String, SEDataRequestManager> targets = new HashMap<String, SEDataRequestManager>();
@@ -112,7 +115,8 @@ public class ValidationDataSetReader
             drMgr.createLiquidCompartmentValidationTarget(propertySplit[0].trim(), propertySplit[1].trim(), CommonUnits.getUnit(unit));
         tgt.type = eType.valueOf(type);
         
-        if(vCell.getCellType() == CellType.STRING)
+        CellType ct = vCell.getCellType();
+        if(ct == CellType.STRING)
         {
           values.clear();
           String sValues = vCell.getStringCellValue().trim();
@@ -124,10 +128,23 @@ public class ValidationDataSetReader
           tgt.rangeMax = DoubleUtils.getMax(values);
           tgt.rangeMin = DoubleUtils.getMin(values);
         }
-        else if(vCell.getCellType() == CellType.NUMERIC)
+        else if(ct == CellType.NUMERIC)
         {
           tgt.rangeMax = vCell.getNumericCellValue();
           tgt.rangeMin = vCell.getNumericCellValue();
+        }
+        else if(ct == CellType.FORMULA)
+        {
+          double cellValue = Double.NaN;
+          switch(evaluator.evaluateFormulaCell(vCell))
+          {
+            case NUMERIC:
+              cellValue = vCell.getNumericCellValue();
+              break;
+            default: // do nothing
+          }
+          tgt.rangeMax = cellValue;
+          tgt.rangeMin = cellValue;
         }
         
         //System.out.println("Row "+r+": "+tgt);
