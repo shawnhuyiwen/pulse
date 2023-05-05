@@ -109,7 +109,7 @@ def serialize_patient_from_bind(src: PatientData, dst: SEPatient):
     if src.HasField("BodyFatFraction"):
         serialize_scalar_0to1_from_bind(src.BodyFatFraction, dst.get_body_fat_fraction())
     if src.HasField("BodyMassIndex"):
-        serialize_scalar_from_bind(src.BodyMassIndex, dst.get_body_())
+        serialize_scalar_from_bind(src.BodyMassIndex, dst.get_body_mass_index())
     if src.HasField("IdealBodyWeight"):
         serialize_scalar_mass_from_bind(src.IdealBodyWeight, dst.get_ideal_body_weight())
     if src.HasField("LeanBodyMass"):

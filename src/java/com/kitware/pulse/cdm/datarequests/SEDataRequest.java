@@ -142,59 +142,37 @@ public class SEDataRequest implements Serializable
   public String toString()
   {
     String str = "";
-    switch(category)
+    switch(this.category)
     {
-      case Patient:
-        str += "Patient-";
-        break;
-      case Physiology:
-        str += "Physiology-";
-        break;
-      case Environment:
-        str += "Environment-";
-        break;
       case Action:
-        str += actionName + "-";
+        str = getActionName()+"-";
         break;
-      case GasCompartment:
-        str += "GasCompartment-";
-        str += compartmentName + "-";
-        break;
-      case LiquidCompartment:
-        str += "LiquidCompartment-";
-        str += compartmentName + "-";
-        break;
-      case ThermalCompartment:
-        str += "ThermalCompartment-";
-        str += compartmentName + "-";
-        break;
-      case TissueCompartment:
-        str += "TissueCompartment-";
-        str+= compartmentName + "-";
-        break;
-      case Substance:
-        str += "Substance-";
-        str += substanceName + "-";
+      case Patient:
+        str = "Patient-";
         break;
       case AnesthesiaMachine:
-        str += "AnesthesiaMachine-";
+        str = "AnesthesiaMachine-";
         break;
       case BagValveMask:
-        str += "BagValveMask-";
+        str = "BagValveMask-";
         break;
       case ECG:
-        str += "ECG-";
+        str = "ECG-";
+        break;
+      case ECMO:
+        str = "ECMO-";
         break;
       case Inhaler:
-        str += "Inhaler-";
+        str = "Inhaler-";
         break;
       case MechanicalVentilator:
-        str += "MechanicalVentilator-";
-        break;
-      default:
-        str += "Unknown-";
+        str = "MechanicalVentilator-";
         break;
     }
+    if(hasCompartmentName())
+      str += " - "+getCompartmentName();
+    if(hasSubstanceName())
+      str += " - "+getSubstanceName();
     str += propertyName;
     if (unit != null)
      str += " (" + unit.toString() + ")";

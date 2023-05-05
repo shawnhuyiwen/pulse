@@ -105,7 +105,7 @@ namespace HowTo_UseEngine
         case InitializationType.StateFileName:
           {
             // Load a state file
-            if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr))
+            if (!pulse.SerializeFromFile("./states/StandardMale@0s.json", data_mgr))
             {
               Console.WriteLine("Error Initializing Pulse!");
               return;
@@ -114,7 +114,7 @@ namespace HowTo_UseEngine
           }
         case InitializationType.StateString:
           {
-            string file_content = File.ReadAllText("./states/Soldier@0s.json");
+            string file_content = File.ReadAllText("./states/StandardMale@0s.json");
             if (!pulse.SerializeFromString(file_content, data_mgr, eSerializationFormat.JSON))
             {
               Console.WriteLine("Error Initializing Pulse!");
@@ -129,9 +129,9 @@ namespace HowTo_UseEngine
             SEPatientConfiguration cfg = new SEPatientConfiguration();
             // If we want to specify a file on disk that the C++ has access to, we can specify that file
             // (Maybe the Pulse engine is on hosted on another machine)
-            //cfg.SetPatientFile("./patients/Soldier.json");
+            //cfg.SetPatientFile("./patients/StandardMale.json");
             // Or, ou can load up a local file on disk
-            cfg.GetPatient().SerializeFromFile("./patients/Soldier.json");
+            cfg.GetPatient().SerializeFromFile("./patients/StandardMale.json");
             // Optionally, you can add conditions to the patient
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().SetValue(0.2);
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().SetValue(1.0);

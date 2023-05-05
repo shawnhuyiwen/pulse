@@ -1,6 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+using System;
+
 namespace Pulse.CDM
 {
   public enum eDataRequest_Category : int
@@ -52,60 +54,48 @@ namespace Pulse.CDM
 
     public new string ToString()
     {
-      string str = "";
+      String str = "";
       switch(Category)
       {
-        case eDataRequest_Category.Patient:
-          str += "Patient-";
-          break;
-        case eDataRequest_Category.Physiology:
-          str += "Physiology-";
-          break;
-        case eDataRequest_Category.Environment:
-          str += "Environment-";
-          break;
         case eDataRequest_Category.Action:
-          str += ActionName + "-";
+          str = GetActionName()+"-";
           break;
-        case eDataRequest_Category.GasCompartment:
-          str += "GasCompartment-";
-          str += CompartmentName + "-";
-          break;
-        case eDataRequest_Category.LiquidCompartment:
-          str += "LiquidCompartment-";
-          str += CompartmentName + "-";
-          break;
-        case eDataRequest_Category.ThermalCompartment:
-          str += "ThermalCompartment-";
-          str += CompartmentName + "-";
-          break;
-        case eDataRequest_Category.TissueCompartment:
-          str += "TissueCompartment-";
-          str+= CompartmentName + "-";
-          break;
-        case eDataRequest_Category.Substance:
-          str += "Substance-";
-          str += SubstanceName + "-";
+        case eDataRequest_Category.Patient:
+          str = "Patient-";
           break;
         case eDataRequest_Category.AnesthesiaMachine:
-          str += "AnesthesiaMachine-";
+          str = "AnesthesiaMachine-";
           break;
         case eDataRequest_Category.BagValveMask:
-          str += "BagValveMask-";
+          str = "BagValveMask-";
           break;
         case eDataRequest_Category.ECG:
-          str += "ECG-";
+          str = "ECG-";
+          break;
+        case eDataRequest_Category.ECMO:
+          str = "ECMO-";
           break;
         case eDataRequest_Category.Inhaler:
-          str += "Inhaler-";
+          str = "Inhaler-";
           break;
         case eDataRequest_Category.MechanicalVentilator:
-          str += "MechanicalVentilator-";
+          str = "MechanicalVentilator-";
+          break;
+        case eDataRequest_Category.GasCompartment:
+        case eDataRequest_Category.LiquidCompartment:
+        case eDataRequest_Category.ThermalCompartment:
+        case eDataRequest_Category.TissueCompartment:
+          str += GetCompartmentName() + "-";
+          if (HasSubstanceName())
+            str += " - " + GetSubstanceName();
+          break;
+        case eDataRequest_Category.Substance:
+          str += GetSubstanceName()+"-";
           break;
       }
       str += PropertyName;
       if (Unit != null)
-       str += " (" + Unit.ToString() + ")";
+        str += " (" + Unit.ToString() + ")"; ;
       return str;
     }
 

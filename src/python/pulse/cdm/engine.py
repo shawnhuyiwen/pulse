@@ -402,12 +402,31 @@ class SEDataRequest:
 
     def __repr__(self):
         out_string = ""
-        if self.has_action_name():
-            out_string += "{} - ".format(self._action_name)
-        if self.has_compartment_name():
-            out_string += "{} - ".format(self._compartment_name)
-        if self.has_substance_name():
-            out_string += "{} - ".format(self._substance_name)
+        if self._category == eDataRequest_category.Action:
+            out_string = self._action_name+"-"
+        elif self._category == eDataRequest_category.Patient:
+            out_string = "Patient-"
+        elif self._category == eDataRequest_category.AnesthesiaMachine:
+            out_string = "AnesthesiaMachine-"
+        elif self._category == eDataRequest_category.BagValveMask:
+            out_string = "BagValveMask-"
+        elif self._category == eDataRequest_category.ECG:
+            out_string = "ECG-"
+        elif self._category == eDataRequest_category.ECMO:
+            out_string = "ECMO-"
+        elif self._category == eDataRequest_category.Inhaler:
+            out_string = "Inhaler-"
+        elif self._category == eDataRequest_category.MechanicalVentilator:
+            out_string = "MechanicalVentilator-"
+        elif self._category == eDataRequest_category.GasCompartment or \
+             self._category == eDataRequest_category.LiquidCompartment or \
+             self._category == eDataRequest_category.ThermalCompartment or \
+             self._category == eDataRequest_category.TissueCompartment:
+            out_string = self._compartment_name+"-"
+            if self.has_substance_name():
+                out_string += "{} - ".format(self._substance_name)
+        elif self._category == eDataRequest_category.Substance:
+            out_string = self._substance_name+"-"
         out_string += "{} ({})".format(self._property_name, self._unit)
         return out_string
 
@@ -550,10 +569,9 @@ class SEDataRequestManager:
     def set_samples_per_second(self, sample): self._samples_per_second = sample
 
     def to_console(self, data_values):
-        idx=0;
-        for key in data_values:
-            print("{}={} ({})".format(key, data_values[key], idx))
-            idx = idx + 1
+        print("SimulationTime(s)={})".format(data_values[0]))
+        for i in range(len(data_values)-1):
+            print("{}={}".format(self._data_requests[i], data_values[i+1]))
 
 class SEEngineInitialization():
     __slots__ = ["id", "patient_configuration", "state_filename",

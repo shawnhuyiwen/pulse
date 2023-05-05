@@ -30,7 +30,7 @@ def hash():
 
 class PulseEngine:
     __slots__ = ['__pulse', "_is_ready", "_dt_s",
-                 "_results", "_results_template",
+                 "_results",
                  "_event_handler", "_log_forward",
                  "_spare_time_s"]
 
@@ -42,8 +42,7 @@ class PulseEngine:
         self._is_ready = False
         self._log_forward = None
         self._event_handler = None
-        self._results = {}
-        self._results_template = {}
+        self._results = []
         self._spare_time_s = 0
         self._dt_s = self.__pulse.get_timestep("s")
 
@@ -57,7 +56,7 @@ class PulseEngine:
         self._is_ready = self.__pulse.serialize_from_file(state_file, drm, PyPulse.serialization_format.json)
         self._dt_s = self.__pulse.get_timestep("s")
         if self._is_ready:
-            self._pull(True)
+            self._pull()
         return self._is_ready
 
     def serialize_to_file(self, state_file: str):
@@ -78,7 +77,7 @@ class PulseEngine:
         self._is_ready = self.__pulse.serialize_from_string(state, drm, fmt)
         self._dt_s = self.__pulse.get_timestep("s")
         if self._is_ready:
-            self._pull(True)
+            self._pull()
         return self._is_ready
 
     def serialize_to_string(self, format: eSerializationFormat):
@@ -94,7 +93,7 @@ class PulseEngine:
         self._is_ready = self.__pulse.initialize_engine(pc, drm, PyPulse.serialization_format.json)
         self._dt_s = self.__pulse.get_timestep("s")
         if self._is_ready:
-            self._pull(True)
+            self._pull()
         return self._is_ready
 
     def get_initial_patient(self, dst: SEPatient):
@@ -122,19 +121,15 @@ class PulseEngine:
             return True
         return False
 
-    def _pull(self, clean: bool):
-        if clean:
-            # TODO is it quicker to just clear the _results value array?
-            self._results = copy.deepcopy(self._results_template)
-        timestep_result = self.__pulse.pull_data()
-        for index, value in enumerate(self._results.keys()):
-            self._results[value].append(timestep_result[index])
+    def _pull(self):
+        #self._results = copy.deepcopy(self.__pulse.pull_data())
+        self._results = self.__pulse.pull_data()
 
     def advance_time(self):
         if not self._is_ready:
             return False
         if self._advance_time():
-            self._pull(True)
+            self._pull()
             return True
         return False
 
@@ -146,22 +141,7 @@ class PulseEngine:
         for n in range(num_steps):
             if not self._advance_time():
                 return False
-        self._pull(True)
-        self._spare_time_s = total_time - (num_steps * self._dt_s)
-        return True
-
-    def advance_time_sample_per_s(self, duration_s: float, rate_s: float):
-        if not self._is_ready:
-            return False
-        total_time = duration_s + self._spare_time_s
-        num_steps = int(total_time / self._dt_s)
-        sample_times = range(0, num_steps, math.floor(rate_s / self._dt_s))
-        self._results = copy.deepcopy(self._results_template)
-        for n in range(num_steps):
-            if not self._advance_time():
-                return False
-            if n in sample_times:
-                self._pull(False)
+        self._pull()
         self._spare_time_s = total_time - (num_steps * self._dt_s)
         return True
 
@@ -195,10 +175,7 @@ class PulseEngine:
 
             ])
         # Simulation time is always the first result.
-        self._results_template = {} # Clear all results
-        self._results_template["SimulationTime(s)"] = []
-        for data_request in data_request_mgr.get_data_requests():
-            self._results_template[data_request.to_string()] = []
+        self._results = [] # Clear all results
         return serialize_data_request_manager_to_string(data_request_mgr, fmt)
 
     def process_action(self, action: SEAction):
