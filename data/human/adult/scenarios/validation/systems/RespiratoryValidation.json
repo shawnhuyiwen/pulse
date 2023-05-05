@@ -23,7 +23,7 @@
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                             "Unit": "L/s" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",              "Unit": "cmH2O s/L" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryTidalVolume",                      "Unit": "mL" },
-        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "FractionOfInsipredOxygen",                   "Unit": "unitless" },
+        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "FractionOfInspiredOxygen",                   "Unit": "unitless" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HorowitzIndex",                               "Unit": "mmHg" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ImposedPowerOfBreathing",                    "Unit": "W" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ImposedWorkOfBreathing",                     "Unit": "J" },
