@@ -222,28 +222,70 @@ void SEDataRequest::InvalidateUnit()
 
 std::string SEDataRequest::ToString() const
 {
-  std::stringstream str;
-  str << eDataRequest_Category_Name(m_Category) << " Data Request";
-  if (m_Category == eDataRequest_Category::Action)
-    str << "\n\tAction : " << m_ActionName;
-  if(HasCompartmentName())
-    str << "\n\tCompartment : " << m_CompartmentName;
-  if (HasSubstanceName())
-    str << "\n\tSubstance : " << m_SubstanceName;
-  str << "\n\tProperty: " << m_PropertyName;
+  std::string str;
+  switch (m_Category)
+  {
+  case eDataRequest_Category::Action:
+    str = GetActionName() + "-";
+    break;
+  case eDataRequest_Category::Patient:
+    str = "Patient-";
+    break;
+  case eDataRequest_Category::AnesthesiaMachine:
+    str = "AnesthesiaMachine-";
+    break;
+  case eDataRequest_Category::BagValveMask:
+    str = "BagValveMask-";
+    break;
+  case eDataRequest_Category::ECG:
+    str = "ECG-";
+    break;
+  case eDataRequest_Category::ECMO:
+    str = "ECMO-";
+    break;
+  case eDataRequest_Category::Inhaler:
+    str = "Inhaler-";
+    break;
+  case eDataRequest_Category::MechanicalVentilator:
+    str = "MechanicalVentilator-";
+    break;
+  case eDataRequest_Category::GasCompartment:
+  case eDataRequest_Category::LiquidCompartment:
+  case eDataRequest_Category::ThermalCompartment:
+  case eDataRequest_Category::TissueCompartment:
+    str += GetCompartmentName() + "-";
+    if (HasSubstanceName())
+      str += " - " + GetSubstanceName();
+    break;
+  case eDataRequest_Category::Substance:
+    str += GetSubstanceName() + "-";
+    break;
+  }
+  str += m_PropertyName;
   if (HasRequestedUnit())
-    str << "\n\tRequested Unit : " << m_RequestedUnit;
-  return str.str();
+    str += " ("+m_RequestedUnit+")";
+  return str;
 }
 
 std::string SEDataRequest::GetHeaderName() const
 {
   std::stringstream ss;
+  // These categories can have properties named the same as a Physiology property
+  // So we prefix these with their category, as physiology is assumed
   if(GetCategory() == eDataRequest_Category::Patient)
     ss << "Patient-";
-  else if(GetCategory() == eDataRequest_Category::MechanicalVentilator)
+  else if(GetCategory() == eDataRequest_Category::AnesthesiaMachine)
+    ss << "AnesthesiaMachine-";
+  else if (GetCategory() == eDataRequest_Category::BagValveMask)
+    ss << "BagValveMask-";
+  else if (GetCategory() == eDataRequest_Category::ECG)
+    ss << "ECG-";
+  else if (GetCategory() == eDataRequest_Category::ECMO)
+    ss << "ECMO-";
+  else if (GetCategory() == eDataRequest_Category::Inhaler)
+    ss << "Inhaler-";
+  else if (GetCategory() == eDataRequest_Category::MechanicalVentilator)
     ss << "MechanicalVentilator-";
-  // TODO We probably should prefix all equipment amb
 
   switch (GetCategory())
   {

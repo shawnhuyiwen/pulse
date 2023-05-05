@@ -112,9 +112,9 @@ def HowTo_UseEngine():
     data_req_mgr.set_results_filename("./test_results/howto/HowTo_EngineUse.py.csv")
 
     # There are several ways to initialize an engine to a patient
-    start_type = eStartType.Stabilize_PatientObject
+    start_type = eStartType.State
     if start_type is eStartType.State: # The engine is ready instantaneously
-        if not pulse.serialize_from_file("./states/Soldier@0s.json", data_req_mgr):
+        if not pulse.serialize_from_file("./states/StandardMale@0s.json", data_req_mgr):
             print("Unable to load initial state file")
             return
         # Stabilization will require the engine to run for several minutes
@@ -208,10 +208,7 @@ def HowTo_UseEngine():
     exercise.get_intensity().set_value(0)
     pulse.process_action(exercise)
     # Advance some time and print out the vitals
-    # advance_time_sample_per_s allows getting data from pulse at a specified rate
-    #  Will advance time by total in first argument
-    #  and samples every second argument seconds
-    pulse.advance_time_sample_per_s(45, 5)
+    pulse.advance_time_s(45)
     results = pulse.pull_data()
     data_req_mgr.to_console(results)
 
