@@ -297,8 +297,6 @@ def serialize_hemothorax_to_bind(src: SEHemothorax, dst: HemothoraxData):
         serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
     if src.has_flow_rate():
         serialize_scalar_volume_per_time_to_bind(src.get_flow_rate(), dst.FlowRate)
-    if src.has_target_volume():
-        serialize_scalar_volume_to_bind(src.get_target_volume(), dst.TargetVolume)
 
 def serialize_hemothorax_from_bind(src: HemothoraxData, dst: SEHemothorax):
     raise Exception("serialize_hemothorax_from_bind not implemented")

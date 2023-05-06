@@ -74,7 +74,7 @@ def HowTo_ECMO():
     data_mgr.to_console(results)
 
     # What is the current (last value in array) sodium concentration at the vena cava?
-    vcNa = results[list(results)[26]][-1]
+    vcNa = results[26]
     newNa = vcNa * 0.95
     print("Vena Cava Na concentration is " + str(vcNa) + ", reducing to " + str(newNa))
 

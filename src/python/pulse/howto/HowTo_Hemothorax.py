@@ -28,7 +28,7 @@ def HowTo_Hemothorax():
         SEDataRequest.create_physiology_request("BloodVolume",  unit=VolumeUnit.mL),
 
         SEDataRequest.create_action_data_request("LeftHemothorax", "FlowRate", unit=VolumePerTimeUnit.mL_Per_min),
-        SEDataRequest.create_action_data_request("LeftHemothorax", "BloodVolume", unit=VolumeUnit.mL),
+        SEDataRequest.create_action_data_request("LeftHemothorax", "TotalBloodVolume", unit=VolumeUnit.mL),
     ]
     data_req_mgr = SEDataRequestManager(data_requests)
     data_req_mgr.set_results_filename("./test_results/howto/HowTo_Hemothorax.py.csv")
