@@ -38,6 +38,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - More validation
   - Respiratory
     - Corrected respiratory inhale/exhale transition timing
+    - Added hemothorax model (including cardiovascular modifications)
     - Added shunting and labored breathing effects to collapsing lung functionality
     - Improved lung collapse (e.g., tension pneumothorax and hemothorax) responses
   - Intubation
