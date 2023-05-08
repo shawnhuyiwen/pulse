@@ -109,6 +109,8 @@ class CSVComparison(SETestReport):
                 min_rows = min(len(expected_df.index), len(computed_df.index)) - 1
                 expected_df_trunc = expected_df_trunc.loc[:min_rows]
                 computed_df_trunc = computed_df_trunc.loc[:min_rows]
+            if min_rows == 0:
+                _pulse_logger.error(f"At least one of the data files appears to be empty.")
 
             # Get times/first column
             first_col_is_time = expected_df.columns[0].lower().startswith("time")
@@ -116,11 +118,15 @@ class CSVComparison(SETestReport):
 
             compare_df = expected_df_trunc.combine(computed_df_trunc, lambda x, y: series_percent_difference(x, y, epsilon=1e-10))
             error_summary = compare_df.apply(lambda x: get_error_info(x, expected_df_trunc, computed_df_trunc, self.error_limit))
-            rms = {h: r for h, r in zip(error_summary.columns, error_summary.loc['rms'])}
-            failures = [column for column in error_summary.columns if error_summary.loc['total'][column] > 0]
-            error_summary = error_summary[failures]
-
-            total_errors += int(error_summary.loc['total'].sum())
+            if not error_summary.empty:
+                rms = {h: r for h, r in zip(error_summary.columns, error_summary.loc['rms'])}
+                failures = [column for column in error_summary.columns if error_summary.loc['total'][column] > 0]
+                total_errors += int(error_summary.loc['total'].sum())
+                error_summary = error_summary[failures]
+            else:
+                _pulse_logger.warning("Error summary is empty, comparison may have failed.")
+                rms = {}
+                failures = []
 
             if self.report_differences:
                 for f in failures:
@@ -182,7 +188,7 @@ def series_percent_difference(x: pd.Series, y: pd.Series, epsilon: float):
 
 
 def compute_rms(diff: pd.Series):
-    return np.sqrt( np.sum( np.square(diff) ) / diff.size )
+    return np.sqrt( np.sum( np.square(diff) ) / diff.size ) if diff.size else np.nan
 
 
 def get_error_info(diff: pd.Series, expected: pd.DataFrame, computed: pd.DataFrame, threshold: float=2.0):

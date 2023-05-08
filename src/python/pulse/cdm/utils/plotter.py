@@ -355,7 +355,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         else:
             legend_success = False
         if not legend_success:
-            pulse_logger.error(f"Failed to create legend {output_filepath}")
+            _pulse_logger.error(f"Failed to create legend: {output_path}")
             config.set_plot_actions(False)
             config.set_plot_events(False)
 

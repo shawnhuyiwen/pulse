@@ -706,7 +706,8 @@ class SEPlotSource():
         if os.path.exists(self._csv_data):
             kwargs = {}
             if self._row_skip:
-                kwargs = {"skiprows": lambda i: i % self._row_skip}
+                # Keep header and every _row_skip-th row starting with first data row
+                kwargs = {"skiprows": lambda i: i != 0 and ((i-1) % self._row_skip)}
 
             self._df = read_csv_into_df(self._csv_data, replace_slashes=False, **kwargs)
         else:
