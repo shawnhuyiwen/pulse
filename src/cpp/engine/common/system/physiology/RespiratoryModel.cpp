@@ -1768,7 +1768,8 @@ namespace pulse
 //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::Hemothorax()
   {
-    double factor = 2.0; //Tuned factor to balance hemorrhage with lung collapse
+    double factor = 1.2; //Tuned factor to balance hemorrhage with lung collapse
+
     double maxVolume_L = 2.0;
     bool stateChange = false;
 

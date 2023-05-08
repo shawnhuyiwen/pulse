@@ -1442,12 +1442,17 @@ namespace pulse
     if (PressureGradient_mmHg > 0 && &sub == m_CO) // Wants to come into the blood
     {
       DiffusedVolume_mL = PressureGradient_mmHg * DiffusingCapacityO2_mL_Per_s_mmHg * sub.GetRelativeDiffusionCoefficient().GetValue() *
-        (1 / (5.404e-05 * vascular.GetSubstanceQuantity(*m_O2)->GetPartialPressure(PressureUnit::mmHg) + 0.02885)) * timestep_s; //Modify the relative diffusion coefficient
+        (1.0 / (5.404e-05 * vascular.GetSubstanceQuantity(*m_O2)->GetPartialPressure(PressureUnit::mmHg) + 0.02885)) * timestep_s; //Modify the relative diffusion coefficient
     }
     double DiffusedMass_ug = DiffusedVolume_mL * sub.GetDensity(MassPerVolumeUnit::ug_Per_mL);
 
     //Check to make sure we're not moving more than exists
-    if (DiffusedVolume_mL > 0)
+    if (SEScalar::IsZero(DiffusedVolume_mL, ZERO_APPROX))
+    {
+      DiffusedVolume_mL = 0.0;
+      DiffusedMass_ug = 0.0;
+    }
+    else if (DiffusedVolume_mL > 0)
     {
       //It's moving from pulmonary to vascular
       double pVolume_mL = pSubQ->GetVolume(VolumeUnit::mL);
@@ -1455,6 +1460,7 @@ namespace pulse
       {
         //Move all we can
         DiffusedVolume_mL = pVolume_mL;
+        DiffusedVolume_mL *= 0.99; //Prevent numerical issues
         DiffusedMass_ug = DiffusedVolume_mL * sub.GetDensity(MassPerVolumeUnit::ug_Per_mL);
       }
     }
@@ -1466,7 +1472,7 @@ namespace pulse
       {
         //Move all we can
         DiffusedMass_ug = -vMass_ug;
-        DiffusedMass_ug *= 0.99; /// \todo Why is this needed? It seems to prevent some sort of numerical issue.
+        DiffusedMass_ug *= 0.99; //Prevent numerical issues
         DiffusedVolume_mL = DiffusedMass_ug / sub.GetDensity(MassPerVolumeUnit::ug_Per_mL);
       }
     }
@@ -1476,10 +1482,6 @@ namespace pulse
     sub.GetDiffusingCapacity().IncrementValue(DiffusingCapacityO2_mL_Per_s_mmHg * sub.GetRelativeDiffusionCoefficient().GetValue(), VolumePerTimePressureUnit::mL_Per_s_mmHg);
 
     vSubQ->GetMass().IncrementValue(DiffusedMass_ug, MassUnit::ug);
-    if (std::abs(vSubQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
-    {
-      vSubQ->GetMass().SetValue(0.0, MassUnit::ug);
-    }
     vSubQ->Balance(BalanceLiquidBy::Mass);
   }
 

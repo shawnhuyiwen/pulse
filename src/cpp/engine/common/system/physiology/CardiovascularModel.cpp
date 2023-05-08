@@ -2646,14 +2646,14 @@ namespace pulse
 
       shuntModifier = GeneralMath::ExponentialGrowthFunction(10, 0.5, 1.0, baseModifier);
 
-      for (auto leftShuntPath : m_LeftPulmonaryArteriesToCapillaries)
+      for (auto leftShuntPath : m_LeftPulmonaryArteriesToVeins)
       {
         // Update the pulmonary shunt
         double leftPulmonaryShuntResistance = leftShuntPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
         leftPulmonaryShuntResistance *= shuntModifier;
         leftShuntPath->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       }
-      for (auto rightShuntPath : m_RightPulmonaryArteriesToCapillaries)
+      for (auto rightShuntPath : m_RightPulmonaryArteriesToVeins)
       {
         // Update the pulmonary shunt
         double rightPulmonaryShuntResistance = rightShuntPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -2940,13 +2940,14 @@ namespace pulse
     //The left and right pleural pressures are likely to have large differences only due to a pneumothorax/hemothorax
     double pleuralCavityPressureDiff_cmH2O = std::abs(m_LeftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_RightPleuralCavity->GetPressure(PressureUnit::cmH2O));
 
-    double maxPressureDiff_cmH2O = 8.0;
-    double maxResistanceMultiplier = 8.0;
+    double maxPressureDiff_cmH2O = 10.0;
+    double maxResistanceMultiplier = 6.0;
     pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 
     //Interpolate into a parabola to effect things much more at larger differences
     double factor = pleuralCavityPressureDiff_cmH2O / maxPressureDiff_cmH2O;
-    double resistanceMultiplier = GeneralMath::ParbolicInterpolator(1.0, maxResistanceMultiplier, factor);
+    //double resistanceMultiplier = GeneralMath::ParbolicInterpolator(1.0, maxResistanceMultiplier, factor);
+    double resistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, maxResistanceMultiplier, factor);
 
     rightHeartResistance_mmHg_s_Per_mL *= resistanceMultiplier;
 
