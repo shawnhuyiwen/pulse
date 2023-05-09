@@ -178,7 +178,6 @@ if ( CMAKE_COMPILER_IS_GNUCC )
   endif()
 endif()
 
-
 set(${PROJECT_NAME}_INSTALL_FOLDER ${project_name})
 
 include(Find)# Our find macros
@@ -272,8 +271,28 @@ add_subdirectory(src)
 add_subdirectory(data)
 
 #--------------------------------------------------------------------------
-# Add setup script for *nix systems
+# Setup development utility scripts
 #--------------------------------------------------------------------------
+
+# Pulse uses Python in its development utility scripts
+find_package(Python COMPONENTS Interpreter)
+if(Python_FOUND)
+  get_filename_component(Python_CMD ${Python_EXECUTABLE} NAME)
+  message(STATUS "Using Python: ${Python_CMD}")
+else()
+  set(Python_CMD "python")
+  message(WARNING "The Pulse `run` utility uses python, which could not be found")
+  message(WARNING "To use the `run` utility, setup python in this environment and reconfigure cmake")
+endif()
+
+# Pulse uses Java in its development utility scripts
+find_package(Java REQUIRED)
+include(UseJava)
+if(_JAVA_HOME)
+  message(STATUS "Using JAVA_HOME as my Java executable (set to : ${_JAVA_HOME})")
+  set(Java_CMD ${_JAVA_HOME}/bin/java)
+endif()
+
 if(NOT WIN32)
   # Create setup shell script to create an environment for running examples
   set(LIBRARY_PATH_VAR "LD_LIBRARY_PATH")

@@ -12,6 +12,15 @@ public class PythonUtils
   
   public PythonUtils()
   {
+    RunConfiguration cfg = new RunConfiguration();
+    this.python = cfg.getPythonCommand();
+    
+    try
+    {
+      if(runPython("--version")==0)
+        return;
+    }catch(Exception ex) {}
+    
     try
     {
       this.python = "python3";
