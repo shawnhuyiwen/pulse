@@ -201,6 +201,9 @@ namespace pulse
     DEFINE_STATIC_STRING(Pharynx);
     DEFINE_STATIC_STRING(Carina);
     DEFINE_STATIC_STRING_EX(Lungs, PulmonaryLungs);
+    DEFINE_STATIC_STRING(Alveoli);
+    DEFINE_STATIC_STRING(AlveolarDeadSpace);
+    DEFINE_STATIC_STRING(AnatomicDeadSpace);
     /**/DEFINE_STATIC_STRING_EX(LeftLung, LeftLungPulmonary);
     /***/DEFINE_STATIC_STRING(LeftAnatomicDeadSpace);
     /***/DEFINE_STATIC_STRING(LeftAlveolarDeadSpace);
@@ -230,6 +233,9 @@ namespace pulse
         _values.push_back(Pharynx);
         _values.push_back(Carina);
         _values.push_back(Lungs);
+        _values.push_back(Alveoli);
+        _values.push_back(AlveolarDeadSpace);
+        _values.push_back(AnatomicDeadSpace);
         _values.push_back(LeftLung);
         _values.push_back(LeftAnatomicDeadSpace);
         _values.push_back(LeftAlveolarDeadSpace);
@@ -327,6 +333,64 @@ namespace pulse
     static bool HasValue(const std::string& v)
     {
       return std::find(_values.begin(), _values.end(), v)!=_values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class ExpandedPulmonaryCompartment
+  {
+  public:
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+
+      }
+      return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class ExpandedPulmonaryLink
+  {
+  public:
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+
+      }
+      return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
     }
     static void AddValue(const std::string& v)
     {

@@ -64,6 +64,10 @@
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/GeneralMath.h"
 
+//Flag for setting things constant to test
+//Should be commented out, unless debugging/tuning
+//#define TUNING
+
 namespace pulse
 {
   // Helper method adding a hierarchy of compartments for sampling
@@ -134,11 +138,6 @@ namespace pulse
     m_VenaCavaCompliancePath = nullptr;
     m_RightHeartResistancePath = nullptr;
 
-    m_LeftPulmonaryArteriesToVeins = nullptr;
-    m_LeftPulmonaryArteriesToCapillaries = nullptr;
-    m_RightPulmonaryArteriesToVeins = nullptr;
-    m_RightPulmonaryArteriesToCapillaries = nullptr;
-
     m_InternalHemorrhageToAorta = nullptr;
     m_AortaToBrain = nullptr;
     m_BrainToVenaCava = nullptr;
@@ -191,6 +190,11 @@ namespace pulse
     m_MuscleResistancePaths.clear();
     m_SkinPaths.clear();
 
+    m_LeftPulmonaryArteriesToVeins.clear();
+    m_LeftPulmonaryArteriesToCapillaries.clear();
+    m_RightPulmonaryArteriesToVeins.clear();
+    m_RightPulmonaryArteriesToCapillaries.clear();
+
     m_CardiacCycleArterialPressure_mmHg->Invalidate();
     m_CardiacCycleArterialCO2PartialPressure_mmHg->Invalidate();
     m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Invalidate();
@@ -199,6 +203,9 @@ namespace pulse
     m_CardiacCyclePulmonaryArteryPressure_mmHg->Invalidate();
     m_CardiacCycleCentralVenousPressure_mmHg->Invalidate();
     m_CardiacCycleSkinFlow_mL_Per_s->Invalidate();
+    m_LeftCardiacCyclePerfusionVolumes_mL.clear();
+    m_RightCardiacCyclePerfusionVolumes_mL.clear();
+
 
     m_HeartRateBaseline_Per_min->Invalidate();
     m_HeartComplianceModifier->Invalidate();
@@ -209,13 +216,6 @@ namespace pulse
     m_SystemicVascularComplianceModifier->Invalidate();
 
     DELETE_MAP_SECOND(m_HemorrhageTrack);
-
-    m_HeartCompliancePaths.clear();
-    m_AortaCompliancePaths.clear();
-    m_VenaCavaCompliancePaths.clear();
-    m_PulmonaryCompliancePaths.clear();
-    m_SystemicCompliancePaths.clear();
-    m_SystemicResistancePaths.clear();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -282,9 +282,6 @@ namespace pulse
     m_CardiacCycleLeftHeartPressureHigh_mmHg = m_CardiacCycleAortaPressureHigh_mmHg;
     m_CardiacCycleLeftHeartPressureLow_mmHg = m_CardiacCycleAortaPressureLow_mmHg;
     m_CardiacCycleStrokeVolume_mL = 0;
-    m_CardiacCyclePerfusionVolume_mL = 0;
-    m_LeftCardiacCyclePerfusionVolume_mL = 0;
-    m_RightCardiacCyclePerfusionVolume_mL = 0;
     m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = 26;
     m_CardiacCyclePulmonaryArteryPressureLow_mmHg = 9;
     m_CardiacCycleRightHeartPressureHigh_mmHg = m_CardiacCycleAortaPressureHigh_mmHg;
@@ -340,6 +337,9 @@ namespace pulse
   {
     m_HemorrhageTrack.clear();
 
+    m_LeftCardiacCyclePerfusionVolumes_mL.clear();
+    m_RightCardiacCyclePerfusionVolumes_mL.clear();
+
     //Compartments
     m_Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
     m_AortaCO2 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
@@ -371,10 +371,18 @@ namespace pulse
     m_RightPulmonaryVeinsNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::RightPulmonaryVeins1);
     m_AbdominalCavityNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::AbdominalCavity1);
     //Paths
-    m_LeftPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryVeins1);
-    m_LeftPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1);
-    m_RightPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryVeins1);
-    m_RightPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryCapillaries1);
+    if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
+    {
+      //Not yet implemented
+    }
+    else
+    {
+      m_LeftPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryVeins1));
+      m_LeftPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1));
+
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryVeins1));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryCapillaries1));
+    }
 
     m_AortaCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToAorta4);
     m_AortaResistancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
@@ -657,10 +665,19 @@ namespace pulse
     m_HeartCompliancePaths.push_back(m_LeftHeartCompliancePath);
     m_HeartCompliancePaths.push_back(m_RightHeartCompliancePath);
 
+    if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
+    {
+      //Not yet implemented
+    }
+    else
+    {
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillaries1ToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryCapillaries1ToGround));
+    }
+
     m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToGround));
     m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToGround));
-    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillaries1ToGround));
-    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryCapillaries1ToGround));
+    
     m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeins1ToGround));
     m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeins1ToGround));
 
@@ -1053,10 +1070,32 @@ namespace pulse
 
     const double PulmonaryArteryNodePressure_mmHg = (LeftPulmonaryArteryVolume_mL * LeftPulmonaryArteryPressure_mmHg + RightPulmonaryArteryVolume_mL * RightPulmonaryArteryPressure_mmHg) / TotalPulmonaryArteryVolume_mL;
     const double PulmVeinNodePressure_mmHg = (LeftPulmonaryVeinVolume_mL * LeftPulmonaryVeinPressure_mmHg + RightPulmonaryVeinVolume_mL * RightPulmonaryVeinPressure_mmHg) / TotalPulmonaryVeinVolume_mL;
-    const double PulmCapFlow_mL_Per_s = m_LeftPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s)
-      + m_RightPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
-    const double PulmShuntFlow_mL_Per_s = m_LeftPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s)
-      + m_RightPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+
+    double PulmCapFlow_mL_Per_s = 0.0;
+    for (unsigned int iter = 0; iter < m_LeftPulmonaryArteriesToCapillaries.size(); iter++)
+    {
+      double pulmonaryCapillaryFlow_mL_Per_s = m_LeftPulmonaryArteriesToCapillaries.at(iter)->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+      PulmCapFlow_mL_Per_s += pulmonaryCapillaryFlow_mL_Per_s;
+      double perfusionVolume_mL = pulmonaryCapillaryFlow_mL_Per_s * m_data.GetTimeStep_s();
+      m_LeftCardiacCyclePerfusionVolumes_mL.at(iter) += perfusionVolume_mL;
+    }
+    for (unsigned int iter = 0; iter < m_RightPulmonaryArteriesToCapillaries.size(); iter++)
+    {
+      double pulmonaryCapillaryFlow_mL_Per_s = m_RightPulmonaryArteriesToCapillaries.at(iter)->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+      PulmCapFlow_mL_Per_s += pulmonaryCapillaryFlow_mL_Per_s;
+      double perfusionVolume_mL = pulmonaryCapillaryFlow_mL_Per_s * m_data.GetTimeStep_s();
+      m_RightCardiacCyclePerfusionVolumes_mL.at(iter) += perfusionVolume_mL;
+    }
+
+    double PulmShuntFlow_mL_Per_s = 0.0;
+    for (auto leftShuntPath : m_LeftPulmonaryArteriesToVeins)
+    {
+      PulmShuntFlow_mL_Per_s += leftShuntPath->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+    }
+    for (auto rightShuntPath : m_RightPulmonaryArteriesToVeins)
+    {
+      PulmShuntFlow_mL_Per_s += rightShuntPath->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+    }
 
     const double VenaCavaPressure_mmHg = m_VenaCava->GetPressure(PressureUnit::mmHg);
     const double LHeartFlow_mL_Per_s = m_LeftHeartToAorta->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
@@ -1118,9 +1157,6 @@ namespace pulse
 
     // Increment stroke volume and pulmonary flows
     m_CardiacCycleStrokeVolume_mL += LHeartFlow_mL_Per_s * m_data.GetTimeStep_s();
-    m_CardiacCyclePerfusionVolume_mL += PulmCapFlow_mL_Per_s * m_data.GetTimeStep_s();
-    m_LeftCardiacCyclePerfusionVolume_mL += m_LeftPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s) * m_data.GetTimeStep_s();
-    m_RightCardiacCyclePerfusionVolume_mL += m_RightPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s) * m_data.GetTimeStep_s();
 
     //Get samples for running means
     m_CardiacCycleArterialPressure_mmHg->Sample(AortaNodePressure_mmHg);
@@ -1279,12 +1315,68 @@ namespace pulse
     GetCardiacOutput().SetValue(m_CardiacCycleStrokeVolume_mL * GetHeartRate().GetValue(FrequencyUnit::Per_min), VolumePerTimeUnit::mL_Per_min);
     GetCardiacIndex().SetValue(GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_min) / m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2), VolumePerTimeAreaUnit::mL_Per_min_m2);
 
-    GetTotalPulmonaryPerfusion().SetValue(m_CardiacCyclePerfusionVolume_mL * GetHeartRate(FrequencyUnit::Per_s), VolumePerTimeUnit::mL_Per_s);
-    m_LeftPulmonaryCapillaries->GetPerfusion().SetValue(m_LeftCardiacCyclePerfusionVolume_mL * GetHeartRate(FrequencyUnit::Per_s), VolumePerTimeUnit::mL_Per_s);
-    m_RightPulmonaryCapillaries->GetPerfusion().SetValue(m_RightCardiacCyclePerfusionVolume_mL * GetHeartRate(FrequencyUnit::Per_s), VolumePerTimeUnit::mL_Per_s);
-    m_CardiacCyclePerfusionVolume_mL = 0.0;
-    m_LeftCardiacCyclePerfusionVolume_mL = 0.0;
-    m_RightCardiacCyclePerfusionVolume_mL = 0.0;
+    double heartRate_Per_s = GetHeartRate(FrequencyUnit::Per_s);
+    double totalPulmonaryPerfusion_mL_Per_s = 0.0;
+    unsigned int leftPulmonaryCapillariesSize = 1;
+    unsigned int rightPulmonaryCapillariesSize = 1;
+
+    if (m_LeftPulmonaryCapillaries->HasChildren())
+    {
+      leftPulmonaryCapillariesSize = m_LeftPulmonaryCapillaries->GetLeaves().size();
+      if (m_LeftCardiacCyclePerfusionVolumes_mL.size() < leftPulmonaryCapillariesSize)
+      {
+        m_LeftCardiacCyclePerfusionVolumes_mL.resize(leftPulmonaryCapillariesSize, 0.0);
+      }
+      for (unsigned int iter = 0; iter < leftPulmonaryCapillariesSize; iter++)
+      {
+        double perfusion_mL_Per_s = m_LeftCardiacCyclePerfusionVolumes_mL.at(iter) * heartRate_Per_s;
+        totalPulmonaryPerfusion_mL_Per_s += perfusion_mL_Per_s;
+        m_LeftPulmonaryCapillaries->GetLeaves().at(iter)->GetPerfusion().SetValue(perfusion_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+        m_LeftCardiacCyclePerfusionVolumes_mL.at(iter) = 0.0;
+      }
+    }
+    else
+    {
+      if (m_LeftCardiacCyclePerfusionVolumes_mL.size() < leftPulmonaryCapillariesSize)
+      {
+        m_LeftCardiacCyclePerfusionVolumes_mL.resize(leftPulmonaryCapillariesSize, 0.0);
+      }
+      double perfusion_mL_Per_s = m_LeftCardiacCyclePerfusionVolumes_mL.at(0) * heartRate_Per_s;
+      totalPulmonaryPerfusion_mL_Per_s += perfusion_mL_Per_s;
+      m_LeftPulmonaryCapillaries->GetPerfusion().SetValue(perfusion_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      m_LeftCardiacCyclePerfusionVolumes_mL.at(0) = 0.0;
+    }
+
+    if (m_RightPulmonaryCapillaries->HasChildren())
+    {
+      rightPulmonaryCapillariesSize = m_RightPulmonaryCapillaries->GetLeaves().size();
+      if (m_RightCardiacCyclePerfusionVolumes_mL.size() < rightPulmonaryCapillariesSize)
+      {
+        m_RightCardiacCyclePerfusionVolumes_mL.resize(rightPulmonaryCapillariesSize, 0.0);
+      }
+      for (unsigned int iter = 0; iter < rightPulmonaryCapillariesSize; iter++)
+      {
+        double perfusion_mL_Per_s = m_RightCardiacCyclePerfusionVolumes_mL.at(iter) * heartRate_Per_s;
+        totalPulmonaryPerfusion_mL_Per_s += perfusion_mL_Per_s;
+        m_RightPulmonaryCapillaries->GetLeaves().at(iter)->GetPerfusion().SetValue(perfusion_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+        m_RightCardiacCyclePerfusionVolumes_mL.at(iter) = 0.0;
+      }
+    }
+    else
+    {
+      if (m_RightCardiacCyclePerfusionVolumes_mL.size() < rightPulmonaryCapillariesSize)
+      {
+        m_RightCardiacCyclePerfusionVolumes_mL.resize(rightPulmonaryCapillariesSize, 0.0);
+      }
+      double perfusion_mL_Per_s = m_RightCardiacCyclePerfusionVolumes_mL.at(0) * heartRate_Per_s;
+      totalPulmonaryPerfusion_mL_Per_s += perfusion_mL_Per_s;
+      m_RightPulmonaryCapillaries->GetPerfusion().SetValue(perfusion_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      m_RightCardiacCyclePerfusionVolumes_mL.at(0) = 0.0;
+    }
+
+    GetTotalPulmonaryPerfusion().SetValue(totalPulmonaryPerfusion_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+    m_LeftCardiacCyclePerfusionVolumes_mL.resize(leftPulmonaryCapillariesSize, 0.0);
+    m_RightCardiacCyclePerfusionVolumes_mL.resize(rightPulmonaryCapillariesSize, 0.0);
 
     // Running means
     // Mean Arterial Pressure
@@ -2280,6 +2372,7 @@ namespace pulse
     m_LeftHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
     m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
 
+#ifndef TUNING
     // Apply baroreceptor reflex effects
     /// \todo need to reset the heart elastance min and max at the end of each stabiliation period in AtSteadyState()
     if (m_data.GetNervous().GetBaroreceptorFeedback() == eSwitch::On)
@@ -2302,6 +2395,7 @@ namespace pulse
 
     //Apply heart failure effects
     m_LeftHeartElastanceMax_mmHg_Per_mL *= m_LeftHeartElastanceModifier;
+#endif
 
     m_DriverCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
     // Snap the cycle period to the nearest time step
@@ -2530,10 +2624,6 @@ namespace pulse
 
     double meanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
     double standardPulmonaryCapillaryCoverage = m_data.GetConfiguration().GetStandardPulmonaryCapillaryCoverage();
-    double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double leftPulmonaryCapillariesResistance = m_LeftPulmonaryArteriesToCapillaries->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double rightPulmonaryCapillariesResistance = m_RightPulmonaryArteriesToCapillaries->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
     // Set a range between 10% below MAP baseline and Cardiovascular Collapse MAP
     double shuntEffect_mmHg = m_StabilizedMeanArterialPressureBaseline_mmHg * 0.9;
@@ -2554,17 +2644,35 @@ namespace pulse
       // Update the capillary coverage for tissue diffusion
       GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage * coverageModifier);
 
-      // Update the pulmonary shunt
       shuntModifier = GeneralMath::ExponentialGrowthFunction(10, 0.5, 1.0, baseModifier);
-      leftPulmonaryShuntResistance *= shuntModifier;
-      rightPulmonaryShuntResistance *= shuntModifier;
-      m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
-      leftPulmonaryCapillariesResistance *= 1 / shuntModifier;
-      rightPulmonaryCapillariesResistance *= 1 / shuntModifier;
-      m_LeftPulmonaryArteriesToCapillaries->GetNextResistance().SetValue(leftPulmonaryCapillariesResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      m_RightPulmonaryArteriesToCapillaries->GetNextResistance().SetValue(rightPulmonaryCapillariesResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      for (auto leftShuntPath : m_LeftPulmonaryArteriesToVeins)
+      {
+        // Update the pulmonary shunt
+        double leftPulmonaryShuntResistance = leftShuntPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        leftPulmonaryShuntResistance *= shuntModifier;
+        leftShuntPath->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      }
+      for (auto rightShuntPath : m_RightPulmonaryArteriesToVeins)
+      {
+        // Update the pulmonary shunt
+        double rightPulmonaryShuntResistance = rightShuntPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        rightPulmonaryShuntResistance *= shuntModifier;
+        rightShuntPath->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      }
+
+      for (auto leftPulmonaryCapillaryPath : m_LeftPulmonaryArteriesToCapillaries)
+      {
+        double leftPulmonaryCapillariesResistance = leftPulmonaryCapillaryPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        leftPulmonaryCapillariesResistance *= 1 / shuntModifier;
+        leftPulmonaryCapillaryPath->GetNextResistance().SetValue(leftPulmonaryCapillariesResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      }
+      for (auto rightPulmonaryCapillaryPath : m_RightPulmonaryArteriesToCapillaries)
+      {
+        double rightPulmonaryCapillariesResistance = rightPulmonaryCapillaryPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        rightPulmonaryCapillariesResistance *= 1 / shuntModifier;
+        rightPulmonaryCapillaryPath->GetNextResistance().SetValue(rightPulmonaryCapillariesResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      }
     }
 
     //m_data.GetDataTrack().Probe("baseModifier", baseModifier);
@@ -2832,13 +2940,14 @@ namespace pulse
     //The left and right pleural pressures are likely to have large differences only due to a pneumothorax/hemothorax
     double pleuralCavityPressureDiff_cmH2O = std::abs(m_LeftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_RightPleuralCavity->GetPressure(PressureUnit::cmH2O));
 
-    double maxPressureDiff_cmH2O = 8.0;
-    double maxResistanceMultiplier = 8.0;
+    double maxPressureDiff_cmH2O = 10.0;
+    double maxResistanceMultiplier = 6.0;
     pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 
     //Interpolate into a parabola to effect things much more at larger differences
     double factor = pleuralCavityPressureDiff_cmH2O / maxPressureDiff_cmH2O;
-    double resistanceMultiplier = GeneralMath::ParbolicInterpolator(1.0, maxResistanceMultiplier, factor);
+    //double resistanceMultiplier = GeneralMath::ParbolicInterpolator(1.0, maxResistanceMultiplier, factor);
+    double resistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, maxResistanceMultiplier, factor);
 
     rightHeartResistance_mmHg_s_Per_mL *= resistanceMultiplier;
 

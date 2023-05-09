@@ -210,7 +210,7 @@ namespace pulse { namespace human_adult_whole_body
     {
       testCase.AddFailure("Could not advance time");
     }
-    std::string ext = ".pbb";// ".json";
+    std::string ext = ".pbb";//".json";
     // If things don't match, change back to json and inspect files to see what is different
 
     size_t numLoads = 10;
@@ -226,7 +226,7 @@ namespace pulse { namespace human_adult_whole_body
       {
         testCase.AddFailure("Could not load saved state, check the error");
       }
-      if (!pe->SerializeToFile(itrName + ".reload.pbb"))
+      if (!pe->SerializeToFile(itrName + ".reload" + ext))
       {
         testCase.AddFailure("Could not save state, check the error");
       }

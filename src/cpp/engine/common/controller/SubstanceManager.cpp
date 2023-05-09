@@ -226,66 +226,32 @@ namespace pulse
     double AmbientCO2VF = Ambient->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().GetValue();
     double AmbientN2VF = Ambient->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().GetValue();
 
-    SEGasCompartment* Airway = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Airway);
-    Airway->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
-    Airway->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
-    Airway->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
-    Airway->Balance(BalanceGasBy::VolumeFraction);
-    SEGasCompartment* Pharynx = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Pharynx);
-    Pharynx->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
-    Pharynx->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
-    Pharynx->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
-    Pharynx->Balance(BalanceGasBy::VolumeFraction);
-    SEGasCompartment* Carina = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
-    Carina->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
-    Carina->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
-    Carina->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
-    Carina->Balance(BalanceGasBy::VolumeFraction);
-    SEGasCompartment* LeftAnatomicDeadSpace = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAnatomicDeadSpace);
-    LeftAnatomicDeadSpace->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.011);
-    LeftAnatomicDeadSpace->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.195);
-    LeftAnatomicDeadSpace->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1 - 0.011 - 0.195);
-    LeftAnatomicDeadSpace->Balance(BalanceGasBy::VolumeFraction);
-    SEGasCompartment* LeftAlveolarDeadSpace = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAlveolarDeadSpace);
-    LeftAlveolarDeadSpace->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.011);
-    LeftAlveolarDeadSpace->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.195);
-    LeftAlveolarDeadSpace->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1 - 0.011 - 0.195);
-    LeftAlveolarDeadSpace->Balance(BalanceGasBy::VolumeFraction);
-    SEGasCompartment* LeftAlveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAlveoli);
-    LeftAlveoli->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.050);
-    LeftAlveoli->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.155);
-    LeftAlveoli->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1 - 0.050 - 0.155);
-    LeftAlveoli->Balance(BalanceGasBy::VolumeFraction);
-    SEGasCompartment* RightAnatomicDeadSpace = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAnatomicDeadSpace);
-    RightAnatomicDeadSpace->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.011);
-    RightAnatomicDeadSpace->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.195);
-    RightAnatomicDeadSpace->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1 - 0.011 - 0.195);
-    RightAnatomicDeadSpace->Balance(BalanceGasBy::VolumeFraction);
-    SEGasCompartment* RightAlveolarDeadSpace = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveolarDeadSpace);
-    RightAlveolarDeadSpace->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.011);
-    RightAlveolarDeadSpace->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.195);
-    RightAlveolarDeadSpace->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1 - 0.011 - 0.195);
-    RightAlveolarDeadSpace->Balance(BalanceGasBy::VolumeFraction);
-    SEGasCompartment* RightAlveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveoli);
-    RightAlveoli->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.050);
-    RightAlveoli->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.155);
-    RightAlveoli->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(1 - 0.050 - 0.155);
-    RightAlveoli->Balance(BalanceGasBy::VolumeFraction);
-    SEGasCompartment* LeftPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftPleuralCavity);
-    LeftPleuralCavity->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
-    LeftPleuralCavity->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
-    LeftPleuralCavity->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
-    SEGasCompartment* RightPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightPleuralCavity);
-    RightPleuralCavity->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
-    RightPleuralCavity->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
-    RightPleuralCavity->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
-    SEGasCompartment* Stomach = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Stomach);
-    Stomach->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(0.01);
-    Stomach->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(0.99);
-    Stomach->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(0.0);
-    Stomach->Balance(BalanceGasBy::VolumeFraction);
-
     //Initialize the compartments to Ambient values
+    for (SEGasCompartment* cmpt : m_data.GetCompartments().GetPulmonaryLeafCompartments())
+    {
+      if (cmpt->HasVolume())
+      {
+        cmpt->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
+        cmpt->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
+        cmpt->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
+        cmpt->Balance(BalanceGasBy::VolumeFraction);
+      }
+    }
+
+    if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
+    {
+      for (SEGasCompartment* cmpt : m_data.GetCompartments().GetExpandedPulmonaryLeafCompartments())
+      {
+        if (cmpt->HasVolume())
+        {
+          cmpt->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
+          cmpt->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
+          cmpt->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
+          cmpt->Balance(BalanceGasBy::VolumeFraction);
+        }
+      }
+    }
+
     for (SEGasCompartment* cmpt : m_data.GetCompartments().GetAnesthesiaMachineLeafCompartments())
     {
       if (cmpt->HasVolume())
@@ -547,92 +513,111 @@ namespace pulse
     concentration.SetValue(0.146448, MassPerVolumeUnit::g_Per_dL);
     SetSubstanceConcentration(*m_HCO3, cmpts.GetUrineLeafCompartments(), concentration);
   }
-  void SubstanceManager::InitializeBloodGases(SELiquidCompartment& cmpt, double Hb_total_mM, double O2_sat, double O2_mmol_Per_L, double CO2_sat, double CO2_mmol_Per_L, double HCO3_mmol_Per_L, double pH, bool distribute)
+  void SubstanceManager::InitializeBloodGases(SELiquidCompartment& inputCmpt, double Hb_total_mM, double O2_sat, double O2_mmol_Per_L, double CO2_sat, double CO2_mmol_Per_L, double HCO3_mmol_Per_L, double pH, bool distribute)
   {
-    // N2 is inert
-    SEGasCompartment* Ambient = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
-    double N2_mmHg = Ambient->GetPressure(PressureUnit::mmHg) * Ambient->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().GetValue();
-    SELiquidSubstanceQuantity* N2 = cmpt.GetSubstanceQuantity(*m_N2);
-    N2->GetPartialPressure().SetValue(N2_mmHg, PressureUnit::mmHg);
-    N2->Balance(BalanceLiquidBy::PartialPressure);
+    SELiquidCompartment* cmpt = &inputCmpt;
 
-    SELiquidSubstanceQuantity* O2 = cmpt.GetSubstanceQuantity(*m_O2);
-    SELiquidSubstanceQuantity* CO2 = cmpt.GetSubstanceQuantity(*m_CO2);
-    SELiquidSubstanceQuantity* Hb = cmpt.GetSubstanceQuantity(*m_Hb);
-    SELiquidSubstanceQuantity* HbO2 = cmpt.GetSubstanceQuantity(*m_HbO2);
-    SELiquidSubstanceQuantity* HbCO2 = cmpt.GetSubstanceQuantity(*m_HbCO2);
-    SELiquidSubstanceQuantity* HbO2CO2 = cmpt.GetSubstanceQuantity(*m_HbO2CO2);
-    SELiquidSubstanceQuantity* HCO3 = cmpt.GetSubstanceQuantity(*m_HCO3);
-
-    //Assume no HbO2CO2 at first (O2sat + CO2sat < 100%)
-    double HbUnbound_mM = Hb_total_mM * (1 - O2_sat - CO2_sat);
-    if (std::abs(HbUnbound_mM) <= ZERO_APPROX) HbUnbound_mM = 0;
-
-    //If our assumption was wrong, that means there was HbO2CO2 contributing to sat values
-    //Any negative is due to HbO2CO2
-    if (HbUnbound_mM < 0)
+    bool hasChildren = inputCmpt.HasChildren();
+    unsigned int numCmpt = 1;
+    if (hasChildren)
     {
-      double HbO2CO2_mM = -HbUnbound_mM;
-      HbO2CO2->GetMolarity().SetValue(HbO2CO2_mM, AmountPerVolumeUnit::mmol_Per_L);
-      HbO2CO2->Balance(BalanceLiquidBy::Molarity);
-
-      HbUnbound_mM = 0;
-      Hb->GetMolarity().SetValue(HbUnbound_mM, AmountPerVolumeUnit::mmol_Per_L);
-      Hb->Balance(BalanceLiquidBy::Molarity);
-
-      //Now we know HbUnbound and HbO2CO2, and we can solve HbO2 and HbCO2 using saturation values
-      double HbO2_mM = O2_sat * Hb_total_mM - HbO2CO2_mM;
-      double HbCO2_mM = CO2_sat * Hb_total_mM - HbO2CO2_mM;
-
-      if (std::abs(HbCO2_mM) <= ZERO_APPROX) HbCO2_mM = 0;
-      if (std::abs(HbO2_mM) <= ZERO_APPROX) HbO2_mM = 0;
-
-      HbO2->GetMolarity().SetValue(HbO2_mM, AmountPerVolumeUnit::mmol_Per_L);
-      HbO2->Balance(BalanceLiquidBy::Molarity);
-      HbCO2->GetMolarity().SetValue(HbCO2_mM, AmountPerVolumeUnit::mmol_Per_L);
-      HbCO2->Balance(BalanceLiquidBy::Molarity);
+      numCmpt = inputCmpt.GetLeaves().size();
     }
-    //If our assumption was right, we have excess Hb, and need to use the total Hb to solve
-    else
+    unsigned int leafIter = 0;
+    while (leafIter < numCmpt)
     {
-      double HbO2CO2_mM = (O2_sat * Hb_total_mM) - Hb_total_mM + HbUnbound_mM + (CO2_sat * Hb_total_mM);
-      double HbO2_mM = O2_sat * Hb_total_mM - HbO2CO2_mM;
-      double HbCO2_mM = CO2_sat * Hb_total_mM - HbO2CO2_mM;
+      if (hasChildren)
+      {
+        cmpt = inputCmpt.GetLeaves().at(leafIter);
+      }
 
-      if (std::abs(HbO2CO2_mM) <= ZERO_APPROX) HbO2CO2_mM = 0;
-      if (std::abs(HbCO2_mM) <= ZERO_APPROX) HbCO2_mM = 0;
-      if (std::abs(HbO2_mM) <= ZERO_APPROX) HbO2_mM = 0;
+      // N2 is inert
+      SEGasCompartment* Ambient = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+      double N2_mmHg = Ambient->GetPressure(PressureUnit::mmHg) * Ambient->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().GetValue();
+      SELiquidSubstanceQuantity* N2 = cmpt->GetSubstanceQuantity(*m_N2);
+      N2->GetPartialPressure().SetValue(N2_mmHg, PressureUnit::mmHg);
+      N2->Balance(BalanceLiquidBy::PartialPressure);
 
-      Hb->GetMolarity().SetValue(HbUnbound_mM, AmountPerVolumeUnit::mmol_Per_L);
-      Hb->Balance(BalanceLiquidBy::Molarity);
-      HbO2CO2->GetMolarity().SetValue(HbO2CO2_mM, AmountPerVolumeUnit::mmol_Per_L);
-      HbO2CO2->Balance(BalanceLiquidBy::Molarity);
-      HbO2->GetMolarity().SetValue(HbO2_mM, AmountPerVolumeUnit::mmol_Per_L);
-      HbO2->Balance(BalanceLiquidBy::Molarity);
-      HbCO2->GetMolarity().SetValue(HbCO2_mM, AmountPerVolumeUnit::mmol_Per_L);
-      HbCO2->Balance(BalanceLiquidBy::Molarity);
+      SELiquidSubstanceQuantity* O2 = cmpt->GetSubstanceQuantity(*m_O2);
+      SELiquidSubstanceQuantity* CO2 = cmpt->GetSubstanceQuantity(*m_CO2);
+      SELiquidSubstanceQuantity* Hb = cmpt->GetSubstanceQuantity(*m_Hb);
+      SELiquidSubstanceQuantity* HbO2 = cmpt->GetSubstanceQuantity(*m_HbO2);
+      SELiquidSubstanceQuantity* HbCO2 = cmpt->GetSubstanceQuantity(*m_HbCO2);
+      SELiquidSubstanceQuantity* HbO2CO2 = cmpt->GetSubstanceQuantity(*m_HbO2CO2);
+      SELiquidSubstanceQuantity* HCO3 = cmpt->GetSubstanceQuantity(*m_HCO3);
+
+      //Assume no HbO2CO2 at first (O2sat + CO2sat < 100%)
+      double HbUnbound_mM = Hb_total_mM * (1 - O2_sat - CO2_sat);
+      if (std::abs(HbUnbound_mM) <= ZERO_APPROX) HbUnbound_mM = 0;
+
+      //If our assumption was wrong, that means there was HbO2CO2 contributing to sat values
+      //Any negative is due to HbO2CO2
+      if (HbUnbound_mM < 0)
+      {
+        double HbO2CO2_mM = -HbUnbound_mM;
+        HbO2CO2->GetMolarity().SetValue(HbO2CO2_mM, AmountPerVolumeUnit::mmol_Per_L);
+        HbO2CO2->Balance(BalanceLiquidBy::Molarity);
+
+        HbUnbound_mM = 0;
+        Hb->GetMolarity().SetValue(HbUnbound_mM, AmountPerVolumeUnit::mmol_Per_L);
+        Hb->Balance(BalanceLiquidBy::Molarity);
+
+        //Now we know HbUnbound and HbO2CO2, and we can solve HbO2 and HbCO2 using saturation values
+        double HbO2_mM = O2_sat * Hb_total_mM - HbO2CO2_mM;
+        double HbCO2_mM = CO2_sat * Hb_total_mM - HbO2CO2_mM;
+
+        if (std::abs(HbCO2_mM) <= ZERO_APPROX) HbCO2_mM = 0;
+        if (std::abs(HbO2_mM) <= ZERO_APPROX) HbO2_mM = 0;
+
+        HbO2->GetMolarity().SetValue(HbO2_mM, AmountPerVolumeUnit::mmol_Per_L);
+        HbO2->Balance(BalanceLiquidBy::Molarity);
+        HbCO2->GetMolarity().SetValue(HbCO2_mM, AmountPerVolumeUnit::mmol_Per_L);
+        HbCO2->Balance(BalanceLiquidBy::Molarity);
+      }
+      //If our assumption was right, we have excess Hb, and need to use the total Hb to solve
+      else
+      {
+        double HbO2CO2_mM = (O2_sat * Hb_total_mM) - Hb_total_mM + HbUnbound_mM + (CO2_sat * Hb_total_mM);
+        double HbO2_mM = O2_sat * Hb_total_mM - HbO2CO2_mM;
+        double HbCO2_mM = CO2_sat * Hb_total_mM - HbO2CO2_mM;
+
+        if (std::abs(HbO2CO2_mM) <= ZERO_APPROX) HbO2CO2_mM = 0;
+        if (std::abs(HbCO2_mM) <= ZERO_APPROX) HbCO2_mM = 0;
+        if (std::abs(HbO2_mM) <= ZERO_APPROX) HbO2_mM = 0;
+
+        Hb->GetMolarity().SetValue(HbUnbound_mM, AmountPerVolumeUnit::mmol_Per_L);
+        Hb->Balance(BalanceLiquidBy::Molarity);
+        HbO2CO2->GetMolarity().SetValue(HbO2CO2_mM, AmountPerVolumeUnit::mmol_Per_L);
+        HbO2CO2->Balance(BalanceLiquidBy::Molarity);
+        HbO2->GetMolarity().SetValue(HbO2_mM, AmountPerVolumeUnit::mmol_Per_L);
+        HbO2->Balance(BalanceLiquidBy::Molarity);
+        HbCO2->GetMolarity().SetValue(HbCO2_mM, AmountPerVolumeUnit::mmol_Per_L);
+        HbCO2->Balance(BalanceLiquidBy::Molarity);
+      }
+
+      CO2->GetMolarity().SetValue(CO2_mmol_Per_L, AmountPerVolumeUnit::mmol_Per_L);
+      CO2->Balance(BalanceLiquidBy::Molarity);
+      CO2->GetSaturation().SetValue(CO2_sat);
+      HCO3->GetMolarity().SetValue(HCO3_mmol_Per_L, AmountPerVolumeUnit::mmol_Per_L);
+      HCO3->Balance(BalanceLiquidBy::Molarity);
+      O2->GetMolarity().SetValue(O2_mmol_Per_L, AmountPerVolumeUnit::mmol_Per_L);
+      O2->Balance(BalanceLiquidBy::Molarity);
+      O2->GetSaturation().SetValue(O2_sat);
+
+      cmpt->GetPH().SetValue(pH);
+
+      if (distribute)
+        m_data.GetSaturationCalculator().CalculateBloodGasDistribution(*cmpt);
+
+      /*std::cout << cmpt->GetName() << " O2 Partial Pressure " << O2->GetPartialPressure() << std::endl;
+      std::cout << cmpt->GetName() << " CO2 Partial Pressure  " << CO2->GetPartialPressure() << std::endl;
+      std::cout << cmpt->GetName() << " O2 Concentration " << O2->GetConcentration() << std::endl;
+      std::cout << cmpt->GetName() << " CO2 Concentration " << CO2->GetConcentration() << std::endl;
+      std::cout << cmpt->GetName() << " HCO3 Molarity " << HCO3->GetMolarity() << std::endl;
+      std::cout << " " << std::endl;*/
+
+      leafIter++;
     }
-
-    CO2->GetMolarity().SetValue(CO2_mmol_Per_L, AmountPerVolumeUnit::mmol_Per_L);
-    CO2->Balance(BalanceLiquidBy::Molarity);
-    CO2->GetSaturation().SetValue(CO2_sat);
-    HCO3->GetMolarity().SetValue(HCO3_mmol_Per_L, AmountPerVolumeUnit::mmol_Per_L);
-    HCO3->Balance(BalanceLiquidBy::Molarity);
-    O2->GetMolarity().SetValue(O2_mmol_Per_L, AmountPerVolumeUnit::mmol_Per_L);
-    O2->Balance(BalanceLiquidBy::Molarity);
-    O2->GetSaturation().SetValue(O2_sat);
-
-    cmpt.GetPH().SetValue(pH);
-
-    if (distribute)
-      m_data.GetSaturationCalculator().CalculateBloodGasDistribution(cmpt);
-
-    /*std::cout << cmpt.GetName() << " O2 Partial Pressure " << O2->GetPartialPressure() << std::endl;
-    std::cout << cmpt.GetName() << " CO2 Partial Pressure  " << CO2->GetPartialPressure() << std::endl;
-    std::cout << cmpt.GetName() << " O2 Concentration " << O2->GetConcentration() << std::endl;
-    std::cout << cmpt.GetName() << " CO2 Concentration " << CO2->GetConcentration() << std::endl;
-    std::cout << cmpt.GetName() << " HCO3 Molarity " << HCO3->GetMolarity() << std::endl;
-    std::cout << " " << std::endl;*/
   }
   void SubstanceManager::InitializeBloodGases(SETissueCompartment& tissue, SELiquidCompartment& vascular)
   {

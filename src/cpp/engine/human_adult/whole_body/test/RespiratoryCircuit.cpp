@@ -141,14 +141,14 @@ namespace pulse { namespace human_adult_whole_body
     //Circuit Analysis Test --------------------------------------------------
     //Execution parameters
     double time = 0;
-    double deltaT_s = 1.0 / 90.0;
-    double runTime_min = 10.0;
+    double deltaT_s = 1.0 / 50.0;
+    double runTime_min = 1.0;
     //Drive waveform parameters
     double period = 5.0;
     double alpha = (2 * M_PI) / (period);
     double driverPressure_cmH2O = 0.0;
-    double amplitude_cmH2O = 6.0;
-    double yOffset = -12.0;
+    double amplitude_cmH2O = 5.8 / 2.0;
+    double yOffset = -amplitude_cmH2O;
 
     for (unsigned int i = 0; i < runTime_min * 60.0 / deltaT_s; i++)
     {

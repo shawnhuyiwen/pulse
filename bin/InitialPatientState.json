@@ -1,7 +1,8 @@
 {
   "Configuration": {
     "WritePatientBaselineFile": "On",
-    "CardiovascularConfiguration" : { "UseExpandedVasculature" : "Off" }
+    "CardiovascularConfiguration" : { "UseExpandedVasculature" : "Off" },
+    "RespiratoryConfiguration" : { "UseExpandedRespiratory" : "Off" }
   },
   "Scenario": {
     "Name": "InitialStableState",

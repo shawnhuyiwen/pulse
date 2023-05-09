@@ -172,6 +172,7 @@ message ConfigurationData
     pulse.cdm.bind.ScalarVolumePerTimeData             PulmonaryVentilationRateMaximum                      = 7;
     pulse.cdm.bind.ScalarVolumeData                    VentilationTidalVolumeIntercept                      = 8;
     pulse.cdm.bind.ScalarPressureData                  VentilatoryOcclusionPressure                         = 9;
+    pulse.cdm.bind.eSwitch                             UseExpandedRespiratory                               = 10;
   }
   
   message TissueConfigurationData

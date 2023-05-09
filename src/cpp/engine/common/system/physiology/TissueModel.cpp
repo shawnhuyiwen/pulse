@@ -592,25 +592,75 @@ namespace pulse
       sub->GetDiffusingCapacity().SetValue(0, VolumePerTimePressureUnit::mL_Per_s_mmHg);
 
       //Left Side Alveoli Transfer
-      double leftAlveoliSurfaceArea_cm2 = m_LeftAlveoli->GetDiffusionSurfaceArea().GetValue(AreaUnit::cm2);
-      double leftDiffusionSurfaceArea_cm2 = leftAlveoliSurfaceArea_cm2 * pulmonaryCapillaryCoverageFraction;
-      double leftDiffusingCapacityOfOxygen_mL_Per_s_mmHg = (leftDiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
-      AlveolarPartialPressureGradientDiffusion(*m_LeftAlveoli, *m_LeftPulmonaryCapillaries, *sub, leftDiffusingCapacityOfOxygen_mL_Per_s_mmHg, m_data.GetTimeStep_s());
+      if (m_LeftAlveoli->HasChildren())
+      {
+        for (unsigned int iter = 0; iter < m_LeftAlveoli->GetLeaves().size(); iter++)
+        {
+          SEGasCompartment* alveoli = m_LeftAlveoli->GetLeaves().at(iter);
+          SELiquidCompartment* capillaries = m_LeftPulmonaryCapillaries->GetLeaves().at(iter);
+          double leftAlveoliSurfaceArea_cm2 = alveoli->GetDiffusionSurfaceArea().GetValue(AreaUnit::cm2);
+          double leftDiffusionSurfaceArea_cm2 = leftAlveoliSurfaceArea_cm2 * pulmonaryCapillaryCoverageFraction;
+          double leftDiffusingCapacityOfOxygen_mL_Per_s_mmHg = (leftDiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
+          AlveolarPartialPressureGradientDiffusion(*alveoli, *capillaries, *sub, leftDiffusingCapacityOfOxygen_mL_Per_s_mmHg, m_data.GetTimeStep_s());
+
+          if (alveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || capillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0)
+          {
+            Fatal("Diffusion mass cannot be negative");
+          }
+
+          alveoli->Balance(BalanceGasBy::Volume);
+        }
+      }
+      else
+      {
+        double leftAlveoliSurfaceArea_cm2 = m_LeftAlveoli->GetDiffusionSurfaceArea().GetValue(AreaUnit::cm2);
+        double leftDiffusionSurfaceArea_cm2 = leftAlveoliSurfaceArea_cm2 * pulmonaryCapillaryCoverageFraction;
+        double leftDiffusingCapacityOfOxygen_mL_Per_s_mmHg = (leftDiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
+        AlveolarPartialPressureGradientDiffusion(*m_LeftAlveoli, *m_LeftPulmonaryCapillaries, *sub, leftDiffusingCapacityOfOxygen_mL_Per_s_mmHg, m_data.GetTimeStep_s());
+
+        if (m_LeftAlveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || m_LeftPulmonaryCapillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0)
+        {
+          Fatal("Diffusion mass cannot be negative");
+        }
+
+        m_LeftAlveoli->Balance(BalanceGasBy::Volume);
+      }
 
       //Right Side Alveoli Transfer
-      double rightAlveoliSurfaceArea_cm2 = m_RightAlveoli->GetDiffusionSurfaceArea().GetValue(AreaUnit::cm2);
-      double rightDiffusionSurfaceArea_cm2 = rightAlveoliSurfaceArea_cm2 * pulmonaryCapillaryCoverageFraction;
-      double rightDiffusingCapacityOfOxygen_mL_Per_s_mmHg = (rightDiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
-      AlveolarPartialPressureGradientDiffusion(*m_RightAlveoli, *m_RightPulmonaryCapillaries, *sub, rightDiffusingCapacityOfOxygen_mL_Per_s_mmHg, m_data.GetTimeStep_s());
-
-      if (m_LeftAlveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || m_LeftPulmonaryCapillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0 ||
-        m_RightAlveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || m_RightPulmonaryCapillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0)
+      if (m_RightAlveoli->HasChildren())
       {
-        Fatal("Diffusion mass cannot be negative");
+        for (unsigned int iter = 0; iter < m_RightAlveoli->GetLeaves().size(); iter++)
+        {
+          SEGasCompartment* alveoli = m_RightAlveoli->GetLeaves().at(iter);
+          SELiquidCompartment* capillaries = m_RightPulmonaryCapillaries->GetLeaves().at(iter);
+          double rightAlveoliSurfaceArea_cm2 = alveoli->GetDiffusionSurfaceArea().GetValue(AreaUnit::cm2);
+          double rightDiffusionSurfaceArea_cm2 = rightAlveoliSurfaceArea_cm2 * pulmonaryCapillaryCoverageFraction;
+          double rightDiffusingCapacityOfOxygen_mL_Per_s_mmHg = (rightDiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
+          AlveolarPartialPressureGradientDiffusion(*alveoli, *capillaries, *sub, rightDiffusingCapacityOfOxygen_mL_Per_s_mmHg, m_data.GetTimeStep_s());
+
+          if (alveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || capillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0)
+          {
+            Fatal("Diffusion mass cannot be negative");
+          }
+
+          alveoli->Balance(BalanceGasBy::Volume);
+        }
+      }
+      else
+      {
+        double rightAlveoliSurfaceArea_cm2 = m_RightAlveoli->GetDiffusionSurfaceArea().GetValue(AreaUnit::cm2);
+        double rightDiffusionSurfaceArea_cm2 = rightAlveoliSurfaceArea_cm2 * pulmonaryCapillaryCoverageFraction;
+        double rightDiffusingCapacityOfOxygen_mL_Per_s_mmHg = (rightDiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
+        AlveolarPartialPressureGradientDiffusion(*m_RightAlveoli, *m_RightPulmonaryCapillaries, *sub, rightDiffusingCapacityOfOxygen_mL_Per_s_mmHg, m_data.GetTimeStep_s());
+
+        if (m_RightAlveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || m_RightPulmonaryCapillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0)
+        {
+          Fatal("Diffusion mass cannot be negative");
+        }
+
+        m_RightAlveoli->Balance(BalanceGasBy::Volume);
       }
     }
-    m_LeftAlveoli->Balance(BalanceGasBy::Volume);
-    m_RightAlveoli->Balance(BalanceGasBy::Volume);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1392,12 +1442,17 @@ namespace pulse
     if (PressureGradient_mmHg > 0 && &sub == m_CO) // Wants to come into the blood
     {
       DiffusedVolume_mL = PressureGradient_mmHg * DiffusingCapacityO2_mL_Per_s_mmHg * sub.GetRelativeDiffusionCoefficient().GetValue() *
-        (1 / (5.404e-05 * vascular.GetSubstanceQuantity(*m_O2)->GetPartialPressure(PressureUnit::mmHg) + 0.02885)) * timestep_s; //Modify the relative diffusion coefficient
+        (1.0 / (5.404e-05 * vascular.GetSubstanceQuantity(*m_O2)->GetPartialPressure(PressureUnit::mmHg) + 0.02885)) * timestep_s; //Modify the relative diffusion coefficient
     }
     double DiffusedMass_ug = DiffusedVolume_mL * sub.GetDensity(MassPerVolumeUnit::ug_Per_mL);
 
     //Check to make sure we're not moving more than exists
-    if (DiffusedVolume_mL > 0)
+    if (SEScalar::IsZero(DiffusedVolume_mL, ZERO_APPROX))
+    {
+      DiffusedVolume_mL = 0.0;
+      DiffusedMass_ug = 0.0;
+    }
+    else if (DiffusedVolume_mL > 0)
     {
       //It's moving from pulmonary to vascular
       double pVolume_mL = pSubQ->GetVolume(VolumeUnit::mL);
@@ -1405,6 +1460,7 @@ namespace pulse
       {
         //Move all we can
         DiffusedVolume_mL = pVolume_mL;
+        DiffusedVolume_mL *= 0.99; //Prevent numerical issues
         DiffusedMass_ug = DiffusedVolume_mL * sub.GetDensity(MassPerVolumeUnit::ug_Per_mL);
       }
     }
@@ -1416,7 +1472,7 @@ namespace pulse
       {
         //Move all we can
         DiffusedMass_ug = -vMass_ug;
-        DiffusedMass_ug *= 0.99; /// \todo Why is this needed? It seems to prevent some sort of numerical issue.
+        DiffusedMass_ug *= 0.99; //Prevent numerical issues
         DiffusedVolume_mL = DiffusedMass_ug / sub.GetDensity(MassPerVolumeUnit::ug_Per_mL);
       }
     }
@@ -1426,10 +1482,6 @@ namespace pulse
     sub.GetDiffusingCapacity().IncrementValue(DiffusingCapacityO2_mL_Per_s_mmHg * sub.GetRelativeDiffusionCoefficient().GetValue(), VolumePerTimePressureUnit::mL_Per_s_mmHg);
 
     vSubQ->GetMass().IncrementValue(DiffusedMass_ug, MassUnit::ug);
-    if (std::abs(vSubQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
-    {
-      vSubQ->GetMass().SetValue(0.0, MassUnit::ug);
-    }
     vSubQ->Balance(BalanceLiquidBy::Mass);
   }
 

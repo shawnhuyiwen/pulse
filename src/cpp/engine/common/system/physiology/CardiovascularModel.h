@@ -144,9 +144,9 @@ namespace pulse
     double m_CardiacCycleRightHeartPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
     double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
     double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
-    double m_CardiacCyclePerfusionVolume_mL; // Total volume through the pulmonary capillaries for the current cardiac cycle
-    double m_LeftCardiacCyclePerfusionVolume_mL;
-    double m_RightCardiacCyclePerfusionVolume_mL;
+    //Needed for expanded pulmonary methodology
+    std::vector<double> m_LeftCardiacCyclePerfusionVolumes_mL;
+    std::vector<double> m_RightCardiacCyclePerfusionVolumes_mL;
 
     SERunningAverage* m_CardiacCycleArterialPressure_mmHg;
     SERunningAverage* m_CardiacCycleArterialCO2PartialPressure_mmHg;
@@ -156,6 +156,7 @@ namespace pulse
     SERunningAverage* m_CardiacCyclePulmonaryArteryPressure_mmHg;
     SERunningAverage* m_CardiacCycleCentralVenousPressure_mmHg;
     SERunningAverage* m_CardiacCycleSkinFlow_mL_Per_s;
+
 
     // Stateless member variable (Set in SetUp())
 
@@ -188,11 +189,6 @@ namespace pulse
     SEFluidCircuitNode*              m_RightPulmonaryVeinsNode;
 
     SEFluidCircuitPath*              m_VenaCavaCompliancePath;
-
-    SEFluidCircuitPath*              m_LeftPulmonaryArteriesToVeins;
-    SEFluidCircuitPath*              m_LeftPulmonaryArteriesToCapillaries;
-    SEFluidCircuitPath*              m_RightPulmonaryArteriesToVeins;
-    SEFluidCircuitPath*              m_RightPulmonaryArteriesToCapillaries;
 
     SEFluidCircuitPath*              m_BrainToVenaCava;
     SEFluidCircuitPath*              m_MyocardiumToVenaCava;
@@ -242,7 +238,6 @@ namespace pulse
     SEGasCompartment*                m_PleuralCavity;
     SEGasCompartment*                m_Ambient;
 
-    
     std::vector<SEFluidCircuitPath*> m_HeartCompliancePaths;
     std::vector<SEFluidCircuitPath*> m_AortaCompliancePaths;
     std::vector<SEFluidCircuitPath*> m_VenaCavaCompliancePaths;
@@ -251,5 +246,11 @@ namespace pulse
     std::vector<SEFluidCircuitPath*> m_SystemicResistancePaths;
     std::vector<SEFluidCircuitPath*> m_MuscleResistancePaths;
     std::vector<SEFluidCircuitPath*> m_SkinPaths;
+
+    //Needed for expanded pulmonary methodology
+    std::vector<SEFluidCircuitPath*> m_LeftPulmonaryArteriesToVeins;
+    std::vector<SEFluidCircuitPath*> m_LeftPulmonaryArteriesToCapillaries;
+    std::vector<SEFluidCircuitPath*> m_RightPulmonaryArteriesToVeins;
+    std::vector<SEFluidCircuitPath*> m_RightPulmonaryArteriesToCapillaries;
   };
 END_NAMESPACE

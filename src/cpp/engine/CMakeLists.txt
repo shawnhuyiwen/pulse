@@ -91,6 +91,7 @@ add_library_ex(PulseEngine
     common/controller/Controller.cpp
     common/controller/SetupCircuitsAndCompartments.cpp
     common/controller/SetupExpandedCardiovascular.cpp
+    common/controller/SetupExpandedRespiratory.cpp
     common/controller/SubstanceManager.cpp
     common/system/environment/EnvironmentModel.cpp
     common/system/equipment/AnesthesiaMachineModel.cpp

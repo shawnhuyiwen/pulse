@@ -41,7 +41,7 @@ namespace pulse
     m_Circuits->Clear();
     m_Compartments->Clear();
     m_Compartments->Setup();
-    if (GetConfiguration().UseExpandedVasculature() == eSwitch::On)
+    if (m_Config->UseExpandedVasculature() == eSwitch::On)
     {
       SetupExpandedCardiovascular();
       if(m_Config->IsRenalEnabled())
@@ -53,7 +53,10 @@ namespace pulse
     }
     else
     {
-      SetupCardiovascular();
+      if (m_Config->UseExpandedRespiratory() == eSwitch::On)
+        SetupExpandedPulmonaryCardiovascular();
+      else
+        SetupCardiovascular();
       if (m_Config->IsRenalEnabled())
         SetupRenal();
       if (m_Config->IsTissueEnabled())
@@ -105,7 +108,10 @@ namespace pulse
     m_EnvironmentModel->Clear();
     m_EnvironmentModel->Initialize();
 
-    SetupRespiratory();
+    if (m_Config->UseExpandedRespiratory() == eSwitch::On)
+      SetupExpandedPulmonaryRespiratory();
+    else
+      SetupRespiratory();
     SetupAnesthesiaMachine();
     SetupBagValveMask();
     SetupInhaler();
@@ -321,7 +327,7 @@ namespace pulse
     double VascularFlowTargetSplanchnic = 0.01 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetSpleen = 0.03 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetPortalVein = VascularFlowTargetLargeIntestine + VascularFlowTargetSmallIntestine + VascularFlowTargetSplanchnic + VascularFlowTargetSpleen;
-    double VascularFlowTargetLiver = (male ? 0.255 * cardiacOutputTarget_mL_Per_s : 0.27 * cardiacOutputTarget_mL_Per_s) -VascularFlowTargetPortalVein;
+    double VascularFlowTargetLiver = (male ? 0.255 * cardiacOutputTarget_mL_Per_s : 0.27 * cardiacOutputTarget_mL_Per_s) - VascularFlowTargetPortalVein;
 
     // Pressure targets derived from information available in \cite guyton2006medical and \cite van2013davis
     double VascularPressureTargetAorta = 1.0 * systolicPressureTarget_mmHg;
@@ -400,7 +406,7 @@ namespace pulse
     double ResistanceMyocardium = (systolicPressureTarget_mmHg - VascularPressureTargetMyocardium) / VascularFlowTargetMyocardium;
     double ResistanceMyocardiumVenous = (VascularPressureTargetMyocardium - VascularPressureTargetVenaCava) / VascularFlowTargetMyocardium;
     double ResistancePulmCapRight = (VascularPressureTargetPulmArtRight - VascularPressureTargetPulmCapRight) / VascularFlowTargetPulmCapRight;
-    double ResistancePulmVeinsRight =(VascularPressureTargetPulmCapRight - VascularPressureTargetPulmVeinsRight) / VascularFlowTargetPulmVeinsRight;
+    double ResistancePulmVeinsRight = (VascularPressureTargetPulmCapRight - VascularPressureTargetPulmVeinsRight) / VascularFlowTargetPulmVeinsRight;
     double ResistancePulmArt = (VascularPressureTargetHeartRight - VascularPressureTargetPulmArtLeft) / VascularFlowTargetPulmArtLeft;
     double ResistancePulmCapLeft = (VascularPressureTargetPulmArtLeft - VascularPressureTargetPulmCapLeft) / VascularFlowTargetPulmCapLeft;
     double ResistancePulmVeinsLeft = (VascularPressureTargetPulmCapLeft - VascularPressureTargetPulmVeinsLeft) / VascularFlowTargetPulmVeinsLeft;
@@ -412,7 +418,7 @@ namespace pulse
     double ResistanceSplanchnicVenous = (VascularPressureTargetSplanchnic - VascularPressureTargetLiver) / VascularFlowTargetSplanchnic;
     double ResistanceSpleen = (systolicPressureTarget_mmHg - VascularPressureTargetSpleen) / VascularFlowTargetSpleen;
     double ResistanceSpleenVenous = (VascularPressureTargetSpleen - VascularPressureTargetLiver) / VascularFlowTargetSpleen;
-    
+
     // Portal vein and shunt are just paths - only have resistance
     double ResistancePortalVein = 0.001; // The portal vein is just a pathway in Pulse. The pressure across this path does not represent portal vein pressure (if it did our patient would always be portal hypertensive)
     double ResistanceShuntRight = (VascularPressureTargetPulmArtRight - VascularPressureTargetPulmCapRight) / (cardiacOutputTarget_mL_Per_s * pulmonaryShuntFractionFactor);
@@ -819,7 +825,7 @@ namespace pulse
         p->GetComplianceBaseline().SetValue(volume / pressure, VolumePerPressureUnit::mL_Per_mmHg);
       }
     }
-    
+
     // Hearts and pericardium have special compliance computations
     double InitialComplianceHeartRight = 1.0 / 0.0243;
     double InitialComplianceHeartLeft = 1.0 / 0.049;
@@ -2988,6 +2994,7 @@ namespace pulse
     SEFluidCircuitNode& Carina = cRespiratory.CreateNode(pulse::RespiratoryNode::Carina);
     Carina.GetPressure().Set(Ambient.GetNextPressure());
     Carina.GetVolumeBaseline().SetValue(0.05 * functionalResidualCapacity_L / 2.4, VolumeUnit::L); //Trachea Volume
+
     // Right Anatomic Dead Space
     SEFluidCircuitNode& RightAnatomicDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAnatomicDeadSpace);
     RightAnatomicDeadSpace.GetPressure().Set(Ambient.GetNextPressure());
@@ -3182,6 +3189,21 @@ namespace pulse
     SEGasCompartment& pPleuralCavity = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::PleuralCavity);
     pPleuralCavity.AddChild(pLeftPleuralCavity);
     pPleuralCavity.AddChild(pRightPleuralCavity);
+
+    // Set up other groupings
+    SEGasCompartment& pAlveoli = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::Alveoli);
+    pAlveoli.AddChild(pLeftAlveoli);
+    pAlveoli.AddChild(pRightAlveoli);
+    SEGasCompartment& pAlveolarDeadSpace = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::AlveolarDeadSpace);
+    pAlveolarDeadSpace.AddChild(pLeftAlveolarDeadSpace);
+    pAlveolarDeadSpace.AddChild(pRightAlveolarDeadSpace);
+    SEGasCompartment& pAnatomicDeadSpace = m_Compartments->CreateGasCompartment(pulse::PulmonaryCompartment::AnatomicDeadSpace);
+    /// \TODO: Add these to the dead space, and make sure to account for it in node volume
+    //pAnatomicDeadSpace.AddChild(pAirway);
+    //pAnatomicDeadSpace.AddChild(pPharynx);
+    //pAnatomicDeadSpace.AddChild(pCarina);
+    pAnatomicDeadSpace.AddChild(pLeftAnatomicDeadSpace);
+    pAnatomicDeadSpace.AddChild(pRightAnatomicDeadSpace);
 
     // Setup Links //
     SEGasCompartment* gEnvironment = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
