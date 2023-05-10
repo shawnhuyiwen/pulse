@@ -1,9 +1,11 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import numpy as np
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from enum import Enum
+from typing import Optional
 from pulse.cdm.scalars import SEScalarTime, SEScalarUnit
 
 class eSerializationFormat(Enum):
@@ -550,16 +552,21 @@ class SEDataRequested: # TODO follow CDM get/set pattern?
 
 
 class SEDataRequestManager:
-    __slots__ = ["_results_filename", "_samples_per_second", "_data_requests"]
+    __slots__ = ["_results_filename", "_samples_per_second", "_data_requests", "_validation_targets"]
 
-    def __init__(self, data_requests=None):
+    def __init__(self, data_requests=[], validation_targets=[]):
         self._data_requests = data_requests
+        self._validation_targets = validation_targets
         self._results_filename = ""
         self._samples_per_second = 0
 
     def has_data_requests(self): return len(self._data_requests)
     def get_data_requests(self): return self._data_requests
     def set_data_requests(self, requests): self._data_requests = requests
+
+    def has_validation_targets(self): return len(self._validation_targets)
+    def get_validation_targets(self): return self._validation_targets
+    def set_validation_targets(self, targets): self._validation_targets = targets
 
     def has_results_filename(self): return self._results_filename is not None
     def get_results_filename(self): return self._results_filename
@@ -588,6 +595,82 @@ class SEEngineInitialization():
         self.log_to_console = False
         self.keep_event_changes = False
         self.keep_log_messages = False
+
+
+class eValidationTargetType(Enum):
+    Mean = 0
+    Min = 1
+    Max = 2
+    Value = 3
+
+
+class SEValidationTarget(SEDataRequest):
+    __slots__ = ["_type", "_range_min", "_range_max"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._type = eValidationTargetType.Mean
+        self._range_min = np.nan
+        self._range_max = np.nan
+
+    def __repr__(self):
+        return f'SEValidationTarget({super().__repr__()}, {self._type}, {self._range_min}, {self._range_max})'
+
+    def __str__(self):
+        return f'SEValidationTarget:\n\tData Request: {super().to_string()}\n\tType: {self._type}' \
+                f'\n\tRange: [{_self.range_min}, {_self.range_max}]'
+
+    def clear(self):
+        super().clear()
+        self.type = eValidationTargetType.Mean
+        self.range_min = np.nan
+        self.range_max = np.nan
+
+    def has_type(self):
+        return self._type is not None
+    def get_type(self):
+        return self._type
+    def set_type(self, t: eValidationTargetType):
+        self._type = t
+    def has_range_min(self):
+        return self._range_min is not None
+    def get_range_min(self):
+        return self._range_min
+    def set_range_min(self, min: float):
+        self._range_min = min
+    def has_range_max(self):
+        return self._range_max is not None
+    def get_range_max(self):
+        return self._range_max
+    def set_range_max(self, max: float):
+        self._range_max = max
+
+
+    @classmethod
+    def create_liquid_compartment_validation_target(cls, compartment: str, property: str, unit: Optional[SEScalarUnit]=None):
+        return cls(
+            category=eDataRequest_category.LiquidCompartment,
+            property=property,
+            compartment=compartment,
+            unit=unit,
+        )
+
+    @classmethod
+    def create_liquid_compartment_substance_validation_target(
+        cls,
+        compartment: str,
+        substance: str,
+        property: str,
+        unit: Optional[SEScalarUnit]=None
+    ):
+        return cls(
+            category=eDataRequest_category.LiquidCompartment,
+            property=property,
+            compartment=compartment,
+            substance=substance,
+            unit=unit,
+        )
+
 
 class ILoggerForward():
     def __init__(self):

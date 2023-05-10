@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEDataRequested, \
-                             SEConditionManager, SEEngineInitialization
+                             SEConditionManager, SEEngineInitialization, SEValidationTarget
 from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       ActionListData, ActionMapData, \
                                       AnyConditionData, ConditionListData, \
@@ -10,7 +10,7 @@ from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       DataRequestData, DataRequestManagerData, \
                                       DataRequestedData, DataRequestedListData, \
                                       EngineInitializationData, EngineInitializationListData, \
-                                      LogMessagesData
+                                      LogMessagesData, ValidationTargetData
 from pulse.cdm.bind.Events_pb2 import ActiveEventListData, EventChangeListData
 
 from pulse.cdm.patient import SEPatientConfiguration
@@ -411,6 +411,11 @@ def serialize_data_request_to_bind(src: SEDataRequest, dst: DataRequestData):
 def serialize_data_request_from_bind(src: DataRequestData, dst: SEDataRequest):
     raise Exception("serialize_data_request_from_bind not implemented")
 
+def serialize_data_request_manager_to_file(src: SEDataRequestManager, filename: str):
+    string = serialize_data_request_manager_to_string(src, eSerializationFormat.JSON)
+    file = open(filename, "w")
+    n = file.write(string)
+    file.close()
 def serialize_data_request_manager_to_string(src: SEDataRequestManager, fmt: eSerializationFormat):
     dst = DataRequestManagerData()
     serialize_data_request_manager_to_bind(src, dst)
@@ -427,6 +432,11 @@ def serialize_data_request_manager_to_bind(src: SEDataRequestManager, dst: DataR
             dst_dr = DataRequestData()
             serialize_data_request_to_bind(dr, dst_dr)
             dst.DataRequest.append(dst_dr)
+    if src.has_validation_targets():
+        for vt in src.get_validation_targets():
+            dst_vt = ValidationTargetData()
+            serialize_validation_target_to_bind(vt, dst_vt)
+            dst.ValidationTarget.append(dst_vt)
     dst.ResultsFilename = src.get_results_filename()
 
 def serialize_data_request_manager_from_bind(src: DataRequestManagerData, dst: SEDataRequestManager):
@@ -477,3 +487,15 @@ def serialize_data_requested_list_from_string(src: str, dst: [SEDataRequested], 
         if e is None:
             raise Exception(str(id)+" not found in destination pool")
         serialize_data_requested_result_from_bind(result, e)
+
+# Validation Targets
+def serialize_validation_target_to_bind(src: SEValidationTarget, dst: ValidationTargetData):
+    serialize_data_request_to_bind(src, dst.DataRequest)
+    if src.has_type():
+        dst.Type = src.get_type().value
+    if src.has_range_min():
+        dst.RangeMin = src.get_range_min()
+    if src.has_range_max():
+        dst.RangeMax = src.get_range_max()
+def serialize_validation_target_from_bind(src: ValidationTargetData, dst: SEValidationTarget):
+    raise Exception("serialize_validation_target_from_bind not implemented")
