@@ -130,11 +130,11 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEHemothorax.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEIntubation.cs
-  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SELobarPneumoniaExacerbation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEMechanicalVentilation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SENeedleDecompression.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEPatientAction.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEPericardialEffusion.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEPneumoniaExacerbation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEPulmonaryShuntExacerbation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SERespiratoryFatigue.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SERespiratoryMechanicsConfiguration.cs
@@ -159,8 +159,8 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEChronicRenalStenosis.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEImpairedAlveolarExchange.cs
-  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SELobarPneumonia.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEPatientCondition.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEPneumonia.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEPulmonaryFibrosis.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEPulmonaryShunt.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SESepsis.cs

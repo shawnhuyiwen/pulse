@@ -29,10 +29,10 @@
 #include "cdm/patient/actions/SEHemorrhage.h"
 #include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
-#include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
 #include "cdm/patient/actions/SEMechanicalVentilation.h"
 #include "cdm/patient/actions/SENeedleDecompression.h"
 #include "cdm/patient/actions/SEPatientAssessmentRequest.h"
+#include "cdm/patient/actions/SEPneumoniaExacerbation.h"
 #include "cdm/patient/actions/SEPericardialEffusion.h"
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
@@ -122,9 +122,8 @@ void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
   /////////////////////
 
   SEAcuteRespiratoryDistressSyndromeExacerbation ards;
-  ards.GetSeverity().SetValue(0.5);
-  ards.GetLeftLungAffected().SetValue(0.3);
-  ards.GetRightLungAffected().SetValue(0.2);
+  ards.GetSeverity(eLungCompartment::LeftLung).SetValue(0.3);
+  ards.GetSeverity(eLungCompartment::RightLung).SetValue(0.2);
   TestAction<SEAcuteRespiratoryDistressSyndromeExacerbation>(testSuite.CreateTestCase(), subMgr, ards, "-Severity--LeftLungAffected-RightLungAffected");
 
   SEAcuteStress as;
@@ -188,7 +187,8 @@ void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
   copd.GetBronchitisSeverity().SetValue(0.4);
   TestAction<SEChronicObstructivePulmonaryDiseaseExacerbation>(testSuite.CreateTestCase(), subMgr, copd, "-BronchitisSeverity");
   copd.GetBronchitisSeverity().Invalidate();
-  copd.GetEmphysemaSeverity().SetValue(0.3);
+  copd.GetEmphysemaSeverity(eLungCompartment::LeftLung).SetValue(0.3);
+  copd.GetEmphysemaSeverity(eLungCompartment::RightLung).SetValue(0.3);
   TestAction<SEChronicObstructivePulmonaryDiseaseExacerbation>(testSuite.CreateTestCase(), subMgr, copd, "-EmphysemaSeverity");
 
   SEConsciousRespiration cr;
@@ -251,11 +251,10 @@ void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
   intub.SetType(eIntubation_Type::Esophageal);
   TestAction<SEIntubation>(testSuite.CreateTestCase(), subMgr, intub, "-Severity-AirwayResistance-Type");
 
-  SELobarPneumoniaExacerbation lpe;
-  lpe.GetSeverity().SetValue(0.3);
-  lpe.GetLeftLungAffected().SetValue(0.7);
-  lpe.GetRightLungAffected().SetValue(0.2);
-  TestAction<SELobarPneumoniaExacerbation>(testSuite.CreateTestCase(), subMgr, lpe, "-Severity-LeftLungAffected-RightLungAffected");
+  SEPneumoniaExacerbation lpe;
+  lpe.GetSeverity(eLungCompartment::LeftLung).SetValue(0.3);
+  lpe.GetSeverity(eLungCompartment::LeftLung).SetValue(0.3);
+  TestAction<SEPneumoniaExacerbation>(testSuite.CreateTestCase(), subMgr, lpe, "-Severity-LeftLungAffected-RightLungAffected");
 
   SEMechanicalVentilation mv;
   mv.SetState(eSwitch::On);

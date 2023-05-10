@@ -2,25 +2,28 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "cdm/patient/conditions/SEPatientCondition.h"
+#include "cdm/patient/actions/SEPatientAction.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
 
-class CDM_DECL SEAcuteRespiratoryDistressSyndrome : public SEPatientCondition
+class CDM_DECL SEPneumoniaExacerbation : public SEPatientAction
 {
-  friend class PBPatientCondition;//friend the serialization class
+  friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEAcuteRespiratoryDistressSyndrome(Logger* logger=nullptr);
-  virtual ~SEAcuteRespiratoryDistressSyndrome();
+  SEPneumoniaExacerbation(Logger* logger=nullptr);
+  virtual ~SEPneumoniaExacerbation();
 
-  static constexpr char const* Name = "Acute Respiratory Distress Syndrome";
+  static constexpr char const* Name = "Pneumonia Exacerbation";
   virtual std::string GetName() const { return Name; }
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEAcuteRespiratoryDistressSyndrome& src);
+  virtual void Copy(const SEPneumoniaExacerbation& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual bool HasSeverity() const;
   virtual LungImpairmentMap& GetSeverities();

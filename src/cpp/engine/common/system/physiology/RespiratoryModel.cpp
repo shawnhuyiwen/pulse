@@ -9,8 +9,8 @@
    // Conditions 
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "cdm/patient/conditions/SELobarPneumonia.h"
 #include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
+#include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/patient/conditions/SEPulmonaryFibrosis.h"
 #include "cdm/patient/conditions/SEPulmonaryShunt.h"
 #include "cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
@@ -33,9 +33,9 @@
 #include "cdm/patient/actions/SEUseInhaler.h"
 #include "cdm/patient/actions/SEDyspnea.h"
 #include "cdm/patient/actions/SEIntubation.h"
-#include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
 #include "cdm/patient/actions/SEMechanicalVentilation.h"
 #include "cdm/patient/actions/SENeedleDecompression.h"
+#include "cdm/patient/actions/SEPneumoniaExacerbation.h"
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
 #include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
@@ -3019,15 +3019,13 @@ namespace pulse
       double rightLungFraction = 0.0;
       if (m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
       {
-        severity = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity().GetValue();
-        leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetRightLungAffected().GetValue();
+        leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       double alveolarDeadSpace_L = 0.0;
@@ -3061,12 +3059,14 @@ namespace pulse
       if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
       {
         bronchitisSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetBronchitisSeverity().GetValue();
-        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
         bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
-        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       double combinedSeverity = 0.0;
@@ -3495,7 +3495,7 @@ namespace pulse
     //------------------------------------------------------------------------------------------------------
     //Restrictive - No change
     //ARDS
-    //LobarPneumonia
+    //Pneumonia
 
     //------------------------------------------------------------------------------------------------------
     // Make sure things don't go crazy
@@ -3590,11 +3590,13 @@ namespace pulse
       double emphysemaSeverity = 0.0;
       if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
       {
-        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       double complianceScalingFactor = GeneralMath::ExponentialGrowthFunction(10, 1.0, 1.15, emphysemaSeverity);
@@ -3609,25 +3611,23 @@ namespace pulse
     double rightRestrictiveComplianceScalingFactor = 1.0;
 
     //------------------------------------------------------------------------------------------------------
-    //Lobar Pneumonia
+    //Pneumonia
     //Exacerbation will overwrite the condition, even if it means improvement
-    if (m_data.GetConditions().HasLobarPneumonia() || m_PatientActions->HasLobarPneumoniaExacerbation())
+    if (m_data.GetConditions().HasPneumonia() || m_PatientActions->HasPneumoniaExacerbation())
     {
       double severity = 0.0;
       double leftLungFraction = 0.0;
       double rightLungFraction = 0.0;
-      if (m_PatientActions->HasLobarPneumoniaExacerbation())
+      if (m_PatientActions->HasPneumoniaExacerbation())
       {
-        SELobarPneumoniaExacerbation& lpe = m_PatientActions->GetLobarPneumoniaExacerbation();
-        severity = lpe.GetSeverity().GetValue();
-        leftLungFraction = lpe.GetLeftLungAffected().GetValue();
-        rightLungFraction = lpe.GetRightLungAffected().GetValue();
+        SEPneumoniaExacerbation& lpe = m_PatientActions->GetPneumoniaExacerbation();
+        leftLungFraction = lpe.GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = lpe.GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetLobarPneumonia().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetLobarPneumonia().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       
       double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.32, 1.0, severity);
@@ -3660,15 +3660,13 @@ namespace pulse
       if (m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
       {
         SEAcuteRespiratoryDistressSyndromeExacerbation& ardse = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation();
-        severity = ardse.GetSeverity().GetValue();
-        leftLungFraction = ardse.GetLeftLungAffected().GetValue();
-        rightLungFraction = ardse.GetRightLungAffected().GetValue();
+        leftLungFraction = ardse.GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = ardse.GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.32, 1.0, severity);
@@ -3724,12 +3722,14 @@ namespace pulse
       if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
       {
         bronchitisSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetBronchitisSeverity().GetValue();
-        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
         bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
-        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       combinedObstructiveSeverity = MAX(combinedObstructiveSeverity, emphysemaSeverity);
@@ -3740,24 +3740,22 @@ namespace pulse
     //Restrictive = Increase
 
     //------------------------------------------------------------------------------------------------------
-    //LobarPneumonia
+    //Pneumonia
     //Exacerbation will overwrite the condition, even if it means improvement
-    if (m_data.GetConditions().HasLobarPneumonia() || m_PatientActions->HasLobarPneumoniaExacerbation())
+    if (m_data.GetConditions().HasPneumonia() || m_PatientActions->HasPneumoniaExacerbation())
     {
       double severity = 0.0;
       double leftLungFraction = 0.0;
       double rightLungFraction = 0.0;
-      if (m_PatientActions->HasLobarPneumoniaExacerbation())
+      if (m_PatientActions->HasPneumoniaExacerbation())
       {
-        severity = m_PatientActions->GetLobarPneumoniaExacerbation().GetSeverity().GetValue();
-        leftLungFraction = m_PatientActions->GetLobarPneumoniaExacerbation().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_PatientActions->GetLobarPneumoniaExacerbation().GetRightLungAffected().GetValue();
+        leftLungFraction = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetLobarPneumonia().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetLobarPneumonia().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       // Get the right and left lung ratios
@@ -3788,15 +3786,13 @@ namespace pulse
       double rightLungFraction = 0.0;
       if (m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
       {
-        severity = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity().GetValue();
-        leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetRightLungAffected().GetValue();
+        leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       // Get the right and left lung ratios
@@ -3939,11 +3935,13 @@ namespace pulse
       double emphysemaSeverity = 0.0;
       if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
       {
-        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, emphysemaSeverity);
@@ -3956,24 +3954,22 @@ namespace pulse
     }
 
     //------------------------------------------------------------------------------------------------------
-    //LobarPneumonia
+    //Pneumonia
     //Exacerbation will overwrite the condition, even if it means improvement
-    if (m_data.GetConditions().HasLobarPneumonia() || m_PatientActions->HasLobarPneumoniaExacerbation())
+    if (m_data.GetConditions().HasPneumonia() || m_PatientActions->HasPneumoniaExacerbation())
     {
       double severity = 0.0;
       double leftLungFraction = 0.0;
       double rightLungFraction = 0.0;
-      if (m_PatientActions->HasLobarPneumoniaExacerbation())
+      if (m_PatientActions->HasPneumoniaExacerbation())
       {
-        severity = m_PatientActions->GetLobarPneumoniaExacerbation().GetSeverity().GetValue();
-        leftLungFraction = m_PatientActions->GetLobarPneumoniaExacerbation().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_PatientActions->GetLobarPneumoniaExacerbation().GetRightLungAffected().GetValue();
+        leftLungFraction = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetLobarPneumonia().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetLobarPneumonia().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
@@ -4012,15 +4008,13 @@ namespace pulse
       double rightLungFraction = 0.0;
       if (m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
       {
-        severity = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity().GetValue();
-        leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetRightLungAffected().GetValue();
+        leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
@@ -4105,12 +4099,14 @@ namespace pulse
       if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
       {
         bronchitisSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetBronchitisSeverity().GetValue();
-        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
         bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
-        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       // Calculate Pulmonary Capillary Resistance Multiplier based on severities
@@ -4196,24 +4192,22 @@ namespace pulse
     }
 
     //------------------------------------------------------------------------------------------------------
-    //LobarPneumonia
+    //Pneumonia
     //Exacerbation will overwrite the condition, even if it means improvement
-    if (m_data.GetConditions().HasLobarPneumonia() || m_PatientActions->HasLobarPneumoniaExacerbation())
+    if (m_data.GetConditions().HasPneumonia() || m_PatientActions->HasPneumoniaExacerbation())
     {
       double severity = 0.0;
       double leftLungFraction = 0.0;
       double rightLungFraction = 0.0;
-      if (m_PatientActions->HasLobarPneumoniaExacerbation())
+      if (m_PatientActions->HasPneumoniaExacerbation())
       {
-        severity = m_PatientActions->GetLobarPneumoniaExacerbation().GetSeverity().GetValue();
-        leftLungFraction = m_PatientActions->GetLobarPneumoniaExacerbation().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_PatientActions->GetLobarPneumoniaExacerbation().GetRightLungAffected().GetValue();
+        leftLungFraction = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetLobarPneumonia().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetLobarPneumonia().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       double rightScaledSeverity = severity * rightLungFraction;
@@ -4233,15 +4227,13 @@ namespace pulse
       double rightLungFraction = 0.0;
       if (m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
       {
-        severity = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity().GetValue();
-        leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetRightLungAffected().GetValue();
+        leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       double rightScaledSeverity = severity * rightLungFraction;
@@ -4355,12 +4347,14 @@ namespace pulse
       if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
       {
         bronchitisSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetBronchitisSeverity().GetValue();
-        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
         bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
-        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::LeftLung).GetValue();
+        emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       double combinedSeverity = 0.0;
@@ -4373,24 +4367,22 @@ namespace pulse
     }
 
     //------------------------------------------------------------------------------------------------------
-    //LobarPneumonia
+    //Pneumonia
     //Exacerbation will overwrite the condition, even if it means improvement
-    if (m_data.GetConditions().HasLobarPneumonia() || m_PatientActions->HasLobarPneumoniaExacerbation())
+    if (m_data.GetConditions().HasPneumonia() || m_PatientActions->HasPneumoniaExacerbation())
     {
       double severity = 0.0;
       double leftLungFraction = 0.0;
       double rightLungFraction = 0.0;
-      if (m_PatientActions->HasLobarPneumoniaExacerbation())
+      if (m_PatientActions->HasPneumoniaExacerbation())
       {
-        severity = m_PatientActions->GetLobarPneumoniaExacerbation().GetSeverity().GetValue();
-        leftLungFraction = m_PatientActions->GetLobarPneumoniaExacerbation().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_PatientActions->GetLobarPneumoniaExacerbation().GetRightLungAffected().GetValue();
+        leftLungFraction = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetLobarPneumonia().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetLobarPneumonia().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       // Get the right and left lung ratios
@@ -4427,15 +4419,13 @@ namespace pulse
       double rightLungFraction = 0.0;
       if (m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
       {
-        severity = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity().GetValue();
-        leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetRightLungAffected().GetValue();
+        leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
       else
       {
-        severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
-        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
-        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
+        leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::LeftLung).GetValue();
+        rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment::RightLung).GetValue();
       }
 
       // Get the right and left lung ratios

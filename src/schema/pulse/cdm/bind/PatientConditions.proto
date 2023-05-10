@@ -4,9 +4,10 @@ option java_package = "com.kitware.pulse.cdm.bind";
 option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
-import "pulse/cdm/bind/Properties.proto";
-import "pulse/cdm/bind/PatientNutrition.proto";
 import "pulse/cdm/bind/Conditions.proto";
+import "pulse/cdm/bind/PatientNutrition.proto";
+import "pulse/cdm/bind/Physiology.proto";
+import "pulse/cdm/bind/Properties.proto";
 
 message AnyPatientConditionData
 {
@@ -21,7 +22,7 @@ message AnyPatientConditionData
     ChronicVentricularSystolicDysfunctionData ChronicVentricularSystolicDysfunction = 6;
     ConsumeMealData                           ConsumeMeal                           = 7;
     ImpairedAlveolarExchangeData              ImpairedAlveolarExchange              = 8;
-    LobarPneumoniaData                        LobarPneumonia                        = 9;
+    PneumoniaData                             Pneumonia                             = 9;
     PulmonaryFibrosisData                     PulmonaryFibrosis                     = 10;
     PulmonaryShuntData                        PulmonaryShunt                        = 11;
     SepsisData                                Sepsis                                = 12;
@@ -37,9 +38,7 @@ message PatientConditionData
 message AcuteRespiratoryDistressSyndromeData
 {
   PatientConditionData                        PatientCondition                      = 1;
-  Scalar0To1Data                              Severity                              = 2;/**<< @brief Scale of affect, 0 being none, 1 being the highest possible. */
-  Scalar0To1Data                              LeftLungAffected                      = 3;/**<< @brief Fraction of the Left Lung Affected*/
-  Scalar0To1Data                              RightLungAffected                     = 4;/**<< @brief Fraction of the Right Lung Affected */
+  repeated LungImpairmentData                 Severity                              = 2;/**<<@brief A list of impairment severities for the lung compartments*/
 }
 
 /** @brief Condition characterized by reduced red blood cells, which leads to reduced oxygen carrying capacity. Implemented by reducing the amount of hemoglobin in the blood. */
@@ -60,7 +59,7 @@ message ChronicObstructivePulmonaryDiseaseData
 {
   PatientConditionData                        PatientCondition                      = 1;
   Scalar0To1Data                              BronchitisSeverity                    = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
-  Scalar0To1Data                              EmphysemaSeverity                     = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  repeated LungImpairmentData                 EmphysemaSeverity                     = 3;/**<<@brief A list of impairment severities for the lung compartments*/
 }
 
 /** @brief Pericardial effusion ("fluid around the heart") is an abnormal accumulation of fluid in the pericardial cavity. Because of the limited amount of space in the pericardial cavity, fluid accumulation leads to an increased intrapericardial pressure which can negatively affect heart function. A pericardial effusion with enough pressure to adversely affect heart function is called cardiac tamponade. Pericardial effusion usually results from a disturbed equilibrium between the production andre-absorption of pericardial fluid, or from a structural abnormality that allows fluid to enter the pericardial cavity. Normal levels of pericardial fluid are from 15 to 50 mL. */
@@ -101,13 +100,11 @@ message ImpairedAlveolarExchangeData
   }
 }
 
-/** @brief Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lungs. As fluid fills portions of the lung it becomes more difficult to breath and the gas diffusion surface area in the alveoli is reduced. */
-message LobarPneumoniaData
+/** @brief pneumonia is a form of pneumonia that affects one or more lobes of the lungs. As fluid fills portions of the lung it becomes more difficult to breath and the gas diffusion surface area in the alveoli is reduced. */
+message PneumoniaData
 {
   PatientConditionData                        PatientCondition                      = 1;
-  Scalar0To1Data                              Severity                              = 2;/**<< @brief Scale of affect, 0 being none, 1 being the highest possible. */
-  Scalar0To1Data                              LeftLungAffected                      = 3;/**<< @brief Fraction of the Left Lung Affected*/
-  Scalar0To1Data                              RightLungAffected                     = 4;/**<< @brief Fraction of the Right Lung Affected */
+  repeated LungImpairmentData                 Severity                              = 2;/**<<@brief A list of impairment severities for the lung compartments*/
 }
 
 /** @brief Pulmonary Fibrosis is a restrictive lung disease that results in increase in the connective tissue of the lung. This reduces the lung compliance making it difficult to expand the lung during inspiration. */

@@ -3,6 +3,7 @@
 
 #pragma once
 #include "cdm/patient/actions/SEPatientAction.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
 
 class CDM_DECL SEChronicObstructivePulmonaryDiseaseExacerbation : public SEPatientAction
 {
@@ -18,6 +19,8 @@ public:
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, bool /*preserveState*/=false);
 
+  virtual const SEScalar* GetScalar(const std::string& name);
+
   virtual bool IsValid() const;
   virtual bool IsActive() const;
   virtual void Deactivate();
@@ -27,12 +30,13 @@ public:
   virtual double GetBronchitisSeverity() const;
 
   virtual bool HasEmphysemaSeverity() const;
-  virtual SEScalar0To1& GetEmphysemaSeverity();
-  virtual double GetEmphysemaSeverity() const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
+  virtual LungImpairmentMap& GetEmphysemaSeverities();
+  virtual const LungImpairmentMap& GetEmphysemaSeverities() const;
+  virtual bool HasEmphysemaSeverity(eLungCompartment cmpt) const;
+  virtual SEScalar0To1& GetEmphysemaSeverity(eLungCompartment cmpt);
+  virtual const SEScalar0To1* GetEmphysemaSeverity(eLungCompartment cmpt) const;
 
 protected:
-  SEScalar0To1*     m_BronchitisSeverity;
-  SEScalar0To1*     m_EmphysemaSeverity;
+  SEScalar0To1* m_BronchitisSeverity;
+  LungImpairmentMap m_EmphysemaSeverities;
 };

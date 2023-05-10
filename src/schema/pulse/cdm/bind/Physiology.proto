@@ -289,6 +289,24 @@ message RespiratoryMechanicsData
   ScalarTimeData                      ResidueTime                                    = 20;/**<< @brief Spontaneous breathing remaining time at 0 pressure after completed waveform.*/
 }
 
+
+enum eLungCompartment
+{
+  LeftLung          = 0;
+  RightLung         = 1;
+  
+  LeftSuperiorLobe  = 2;
+  LeftInferiorLobe  = 3;
+  RightSuperiorLobe = 4;
+  RightMiddleLobe   = 5;
+  RightInferiorLobe = 6;
+}
+message LungImpairmentData
+{
+  eLungCompartment Compartment = 1;
+  Scalar0To1Data   Severity    = 2;
+}
+
 /**@brief Provides ventilation and gas exchange of the human respiratory system.
    @details Supports changes in the lungs volume and pressure data during the flow
    and transfer of gases between the lungs, the blood and the outside environment.*/

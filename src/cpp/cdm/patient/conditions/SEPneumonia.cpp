@@ -2,22 +2,22 @@
    See accompanying NOTICE file for details.*/
 
 #include "cdm/CommonDefs.h"
-#include "cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
+#include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/io/protobuf/PBPatientConditions.h"
 
-SEAcuteRespiratoryDistressSyndrome::SEAcuteRespiratoryDistressSyndrome(Logger* logger) : SEPatientCondition(logger)
+SEPneumonia::SEPneumonia(Logger* logger) : SEPatientCondition(logger)
 {
 
 }
 
-SEAcuteRespiratoryDistressSyndrome::~SEAcuteRespiratoryDistressSyndrome()
+SEPneumonia::~SEPneumonia()
 {
   Clear();
   DELETE_MAP_SECOND(m_Severities);
 }
 
-void SEAcuteRespiratoryDistressSyndrome::Clear()
+void SEPneumonia::Clear()
 {
   SEPatientCondition::Clear();
   for (auto itr : m_Severities)
@@ -25,16 +25,17 @@ void SEAcuteRespiratoryDistressSyndrome::Clear()
       itr.second->SetValue(0);
 }
 
-void SEAcuteRespiratoryDistressSyndrome::Copy(const SEAcuteRespiratoryDistressSyndrome& src)
+void SEPneumonia::Copy(const SEPneumonia& src)
 {
   PBPatientCondition::Copy(src, *this);
 }
 
-bool SEAcuteRespiratoryDistressSyndrome::IsValid() const
+bool SEPneumonia::IsValid() const
 {
   return HasSeverity();
 }
-bool SEAcuteRespiratoryDistressSyndrome::IsActive() const
+
+bool SEPneumonia::IsActive() const
 {
   if (!IsValid())
     return false;
@@ -43,23 +44,23 @@ bool SEAcuteRespiratoryDistressSyndrome::IsActive() const
   return true;
 }
 
-bool SEAcuteRespiratoryDistressSyndrome::HasSeverity() const
+bool SEPneumonia::HasSeverity() const
 {
   for (auto itr : m_Severities)
     if (itr.second != nullptr && itr.second->IsPositive())
       return true;
   return false;
 }
-LungImpairmentMap& SEAcuteRespiratoryDistressSyndrome::GetSeverities()
+LungImpairmentMap& SEPneumonia::GetSeverities()
 {
   return m_Severities;
 }
-const LungImpairmentMap& SEAcuteRespiratoryDistressSyndrome::GetSeverities() const
+const LungImpairmentMap& SEPneumonia::GetSeverities() const
 {
   return m_Severities;
 }
 
-bool SEAcuteRespiratoryDistressSyndrome::HasSeverity(eLungCompartment cmpt) const
+bool SEPneumonia::HasSeverity(eLungCompartment cmpt) const
 {
   auto s = m_Severities.find(cmpt);
   if (s == m_Severities.end())
@@ -68,7 +69,7 @@ bool SEAcuteRespiratoryDistressSyndrome::HasSeverity(eLungCompartment cmpt) cons
     return false;
   return s->second->IsValid();
 }
-SEScalar0To1& SEAcuteRespiratoryDistressSyndrome::GetSeverity(eLungCompartment cmpt)
+SEScalar0To1& SEPneumonia::GetSeverity(eLungCompartment cmpt)
 {
   SEScalar0To1* s = m_Severities[cmpt];
   if (s == nullptr)
@@ -79,7 +80,7 @@ SEScalar0To1& SEAcuteRespiratoryDistressSyndrome::GetSeverity(eLungCompartment c
   }
   return *s;
 }
-const SEScalar0To1* SEAcuteRespiratoryDistressSyndrome::GetSeverity(eLungCompartment cmpt) const
+const SEScalar0To1* SEPneumonia::GetSeverity(eLungCompartment cmpt) const
 {
   auto s = m_Severities.find(cmpt);
   if (s == m_Severities.end())

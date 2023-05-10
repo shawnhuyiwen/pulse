@@ -3,6 +3,7 @@
 
 #pragma once
 #include "cdm/patient/conditions/SEPatientCondition.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
 
 class CDM_DECL SEChronicObstructivePulmonaryDisease : public SEPatientCondition
 {
@@ -26,10 +27,13 @@ public:
   virtual double GetBronchitisSeverity() const;
 
   virtual bool HasEmphysemaSeverity() const;
-  virtual SEScalar0To1& GetEmphysemaSeverity();
-  virtual double GetEmphysemaSeverity() const;
+  virtual LungImpairmentMap& GetEmphysemaSeverities();
+  virtual const LungImpairmentMap& GetEmphysemaSeverities() const;
+  virtual bool HasEmphysemaSeverity(eLungCompartment cmpt) const;
+  virtual SEScalar0To1& GetEmphysemaSeverity(eLungCompartment cmpt);
+  virtual const SEScalar0To1* GetEmphysemaSeverity(eLungCompartment cmpt) const;
 
 protected:
   SEScalar0To1*     m_BronchitisSeverity;
-  SEScalar0To1*     m_EmphysemaSeverity;
+  LungImpairmentMap m_EmphysemaSeverities;
 };

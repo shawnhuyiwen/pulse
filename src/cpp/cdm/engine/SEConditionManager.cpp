@@ -12,7 +12,7 @@
 #include "cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.h"
 #include "cdm/patient/conditions/SEConsumeMeal.h"
 #include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
-#include "cdm/patient/conditions/SELobarPneumonia.h"
+#include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/patient/conditions/SEPulmonaryFibrosis.h"
 #include "cdm/patient/conditions/SEPulmonaryShunt.h"
 #include "cdm/patient/conditions/SESepsis.h"
@@ -30,8 +30,8 @@ SEConditionManager::SEConditionManager(Logger* logger) : Loggable(logger)
   m_ChronicVentricularSystolicDysfunction = nullptr;
   m_RenalStenosis = nullptr;
   m_ConsumeMeal = nullptr;
-  m_LobarPneumonia = nullptr;
   m_PericardialEffusion = nullptr;
+  m_Pneumonia = nullptr;
   m_PulmonaryFibrosis = nullptr;
   m_PulmonaryShunt = nullptr;
   m_ImpairedAlveolarExchange = nullptr;
@@ -47,7 +47,7 @@ SEConditionManager::~SEConditionManager()
   SAFE_DELETE(m_ChronicVentricularSystolicDysfunction);
   SAFE_DELETE(m_RenalStenosis);
   SAFE_DELETE(m_ConsumeMeal);
-  SAFE_DELETE(m_LobarPneumonia);
+  SAFE_DELETE(m_Pneumonia);
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_PulmonaryFibrosis);
   SAFE_DELETE(m_PulmonaryShunt);
@@ -64,7 +64,7 @@ void SEConditionManager::Clear()
   SAFE_DELETE(m_ChronicVentricularSystolicDysfunction);
   SAFE_DELETE(m_RenalStenosis);
   SAFE_DELETE(m_ConsumeMeal);
-  SAFE_DELETE(m_LobarPneumonia);
+  SAFE_DELETE(m_Pneumonia);
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_PulmonaryFibrosis);
   SAFE_DELETE(m_PulmonaryShunt);
@@ -172,10 +172,10 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
       return true;
     }
 
-    const SELobarPneumonia* lp = dynamic_cast<const SELobarPneumonia*>(&condition);
+    const SEPneumonia* lp = dynamic_cast<const SEPneumonia*>(&condition);
     if (lp != nullptr)
     {
-      GetLobarPneumonia().Copy(*lp);
+      GetPneumonia().Copy(*lp);
       return true;
     }
 
@@ -339,19 +339,19 @@ const SEImpairedAlveolarExchange* SEConditionManager::GetImpairedAlveolarExchang
   return m_ImpairedAlveolarExchange;
 }
 
-bool SEConditionManager::HasLobarPneumonia() const
+bool SEConditionManager::HasPneumonia() const
 {
-  return m_LobarPneumonia == nullptr ? false : m_LobarPneumonia->IsValid();
+  return m_Pneumonia == nullptr ? false : m_Pneumonia->IsValid();
 }
-SELobarPneumonia& SEConditionManager::GetLobarPneumonia()
+SEPneumonia& SEConditionManager::GetPneumonia()
 {
-  if (m_LobarPneumonia == nullptr)
-    m_LobarPneumonia = new SELobarPneumonia(GetLogger());
-  return *m_LobarPneumonia;
+  if (m_Pneumonia == nullptr)
+    m_Pneumonia = new SEPneumonia(GetLogger());
+  return *m_Pneumonia;
 }
-const SELobarPneumonia* SEConditionManager::GetLobarPneumonia() const
+const SEPneumonia* SEConditionManager::GetPneumonia() const
 {
-  return m_LobarPneumonia;
+  return m_Pneumonia;
 }
 
 bool SEConditionManager::HasPulmonaryFibrosis() const
@@ -432,8 +432,8 @@ void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& condi
     conditions.push_back(GetConsumeMeal());
   if (HasImpairedAlveolarExchange())
     conditions.push_back(GetImpairedAlveolarExchange());
-  if (HasLobarPneumonia())
-    conditions.push_back(GetLobarPneumonia());
+  if (HasPneumonia())
+    conditions.push_back(GetPneumonia());
   if (HasPulmonaryFibrosis())
     conditions.push_back(GetPulmonaryFibrosis());
   if (HasPulmonaryShunt())
@@ -463,7 +463,7 @@ bool SEConditionManager::IsEmpty() const
     return false;
   if (HasImpairedAlveolarExchange())
     return false;
-  if (HasLobarPneumonia())
+  if (HasPneumonia())
     return false;
   if (HasPulmonaryFibrosis())
     return false;

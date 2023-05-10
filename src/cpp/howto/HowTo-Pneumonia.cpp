@@ -11,7 +11,7 @@
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/compartment/SECompartmentManager.h"
 #include "cdm/compartment/fluid/SEGasCompartment.h"
-#include "cdm/patient/conditions/SELobarPneumonia.h"
+#include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
@@ -28,28 +28,27 @@
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Usage for applying a Lobar Pneumonia condition to the patient
+/// Usage for applying a Pneumonia condition to the patient
 ///
 /// \details
-/// Refer to the SELobarPneumonia class
+/// Refer to the SEPneumonia class
 //--------------------------------------------------------------------------------------------------
-void HowToLobarPneumonia()
+void HowToPneumonia()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_LobarPneumonia.log");
-  pe->GetLogger()->Info("HowTo_LobarPneumonia");
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_Pneumonia.log");
+  pe->GetLogger()->Info("HowTo_Pneumonia");
   
-  // Lobar pneumonia is a form of pneumonia that affects one or more lobes of the lungs.  
+  //  pneumonia is a form of pneumonia that affects one or more lobes of the lungs.  
   // As fluid fills portions of the lung it becomes more difficult to breath and the gas diffusion surface area in the alveoli is reduced. 
   // Since this is a condition, we need to initialize it on the patient along with engine initialization
 
   SEPatientConfiguration pc;
   pc.SetPatientFile("StandardMale.json");
-  SELobarPneumonia& lobarPneumonia = pc.GetConditions().GetLobarPneumonia();
-  lobarPneumonia.GetSeverity().SetValue(0.2);
-  lobarPneumonia.GetLeftLungAffected().SetValue(1.0);
-  lobarPneumonia.GetRightLungAffected().SetValue(1.0);
+  SEPneumonia& pneumonia = pc.GetConditions().GetPneumonia();
+  pneumonia.GetSeverity(eLungCompartment::LeftLung).SetValue(0.2);
+  pneumonia.GetSeverity(eLungCompartment::RightLung).SetValue(1.0);
 
   if (!pe->InitializeEngine(pc))
   {
@@ -67,7 +66,7 @@ void HowToLobarPneumonia()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
   pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
 
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToLobarPneumonia.csv");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToPneumonia.csv");
 
   // Advance some time to get some data
   AdvanceAndTrackTime_s(500, *pe);

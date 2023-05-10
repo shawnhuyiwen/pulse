@@ -5,19 +5,19 @@
 #include "cdm/patient/conditions/SEPatientCondition.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
 
-class CDM_DECL SEAcuteRespiratoryDistressSyndrome : public SEPatientCondition
+class CDM_DECL SEPneumonia : public SEPatientCondition
 {
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEAcuteRespiratoryDistressSyndrome(Logger* logger=nullptr);
-  virtual ~SEAcuteRespiratoryDistressSyndrome();
+  SEPneumonia(Logger* logger=nullptr);
+  virtual ~SEPneumonia();
 
-  static constexpr char const* Name = "Acute Respiratory Distress Syndrome";
+  static constexpr char const* Name = "Pneumonia";
   virtual std::string GetName() const { return Name; }
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEAcuteRespiratoryDistressSyndrome& src);
+  virtual void Copy(const SEPneumonia& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

@@ -7,9 +7,9 @@ option optimize_for = SPEED;
 import "pulse/cdm/bind/Actions.proto";
 import "pulse/cdm/bind/Enums.proto";
 import "pulse/cdm/bind/PatientAssessments.proto";
-import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/PatientNutrition.proto";
 import "pulse/cdm/bind/Physiology.proto";
+import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/Substance.proto";
 
 message AnyPatientActionData
@@ -37,10 +37,10 @@ message AnyPatientActionData
     HemothoraxData                                     Hemothorax                                     = 19;
     ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 20;
     IntubationData                                     Intubation                                     = 21;
-    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 22;
-    MechanicalVentilationData                          MechanicalVentilation                          = 23;
-    NeedleDecompressionData                            NeedleDecompression                            = 24;
-    PericardialEffusionData                            PericardialEffusion                            = 25;
+    MechanicalVentilationData                          MechanicalVentilation                          = 22;
+    NeedleDecompressionData                            NeedleDecompression                            = 23;
+    PericardialEffusionData                            PericardialEffusion                            = 24;
+    PneumoniaExacerbationData                          PneumoniaExacerbation                          = 25;
     PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 26;
     RespiratoryFatigueData                             RespiratoryFatigue                             = 27;
     RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 28;
@@ -65,13 +65,11 @@ message PatientAssessmentRequestData
   ePatientAssessmentType                    Type                            = 2;/**<<@brief @ref ePatientAssessmentTypeTable */
 }
 
-/** @brief Worsen the effects of the Acute %Respiratory Distress Syndrome condition. */
 message AcuteRespiratoryDistressSyndromeExacerbationData
 {
   PatientActionData                         PatientAction                   = 1;
-  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
-  Scalar0To1Data                            LeftLungAffected                = 3;/**<<@brief Fraction of the Left Lung Affected*/
-  Scalar0To1Data                            RightLungAffected               = 4;/**<<@brief Fraction of the Right Lung Affected */
+  repeated LungImpairmentData               Severity                        = 2;/**<<@brief A list of impairment severities for the lung compartments*/
+  eMergeType                                MergeType                       = 3;/**<< @brief How to apply provided impairments to internal data model. */
 }
 
 /** @brief Fight or flight.  The body prepares to defend itself. */
@@ -184,7 +182,8 @@ message ChronicObstructivePulmonaryDiseaseExacerbationData
 {
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            BronchitisSeverity              = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
-  Scalar0To1Data                            EmphysemaSeverity               = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  repeated LungImpairmentData               EmphysemaSeverity               = 3;/**<<@brief A list of impairment severities for the lung compartments*/
+  eMergeType                                MergeType                       = 4;/**<<@brief How to apply provided impairments to internal data model. */
 }
 
 /** @brief Reduction of achieved tidal volume by inhibiting the respiratory breathing mechanism (i.e., muscles of respiration).  Maximum severity will stop breathing completely. */
@@ -352,15 +351,6 @@ message IntubationData
   Scalar0To1Data                            Severity                        = 4;/**<< @brief Scale of affect, 0 has no affect on airflow in the tube or compartments, 1 air only flows through the tube. */
 }
 
-/** @brief Worsen the effects of the Lobar Pneumonia condition. */
-message LobarPneumoniaExacerbationData
-{
-  PatientActionData                         PatientAction                   = 1;
-  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
-  Scalar0To1Data                            LeftLungAffected                = 3;/**<< @brief Fraction of the Left Lung Affected*/
-  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Right Lung Affected */
-}
-
 /** @brief Mechanically breathing for the patient, such as with a squeeze bag or other equipment. */
 message MechanicalVentilationData
 {
@@ -386,6 +376,15 @@ message PericardialEffusionData
   PatientActionData                         PatientAction                   = 1;
   ScalarVolumePerTimeData                   EffusionRate                    = 2;/**<<@brief Rate at which fluid is filling the pericardial cavity*/
 }
+
+/** @brief Worsen the effects of the Pneumonia condition. */
+message PneumoniaExacerbationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  repeated LungImpairmentData               Severity                        = 2;/**<< @brief A list of impairment severities for the lung compartments*/
+  eMergeType                                MergeType                       = 3;/**<< @brief How to apply provided impairments to internal data model. */
+}
+
 
 /** @brief Pulmonary shunt is when the alveoli of the lungs are perfused with blood as normal, but ventilation (the supply of air) fails to supply the perfused region */
 message PulmonaryShuntExacerbationData
