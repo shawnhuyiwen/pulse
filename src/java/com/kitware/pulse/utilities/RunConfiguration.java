@@ -19,6 +19,7 @@ public class RunConfiguration
   protected String testConfigDirectory;
   protected String validationDirectory;
   protected String verificationDirectory;
+  protected String pythonCommand;
   
   public    String getRootDirectory()         { return rootDirectory;         }
   public    String getDataDirectory()         { return dataDirectory;         }
@@ -26,6 +27,7 @@ public class RunConfiguration
   public    String getTestConfigDirectory()   { return testConfigDirectory;   }
   public    String getValidationDirectory()   { return validationDirectory;   }
   public    String getVerificationDirectory() { return verificationDirectory; }
+  public    String getPythonCommand()         { return pythonCommand; }
   
   
   public RunConfiguration()
@@ -37,6 +39,7 @@ public class RunConfiguration
     testConfigDirectory   = "./";
     validationDirectory   = "./";
     verificationDirectory = "./";
+    pythonCommand = "python";
     
     // Now let's look for a config file and
     // use any configuration parameters it has    
@@ -132,6 +135,10 @@ public class RunConfiguration
         else
           Log.error("verification_dir set to invalid directory "+val+", ignoring and using default ("+this.verificationDirectory+")");
       }
+    }
+    if(properties.containsKey("python_cmd"))
+    {  
+      pythonCommand = properties.get("python_cmd").toString();
     }
   }
   

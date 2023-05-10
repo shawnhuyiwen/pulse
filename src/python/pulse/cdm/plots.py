@@ -1,9 +1,10 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from enum import Enum
-from typing import Dict, List, Optional, Set, Tuple
 from copy import deepcopy
+from enum import Enum
+from operator import attrgetter
+from typing import Dict, List, Optional, Set, Tuple
 import logging
 import os
 import pandas as pd
@@ -11,6 +12,7 @@ import pandas as pd
 from pulse.cdm.scalars import SEScalar, SEScalarLength
 from pulse.cdm.utils.file_utils import get_dir_from_run_config
 from pulse.cdm.utils.csv_utils import read_csv_into_df
+from pulse.cdm.utils.logger import eActionEventCategory, LogActionEvent, parse_actions, parse_events
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -544,12 +546,12 @@ class SEPlotConfig():
 
 
 class SEPlotSource():
-    __slots__ = ["_csv_data", "_log_file", "_df", "_label",
-                 "_line_format", "_line_width", "_start_row", "_end_row"]
+    __slots__ = ["_csv_data", "_log_file", "_df", "_label", "_line_format",
+                 "_line_width", "_start_row", "_end_row", "_row_skip", "_actions_events"]
 
     def __init__(self, csv_data: Optional[str]=None, log_file: Optional[str]=None, label: Optional[str]=None,
         line_format: Optional[str]=None, line_width: Optional[float]=None, start_row: Optional[int]=None,
-        end_row: Optional[int]=None
+        end_row: Optional[int]=None, row_skip: Optional[int]=None
     ):
         self._csv_data = csv_data
         self._log_file = log_file
@@ -558,7 +560,9 @@ class SEPlotSource():
         self._line_width = line_width
         self._start_row = start_row
         self._end_row = end_row
+        self._row_skip = row_skip
 
+        self._actions_events = None
         self._df = pd.DataFrame()
 
     def get_csv_data(self):
@@ -579,6 +583,56 @@ class SEPlotSource():
         return self._log_file is not None
     def invalidate_log_file(self):
         self._log_file = None
+
+    def parse_actions_events(self):
+        # Attempt to find log file if not given
+        if not self._log_file:
+            if self._csv_data:
+                idx = self._csv_data.rfind("Results.csv")
+                if idx == -1:
+                    idx = self._csv_data.rfind(".csv")
+                self._log_file = self._csv_data[:idx] + ".log"
+
+        # Ensure log file exists
+        if not os.path.exists(self._log_file):
+            _pulse_logger.error(f"Could not find corresponding log file: {self._csv_data}")
+            return False
+
+        self._actions_events = parse_actions(self._log_file)
+        self._actions_events.extend(parse_events(self._log_file))
+
+        self._actions_events = sorted(self._actions_events, key=attrgetter('time'))
+
+        return True
+    def get_actions_events(self, plot_actions: bool=True, plot_events: bool=True,
+            omit_actions_with: List[str]=[], omit_events_with: List[str]=[]):
+
+        filtered = []
+        for ae in self._actions_events:
+            if plot_actions and ae.category == eActionEventCategory.ACTION:
+                keep = True
+                for o in omit_actions_with:
+                    if o in ae.text:
+                        keep = False
+                        break
+                if keep:
+                    filtered.append(ae)
+            elif plot_events and ae.category == eActionEventCategory.EVENT:
+                keep = True
+                for o in omit_events_with:
+                    if o in ae.text:
+                        keep = False
+                        break
+                if keep:
+                    filtered.append(ae)
+
+        return filtered
+    def set_actions_events(self, actions_events: List[LogActionEvent]):
+        self._actions_events = sorted(actions_events, key=attrgetter('time'))
+    def has_actions_events(self):
+        return self._actions_events is not None
+    def invalidate_log_file(self):
+        self._actions_events = None
 
     def get_data_frame(self):
         if self._df.empty:
@@ -628,6 +682,13 @@ class SEPlotSource():
     def has_end_row(self):
         return self._end_row is not None
 
+    def get_row_skip(self):
+        return self._row_skip
+    def set_row_skip(self, rows: int):
+        self._row_skip = rows
+    def has_row_skip(self):
+        return self._row_skip is not None
+
     def _filepath_replacement(self, filepath: str):
         keys = ['$ROOT_DIR', '$DATA_DIR', '$SCENARIO_DIR','$VALIDATION_DIR', '$VERIFICATION_DIR']
         for key in keys:
@@ -643,7 +704,12 @@ class SEPlotSource():
         self._csv_data = self._filepath_replacement(self._csv_data)
 
         if os.path.exists(self._csv_data):
-            self._df = read_csv_into_df(self._csv_data, replace_slashes=False)
+            kwargs = {}
+            if self._row_skip:
+                # Keep header and every _row_skip-th row starting with first data row
+                kwargs = {"skiprows": lambda i: i != 0 and ((i-1) % self._row_skip)}
+
+            self._df = read_csv_into_df(self._csv_data, replace_slashes=False, **kwargs)
         else:
             _pulse_logger.error(f"File not found: {self._csv_data}")
 
@@ -840,12 +906,19 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
     def invalidate_validation_source(self):
         self._validation_source = None
 
-
+class ePlotType(Enum):
+    NoPlot = 0
+    FullPlot = 1
+    FullPlotErrors = 2
+    FastPlot = 3
+    FastPlotErrors = 4
+    MemoryFastPlot = 5
 class SEComparePlotter(SEPlotter):
-    __slots__ = ["_computed_source", "_expected_source", "_failures", "_rms"]
+    __slots__ = ["_computed_source", "_expected_source", "_failures", "_rms", "_plot_type"]
 
     def __init__(self, config: Optional[SEPlotConfig]=None, computed_source: Optional[SEPlotSource]=None,
-        expected_source: Optional[SEPlotSource]=None, failures: Set[str]=set(), rms: Dict[str, float]={}
+        expected_source: Optional[SEPlotSource]=None, failures: Set[str]=set(), rms: Dict[str, float]={},
+        plot_type: ePlotType=ePlotType.FastPlot
     ):
         super().__init__(config)
 
@@ -853,6 +926,12 @@ class SEComparePlotter(SEPlotter):
         self._expected_source = expected_source
         self._failures = set(failures)
         self._rms = dict(rms)
+        self._plot_type = plot_type
+
+    def get_plot_type(self):
+        return self._plot_type
+    def set_plot_type(self, ptype: ePlotType):
+        self._plot_type = ptype
 
     def get_computed_source(self):
         return self._computed_source

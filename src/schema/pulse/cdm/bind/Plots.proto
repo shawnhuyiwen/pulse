@@ -85,12 +85,24 @@ message PlotSourceData
   optional double                     LineWidth                 = 4;   /**<< @brief Plot this source with this linewidth. */
   optional int32                      StartRow                  = 5;  /**<< @brief Specify the starting row number of the CSV data to include in plot. */
   optional int32                      EndRow                    = 6;  /**<< @brief Specify the ending row number of the CSV data to include in plot. */
-  optional string                     LogFile                   = 7;  /**<< @brief Specify log file if it does not following usual naming conventions/location. */
+  optional int32                      RowSkip                   = 7;  /**<< @brief If specified, only every "RowSkip-th" (nth) row of the CSV data will be read. */
+  optional string                     LogFile                   = 8;  /**<< @brief Specify log file if it does not following usual naming conventions/location. */
 }
 
 /** @brief Data used to configure x vs y plots. */
 message ComparePlotterData
 {
+  /** @brief Enumeration for plot types. */
+  enum ePlotType
+  {
+    NoPlot                                                      = 0;  /**<< @brief Don't generate plots, only report. */
+    FullPlot                                                    = 1;  /**<< @brief Plot all data points. */
+    FullPlotErrors                                              = 2;  /**<< @brief Plot all data points, only for failing data. */
+    FastPlot                                                    = 3;  /**<< @brief Plot every nth data point. */
+    FastPlotErrors                                              = 4;  /**<< @brief Plot every nth data point, only for failing data. */
+    MemoryFastPlot                                              = 5;  /**<< @brief FastPlot with better memory management (slower). */
+  }
+
   string                              Comment                   = 1;
 
   optional PlotConfigData             PlotConfig                = 2;  /**<< @brief Provided settings take precedence over PlotConfig settings defined in plotter list. */
@@ -98,6 +110,8 @@ message ComparePlotterData
   PlotSourceData                      ExpectedSource            = 4;
   repeated string                     Failures                  = 5;  /**<< @brief Headers that were deemed as failure during comparison. */
   map<string, double>                 RMSValues                 = 6;  /**<< @brief Root Mean Square (RMS) values computed during comparison. */
+  ePlotType                           PlotType                  = 7;
+
 }
 
 /** @brief Data used to configure x vs y plots. */

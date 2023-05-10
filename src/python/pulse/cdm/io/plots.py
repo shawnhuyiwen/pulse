@@ -171,6 +171,8 @@ def serialize_plot_source_to_bind(src: SEPlotSource, dst: PlotSourceData):
         dst.StartRow = src.get_start_row()
     if src.has_end_row():
         dst.EndRow = src.get_end_row()
+    if src.has_row_skip():
+        dst.RowSkip = src.get_row_skip()
     if src.has_log_file():
         dst.LogFile = src.get_log_file()
 def serialize_plot_source_from_bind(src: PlotSourceData, dst: SEPlotSource):
@@ -185,6 +187,8 @@ def serialize_plot_source_from_bind(src: PlotSourceData, dst: SEPlotSource):
         dst.set_start_row(src.StartRow)
     if src.HasField("EndRow"):
         dst.set_end_row(src.EndRow)
+    if src.HasField("RowSkip"):
+        dst.set_row_skip(src.RowSkip)
     if src.HasField("LogFile"):
         dst.set_log_file(src.LogFile)
 
@@ -305,6 +309,7 @@ def serialize_compare_plotter_to_bind(src: SEComparePlotter, dst: ComparePlotter
         failureData = dst.Failures.append(f)
     for h, r in src.get_rms_values().items():
         dst.RMSValues[h] = r
+    dst.PlotType = src.get_plot_type().value
 def serialize_compare_plotter_from_bind(
     src: ComparePlotterData,
     dst: SEComparePlotter,
@@ -327,4 +332,6 @@ def serialize_compare_plotter_from_bind(
         dst.add_failure(failureData)
 
     for header in src.RMSValues:
-        src.add_rms_value(header, src.RMSValues[header])
+        dst.add_rms_value(header, src.RMSValues[header])
+
+    dst.set_plot_type(ePlotType(src.PlotType))

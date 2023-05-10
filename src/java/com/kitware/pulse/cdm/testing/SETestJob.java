@@ -6,6 +6,7 @@ import java.util.List;
 import com.kitware.pulse.engine.PulseScenarioExec;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
+import com.kitware.pulse.utilities.PythonUtils;
 import com.kitware.pulse.utilities.csv.plots.CSVComparePlotter.PlotType;
 
 public class SETestJob extends LogListener
@@ -20,10 +21,11 @@ public class SETestJob extends LogListener
   public String                name;
   public boolean               skipExecution = false;
   public boolean               skipPlot = false;
+  public PythonUtils           python = null;
   public boolean               knownFailure = false;
   public SETestDriver.Executor executor = null;
   public boolean               isAssessment = false;
-  public boolean               PlottableResults = false;
+  public boolean               plottableResults = false;
   public PlotType              plotType = PlotType.FastPlot;//Only plot every nth data point
   public double                percentDifference;
   public List<String>          scenarioFiles = new ArrayList<>();
@@ -48,7 +50,8 @@ public class SETestJob extends LogListener
     copy.skipPlot = this.skipPlot;
     copy.knownFailure = this.knownFailure;
     copy.executor = this.executor;
-    copy.PlottableResults = this.PlottableResults;
+    copy.python = this.python;
+    copy.plottableResults = this.plottableResults;
     copy.plotType = this.plotType;
     copy.percentDifference = this.percentDifference;
     copy.scenarioFiles.addAll(this.scenarioFiles);

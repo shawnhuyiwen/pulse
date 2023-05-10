@@ -12,6 +12,7 @@ import com.kitware.pulse.cdm.testing.SETestDriver;
 import com.kitware.pulse.cdm.testing.SETestJob;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
+import com.kitware.pulse.utilities.TimingProfile;
 import com.kitware.pulse.utilities.JNIBridge;
 
 public class ScenarioTestDriver implements SETestDriver.Executor
@@ -101,7 +102,9 @@ public class ScenarioTestDriver implements SETestDriver.Executor
 
   public static void main(String[] args)
   {
+    TimingProfile.start("main");
     JNIBridge.initialize();
     SETestDriver.main(args);
+    Log.info("It took "+TimingProfile.profile("main")+"s to execute ScenarioTestDriver");
   }
 }

@@ -4,8 +4,8 @@
 import pandas as pd
 import numpy as np
 
-def read_csv_into_df(csv_filename: str, replace_slashes: bool=False):
-    df = pd.read_csv(csv_filename)
+def read_csv_into_df(csv_filename: str, replace_slashes: bool=False, **kwargs):
+    df = pd.read_csv(csv_filename, **kwargs)
     for column in df.columns[1:]:
         # Convert any strings to NaN
         df[column] = pd.to_numeric(df[column], errors='coerce')

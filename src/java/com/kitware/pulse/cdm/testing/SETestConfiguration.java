@@ -17,6 +17,7 @@ import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.engine.bind.Enums.eModelType;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
+import com.kitware.pulse.utilities.PythonUtils;
 import com.kitware.pulse.utilities.RunConfiguration;
 import com.kitware.pulse.utilities.csv.plots.CSVComparePlotter.PlotType;
 
@@ -34,6 +35,8 @@ public class SETestConfiguration
   protected String patientFiles;
   protected boolean executeJobs=true;
   protected boolean plotResults=true;
+  protected boolean pythonComparison=true;
+  protected PythonUtils python = null;
 
   protected Map<String,String> macros = new HashMap<>();
   protected Map<String,Class<? extends SETestDriver.Executor>> executors = new HashMap<>();
@@ -134,7 +137,15 @@ public class SETestConfiguration
           if(value.equalsIgnoreCase("false"))
             plotResults=false; 
           continue; 
-        }       
+        }
+        if(key.equalsIgnoreCase("CompareWith"))
+        {
+          if(value.startsWith("Java"))
+            pythonComparison=false;
+          else
+            python = new PythonUtils();
+          continue; 
+        }
         if(key.equalsIgnoreCase("Executor"))
         {
           Class<? extends SETestDriver.Executor> clazz = null;
@@ -185,6 +196,8 @@ public class SETestConfiguration
         this.jobs.add(job);
         job.name = key.trim();
         job.percentDifference = this.percentDifference;
+        if(this.python != null && this.python.isActive())
+          job.python = this.python;
 
         String[] directives = value.trim().split(" ");
         for(String directive : directives)
@@ -204,17 +217,17 @@ public class SETestConfiguration
             if(directive.equalsIgnoreCase("Assessment")) 
             { job.isAssessment = true; job.state = SETestJob.State.Complete; continue; }
             if(directive.equalsIgnoreCase("NoCompare")) 
-            { job.PlottableResults = false; continue; }
+            { job.plottableResults = false; continue; }
             if(directive.equalsIgnoreCase("FastPlot")) 
-            { job.PlottableResults = true; job.plotType=PlotType.FastPlot; continue; }
+            { job.plottableResults = true; job.plotType=PlotType.FastPlot; continue; }
             if(directive.equalsIgnoreCase("FullPlot"))
-            { job.PlottableResults = true; job.plotType=PlotType.FullPlot; continue; }
+            { job.plottableResults = true; job.plotType=PlotType.FullPlot; continue; }
             if(directive.equalsIgnoreCase("FullPlotErrors"))
-            { job.PlottableResults = true; job.plotType=PlotType.FullPlotErrors; continue; }
+            { job.plottableResults = true; job.plotType=PlotType.FullPlotErrors; continue; }
             if(directive.equalsIgnoreCase("FastPlotErrors"))
-            { job.PlottableResults = true; job.plotType=PlotType.FastPlotErrors; continue; }
+            { job.plottableResults = true; job.plotType=PlotType.FastPlotErrors; continue; }
             if(directive.equalsIgnoreCase("MemoryFastPlot"))
-            { job.PlottableResults = true; job.plotType=PlotType.MemoryFastPlot; continue; }
+            { job.plottableResults = true; job.plotType=PlotType.MemoryFastPlot; continue; }
             try {
               job.execOpts.setModelType(eModelType.valueOf(directive));
               continue;

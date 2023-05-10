@@ -96,7 +96,7 @@ public class Rebase
           Log.error("A job has no expected result files!?!?");
           continue;
         }
-        if(!job.PlottableResults && !job.isAssessment)
+        if(!job.plottableResults && !job.isAssessment)
           continue;// Nothing to plot/compare, nothing to zip  
         // We assume all json will have something to zip...
         

@@ -11,6 +11,14 @@ For detailed information about our design and methodology read our <a href="http
 Use this <a href="https://discourse.kitware.com/c/pulse-physiology-engine">discourse channel</a> 
 to ask or share anything and everything about building, using, or understanding the Pulse engine and welcome to our community!!
 
+## Checkout
+
+Pulse branching convention:
+
+- **Stable:** This branch is fully validated and tested. We recommend using this branch when using Pulse in your applications or studies.
+- **Integration:** This branch is generally stable, but not validated. It is the bleeding edge of our current feature development. As new features are completed they are merged into the integration branch. This branch allows us to understand how different models interact with each other. We often find unexpected consequences when code from multiple features we are developing are merged together. We address these issues as quickly as possible. Once they all integration issues are addressed we need then have to assess the validation of all models before merging into our stable branch. Validation is currently a manual process and can delay merging into stable. 
+- **Features:** Branches starting with `feature/` are self contained updates for a particular addition to the code. It is not recommended to pull these branches unless you are helping to develop this feature.
+
 ## Build Environment
 
 The code provided utilizes C++17, here is a list of popular compilers and their initial version to implement all of C++17 :
@@ -236,6 +244,12 @@ N:/Tools/MagicLeap/dev/mlsdk/v0.24.1/tools/mabu/tools/MinGW/bin/mingw32-make.exe
 
 This will provide a PulseC.so in the build/install/bin that works on the Magic Leap platform!
 
+## Executing Pulse
+
+We provide a set of scripts to assist in the development of Pulse.
+These scripts call fuctionality implented in both Java and Python.
+This repository contains all reqired Java jar files, we only require that Java is discoverable on your Path.
+However Python based functionality requires that Python is discoverable on your Path _and_ your Python environment has pip installed the packages in our requirements.txt
 
 ## Updating Pulse
 
