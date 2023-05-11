@@ -21,7 +21,7 @@ void SEAcuteRespiratoryDistressSyndromeExacerbation::Clear()
   SEPatientAction::Clear();
   for (auto itr : m_Severities)
     if (itr.second != nullptr)
-      itr.second->SetValue(0);
+      itr.second->Invalidate();
 }
 
 void SEAcuteRespiratoryDistressSyndromeExacerbation::Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, bool /*preserveState*/)
@@ -88,7 +88,6 @@ SEScalar0To1& SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverity(eLungC
   {
     s = new SEScalar0To1();
     m_Severities[cmpt] = s;
-    s->SetValue(0);
   }
   return *s;
 }

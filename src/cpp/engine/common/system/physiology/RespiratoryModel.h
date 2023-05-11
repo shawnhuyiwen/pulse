@@ -56,6 +56,9 @@ namespace pulse
 
   protected:
     void ComputeExposedModelParameters() override;
+    eLungCompartment GeteLungCompartment(const std::string& cmpt);
+    const std::string& GetCompartmentName(eLungCompartment m);
+    void CompleteLungImpairmentMap(LungImpairmentMap& map);
 
     //Tuning
     void TuneCircuit();
@@ -89,7 +92,6 @@ namespace pulse
     /**/void ConsciousRespiration();
     /**/double VolumeToDriverPressure(double TargetVolume);
     /**/void UpdateDriverPressure();
-    /**/double UpdateDriverPeriod(double totalBreathingCycleTime_s);
     // Aerosol Deposition and various Effects
     void ProcessAerosolSubstances();
 

@@ -23,7 +23,7 @@ void SEChronicObstructivePulmonaryDiseaseExacerbation::Clear()
   INVALIDATE_PROPERTY(m_BronchitisSeverity);
   for (auto itr : m_EmphysemaSeverities)
     if (itr.second != nullptr)
-      itr.second->SetValue(0);
+      itr.second->Invalidate();
 }
 
 void SEChronicObstructivePulmonaryDiseaseExacerbation::Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, bool /*preserveState*/)
@@ -106,7 +106,6 @@ SEScalar0To1& SEChronicObstructivePulmonaryDiseaseExacerbation::GetEmphysemaSeve
   {
     s = new SEScalar0To1();
     m_EmphysemaSeverities[cmpt] = s;
-    s->SetValue(0);
   }
   return *s;
 }

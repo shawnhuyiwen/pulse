@@ -21,7 +21,7 @@ void SEPneumoniaExacerbation::Clear()
   SEPatientAction::Clear();
   for (auto itr : m_Severities)
     if (itr.second != nullptr)
-      itr.second->SetValue(0);
+      itr.second->Invalidate();
 }
 
 void SEPneumoniaExacerbation::Copy(const SEPneumoniaExacerbation& src, bool /*preserveState*/)
@@ -87,7 +87,6 @@ SEScalar0To1& SEPneumoniaExacerbation::GetSeverity(eLungCompartment cmpt)
   {
     s = new SEScalar0To1();
     m_Severities[cmpt] = s;
-    s->SetValue(0);
   }
   return *s;
 }
