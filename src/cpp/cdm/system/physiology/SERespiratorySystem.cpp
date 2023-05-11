@@ -1383,3 +1383,33 @@ const SERespiratoryMechanics* SERespiratorySystem::GetRespiratoryMechanics() con
 {
   return m_RespiratoryMechanics;
 }
+
+void FillLungImpairmentMap(LungImpairmentMap& map)
+{
+  SEScalar0To1* lung;
+  SEScalar0To1* lobe;
+  lung = map[eLungCompartment::LeftLung];
+  if (!lung->IsValid())
+    lung->SetValue(0);
+  // Child Lobes
+  lobe = map[eLungCompartment::LeftInferiorLobe];
+  if (!lobe->IsValid())
+    lobe->Set(*lung);
+  lobe = map[eLungCompartment::LeftSuperiorLobe];
+  if (!lobe->IsValid())
+    lobe->Set(*lung);
+
+  lung = map[eLungCompartment::RightLung];
+  if (!lung->IsValid())
+    lung->SetValue(0);
+  // Child Lobes
+  lobe = map[eLungCompartment::RightInferiorLobe];
+  if (!lobe->IsValid())
+    lobe->Set(*lung);
+  lobe = map[eLungCompartment::RightMiddleLobe];
+  if (!lobe->IsValid())
+    lobe->Set(*lung);
+  lobe = map[eLungCompartment::RightSuperiorLobe];
+  if (!lobe->IsValid())
+    lobe->Set(*lung);
+}

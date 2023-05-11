@@ -45,6 +45,11 @@ bool SEAcuteRespiratoryDistressSyndromeExacerbation::IsActive() const
     return false;
   return true;
 }
+void SEAcuteRespiratoryDistressSyndromeExacerbation::Activate()
+{
+  SEPatientAction::Activate();
+  FillLungImpairmentMap(m_Severities);
+}
 void SEAcuteRespiratoryDistressSyndromeExacerbation::Deactivate()
 {
   SEPatientAction::Deactivate();

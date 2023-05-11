@@ -14,16 +14,17 @@ public:
   virtual ~SEAcuteRespiratoryDistressSyndromeExacerbation();
 
   static constexpr char const* Name = "ARDS Exacerbation";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, bool preserveState=false);
+  void Clear() override;
+  void Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, bool preserveState=false);
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Activate() override;
+  void Deactivate() override;
 
   virtual bool HasSeverity() const;
   virtual LungImpairmentMap& GetSeverities();

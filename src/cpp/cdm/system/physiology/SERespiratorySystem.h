@@ -17,6 +17,7 @@ enum class eLungCompartment
   RightInferiorLobe
 };
 using LungImpairmentMap = std::map<eLungCompartment, SEScalar0To1*>;
+void FillLungImpairmentMap(LungImpairmentMap& map);
 
 class CDM_DECL SERespiratorySystem : public SESystem
 {

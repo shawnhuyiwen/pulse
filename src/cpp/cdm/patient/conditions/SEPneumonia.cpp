@@ -43,6 +43,11 @@ bool SEPneumonia::IsActive() const
     return false;
   return true;
 }
+void SEPneumonia::Activate()
+{
+  SEPatientCondition::Activate();
+  FillLungImpairmentMap(m_Severities);
+}
 
 bool SEPneumonia::HasSeverity() const
 {

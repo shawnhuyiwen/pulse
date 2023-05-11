@@ -12,7 +12,6 @@ public:
   SEConsciousRespirationCommand(Logger* logger);
   virtual ~SEConsciousRespirationCommand();
 
-
   static constexpr char const* ActionType = "Conscious Respiration Command";
   virtual std::string GetActionType() const { return ActionType; }
 

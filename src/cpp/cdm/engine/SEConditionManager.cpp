@@ -120,6 +120,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (ards != nullptr)
     {
       GetAcuteRespiratoryDistressSyndrome().Copy(*ards);
+      GetAcuteRespiratoryDistressSyndrome().Activate();
       return true;
     }
 
@@ -127,6 +128,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (a != nullptr)
     {
       GetChronicAnemia().Copy(*a);
+      GetChronicAnemia().Activate();
       return true;
     }
 
@@ -134,6 +136,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (copd != nullptr)
     {
       GetChronicObstructivePulmonaryDisease().Copy(*copd);
+      GetChronicObstructivePulmonaryDisease().Activate();
       return true;
     }
 
@@ -141,6 +144,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (pe != nullptr)
     {
       GetChronicPericardialEffusion().Copy(*pe);
+      GetChronicPericardialEffusion().Activate();
       return true;
     }
 
@@ -148,6 +152,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (r != nullptr)
     {
       GetChronicRenalStenosis().Copy(*r);
+      GetChronicRenalStenosis().Activate();
       return true;
     }
 
@@ -155,6 +160,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (vsd != nullptr)
     {
       GetChronicVentricularSystolicDysfunction().Copy(*vsd);
+      GetChronicVentricularSystolicDysfunction().Activate();
       return true;
     }
 
@@ -162,6 +168,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (g != nullptr)
     {
       GetConsumeMeal().Copy(*g);
+      GetConsumeMeal().Activate();
       return true;
     }
 
@@ -169,6 +176,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (iae != nullptr)
     {
       GetImpairedAlveolarExchange().Copy(*iae);
+      GetImpairedAlveolarExchange().Activate();
       return true;
     }
 
@@ -176,6 +184,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (lp != nullptr)
     {
       GetPneumonia().Copy(*lp);
+      GetPneumonia().Activate();
       return true;
     }
 
@@ -183,6 +192,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (pf != nullptr)
     {
       GetPulmonaryFibrosis().Copy(*pf);
+      GetPulmonaryFibrosis().Activate();
       return true;
     }
 
@@ -190,6 +200,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (ps != nullptr)
     {
       GetPulmonaryShunt().Copy(*ps);
+      GetPulmonaryShunt().Activate();
       return true;
     }
 
@@ -197,6 +208,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (s != nullptr)
     {
       GetSepsis().Copy(*s);
+      GetSepsis().Activate();
       return true;
     }
   }
@@ -207,6 +219,7 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (ie != nullptr)
     {
       GetInitialEnvironmentalConditions().Copy(*ie, subMgr);
+      GetInitialEnvironmentalConditions().Activate();
       return true;
     }
   }

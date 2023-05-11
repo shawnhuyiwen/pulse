@@ -42,6 +42,11 @@ bool SEAcuteRespiratoryDistressSyndrome::IsActive() const
     return false;
   return true;
 }
+void SEAcuteRespiratoryDistressSyndrome::Activate()
+{
+  SEPatientCondition::Activate();
+  FillLungImpairmentMap(m_Severities);
+}
 
 bool SEAcuteRespiratoryDistressSyndrome::HasSeverity() const
 {

@@ -44,6 +44,11 @@ bool SEPneumoniaExacerbation::IsActive() const
     return false;
   return true;
 }
+void SEPneumoniaExacerbation::Activate()
+{
+  SEPatientAction::Activate();
+  FillLungImpairmentMap(m_Severities);
+}
 void SEPneumoniaExacerbation::Deactivate()
 {
   SEPatientAction::Deactivate();

@@ -613,20 +613,6 @@ namespace pulse
       m_PatientActions->RemoveRespiratoryMechanicsConfiguration();
     }
 
-    // Complete Imparimentmaps if we need to
-    if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome())
-      CompleteLungImpairmentMap(m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverities());
-    if (m_data.GetActions().GetPatientActions().HasAcuteRespiratoryDistressSyndromeExacerbation())
-      CompleteLungImpairmentMap(m_data.GetActions().GetPatientActions().GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverities());
-    if (m_data.GetConditions().HasChronicObstructivePulmonaryDisease())
-      CompleteLungImpairmentMap(m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverities());
-    if (m_data.GetActions().GetPatientActions().HasChronicObstructivePulmonaryDiseaseExacerbation())
-      CompleteLungImpairmentMap(m_data.GetActions().GetPatientActions().GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverities());
-    if (m_data.GetConditions().HasPneumonia())
-      CompleteLungImpairmentMap(m_data.GetConditions().GetPneumonia().GetSeverities());
-    if (m_data.GetActions().GetPatientActions().HasPneumoniaExacerbation())
-      CompleteLungImpairmentMap(m_data.GetActions().GetPatientActions().GetPneumoniaExacerbation().GetSeverities());
-
     CalculateWork();
     CalculateFatigue();
 
@@ -4684,39 +4670,6 @@ namespace pulse
     //  return eLungCompartment::RightSuperiorLobe;
 
     return (eLungCompartment)-1;
-  }
-
-  void RespiratoryModel::CompleteLungImpairmentMap(LungImpairmentMap& map)
-  {
-    if (map.size() == 5)
-      return;
-
-    SEScalar0To1* lung;
-    SEScalar0To1* lobe;
-    lung = map[eLungCompartment::LeftLung];
-    if (!lung->IsValid())
-      lung->SetValue(0);
-    // Child Lobes
-    lobe = map[eLungCompartment::LeftInferiorLobe];
-    if (!lobe->IsValid())
-      lobe->Set(*lung);
-    lobe = map[eLungCompartment::LeftSuperiorLobe];
-    if (!lobe->IsValid())
-      lobe->Set(*lung);
-
-    lung = map[eLungCompartment::RightLung];
-    if (!lung->IsValid())
-      lung->SetValue(0);
-    // Child Lobes
-    lobe = map[eLungCompartment::RightInferiorLobe];
-    if (!lobe->IsValid())
-      lobe->Set(*lung);
-    lobe = map[eLungCompartment::RightMiddleLobe];
-    if (!lobe->IsValid())
-      lobe->Set(*lung);
-    lobe = map[eLungCompartment::RightSuperiorLobe];
-    if (!lobe->IsValid())
-      lobe->Set(*lung);
   }
 
   //--------------------------------------------------------------------------------------------------

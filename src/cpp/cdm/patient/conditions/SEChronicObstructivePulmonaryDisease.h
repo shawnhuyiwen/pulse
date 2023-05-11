@@ -14,13 +14,14 @@ public:
   virtual ~SEChronicObstructivePulmonaryDisease();
 
   static constexpr char const* Name = "Chronic Obstructive Pulmonary Disease";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEChronicObstructivePulmonaryDisease& src);
+  void Clear() override;
+  void Copy(const SEChronicObstructivePulmonaryDisease& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Activate() override;
 
   virtual bool HasBronchitisSeverity() const;
   virtual SEScalar0To1& GetBronchitisSeverity();

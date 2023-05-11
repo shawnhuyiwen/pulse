@@ -13,14 +13,16 @@ public:
   virtual ~SENeedleDecompression();
 
   static constexpr char const* Name = "Needle Decompression";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SENeedleDecompression& src, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SENeedleDecompression& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual eSwitch GetState() const;
   virtual void SetState(eSwitch name);
@@ -29,8 +31,6 @@ public:
   virtual void SetSide(eSide LeftOrRight);
   virtual bool HasSide() const;
   virtual void InvalidateSide();
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   eSide m_Side;

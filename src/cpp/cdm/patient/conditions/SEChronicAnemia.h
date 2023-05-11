@@ -13,13 +13,13 @@ public:
   virtual ~SEChronicAnemia();
 
   static constexpr char const* Name = "Chronic Anemia";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEChronicAnemia& src);
+  void Clear() override;
+  void Copy(const SEChronicAnemia& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  bool IsValid() const override;
+  bool IsActive() const override;
 
   virtual bool HasReductionFactor() const;
   virtual SEScalar0To1& GetReductionFactor();

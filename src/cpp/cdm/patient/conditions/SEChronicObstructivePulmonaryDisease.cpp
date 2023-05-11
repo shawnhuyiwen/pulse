@@ -42,6 +42,11 @@ bool SEChronicObstructivePulmonaryDisease::IsActive() const
     return false;
   return GetBronchitisSeverity() > 0 || HasEmphysemaSeverity();
 }
+void SEChronicObstructivePulmonaryDisease::Activate()
+{
+  SEPatientCondition::Activate();
+  FillLungImpairmentMap(m_EmphysemaSeverities);
+}
 
 bool SEChronicObstructivePulmonaryDisease::HasBronchitisSeverity() const
 {

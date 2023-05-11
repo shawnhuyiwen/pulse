@@ -13,14 +13,16 @@ public:
   virtual ~SEChestCompression();
 
   static constexpr char const* Name = "Chest Compression";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEChestCompression& src, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SEChestCompression& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasForce() const;
   virtual SEScalarForce& GetForce();
@@ -33,8 +35,6 @@ public:
   virtual bool HasCompressionPeriod() const;
   virtual SEScalarTime& GetCompressionPeriod();
   virtual double GetCompressionPeriod(const TimeUnit& unit) const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalarForce*           m_Force;
