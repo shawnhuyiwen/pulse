@@ -20,12 +20,10 @@ def serialize_patient_action_from_bind(src: PatientActionData, dst: SEPatientAct
 def serialize_acute_respiratory_distress_syndrome_exacerbation_to_bind(src: SEAcuteRespiratoryDistressSyndromeExacerbation,
                                                                        dst: AcuteRespiratoryDistressSyndromeExacerbationData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
-    if src.has_severity():
-        serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
-    if src.has_left_lung_affected():
-        serialize_scalar_0to1_to_bind(src.get_left_lung_affected(), dst.LeftLungAffected)
-    if src.has_right_lung_affected():
-        serialize_scalar_0to1_to_bind(src.get_right_lung_affected(), dst.RightLungAffected)
+    for c,s in src._severities.items():
+        i = dst.Severity.add()
+        i.Compartment = c.value
+        serialize_scalar_0to1_to_bind(s, i.Severity)
 
 def serialize_acute_respiratory_distress_syndrome_exacerbation_from_bind(src: AcuteRespiratoryDistressSyndromeExacerbationData,
                                                                          dst: SEAcuteRespiratoryDistressSyndromeExacerbation):
@@ -165,8 +163,10 @@ def serialize_chronic_obstructive_pulmonary_disease_exacerbation_to_bind(src: SE
     serialize_patient_action_to_bind(src, dst.PatientAction)
     if src.has_bronchitis_severity():
         serialize_scalar_0to1_to_bind(src.get_bronchitis_severity(), dst.BronchitisSeverity)
-    if src.has_emphysema_severity():
-        serialize_scalar_0to1_to_bind(src.get_emphysema_severity(), dst.EmphysemaSeverity)
+    for c,s in src._emphysema_severities.items():
+        i = dst.Severity.add()
+        i.Compartment = c.value
+        serialize_scalar_0to1_to_bind(s, i.Severity)
 def serialize_chronic_obstructive_pulmonary_disease_exacerbation_from_bind(src: ChronicObstructivePulmonaryDiseaseExacerbationData,
                                                                            dst: SEChronicObstructivePulmonaryDiseaseExacerbation):
     serialize_patient_action_from_bind(src.PatientAction, dst)
@@ -326,22 +326,6 @@ def serialize_impaired_alveolar_exchange_exacerbation_from_bind(src: ImpairedAlv
     serialize_patient_action_from_bind(src.PatientAction, dst)
     raise Exception("serialize_patient_action_from_bind not implemented")
 
-
-#################################################################
-
-def serialize_lobar_pneumonia_exacerbation_to_bind(src:SELobarPneumoniaExacerbation, dst: LobarPneumoniaExacerbationData):
-    serialize_patient_action_to_bind(src, dst.PatientAction)
-    if src.has_severity():
-        serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
-    if src.has_right_lung_affected():
-        serialize_scalar_0to1_to_bind(src.get_right_lung_affected(), dst.RightLungAffected)
-    if src.has_left_lung_affected():
-        serialize_scalar_0to1_to_bind(src.get_left_lung_affected(), dst.LeftLungAffected)
-
-def serialize_lobar_pneumonia_exacerbation_from_bind(src:LobarPneumoniaExacerbationData, dst: SELobarPneumoniaExacerbation ):
-    serialize_patient_action_from_bind(src.PatientAction, dst)
-    raise Exception("serialize_patient_action_from_bind not implemented")
-
 #################################################################
 
 def serialize_mechanical_ventilation_to_bind(src: SEMechanicalVentilation, dst: MechanicalVentilationData):
@@ -377,6 +361,19 @@ def serialize_pericardial_effusion_to_bind(src: SEPericardialEffusion, dst:Peric
         serialize_scalar_volume_per_time_to_bind(src.get_effusion_rate(), dst.EffusionRate)
 
 def serialize_pericardial_effusion_from_bind(src: PericardialEffusionData, dst: SEPericardialEffusion):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+    raise Exception("serialize_patient_action_from_bind not implemented")
+
+#################################################################
+
+def serialize_pneumonia_exacerbation_to_bind(src:SEPneumoniaExacerbation, dst: PneumoniaExacerbationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    for c,s in src._severities.items():
+        i = dst.Severity.add()
+        i.Compartment = c.value
+        serialize_scalar_0to1_to_bind(s, i.Severity)
+
+def serialize_pneumonia_exacerbation_from_bind(src:PneumoniaExacerbationData, dst: SEPneumoniaExacerbation ):
     serialize_patient_action_from_bind(src.PatientAction, dst)
     raise Exception("serialize_patient_action_from_bind not implemented")
 
