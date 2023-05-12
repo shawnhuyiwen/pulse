@@ -17,7 +17,7 @@ def HowTo_RepiratoryFatigue():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # TODO Model is currently incomplete!
 
@@ -30,7 +30,7 @@ def HowTo_RepiratoryFatigue():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_RepiratoryFatigue()
 

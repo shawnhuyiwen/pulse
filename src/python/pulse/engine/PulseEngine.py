@@ -30,7 +30,7 @@ def hash():
 
 class PulseEngine:
     __slots__ = ['__pulse', "_is_ready", "_dt_s",
-                 "_results",
+                 "_data_request_mgr","_results",
                  "_event_handler", "_log_forward",
                  "_spare_time_s"]
 
@@ -43,6 +43,7 @@ class PulseEngine:
         self._log_forward = None
         self._event_handler = None
         self._results = []
+        self._data_request_mgr = None
         self._spare_time_s = 0
         self._dt_s = self.__pulse.get_timestep("s")
 
@@ -148,6 +149,9 @@ class PulseEngine:
     def pull_data(self):
         return self._results
 
+    def print_results(self):
+        self._data_request_mgr.to_console(self._results)
+
     def pull_active_events(self):
         events = self.__pulse.pull_active_events(PyPulse.serialization_format.json)
         if events:
@@ -156,9 +160,10 @@ class PulseEngine:
         return None
 
     def _process_requests(self, data_request_mgr, fmt: eSerializationFormat):
-        if data_request_mgr is None:
-            data_request_mgr = SEDataRequestManager()
-            data_request_mgr.set_data_requests([
+        self._data_request_mgr = data_request_mgr
+        if self._data_request_mgr is None:
+            self._data_request_mgr = SEDataRequestManager()
+            self._data_request_mgr.set_data_requests([
                 SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
                 SEDataRequest.create_physiology_request("ArterialPressure", unit=PressureUnit.mmHg),
                 SEDataRequest.create_physiology_request("MeanArterialPressure", unit=PressureUnit.mmHg),
@@ -176,7 +181,7 @@ class PulseEngine:
             ])
         # Simulation time is always the first result.
         self._results = [] # Clear all results
-        return serialize_data_request_manager_to_string(data_request_mgr, fmt)
+        return serialize_data_request_manager_to_string(self._data_request_mgr, fmt)
 
     def process_action(self, action: SEAction):
         if not self._is_ready:

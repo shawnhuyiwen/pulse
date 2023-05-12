@@ -18,7 +18,7 @@ def HowTo_SupplementalOxygen():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Perform an action
     oxygen = SESupplementalOxygen()
@@ -31,7 +31,7 @@ def HowTo_SupplementalOxygen():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_SupplementalOxygen()
 

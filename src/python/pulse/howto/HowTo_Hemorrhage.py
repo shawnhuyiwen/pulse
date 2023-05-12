@@ -18,7 +18,7 @@ def HowTo_Hemorrhage():
 
     # Get default data at time 0s from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Perform an action
     hemorrhage = SEHemorrhage()
@@ -35,7 +35,7 @@ def HowTo_Hemorrhage():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # For this example, you will see a decrease in blood volume
 

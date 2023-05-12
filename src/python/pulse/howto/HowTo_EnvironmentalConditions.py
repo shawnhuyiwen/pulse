@@ -36,7 +36,7 @@ def HowTo_EnvironmentalConditions():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Change the environment
     change = SEChangeEnvironmentalConditions()
@@ -63,7 +63,7 @@ def HowTo_EnvironmentalConditions():
     # Advance some time and print out the vitals
     pulse.advance_time_s(300)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 
 HowTo_EnvironmentalConditions()

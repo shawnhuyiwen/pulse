@@ -17,7 +17,7 @@ def HowTo_ConsumeNutrients():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     consume = SEConsumeNutrients()
     consume.set_comment("Patient eats lunch")
@@ -36,7 +36,7 @@ def HowTo_ConsumeNutrients():
     # Advance some time and print out the vitals
     pulse.advance_time_s(60)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_ConsumeNutrients()
 

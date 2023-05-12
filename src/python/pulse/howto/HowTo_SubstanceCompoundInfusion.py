@@ -25,7 +25,7 @@ def HowTo_CompoundSubstanceInfusion():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Perform an action
     substance_compound = SESubstanceCompoundInfusion()
@@ -39,7 +39,7 @@ def HowTo_CompoundSubstanceInfusion():
     for i in range(6):
         pulse.advance_time_s(5)
         results = pulse.pull_data()
-        print(results)
+        pulse.print_results()
 
     pulse.clear()
 

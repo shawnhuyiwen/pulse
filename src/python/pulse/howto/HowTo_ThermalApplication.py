@@ -18,7 +18,7 @@ def HowTo_ThermalApplication():
 
     # Get default data at time 0s from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Perform an action
     change = SEThermalApplication()
@@ -47,6 +47,6 @@ def HowTo_ThermalApplication():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_ThermalApplication()

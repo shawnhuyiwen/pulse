@@ -17,7 +17,7 @@ def HowTo_Bronchoconstriction():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     bronchoconstriction = SEBronchoconstriction()
     bronchoconstriction.set_comment("Patient undergoes constriction of the bronchus")
@@ -27,7 +27,7 @@ def HowTo_Bronchoconstriction():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_Bronchoconstriction()
 

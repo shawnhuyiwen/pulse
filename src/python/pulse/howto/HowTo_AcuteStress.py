@@ -18,7 +18,7 @@ def HowTo_AcuteStress():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     acute_stress = SEAcuteStress()
     acute_stress.set_comment("Patient undergoes acute stress")
@@ -28,7 +28,7 @@ def HowTo_AcuteStress():
     # Advance some time and print out the vitals
     pulse.advance_time_s(60)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_AcuteStress()
 

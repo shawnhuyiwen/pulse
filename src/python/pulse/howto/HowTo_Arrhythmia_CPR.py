@@ -18,7 +18,7 @@ def HowTo_Arrhythmia():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     arryhthmia = SEArrhythmia()
     arryhthmia.set_comment("Patient experiences cardiac arrest")
@@ -28,7 +28,7 @@ def HowTo_Arrhythmia():
     # Advance some time and print out the vitals
     pulse.advance_time_s(10)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # If you are using a sensor, you can directly pass over a force
     # You should pass the sensor readings over at a decent rate continuously
@@ -39,7 +39,7 @@ def HowTo_Arrhythmia():
 
     pulse.advance_time_s(1)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     cpr_force.set_comment("Stop pressing")
     cpr_force.get_force().set_value(0, ForceUnit.N)
@@ -54,7 +54,7 @@ def HowTo_Arrhythmia():
 
     pulse.advance_time_s(10)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_Arrhythmia()
 

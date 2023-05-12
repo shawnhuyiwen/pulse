@@ -24,7 +24,7 @@ def HowTo_PericardalEffusion():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Perform an action
     effusion = SEPericardialEffusion()
@@ -35,7 +35,7 @@ def HowTo_PericardalEffusion():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_PericardalEffusion()
 

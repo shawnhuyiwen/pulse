@@ -17,7 +17,7 @@ def HowTo_BrainInjury():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     brain_injury = SEBrainInjury()
     brain_injury.set_comment("Patient receives a brain injury")
@@ -28,7 +28,7 @@ def HowTo_BrainInjury():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_BrainInjury()
 

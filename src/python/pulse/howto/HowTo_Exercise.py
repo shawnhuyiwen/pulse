@@ -17,7 +17,7 @@ def HowTo_Exercise():
 
     # Get default data at time 0s from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Perform an action
     exercise = SEExercise()
@@ -28,7 +28,7 @@ def HowTo_Exercise():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # For this example, you will see an increase in heart rate
 

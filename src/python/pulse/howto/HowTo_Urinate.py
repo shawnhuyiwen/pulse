@@ -16,7 +16,7 @@ def HowTo_Urinate():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     urinate = SEUrinate()
     urinate.set_comment("Patient goes to the restroom")
@@ -25,7 +25,7 @@ def HowTo_Urinate():
     # Advance some time and print out the vitals
     pulse.advance_time_s(60)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_Urinate()
 

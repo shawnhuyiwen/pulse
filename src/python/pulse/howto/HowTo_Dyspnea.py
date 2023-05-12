@@ -17,7 +17,7 @@ def HowTo_Dyspnea():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Perform an action
     dsypnea = SEDyspnea()
@@ -28,7 +28,7 @@ def HowTo_Dyspnea():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_Dyspnea()
 

@@ -27,7 +27,7 @@ def HowTo_Intubation():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_Intubation()
 
