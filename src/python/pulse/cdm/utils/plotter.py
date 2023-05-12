@@ -2,12 +2,14 @@
 # See accompanying NOTICE file for details.
 
 import logging
+import numpy as np
 import os
 import re
 import shutil
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.style as mplstyle
+import matplotlib.ticker as mplticker
 from matplotlib import colors as mcolors
 from cycler import cycler
 from timeit import default_timer as timer
@@ -252,6 +254,21 @@ def csv_plotter(csv: str, benchmark: bool = False):
         if x_label:
             config.set_x_label(x_label)
 
+        # Axis bounds
+        if "PlasmaConcentration" in y_header:
+            config.set_log_axis(True)
+        else:
+            min_y = min([s.get_data_frame()[y_header].min() for s in sources])
+            max_y = max([s.get_data_frame()[y_header].max() for s in sources])
+            if np.isclose(min_y, 0):
+                min_y = -0.001
+            if np.isclose(max_y, 0):
+                max_y = 0.001
+            if min_y >= 0:
+                min_y = -0.01
+            if not np.isnan(min_y):
+                config.set_y_bounds(SEBounds(min_y-0.05*abs(min_y), max_y+0.15*abs(max_y)))
+
         if create_plot(
             sources,
             config,
@@ -265,6 +282,8 @@ def csv_plotter(csv: str, benchmark: bool = False):
         # Reset
         clear_current_plot()
         config.invalidate_x_label()
+        config.invalidate_y_bounds()
+        config.set_log_axis(False)
 
         if benchmark:
             end_series = timer()
@@ -384,6 +403,21 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         if x_label:
             config.set_x_label(x_label)
 
+        # Axis bounds
+        if "PlasmaConcentration" in y_header:
+            config.set_log_axis(True)
+        else:
+            min_y = min([s.get_data_frame()[y_header].min() for s in sources])
+            max_y = max([s.get_data_frame()[y_header].max() for s in sources])
+            if np.isclose(min_y, 0):
+                min_y = -0.001
+            if np.isclose(max_y, 0):
+                max_y = 0.001
+            if min_y >= 0:
+                min_y = -0.01
+            if not np.isnan(min_y):
+                config.set_y_bounds(SEBounds(min_y-0.05*abs(min_y), max_y+0.15*abs(max_y)))
+
         # Update background color based on fail/pass
         dark_bg_params = {
             "legend.facecolor" : "dimgrey",
@@ -414,6 +448,8 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         # Reset
         clear_current_plot()
         config.invalidate_x_label()
+        config.invalidate_y_bounds()
+        config.set_log_axis(False)
         plt.rcParams.update(plt.rcParamsDefault)
 
         if benchmark:
@@ -595,6 +631,9 @@ def create_plot(plot_sources: [SEPlotSource],
     def _plot_headers(ax, ps, df, x_header, y_headers, y_label):
         color = ""
         for y_header in y_headers:
+            if y_header not in df.columns:
+                _pulse_logger.error(f"{y_header} not found in data")
+                return None
             line_lbl = ""
             if ps.has_label():
                 line_lbl = ps.get_label()
@@ -646,6 +685,8 @@ def create_plot(plot_sources: [SEPlotSource],
             return False
 
         color = _plot_headers(ax1, ps, df, x_header, y_headers, y_label)
+        if color is None:
+            return False
 
         if y2_headers or validation_source:
             ax1.yaxis.label.set_color(color)
@@ -723,6 +764,7 @@ def create_plot(plot_sources: [SEPlotSource],
     # approximation will also likely need to be updated.
 
     # Legend and gridline settings
+    ax1.xaxis.set_major_locator(mplticker.MaxNLocator(nbins=(plot_config.get_image_properties().get_width_inch() / .55)))
     if plot_config.get_gridlines():
         ax1.grid(linestyle='dotted')
     if plot_config.get_legend_mode() != eLegendMode.NoLegends and len(lns) > 0:
