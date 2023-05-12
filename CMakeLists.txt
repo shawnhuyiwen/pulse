@@ -202,7 +202,7 @@ if(protobuf_DIR AND NOT EXISTS ${protobuf_DIR})
   # Linux systems can build libs to a variety of directories...
   message(STATUS "Provided protobuf_DIR, does not exist, looking for alternatives...")
   message(STATUS "  Original protobuf_DIR : ${protobuf_DIR}")
-  
+
   # We could be cross compiling for windows on linux, change to a linux path
   string(FIND ${protobuf_DIR} "install/cmake" _idx)
   if(_idx GREATER_EQUAL 0)
@@ -214,7 +214,7 @@ if(protobuf_DIR AND NOT EXISTS ${protobuf_DIR})
       message(STATUS "Nope, that was not it")
     endif()
   endif()
-  
+
   if(NOT EXISTS ${protobuf_DIR})
     string(FIND ${protobuf_DIR} "/lib/" _idx)
     if(_idx GREATER_EQUAL 0)
@@ -288,9 +288,11 @@ endif()
 # Pulse uses Java in its development utility scripts
 find_package(Java REQUIRED)
 include(UseJava)
-if(_JAVA_HOME)
-  message(STATUS "Using JAVA_HOME as my Java executable (set to : ${_JAVA_HOME})")
-  set(Java_CMD ${_JAVA_HOME}/bin/java)
+if(Java_JAVA_EXECUTABLE)
+  message(STATUS "Using Java executable : ${Java_JAVA_EXECUTABLE}")
+  set(Java_CMD ${Java_JAVA_EXECUTABLE})
+else()
+  message(STATUS "Could not find Java_JAVA_EXECUTABLE")
 endif()
 
 if(NOT WIN32)

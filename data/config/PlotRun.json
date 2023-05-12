@@ -103,10 +103,10 @@
         "Series":
         [
           { "OutputFilename": "SinusECG", "Title": "", "XBounds": { "LowerBound": 2.5, "UpperBound": 5.5 },
-              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] },
+              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "ECG-Lead3ElectricPotential(mV)" ] },
           { "OutputFilename": "SinusBradycardia_Engine", "Title": "",
               "XBounds": { "LowerBound": 140, "UpperBound": 146 }, "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 },
-              "YHeader": [ "Lead3ElectricPotential(mV)" ], "PlotConfig": { "ImageProperties": { "Width_inch": 10 } } }
+              "YHeader": [ "ECG-Lead3ElectricPotential(mV)" ], "PlotConfig": { "ImageProperties": { "Width_inch": 10 } } }
         ]
       }
     },
@@ -134,7 +134,7 @@
               "YHeader": [ "MeanArterialPressure(mmHg)" ] },
           { "OutputFilename": "ECGVT_Engine", "Title": "",
               "XBounds": { "LowerBound": 140, "UpperBound": 145 }, "YBounds": { "LowerBound": -1.0, "UpperBound": 2.0 },
-              "YHeader": [ "Lead3ElectricPotential(mV)" ], "PlotConfig": { "ImageProperties": { "Width_inch": 10 } } }
+              "YHeader": [ "ECG-Lead3ElectricPotential(mV)" ], "PlotConfig": { "ImageProperties": { "Width_inch": 10 } } }
         ]
       }
     },
@@ -180,7 +180,7 @@
         [
           { "OutputFilename": "SinusTachycardia_Engine", "Title": "",
               "XBounds": { "LowerBound": 140, "UpperBound": 146 }, "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 },
-              "YHeader": [ "Lead3ElectricPotential(mV)" ] }
+              "YHeader": [ "ECG-Lead3ElectricPotential(mV)" ] }
         ]
       }
     },
@@ -200,7 +200,7 @@
         "Series":
         [
           { "OutputFilename": "SinusPEA_Engine", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
-              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
+              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "ECG-Lead3ElectricPotential(mV)" ] }
         ]
       }
     },
@@ -220,7 +220,7 @@
         "Series":
         [
           { "OutputFilename": "PulselessVT_Engine", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
-              "YBounds": { "LowerBound": -0.5, "UpperBound": 1.0 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
+              "YBounds": { "LowerBound": -0.5, "UpperBound": 1.0 }, "YHeader": [ "ECG-Lead3ElectricPotential(mV)" ] }
         ]
       }
     },
@@ -240,7 +240,7 @@
         "Series":
         [
           { "OutputFilename": "ECGCoarseVF_Engine", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
-              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
+              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "ECG-Lead3ElectricPotential(mV)" ] }
         ]
       }
     },
@@ -260,7 +260,7 @@
         "Series":
         [
           { "OutputFilename": "ECGFineVF_Engine", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
-              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
+              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "ECG-Lead3ElectricPotential(mV)" ] }
         ]
       }
     },
@@ -280,7 +280,7 @@
         "Series":
         [
           { "OutputFilename": "Asystole_Engine", "Title": "", "XBounds": { "LowerBound": 140, "UpperBound": 146 },
-              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "Lead3ElectricPotential(mV)" ] }
+              "YBounds": { "LowerBound": -0.1, "UpperBound": 0.7 }, "YHeader": [ "ECG-Lead3ElectricPotential(mV)" ] }
         ]
       }
     },
