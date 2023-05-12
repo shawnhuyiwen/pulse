@@ -12,6 +12,13 @@ void PulseEnginePoolBind(py::module&);
 // Studies
 void MultiplexVentilationEngineBind(py::module&);
 
+double convert(double val, const std::string& from, const std::string& to)
+{
+  CPScalar cp(val, from);
+  double d = cp(to).GetValue();
+  return d;
+}
+
 PYBIND11_MODULE(PyPulse, m)
 {
    m.doc() = R"pbdoc(
@@ -25,7 +32,9 @@ PYBIND11_MODULE(PyPulse, m)
            serialize_from_string
            serialize_to_string
     )pbdoc";
-   
+
+   m.def("convert", &convert, "A function that converts a number from one unit to another");
+
    py::enum_<eSerializationFormat>(m, "serialization_format")
     .value("binary", eSerializationFormat::BINARY)
     .value("json", eSerializationFormat::JSON)
