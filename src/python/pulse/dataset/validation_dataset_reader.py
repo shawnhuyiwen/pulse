@@ -26,7 +26,7 @@ from pulse.cdm.io.patient import serialize_patient_from_file
 
 _pulse_logger = logging.getLogger('pulse')
 
-# TODO: add openpyxl and pycel to requirements.txt
+
 def load_data(xls_file: str):
     # Remove and recreate directory
     output_dir = "./validation/"
@@ -131,22 +131,19 @@ def read_sheet(sheet: Worksheet, evaluator: ExcelCompiler, output_dir: str):
         if not vtb.tgt_file or vtb.tgt_file == "ValidationTargetFile":
             continue
 
-        # Space in 'Reference Values' is an invalid Python identifier, so it becomes positional
-        ref_cell = row._4
-
-        if row.OptimizerTargets not in targets:
-            targets[row.OptimizerTargets] = SEDataRequestManager()
-        dr_manager = targets[row.OptimizerTargets]
+        if vtb.tgt_file not in targets:
+            targets[vtb.tgt_file] = SEDataRequestManager()
+        dr_manager = targets[vtb.tgt_file]
         vts = dr_manager.get_validation_targets() if dr_manager.has_validation_targets() else []
 
-        prop_split = [s.strip() for s in row.Output.split("-")]
+        prop_split = [s.strip() for s in vtb.header.split("-")]
         unit = None
         try:
-            unit = get_unit(row.Units.strip)
+            unit = get_unit(vtb.units.strip())
         except:
-            _pulse_logger.warning(f"Could not identify unit: {row.Units}")
+            _pulse_logger.warning(f"Could not identify unit: {vtb.units}")
         tgt = SEValidationTarget.create_liquid_compartment_validation_target(prop_split[0], prop_split[1], unit)
-        tgt.set_type(eValidationTargetType[row.Algorithm])
+        tgt.set_type(eValidationTargetType[vtb.algorithm])
 
 
         ref_val = vtb.ref_cell
