@@ -48,7 +48,8 @@ void HowToCOPD()
 
   SEChronicObstructivePulmonaryDisease& COPD = pc.GetConditions().GetChronicObstructivePulmonaryDisease();
   COPD.GetBronchitisSeverity().SetValue(0.5);
-  COPD.GetEmphysemaSeverity().SetValue(0.7);
+  COPD.GetEmphysemaSeverity(eLungCompartment::LeftLung).SetValue(0.7);
+  COPD.GetEmphysemaSeverity(eLungCompartment::LeftLung).SetValue(0.7);
 
   if (!pe->InitializeEngine(pc))
   {

@@ -46,13 +46,13 @@ bool SEPneumonia::IsActive() const
 void SEPneumonia::Activate()
 {
   SEPatientCondition::Activate();
-  FillLungImpairmentMap(m_Severities);
+  SERespiratorySystem::FillLungImpairmentMap(m_Severities);
 }
 
 bool SEPneumonia::HasSeverity() const
 {
   for (auto itr : m_Severities)
-    if (itr.second != nullptr && itr.second->IsPositive())
+    if (itr.second != nullptr && itr.second->IsValid())
       return true;
   return false;
 }

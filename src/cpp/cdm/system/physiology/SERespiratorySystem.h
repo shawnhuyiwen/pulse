@@ -17,12 +17,12 @@ enum class eLungCompartment
   RightInferiorLobe
 };
 using LungImpairmentMap = std::map<eLungCompartment, SEScalar0To1*>;
-void FillLungImpairmentMap(LungImpairmentMap& map);
 
 class CDM_DECL SERespiratorySystem : public SESystem
 {
   friend class PBPhysiology;//friend the serialization class
 public:
+  static void FillLungImpairmentMap(LungImpairmentMap& map);
 
   SERespiratorySystem(Logger* logger);
   virtual ~SERespiratorySystem();

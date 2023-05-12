@@ -95,8 +95,8 @@ namespace Pulse.CDM
         dst.AnyCondition.Add(PBCondition.Unload(src.GetChronicVentricularSystolicDysfunction()));
       if (src.HasImpairedAlveolarExchange())
         dst.AnyCondition.Add(PBCondition.Unload(src.GetImpairedAlveolarExchange()));
-      if (src.HasLobarPneumonia())
-        dst.AnyCondition.Add(PBCondition.Unload(src.GetLobarPneumonia()));
+      if (src.HasPneumonia())
+        dst.AnyCondition.Add(PBCondition.Unload(src.GetPneumonia()));
       if (src.HasSepsis())
         dst.AnyCondition.Add(PBCondition.Unload(src.GetSepsis()));
 

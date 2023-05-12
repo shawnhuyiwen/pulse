@@ -133,9 +133,8 @@ namespace HowTo_UseEngine
             // Or, ou can load up a local file on disk
             cfg.GetPatient().SerializeFromFile("./patients/StandardMale.json");
             // Optionally, you can add conditions to the patient
-            cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().SetValue(0.2);
-            cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().SetValue(1.0);
-            cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().SetValue(1.0);
+            cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment.LeftLung).SetValue(1.0);
+            cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(eLungCompartment.RightLung).SetValue(1.0);
             // Initialization requires that you have all data files on disk for Pulse to find when creating a patient
             //   - Patient file (if not creating an inline patient definition)
             //   - Substance, Stabilization (config folder), nutrition, environments, ecg files
@@ -169,7 +168,8 @@ namespace HowTo_UseEngine
             // https://pulse.kitware.com/_patient_methodology.html
             // Optionally, you can add conditions to the patient
             cfg.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().SetValue(0.45);
-            cfg.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().SetValue(0.20);
+            cfg.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment.LeftLung).SetValue(0.20);
+            cfg.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(eLungCompartment.RightLung).SetValue(0.20);
             // Initialization requires that you have all data files on disk for Pulse to find when creating a patient
             //   - Patient file (if not creating an inline patient definition)
             //   - Substance, Stabilization (config folder), nutrition, environments, ecg files

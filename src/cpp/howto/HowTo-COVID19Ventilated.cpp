@@ -67,9 +67,8 @@ void HowToCOVID19Ventilated()
   // Set moderate ARDS because COVID-19 pneumonia patients that received invasive mechanical ventilation have shown the PaO2/FiO2 ratios 
   // were consistent with the Berlin criteria of moderate-to-severe ARDS. @cite bhatraju2020covid @cite yang2020clinical
   SEAcuteRespiratoryDistressSyndromeExacerbation ARDS;
-  ARDS.GetSeverity().SetValue(0.6);
-  ARDS.GetLeftLungAffected().SetValue(1.0);
-  ARDS.GetRightLungAffected().SetValue(1.0);
+  ARDS.GetSeverity(eLungCompartment::LeftLung).SetValue(0.6);
+  ARDS.GetSeverity(eLungCompartment::RightLung).SetValue(0.6);
   pe->ProcessAction(ARDS);
 
   // Update the total respiratory compliance, since COVID-19 patients present an atypical form of ARDS with a dissociation between 

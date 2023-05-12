@@ -256,6 +256,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/physiology/SERespiratoryMechanics.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/physiology/SERespiratorySystem.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/utils/Logger.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/utils/RunConfiguration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/utils/UnitConverter.cs

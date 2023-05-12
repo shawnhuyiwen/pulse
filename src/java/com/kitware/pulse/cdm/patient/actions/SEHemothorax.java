@@ -7,10 +7,10 @@ import com.kitware.pulse.cdm.bind.Enums.eSide;
 import com.kitware.pulse.cdm.bind.PatientActions.HemothoraxData;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 import com.kitware.pulse.cdm.properties.SEScalarVolumePerTime;
-import com.kitware.pulse.cdm.properties.SEScalarVolume;
 
 public class SEHemothorax extends SEPatientAction
 {
+  private static final long serialVersionUID = -1654353830396887L;
   protected eSide side;
   protected SEScalar0To1 severity;
   protected SEScalarVolumePerTime flowRate;

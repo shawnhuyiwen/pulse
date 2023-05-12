@@ -48,7 +48,7 @@ bool SEAcuteRespiratoryDistressSyndromeExacerbation::IsActive() const
 void SEAcuteRespiratoryDistressSyndromeExacerbation::Activate()
 {
   SEPatientAction::Activate();
-  FillLungImpairmentMap(m_Severities);
+  SERespiratorySystem::FillLungImpairmentMap(m_Severities);
 }
 void SEAcuteRespiratoryDistressSyndromeExacerbation::Deactivate()
 {
@@ -64,7 +64,7 @@ const SEScalar* SEAcuteRespiratoryDistressSyndromeExacerbation::GetScalar(const 
 bool SEAcuteRespiratoryDistressSyndromeExacerbation::HasSeverity() const
 {
   for (auto itr : m_Severities)
-    if (itr.second != nullptr && itr.second->IsPositive())
+    if (itr.second != nullptr && itr.second->IsValid())
       return true;
   return false;
 }

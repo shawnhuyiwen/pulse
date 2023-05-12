@@ -45,7 +45,7 @@ bool SEChronicObstructivePulmonaryDisease::IsActive() const
 void SEChronicObstructivePulmonaryDisease::Activate()
 {
   SEPatientCondition::Activate();
-  FillLungImpairmentMap(m_EmphysemaSeverities);
+  SERespiratorySystem::FillLungImpairmentMap(m_EmphysemaSeverities);
 }
 
 bool SEChronicObstructivePulmonaryDisease::HasBronchitisSeverity() const
@@ -68,7 +68,7 @@ double SEChronicObstructivePulmonaryDisease::GetBronchitisSeverity() const
 bool SEChronicObstructivePulmonaryDisease::HasEmphysemaSeverity() const
 {
   for (auto itr : m_EmphysemaSeverities)
-    if (itr.second != nullptr && itr.second->IsPositive())
+    if (itr.second != nullptr && itr.second->IsValid())
       return true;
   return false;
 }

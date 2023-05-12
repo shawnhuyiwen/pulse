@@ -47,7 +47,7 @@ bool SEPneumoniaExacerbation::IsActive() const
 void SEPneumoniaExacerbation::Activate()
 {
   SEPatientAction::Activate();
-  FillLungImpairmentMap(m_Severities);
+  SERespiratorySystem::FillLungImpairmentMap(m_Severities);
 }
 void SEPneumoniaExacerbation::Deactivate()
 {
@@ -63,7 +63,7 @@ const SEScalar* SEPneumoniaExacerbation::GetScalar(const std::string& name)
 bool SEPneumoniaExacerbation::HasSeverity() const
 {
   for (auto itr : m_Severities)
-    if (itr.second != nullptr && itr.second->IsPositive())
+    if (itr.second != nullptr && itr.second->IsValid())
       return true;
   return false;
 }
