@@ -25,11 +25,12 @@ set(JAVA_CLASSPATH Pulse.jar
         "@CMAKE_SOURCE_DIR@/src/java/jar/slf4j-simple-2.0.7.jar"
         "@CMAKE_SOURCE_DIR@/src/java/jar/xmlbeans-5.1.1.jar"
         )
+set(separator ";")
 if(NOT WIN32)
+  set(separator ":")
   string(REPLACE ";" ":" JAVA_CLASSPATH "${JAVA_CLASSPATH}")
 endif()
-
-set(ENV{PYTHONPATH} "@CMAKE_INSTALL_PREFIX@/python/")
+set(ENV{PYTHONPATH} "@CMAKE_INSTALL_PREFIX@/bin${separator}@CMAKE_INSTALL_PREFIX@/python")
 
 string( TOLOWER "${TYPE}" cmd )
 
@@ -133,7 +134,7 @@ elseif(cmd STREQUAL "rebase")
 elseif(cmd STREQUAL "fullreport")
   execute_process(COMMAND "@Java_CMD@" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SEReportResults)
 elseif(cmd STREQUAL "plotter")
-  execute_process(COMMAND @Python_CMD@ "../python/pulse/cdm/utils/plotter.py" ${ARG1} RESULT_VARIABLE py_result)
+  execute_process(COMMAND "@Python_CMD@" "../python/pulse/cdm/utils/plotter.py" ${ARG1} RESULT_VARIABLE py_result)
 elseif(${cmd} MATCHES "compare")
   # If ARG2 is empty, assume ARG1 is a directory with 2 csv files
   if(NOT ARG2)
@@ -155,7 +156,7 @@ elseif(${cmd} MATCHES "compare")
   endif()
 else()
   if(${cmd} MATCHES "plot")
-    execute_process(COMMAND @Python_CMD@ "../python/pulse/cdm/utils/plotter.py" ${TYPE}.json RESULT_VARIABLE py_result)
+    execute_process(COMMAND "@Python_CMD@" "../python/pulse/cdm/utils/plotter.py" ${TYPE}.json RESULT_VARIABLE py_result)
   else()
     execute_process(COMMAND "@Java_CMD@" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.SETestDriver ${TYPE}.config)
   endif()
