@@ -52,23 +52,31 @@ def load_data(xls_file: str):
 
     # Iterate through patients
     patient_dir = "./patients/"
-    if os.path.isdir(patient_dir):
-        for patient_file in os.listdir(patient_dir):
-            f = os.path.join(patient_dir, patient_file)
-            if os.path.isfile(f) and patient_file.endswith(".json"):
-                update_patient(f, xls_file, xls_edit)
-                full_output_path = output_dir + patient_file[:-5] + "/"
-                os.makedirs(full_output_path)
+    try:
+        if os.path.isdir(patient_dir):
+            for patient_file in os.listdir(patient_dir):
+                f = os.path.join(patient_dir, patient_file)
+                if os.path.isfile(f) and patient_file.endswith(".json"):
+                    update_patient(f, xls_file, xls_edit)
+                    full_output_path = output_dir + patient_file[:-5] + "/"
+                    os.makedirs(full_output_path)
 
-                systems = ["Cardiovascular"]
-                workbook = load_workbook(filename=xls_edit, data_only=False)
-                evaluator = ExcelCompiler(filename=xls_edit)
-                for system in systems: #TODO: for system in workbook.sheetnames:
-                    if not read_sheet(workbook[system], evaluator, full_output_path):
-                        _pulse_logger.error(f"Unable to read {system} sheet")
+                    workbook = load_workbook(filename=xls_edit, data_only=False)
+                    evaluator = ExcelCompiler(filename=xls_edit)
+                    for system in workbook.sheetnames:
+                        if system == "Patient":
+                            continue
+                        if not read_sheet(workbook[system], evaluator, full_output_path):
+                            _pulse_logger.error(f"Unable to read {system} sheet")
+    except:
+        # Clean up temporary file no matter what
+        if os.path.isfile(xls_edit):
+            os.remove(xls_edit)
+        raise
 
     # Remove temp file
-    os.remove(xls_edit)
+    if os.path.isfile(xls_edit):
+        os.remove(xls_edit)
 
 
 def update_patient(patient_file: str, xls_file: str, new_file: Optional[str]=None):
@@ -98,11 +106,16 @@ def read_sheet(sheet: Worksheet, evaluator: ExcelCompiler, output_dir: str):
 
     # Get header to dataclass mapping
     ws_headers = [cell.value for cell in sheet[1]]
-    VTB_HEADER = ws_headers.index('Output')
-    VTB_UNITS = ws_headers.index('Units')
-    VTB_ALGO = ws_headers.index('Algorithm')
-    VTB_REF_CELL = ws_headers.index('Reference Values')
-    VTB_TGT_FILE = ws_headers.index('ValidationTargetFile')
+    try:
+        VTB_HEADER = ws_headers.index('Output')
+        VTB_UNITS = ws_headers.index('Units')
+        VTB_ALGO = ws_headers.index('Algorithm')
+        VTB_REF_CELL = ws_headers.index('Reference Values')
+        VTB_TGT_FILE = ws_headers.index('ValidationTargetFile')
+    except ValueError as e:
+        _pulse_logger.error(f"Missing required header {str(e)[:str(e).find(' is not in list')]}")
+        return False
+
 
     @dataclass
     class ValidationTargetBuilder:
@@ -142,6 +155,7 @@ def read_sheet(sheet: Worksheet, evaluator: ExcelCompiler, output_dir: str):
             unit = get_unit(vtb.units.strip())
         except:
             _pulse_logger.warning(f"Could not identify unit: {vtb.units}")
+        # TODO: Create other DR types
         tgt = SEValidationTarget.create_liquid_compartment_validation_target(prop_split[0], prop_split[1], unit)
         tgt.set_type(eValidationTargetType[vtb.algorithm])
 
@@ -183,5 +197,6 @@ def read_sheet(sheet: Worksheet, evaluator: ExcelCompiler, output_dir: str):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+    logging.getLogger("pycel").setLevel(logging.WARNING)
 
     load_data(get_data_dir() + "/human/adult/validation/SystemValidationData.xlsx")
