@@ -472,7 +472,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
             mode = _eColorMode.Pass
 
         computed_label = computed_source.get_label()
-        if y_header in rms_values:
+        if y_header in rms_values and not np.isnan(rms_values[y_header]):
             computed_source.set_label(f"{computed_label} (RMS = {rms_values[y_header]:.4f})")
 
         _plot_header([expected_source, computed_source], color_mode=mode)

@@ -10,10 +10,13 @@ _pulse_logger = logging.getLogger('pulse')
 
 def percent_tolerance(expected: float, calculated: float, epsilon: float, verbose: bool=True):
     # Check for 'invalid' numbers
-    if verbose and (np.isnan(expected) or np.isnan(calculated) or \
-       np.isinf(expected) or np.isinf(calculated)):
-        _pulse_logger.warning(f"While finding percent tolerance from values 'expected' = {expected} and " \
-               f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
+    if np.isnan(expected) or np.isnan(calculated) or np.isinf(expected) or np.isinf(calculated):
+        if verbose:
+            _pulse_logger.warning(f"While finding percent tolerance from values 'expected' = {expected} and " \
+                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
+        if (np.isnan(expected) and np.isnan(calculated)) or (np.isinf(expected) and np.isinf(calculated)):
+           return 0.0
+        return np.nan
 
     # Special cases
     if expected == 0.0 and calculated == 0.0:
@@ -40,10 +43,13 @@ def generate_percent_tolerance_span(expected: float, calculated: float, epsilon:
 
 def percent_difference(expected: float, calculated: float, epsilon: float, verbose: bool=True):
     # Check for 'invalid' numbers
-    if verbose and (np.isnan(expected) or np.isnan(calculated) or \
-       np.isinf(expected) or np.isinf(calculated)):
-        _pulse_logger.warning(f"While finding percent difference from values 'expected' = {expected} and " \
-               f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
+    if np.isnan(expected) or np.isnan(calculated) or np.isinf(expected) or np.isinf(calculated):
+        if verbose:
+            _pulse_logger.warning(f"While finding percent difference from values 'expected' = {expected} and " \
+                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
+        if (np.isnan(expected) and np.isnan(calculated)) or (np.isinf(expected) and np.isinf(calculated)):
+           return 0.0
+        return np.nan
 
     # Special cases
     if expected == 0.0 and calculated == 0.0:
