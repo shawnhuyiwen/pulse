@@ -142,7 +142,8 @@ class CSVComparison(SETestReport):
             def _time(idx: int):
                 return times.iloc[int(idx)]
             if total_errors > 0:
-                _pulse_logger.error(f"{total_errors} total errors found")
+                max_rms = max(rms.values()) if rms else np.nan
+                _pulse_logger.error(f"{total_errors} total errors found. Max RMS {max_rms:.4f}")
                 for f in failures:
                     e = error_summary[f]
                     errPercent = 100 * e.loc['total'] / (e['last row'] + 1 - e['first row'])

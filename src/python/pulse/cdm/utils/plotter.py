@@ -487,6 +487,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         if y_header in expected_df.columns:
             continue
 
+        _pulse_logger.warning(f"{y_header} not found in expected results. Plotting computed data by itself.")
         _plot_header([computed_source], color_mode=_eColorMode.Default)
 
     if benchmark:
@@ -593,13 +594,13 @@ def create_plot(plot_sources: [SEPlotSource],
         ax1.set_yscale("log")
         if y_label:
             ax1.set_ylabel(f'Log({y_label})', fontsize=plot_config.get_font_size())
-    x_bounds = plot_config.get_x_bounds()
-    if x_bounds.has_lower_bound():
+    x_bounds = plot_config.get_x_bounds() if plot_config.has_x_bounds() else None
+    if x_bounds is not None and x_bounds.has_lower_bound():
         ax1.set_xlim(left=x_bounds.get_lower_bound())
-    if x_bounds.has_upper_bound():
+    if x_bounds is not None and x_bounds.has_upper_bound():
         ax1.set_xlim(right=x_bounds.get_upper_bound())
-    y_bounds = plot_config.get_y_bounds()
-    if y_bounds.has_lower_bound() or y_bounds.has_upper_bound():
+    y_bounds = plot_config.get_y_bounds() if plot_config.has_y_bounds() else None
+    if y_bounds is not None and (y_bounds.has_lower_bound() or y_bounds.has_upper_bound()):
         ax1.set_ylim(bottom=y_bounds.get_lower_bound(), top=y_bounds.get_upper_bound())
 
     # Secondary y axis
@@ -618,7 +619,7 @@ def create_plot(plot_sources: [SEPlotSource],
             if y2_label:
                 ax2.set_ylabel(f'Log({y2_label})', fontsize=plot_config.get_font_size())
         y2_bounds = plot_config.get_y2_bounds()
-        if y2_bounds.has_lower_bound() or y2_bounds.has_upper_bound():
+        if y2_bounds is not None and y2_bounds.has_lower_bound() or y2_bounds.has_upper_bound():
             ax2.set_ylim(bottom=y2_bounds.get_lower_bound(), top=y2_bounds.get_upper_bound())
 
     # Action/Events axis

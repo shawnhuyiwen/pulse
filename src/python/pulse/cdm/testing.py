@@ -6,7 +6,7 @@ import os
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
-from pulse.cdm.scalars import TimeUnit
+from pulse.cdm.scalars import SEScalarTime, TimeUnit
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -135,7 +135,7 @@ class SETestSuite():
     def get_duration(self, unit: TimeUnit):
         time = 0
         for tc in self.test_cases:
-            time += tc.get_duration().get_value(unit)
+            time += tc.get_duration().get_value(unit) if tc.has_duration() else 0
         return time
 
 
@@ -230,28 +230,28 @@ class SETestReport():
         return to_html(title, None)
     def to_html(self, title: str, groups: Optional[Dict[str, List[str]]]):
         sort_results = True
-        html = '<html>'
-        html += f'<head><title>{title}</titile></head>'
-        html += '<body>'
-        html += f'<h1>{title}</h1><br>'
+        html = '<html>\n'
+        html += f'<head><title>{title}</title></head>\n'
+        html += '<body>\n'
+        html += f'<h1>{title}</h1><br>\n'
 
         # Any test suites not run?
-        html += '<table border="1">'
-        html += '<tr><th>Missing Reports</th></tr>'
+        html += '<table border="1">\n'
+        html += '<tr><th>Missing Reports</th></tr>\n'
         for ts in self.test_suites:
             if not ts.get_performed():
-                html += f'<tr bgcolor="#FF0000"<td>{ts.get_name()}</td></tr>'
-        html += '</table>'
+                html += f'<tr bgcolor="#FF0000"<td>{ts.get_name()}</td></tr>\n'
+        html += '</table>\n'
 
         #Make a little room
-        html += '<br>'
+        html += '<br>\n'
 
         # Any test suires known to fail?
-        html += '<table border="1">'
-        html += '<tr><th>Known Failing Reports</th></tr>'
+        html += '<table border="1">\n'
+        html += '<tr><th>Known Failing Reports</th></tr>\n'
         for suite in self.known_failing_suites:
-            html += f'<tr bgcolor="#FFFF00"><td>{suite}</td></tr>'
-        html += '</table>'
+            html += f'<tr bgcolor="#FFFF00"><td>{suite}</td></tr>\n'
+        html += '</table>\n'
 
         if groups is None:
             groups = dict()
@@ -262,14 +262,14 @@ class SETestReport():
 
         for group, group_tests in groups.items():
             # Make a little room
-            html += '<br>'
+            html += '<br>\n'
 
-            html += '<table border="1">'
-            html += f'<caption><b>{group}</b></caption>'
+            html += '<table border="1">\n'
+            html += f'<caption><b>{group}</b></caption>\n'
             html += '<tr>'
             html += '<th> Test Case </th>'
             html += '<th> Failures </th>'
-            html += '</tr>'
+            html += '</tr>\n'
 
             runs = 0
             total_runs = 0
@@ -278,7 +278,6 @@ class SETestReport():
             error_data = []
             passed_data = []
 
-            data = self.Data()
             for ts in self.test_suites:
                 if ts.get_name() not in group_tests:
                     continue
@@ -289,12 +288,13 @@ class SETestReport():
 
                 if ts.get_performed():
                     runs += 1
-                    data = self.Data()
-                    data.name = ts.get_name()
-                    data.runs = len(ts.get_test_cases())
-                    data.errors = ts.get_num_erros()
-                    data.duration_s = ts.get_duration(TimeUnit.s)
-                    for tc in ts.testCases:
+                    data = self.Data(
+                        ts.get_name(),
+                        len(ts.get_test_cases()),
+                        ts.get_num_errors(),
+                        ts.get_duration(TimeUnit.s),
+                    )
+                    for tc in ts.get_test_cases():
                         data.failures.extend(tc.get_failures())
                     data.requirements.extend(ts.get_requirements())
                     if ts.get_num_errors() > 0:
@@ -315,15 +315,17 @@ class SETestReport():
                             # Only write out the first few errors, could be a LOT of errors
                             if i > 5:
                                 break
-                        data.html += data.failures[i]
+
+                        f = data.failures[i].replace("\n", "<br>")
+                        data.html += f'{f}'
 
                     data.html += '</td>'
-                    data.html += '</tr>'
+                    data.html += '</tr>\n'
 
             html += '<tr>'
             html += f'<td align="left">Totals for {runs} test suites</td>'
             html += f'<td>{total_errors}</td>'
-            html += '</tr>'
+            html += '</tr>\n'
 
             if sort_results:
                 error_data.sort()
@@ -333,11 +335,11 @@ class SETestReport():
             for d in passed_data:
                 html += d.html
 
-            html += '</table>'
+            html += '</table>\n'
 
             # Make a little room
-            html += '<br>'
+            html += '<br>\n'
 
-        html += '</body>'
+        html += '</body>\n'
         html += '</html>'
         return html
