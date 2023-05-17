@@ -31,10 +31,11 @@ def load_data(xls_file: str):
     # Remove and recreate directory
     output_dir = "./validation/"
     xls_basename = os.path.splitext(os.path.basename(xls_file))[0]
-    xls_basename_out = xls_basename[:-4] if xls_basename.endswith("Data") else xls_basename
-    output_dir += xls_basename_out + "/"
+    xls_basename_out = xls_basename[:-4] if xls_basename.lower().endswith("data") else xls_basename
+    output_dir = os.path.join(output_dir, xls_basename_out + "/")
     try:
-        shutil.rmtree(output_dir)
+        if os.path.isdir(output_dir):
+            shutil.rmtree(output_dir)
         os.makedirs(output_dir)
     except OSError as e:
         _pulse_logger.error(f"Unable to clean directories")
@@ -118,7 +119,7 @@ def read_sheet(sheet: Worksheet, evaluator: ExcelCompiler, output_dir: str):
 
 
     @dataclass
-    class ValidationTargetBuilder:
+    class ValidationTargetBuilder():
         header: str
         units: str
         algorithm: str

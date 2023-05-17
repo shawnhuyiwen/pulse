@@ -555,8 +555,13 @@ class SEDataRequestManager:
     __slots__ = ["_results_filename", "_samples_per_second", "_data_requests", "_validation_targets"]
 
     def __init__(self, data_requests=[], validation_targets=[]):
+        self.clear()
         self._data_requests = data_requests
         self._validation_targets = validation_targets
+
+    def clear(self):
+        self._data_requests = []
+        self._validation_targets = []
         self._results_filename = ""
         self._samples_per_second = 0
 
