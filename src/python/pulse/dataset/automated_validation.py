@@ -76,6 +76,10 @@ def read_sheet(sheet: Worksheet, output_dir: str):
     for row_num, r in enumerate(sheet.iter_rows(min_row=2, values_only=True)):
         # Scenario name and description
         if stage == Stage.IDScenario:
+            # Header row
+            if isinstance(r[0], str) and r[0].strip().lower() == "scenario name":
+                continue
+
             scenario.set_name(r[0])
             scenario.set_description(r[1] if r[1] is not None else "")
 
@@ -156,9 +160,9 @@ def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], condit
     for s in segments:
         all_actions_str += s.actions
     all_actions_str += ']}'
-    all_actions = {}
+    all_actions = []
     if all_actions_str != '{"AnyAction": []}':
-        all_actions = json.loads(all_actions_str)
+        all_actions = json.loads(all_actions_str)["AnyAction"]
 
     # Load conditions into dict
     all_conditions_str = '{"AnyCondition": ['
@@ -196,7 +200,7 @@ def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], condit
         "PatientConfiguration": patient_config_dict,
         "DataRequestFile": scenario.get_data_request_files(),
         "DataRequestManager": dr_mgr_dict,
-        "AnyAction": all_actions["AnyAction"],
+        "AnyAction": all_actions,
     }
 
     return json.dumps(scenario_dict, indent=2)
