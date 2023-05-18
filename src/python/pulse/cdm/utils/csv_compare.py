@@ -197,8 +197,38 @@ def get_error_info(diff: pd.Series, expected: pd.DataFrame, computed: pd.DataFra
 
     # Filter by threshold
     filtered = diff[diff > threshold]
+    nan_check = diff.isna()
+    nan_count = nan_check.sum()
 
-    if filtered.empty:  # No errors above threshold
+    # Only NaN errors, header present in both expected and computed
+    if diff.name in expected.columns and diff.name in computed.columns and \
+            (nan_count == diff.size or (nan_count > 0 and filtered.empty)):
+        expected_s = expected[diff.name]
+        computed_s = computed[diff.name]
+
+        first_idx = 0
+        last_idx = -1
+        if nan_count < diff.size:
+            first_idx = nan_check[nan_check == True].index[0]
+            last_idx = nan_check[nan_check == True].index[-1]
+
+        summary = {
+            "first row": diff.index[first_idx],
+            "last row": diff.index[last_idx],
+            "max": np.nan,
+            "max computed": computed_s.iloc[last_idx],
+            "max expected": expected_s.iloc[last_idx],
+            "max row": diff.index[last_idx],
+            "min": np.nan,
+            "min computed": computed_s.iloc[first_idx],
+            "min expected": expected_s.iloc[first_idx],
+            "min row": diff.index[first_idx],
+            "total": nan_count,
+        }
+
+        summary["rms"] = np.nan
+    # No errors above threshold
+    elif filtered.empty:
         summary = {
             "first row": np.nan,
             "last row": np.nan,
@@ -209,9 +239,12 @@ def get_error_info(diff: pd.Series, expected: pd.DataFrame, computed: pd.DataFra
             "min": np.nan,
             "min computed": np.nan,
             "min expected": np.nan,
-            "max row": np.nan,
+            "min row": np.nan,
             "total": 0,
         }
+
+        summary["rms"] = compute_rms(diff)
+    # Number-based errors present
     else:
         expected_s = expected[diff.name]
         computed_s = computed[diff.name]
@@ -234,7 +267,7 @@ def get_error_info(diff: pd.Series, expected: pd.DataFrame, computed: pd.DataFra
         # Num errors > threshold
         summary["total"] = filtered.count()
 
-    summary["rms"] = compute_rms(diff)
+        summary["rms"] = compute_rms(diff)
 
     return pd.Series(summary.values(), summary.keys())
 
