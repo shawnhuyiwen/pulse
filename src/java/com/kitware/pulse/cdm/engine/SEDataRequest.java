@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-package com.kitware.pulse.cdm.datarequests;
+package com.kitware.pulse.cdm.engine;
 
 import java.io.Serializable;
 
@@ -141,41 +141,53 @@ public class SEDataRequest implements Serializable
   
   public String toString()
   {
-    String str = "";
-    switch(this.category)
+    // This needs to match C++ SEDataRequest::ToString
+    // We use this string for csv headers and we need to be consistent across all languages
+    String str="";
+    switch (this.category)
     {
-      case Action:
-        str = getActionName()+"-";
-        break;
-      case Patient:
-        str = "Patient-";
-        break;
-      case AnesthesiaMachine:
-        str = "AnesthesiaMachine-";
-        break;
-      case BagValveMask:
-        str = "BagValveMask-";
-        break;
-      case ECG:
-        str = "ECG-";
-        break;
-      case ECMO:
-        str = "ECMO-";
-        break;
-      case Inhaler:
-        str = "Inhaler-";
-        break;
-      case MechanicalVentilator:
-        str = "MechanicalVentilator-";
+    case Action:
+      str = getActionName()+"-";
+      break;
+    case Patient:
+      str = "Patient-";
+      break;
+    case AnesthesiaMachine:
+      str = "AnesthesiaMachine-";
+      break;
+    case BagValveMask:
+      str = "BagValveMask-";
+      break;
+    case ECG:
+      str = "ECG-";
+      break;
+    case ECMO:
+      str = "ECMO-";
+      break;
+    case Inhaler:
+      str = "Inhaler-";
+      break;
+    case MechanicalVentilator:
+      str = "MechanicalVentilator-";
+      break;
+    case GasCompartment:
+    case LiquidCompartment:
+    case ThermalCompartment:
+    case TissueCompartment:
+      str += getCompartmentName()+"-";
+      if (hasSubstanceName())
+        str += getSubstanceName()+"-";
+      break;
+    case Substance:
+      str += getSubstanceName()+"-";
+      break;
+      default:
         break;
     }
-    if(hasCompartmentName())
-      str += " - "+getCompartmentName();
-    if(hasSubstanceName())
-      str += " - "+getSubstanceName();
-    str += propertyName;
+    str += this.propertyName;
     if (unit != null)
-     str += " (" + unit.toString() + ")";
+     str += "(" + unit.toString() + ")";
+    str=str.replaceAll(" ", "_");
     return str;
   }
   

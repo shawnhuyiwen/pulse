@@ -38,6 +38,12 @@ message AdvanceTimeData
   ScalarTimeData         Time     = 2;
 }
 
+message AdvanceUntilStableData
+{
+  ActionData             Action   = 1;
+  string                 Criteria = 2;
+}
+
 message SerializeStateData
 {
   enum eType
@@ -48,6 +54,13 @@ message SerializeStateData
   
   ActionData             Action   = 1;
   eType                  Type     = 2;
+  string                 Filename = 3;
+}
+
+message SerializeRequestedData
+{
+  
+  ActionData             Action   = 1;
   string                 Filename = 3;
 }
 

@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.kitware.pulse.cdm.bind.Engine.DynamicStabilizationEngineConvergenceData;
 import com.kitware.pulse.cdm.bind.Engine.DynamicStabilizationPropertyConvergenceData;
-import com.kitware.pulse.cdm.datarequests.SEDataRequest;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
 
 public class SEDynamicStabilizationEngineConvergence

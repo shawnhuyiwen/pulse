@@ -67,10 +67,10 @@ namespace Pulse.CDM
             PBAction.Load(action.AdvanceTime, adv);
             return adv;
           }
-        case pulse.cdm.bind.AnyActionData.ActionOneofCase.Serialize:
+        case pulse.cdm.bind.AnyActionData.ActionOneofCase.SerializeState:
           {
             SESerializeState ss = new SESerializeState();
-            PBAction.Load(action.Serialize, ss);
+            PBAction.Load(action.SerializeState, ss);
             return ss;
           }
       }
@@ -90,7 +90,7 @@ namespace Pulse.CDM
       else if (action is SEAdvanceTime)
         any.AdvanceTime = PBAction.Unload((SEAdvanceTime)action);
       else if (action is SESerializeState)
-        any.Serialize = PBAction.Unload((SESerializeState)action);
+        any.SerializeState = PBAction.Unload((SESerializeState)action);
       else
         throw new System.InvalidOperationException("Cannot unload action " + action.ToString());
       return any;

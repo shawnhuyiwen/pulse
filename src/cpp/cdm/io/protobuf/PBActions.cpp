@@ -47,10 +47,10 @@ SEAction* PBAction::Load(const CDM_BIND::AnyActionData& action, const SESubstanc
     PBAction::Load(action.advancetime(), *a);
     return a;
   }
-  case CDM_BIND::AnyActionData::kSerialize:
+  case CDM_BIND::AnyActionData::kSerializeState:
   {
     SESerializeState* a = new SESerializeState();
-    PBAction::Load(action.serialize(), *a);
+    PBAction::Load(action.serializestate(), *a);
     return a;
   }
   case CDM_BIND::AnyActionData::kOverrides:
@@ -81,7 +81,7 @@ CDM_BIND::AnyActionData* PBAction::Unload(const SEAction& action)
   const SESerializeState* ss = dynamic_cast<const SESerializeState*>(&action);
   if (ss != nullptr)
   {
-    any->set_allocated_serialize(PBAction::Unload(*ss));
+    any->set_allocated_serializestate(PBAction::Unload(*ss));
     return any;
   }
   const SEOverrides* o = dynamic_cast<const SEOverrides*>(&action);

@@ -7,7 +7,7 @@ import java.util.List;
 import com.kitware.pulse.cdm.bind.Enums.eDriverWaveform;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.*;
-import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
+import com.kitware.pulse.cdm.engine.SEDataRequestManager;
 import com.kitware.pulse.cdm.patient.actions.SEDyspnea;
 import com.kitware.pulse.cdm.properties.CommonUnits.*;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
@@ -38,7 +38,6 @@ public class HowTo_MechanicalVentilator
   public static void main(String[] args)
   {
     List<Double> data_values;
-    SEScalarTime time = new SEScalarTime(1,TimeUnit.min);
     
     JNIBridge.initialize();
     PulseEngine pulse = new PulseEngine();

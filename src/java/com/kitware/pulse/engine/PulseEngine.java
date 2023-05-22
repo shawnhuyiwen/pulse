@@ -26,7 +26,7 @@ import com.kitware.pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanel
 import com.kitware.pulse.cdm.bind.PatientAssessments.UrinalysisData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
 import com.kitware.pulse.cdm.conditions.SECondition;
-import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
+import com.kitware.pulse.cdm.engine.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEActiveEvent;
 import com.kitware.pulse.cdm.engine.SEEventHandler;
 import com.kitware.pulse.cdm.engine.SEPatientConfiguration;

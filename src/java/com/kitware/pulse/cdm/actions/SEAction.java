@@ -94,10 +94,10 @@ public abstract class SEAction implements Serializable
         return SEEnvironmentAction.ANY2CDM(any.getEnvironmentAction());
       case EQUIPMENTACTION:
         return SEEquipmentAction.ANY2CDM(any.getEquipmentAction());
-      case SERIALIZE:
+      case SERIALIZESTATE:
       {
         SESerializeState dst = new SESerializeState();
-        SESerializeState.load(any.getSerialize(), dst);
+        SESerializeState.load(any.getSerializeState(), dst);
         return dst;
       }
       case ACTION_NOT_SET:
@@ -133,7 +133,7 @@ public abstract class SEAction implements Serializable
     }
     if(a instanceof SESerializeState)
     {
-      dst.setSerialize(SESerializeState.unload((SESerializeState)a));
+      dst.setSerializeState(SESerializeState.unload((SESerializeState)a));
       return dst.build();
     }
     Log.error("Unsupported AnyActionData Type "+a.toString());

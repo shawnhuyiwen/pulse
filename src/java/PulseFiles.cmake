@@ -59,13 +59,12 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SEThermalCompartment.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SETissueCompartment.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/conditions/SECondition.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/datarequests/SEDataRequest.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/datarequests/SEDataRequestManager.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/datarequests/SEValidationTarget.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/doxygen/CDM2MD.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/doxygen/DoxygenPreprocessor.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/doxygen/Proto2Doxygen.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEActiveEvent.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDataRequest.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDataRequestManager.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDynamicStabilization.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDynamicStabilizationEngineConvergence.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEEngineConfiguration.java
@@ -73,6 +72,9 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEEventManager.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEPatientConfiguration.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SETimedStabilization.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEValidationTarget.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SESegmentValidationTarget.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SETimeSeriesValidationTarget.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/exceptions/InvalidUnitException.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/SEPatient.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.java

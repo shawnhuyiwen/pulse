@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.kitware.pulse.cdm.bind.Enums.eSide;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
-import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
+import com.kitware.pulse.cdm.engine.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEEventHandler;
 import com.kitware.pulse.cdm.patient.actions.SEHemothorax;
 import com.kitware.pulse.cdm.patient.actions.SETubeThoracostomy;
@@ -19,7 +19,6 @@ import com.kitware.pulse.engine.PulseEngine;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
-import com.kitware.pulse.utilities.JNIBridge;
 
 /**
  * How to use the Java interface to the Pulse Physiology Engine
