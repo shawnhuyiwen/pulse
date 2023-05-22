@@ -88,12 +88,24 @@ public abstract class SEAction implements Serializable
         SEAdvanceTime.load(any.getAdvanceTime(), dst);
         return dst;
       }
+      case ADVANCEUNTILSTABLE:
+      {
+        SEAdvanceUntilStable dst = new SEAdvanceUntilStable();
+        SEAdvanceUntilStable.load(any.getAdvanceUntilStable(), dst);
+        return dst;
+      }
       case PATIENTACTION:
         return SEPatientAction.ANY2CDM(any.getPatientAction());
       case ENVIRONMENTACTION:
         return SEEnvironmentAction.ANY2CDM(any.getEnvironmentAction());
       case EQUIPMENTACTION:
         return SEEquipmentAction.ANY2CDM(any.getEquipmentAction());
+      case SERIALIZEREQUESTED:
+      {
+        SESerializeRequested dst = new SESerializeRequested();
+        SESerializeRequested.load(any.getSerializeRequested(), dst);
+        return dst;
+      }
       case SERIALIZESTATE:
       {
         SESerializeState dst = new SESerializeState();
@@ -116,6 +128,11 @@ public abstract class SEAction implements Serializable
       dst.setAdvanceTime(SEAdvanceTime.unload((SEAdvanceTime)a));
       return dst.build();
     }
+    if(a instanceof SEAdvanceUntilStable)
+    {
+      dst.setAdvanceUntilStable(SEAdvanceUntilStable.unload((SEAdvanceUntilStable)a));
+      return dst.build();
+    }
     if(a instanceof SEPatientAction)
     {
       dst.setPatientAction(SEPatientAction.CDM2ANY((SEPatientAction)a));
@@ -129,6 +146,11 @@ public abstract class SEAction implements Serializable
     if(a instanceof SEEquipmentAction)
     {
       dst.setEquipmentAction(SEEquipmentAction.CDM2ANY((SEEquipmentAction)a));
+      return dst.build();
+    }
+    if(a instanceof SESerializeRequested)
+    {
+      dst.setSerializeRequested(SESerializeRequested.unload((SESerializeRequested)a));
       return dst.build();
     }
     if(a instanceof SESerializeState)

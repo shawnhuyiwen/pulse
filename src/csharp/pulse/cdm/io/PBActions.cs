@@ -67,6 +67,18 @@ namespace Pulse.CDM
             PBAction.Load(action.AdvanceTime, adv);
             return adv;
           }
+        case pulse.cdm.bind.AnyActionData.ActionOneofCase.AdvanceUntilStable:
+          {
+            SEAdvanceUntilStable adv = new SEAdvanceUntilStable();
+            PBAction.Load(action.AdvanceUntilStable, adv);
+            return adv;
+          }
+        case pulse.cdm.bind.AnyActionData.ActionOneofCase.SerializeRequested:
+          {
+            SESerializeRequested ss = new SESerializeRequested();
+            PBAction.Load(action.SerializeRequested, ss);
+            return ss;
+          }
         case pulse.cdm.bind.AnyActionData.ActionOneofCase.SerializeState:
           {
             SESerializeState ss = new SESerializeState();
@@ -89,6 +101,10 @@ namespace Pulse.CDM
         any.EnvironmentAction = PBEnvironmentAction.Unload((SEEnvironmentAction)action);
       else if (action is SEAdvanceTime)
         any.AdvanceTime = PBAction.Unload((SEAdvanceTime)action);
+      else if (action is SEAdvanceUntilStable)
+        any.AdvanceUntilStable = PBAction.Unload((SEAdvanceUntilStable)action);
+      else if (action is SESerializeRequested)
+        any.SerializeRequested = PBAction.Unload((SESerializeRequested)action);
       else if (action is SESerializeState)
         any.SerializeState = PBAction.Unload((SESerializeState)action);
       else
@@ -143,6 +159,56 @@ namespace Pulse.CDM
       Serialize(src, dst.Action);
       if (src.HasTime())
         dst.Time = PBProperty.Unload(src.GetTime());
+    }
+    #endregion
+
+    #region SEAdvanceUntilStable
+    public static void Load(pulse.cdm.bind.AdvanceUntilStableData src, SEAdvanceUntilStable dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.AdvanceUntilStableData src, SEAdvanceUntilStable dst)
+    {
+      Serialize(src.Action, dst);
+      dst.SetCriteria(src.Criteria);
+    }
+    public static pulse.cdm.bind.AdvanceUntilStableData Unload(SEAdvanceUntilStable src)
+    {
+      pulse.cdm.bind.AdvanceUntilStableData dst = new pulse.cdm.bind.AdvanceUntilStableData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEAdvanceUntilStable src, pulse.cdm.bind.AdvanceUntilStableData dst)
+    {
+      dst.Action = new pulse.cdm.bind.ActionData();
+      Serialize(src, dst.Action);
+      dst.Criteria = src.GetCriteria();
+    }
+    #endregion
+
+    #region SESerializeRequested
+    public static void Load(pulse.cdm.bind.SerializeRequestedData src, SESerializeRequested dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.SerializeRequestedData src, SESerializeRequested dst)
+    {
+      Serialize(src.Action, dst);
+      if (!string.IsNullOrEmpty(src.Filename))
+        dst.SetFilename(src.Filename);
+    }
+    public static pulse.cdm.bind.SerializeRequestedData Unload(SESerializeRequested src)
+    {
+      pulse.cdm.bind.SerializeRequestedData dst = new pulse.cdm.bind.SerializeRequestedData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SESerializeRequested src, pulse.cdm.bind.SerializeRequestedData dst)
+    {
+      dst.Action = new pulse.cdm.bind.ActionData();
+      Serialize(src, dst.Action);
+      if (src.HasFilename())
+        dst.Filename = src.GetFilename();
     }
     #endregion
 

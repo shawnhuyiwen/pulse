@@ -3,28 +3,25 @@
 
 package com.kitware.pulse.cdm.actions;
 
-import com.kitware.pulse.cdm.bind.Actions.SerializeStateData;
+import com.kitware.pulse.cdm.bind.Actions.SerializeRequestedData;
 
-public class SESerializeState extends SEAction 
+public class SESerializeRequested extends SEAction 
 {
   private static final long serialVersionUID = 3176123488867413596L;
   
   protected String              filename;
-  protected SerializeStateData.eType type;
   
-  public SESerializeState() 
+  public SESerializeRequested() 
   {
     filename = "";
-    type = null;
   }
   
-  public void copy(SESerializeState other)
+  public void copy(SESerializeRequested other)
   {
     if(this==other)
       return;
     super.copy(other);
     this.filename = other.filename;
-    this.type = other.type;
   }
   
   @Override
@@ -32,36 +29,31 @@ public class SESerializeState extends SEAction
   {
     super.clear();
     filename = "";
-    type = null;
   }
   
   @Override
   public boolean isValid()
   {
-    return hasType();
+    return hasFilename();
   }
 
-  public static void load(SerializeStateData src, SESerializeState dst) 
+  public static void load(SerializeRequestedData src, SESerializeRequested dst) 
   {
     SEAction.load(src.getAction(), dst);
-    if(src.getType()!=SerializeStateData.eType.UNRECOGNIZED)
-      dst.type = src.getType();
     if(src.getFilename()!=null)
       dst.setFilename(src.getFilename());
   }
-  public static SerializeStateData unload(SESerializeState src)
+  public static SerializeRequestedData unload(SESerializeRequested src)
   {
-    SerializeStateData.Builder dst = SerializeStateData.newBuilder();
+    SerializeRequestedData.Builder dst = SerializeRequestedData.newBuilder();
     unload(src,dst);
     return dst.build();
   }  
-  protected static void unload(SESerializeState src, SerializeStateData.Builder dst)
+  protected static void unload(SESerializeRequested src, SerializeRequestedData.Builder dst)
   {
     SEAction.unload(src, dst.getActionBuilder());
     if(src.hasFilename())
       dst.setFilename(src.filename);
-    if(src.hasType())
-      dst.setType(src.type);
   }
   
   public boolean hasFilename()
@@ -81,28 +73,10 @@ public class SESerializeState extends SEAction
     this.filename = "";
   }
   
-  public boolean hasType()
-  {
-    return type!=null;
-  }
-  public SerializeStateData.eType getType() 
-  {
-    return type;
-  }
-  public void setType(SerializeStateData.eType t)
-  {
-    this.type = t;
-  }
-  public void invalidateType()
-  {
-    this.type = null;
-  }
-  
   @Override
   public String toString() 
   {
-    return "Serialize State" 
-        + "\n\tType: " + getType()
+    return "Serialize Requested" 
         + "\n\tFilename: " + getFilename();
   }
 }

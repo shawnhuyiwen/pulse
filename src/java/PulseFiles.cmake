@@ -50,6 +50,8 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/SerializationType.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SEAction.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SEAdvanceTime.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SEAdvanceUntilStable.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SESerializeRequested.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SESerializeState.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SECompartment.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SECompartmentManager.java
