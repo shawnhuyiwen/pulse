@@ -44,7 +44,7 @@ bool SESegmentValidationTarget::SerializeFromString(const std::string& src, std:
 }
 bool SESegmentValidationTarget::SerializeFromFile(const std::string& filename, std::vector<SESegmentValidationTarget*>& dst, Logger* logger)
 {
-  return PBEngine::SerializeFromFile(filename, dst ,logger);
+  return PBEngine::SerializeFromFile(filename, dst, logger);
 }
 void SESegmentValidationTarget::SetEqualTo(double d, int s)
 {
@@ -215,7 +215,8 @@ bool SETimeSeriesValidationTarget::ComputeError()
     m_Error = maxError;
   else if (m_ComparisonValue < m_TargetMinimum)
     m_Error = minError;
-  else if (std::abs(m_Error) < 1e-15)
+
+  if (std::abs(m_Error) < 1e-15)
     m_Error = 0; // Close enough
   return true;
 }

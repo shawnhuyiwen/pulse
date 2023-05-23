@@ -61,6 +61,10 @@ namespace Pulse.CDM
       {
         case eDataRequest_Category.Action:
           str = GetActionName()+"-";
+          if (HasCompartmentName())
+            str += GetCompartmentName()+"-";
+          else if (HasSubstanceName())
+            str += GetSubstanceName()+"-";
           break;
         case eDataRequest_Category.Patient:
           str = "Patient-";

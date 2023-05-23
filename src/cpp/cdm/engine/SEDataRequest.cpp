@@ -8,7 +8,7 @@
 
 std::string Space2Underscore(const std::string& str)
 {
-  std::string s = str; 
+  std::string s = str;
   std::transform(s.begin(), s.end(), s.begin(), [](char ch) {
     return ch == ' ' ? '_' : ch;
   });
@@ -113,8 +113,8 @@ size_t SEDataRequest::HashCode() const
   return h;
 }
 
-eDataRequest_Category SEDataRequest::GetCategory() const 
-{ 
+eDataRequest_Category SEDataRequest::GetCategory() const
+{
   return m_Category;
 }
 
@@ -235,6 +235,10 @@ std::string SEDataRequest::ToString() const
   {
   case eDataRequest_Category::Action:
     str = GetActionName() + "-";
+    if (HasCompartmentName())
+      str += GetCompartmentName()+"-";
+    else if (HasSubstanceName())
+      str += GetSubstanceName()+"-";
     break;
   case eDataRequest_Category::Patient:
     str = "Patient-";

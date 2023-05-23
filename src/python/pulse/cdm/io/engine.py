@@ -1,8 +1,11 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+from typing import List
+
 from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEDataRequested, \
-                             SEConditionManager, SEEngineInitialization, SEValidationTarget
+                             SEConditionManager, SEEngineInitialization, SEValidationTarget, \
+                             SESegmentValidationTarget, SETimeSeriesValidationTarget
 from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       ActionListData, ActionMapData, \
                                       AnyConditionData, ConditionListData, \
@@ -10,7 +13,9 @@ from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       DataRequestData, DataRequestManagerData, \
                                       DataRequestedData, DataRequestedListData, \
                                       EngineInitializationData, EngineInitializationListData, \
-                                      LogMessagesData, ValidationTargetData
+                                      LogMessagesData, ValidationTargetData, \
+                                      SegmentValidationTargetData, SegmentValidationTargetListData, \
+                                      TimeSeriesValidationTargetData, TimeSeriesValidationTargetListData
 from pulse.cdm.bind.Events_pb2 import ActiveEventListData, EventChangeListData
 
 from pulse.cdm.patient import SEPatientConfiguration
@@ -490,12 +495,129 @@ def serialize_data_requested_list_from_string(src: str, dst: [SEDataRequested], 
 
 # Validation Targets
 def serialize_validation_target_to_bind(src: SEValidationTarget, dst: ValidationTargetData):
-    serialize_data_request_to_bind(src, dst.DataRequest)
-    if src.has_type():
-        dst.Type = src.get_type().value
-    if src.has_range_min():
-        dst.RangeMin = src.get_range_min()
-    if src.has_range_max():
-        dst.RangeMax = src.get_range_max()
+    dst.Header = src.get_header()
+    dst.Reference = src.get_reference()
+    dst.Notes = src.get_notes()
+
+    if src.get_comparison_type() == SEValidationTarget.eComparisonType.EqualTo:
+        dst.EqualTo = src.get_target()
+    elif src.get_comparison_type() == SEValidationTarget.eComparisonType.GreaterThan:
+        dst.GreaterThan = src.get_target()
+    elif src.get_comparison_type() == SEValidationTarget.eComparisonType.LessThan:
+        dst.LessThan = src.get_target()
+    elif src.get_comparison_type() == SEValidationTarget.eComparisonType.Increase:
+        dst.Trend = ValidationTargetData.eTrend.Increase
+    elif src.get_comparison_type() == SEValidationTarget.eComparisonType.Decrease:
+        dst.Trend = ValidationTargetData.eTrend.Decrease
+    elif src.get_comparison_type() == SEValidationTarget.eComparisonType.Range:
+        dst.Range.Minimum = src.get_target_minimum()
+        dst.Range.Maximum = src.get_target_maximum()
+    else:
+        raise ValueError(f"Unknown comparison type: {src.get_comparison_type()}")
 def serialize_validation_target_from_bind(src: ValidationTargetData, dst: SEValidationTarget):
-    raise Exception("serialize_validation_target_from_bind not implemented")
+    dst.clear()
+    dst.set_header(src.Header)
+    dst.set_reference(src.Reference)
+    dst.set_notes(src.Notes)
+
+def serialize_segment_validation_target_to_bind(src: SESegmentValidationTarget, dst: SegmentValidationTargetData):
+    serialize_validation_target_to_bind(src, dst.ValidationTarget)
+    dst.Segment = src.get_segment()
+def serialize_segment_validation_target_from_bind(src: SegmentValidationTargetData, dst: SESegmentValidationTarget):
+    dst.clear()
+    serialize_validation_target_from_bind(src.ValidationTarget, dst)
+    base = src.ValidationTarget
+    if base.HasField("EqualTo"):
+        dst.set_equal_to(base.EqualTo, src.Segment)
+    elif base.HasField("GreaterThan"):
+        dst.set_greater_than(base.GreaterThan, src.Segment)
+    elif base.HasField("LessThan"):
+        dst.set_less_than(base.LessThan, src.Segment)
+    elif base.HasField("Trend"):
+        if base.Trend == ValidationTargetData.eTrend.Increase:
+            dst.set_increase(src.Segment)
+        elif base.Trend == ValidationTargetData.eTrend.Decrease:
+            dst.set_decrease(src.Segment)
+        else:
+            raise ValueError(f"Unknown trend: {base.Trend}")
+    elif base.HasField("Range"):
+        dst.set_range(base.Range.Minimum, base.Range.Maximum, src.Segment)
+    else:
+        raise ValueError(f"Unknown expected field: {base.WhichOneOf('Expected')}")
+def serialize_segment_validation_target_list_to_bind(src: List[SESegmentValidationTarget], dst: SegmentValidationTargetListData):
+    for tgt in src:
+        serialize_segment_validation_target_to_bind(tgt, dst.SegmentValidationTarget.add())
+def serialize_segment_validation_target_list_from_bind(src: SegmentValidationTargetListData, dst: List[SESegmentValidationTarget]):
+    dst = []
+    for tgtData in src.SegmentValidationTarget:
+        tgt = SESegmentValidationTarget()
+        serialize_segment_validation_target_from_bind(tgtData, tgt)
+        dst.append(tgt)
+def serialize_segment_validation_target_list_to_string(src: List[SESegmentValidationTarget], fmt: eSerializationFormat):
+    dst = SegmentValidationTargetListData()
+    serialize_segment_validation_target_list_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+def serialize_segment_validation_target_list_to_file(src: List[SESegmentValidationTarget], filename: str):
+    string = serialize_segment_validation_target_list_to_string(src, eSerializationFormat.JSON)
+    file = open(filename, "w")
+    n = file.write(string)
+    file.close()
+def serialize_segment_validation_target_list_from_string(string: str, dst: List[SESegmentValidationTarget], fmt: eSerializationFormat):
+    src = SegmentValidationTargetListData()
+    json_format.Parse(string, src)
+    serialize_segment_validation_target_list_from_bind(src, dst)
+def serialize_segment_validation_target_list_from_file(filename: str, dst: SESegmentValidationTarget):
+    with open(filename) as f:
+        string = f.read()
+    serialize_segment_validation_target_list_from_string(string, dst, eSerializationFormat.JSON)
+
+def serialize_time_series_validation_target_to_bind(src: SETimeSeriesValidationTarget, dst: TimeSeriesValidationTargetData):
+    serialize_validation_target_to_bind(src, dst.ValidationTarget)
+    dst.Type = src.get_target_type().value
+def serialize_time_series_validation_target_from_bind(src: TimeSeriesValidationTargetData, dst: SETimeSeriesValidationTarget):
+    dst.clear()
+    serialize_validation_target_from_bind(src.ValidationTarget, dst)
+    base = src.ValidationTarget
+    if base.HasField("EqualTo"):
+        dst.set_equal_to(base.EqualTo, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif base.HasField("GreaterThan"):
+        dst.set_greater_than(base.GreaterThan, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif base.HasField("LessThan"):
+        dst.set_less_than(base.LessThan, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif base.HasField("Trend"):
+        if base.Trend == ValidationTargetData.eTrend.Increase:
+            dst.set_increase(SETimeSeriesValidationTarget.eTargetType(src.Type))
+        elif base.Trend == ValidationTargetData.eTrend.Decrease:
+            dst.set_decrease(SETimeSeriesValidationTarget.eTargetType(src.Type))
+        else:
+            raise ValueError(f"Unknown trend: {base.Trend}")
+    elif base.HasField("Range"):
+        dst.set_range(base.Range.Minimum, base.Range.Maximum, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    else:
+        raise ValueError(f"Unknown expected field: {base.WhichOneOf('Expected')}")
+def serialize_time_series_validation_target_list_to_bind(src: List[SETimeSeriesValidationTarget], dst: TimeSeriesValidationTargetListData):
+    for tgt in src:
+        serialize_time_series_validation_target_to_bind(tgt, dst.TimeSeriesValidationTarget.add())
+def serialize_time_series_validation_target_list_from_bind(src: TimeSeriesValidationTargetListData, dst: List[SETimeSeriesValidationTarget]):
+    dst = []
+    for tgtData in src.TimeSeriesValidationTarget:
+        tgt = SETimeSeriesValidationTarget()
+        serialize_time_series_validation_target_from_bind(tgtData, tgt)
+        dst.append(tgt)
+def serialize_time_series_validation_target_list_to_string(src: List[SETimeSeriesValidationTarget], fmt: eSerializationFormat):
+    dst = TimeSeriesValidationTargetListData()
+    serialize_time_series_validation_target_list_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+def serialize_time_series_validation_target_list_to_file(src: List[SETimeSeriesValidationTarget], filename: str):
+    string = serialize_time_series_validation_target_list_to_string(src, eSerializationFormat.JSON)
+    file = open(filename, "w")
+    n = file.write(string)
+    file.close()
+def serialize_time_series_validation_target_list_from_string(string: str, dst: List[SETimeSeriesValidationTarget], fmt: eSerializationFormat):
+    src = TimeSeriesValidationTargetListData()
+    json_format.Parse(string, src)
+    serialize_time_series_validation_target_list_from_bind(src, dst)
+def serialize_time_series_validation_target_list_from_file(filename: str, dst: List[SETimeSeriesValidationTarget]):
+    with open(filename) as f:
+        string = f.read()
+    serialize_time_series_validation_target_list_from_string(string, dst, eSerializationFormat.JSON)
