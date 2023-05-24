@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from typing import Hashable, List, Optional, Tuple
+from typing import Dict, Hashable, List, Optional, Tuple
 
 from pulse.cdm.engine import SESegmentValidationTarget, eDataRequest_category, SEDataRequest
 from pulse.cdm.scalars import get_unit
@@ -24,7 +24,7 @@ from pulse.cdm.io.engine import serialize_segment_validation_target_list_to_file
 _pulse_logger = logging.getLogger('pulse')
 
 
-def load_data(xls_file: str):
+def load_data(xls_file: str) -> None:
     # Remove and recreate directory
     output_dir = "./validation/scenarios/"
     xls_basename = os.path.splitext(os.path.splitext(os.path.basename(xls_file))[0])[0]
@@ -49,7 +49,7 @@ def load_data(xls_file: str):
             _pulse_logger.error(f"Unable to read {s} sheet")
 
 
-def generate_data_request(request_type: str, property_name: str, unit: str, precision: Optional[int]):
+def generate_data_request(request_type: str, property_name: str, unit: str, precision: Optional[int]) -> SEDataRequest:
     request_type = request_type.strip()
     if request_type == "ActionCmpt" or request_type == "ActionSub":
         category = eDataRequest_category.Action
@@ -123,8 +123,12 @@ def generate_data_request(request_type: str, property_name: str, unit: str, prec
     else:
         raise ValueError(f"Unknown data request category: {request_type}")
 
-    # TODO: Precision
-    return SEDataRequest(category, action, compartment, substance, property, unit)
+    d_fmt = None
+    if precision is not None:
+        d_fmt = SEDecimalFormat()
+        d_fmt.set_precision(precision)
+
+    return SEDataRequest(category, action, compartment, substance, property, unit, d_fmt)
 
 
 # Dataclass encapsulating information for a singular scenario "segment"
@@ -137,7 +141,7 @@ class ScenarioSegment():
 
 
 # Read xlsx sheet and generate corresponding scenario file and validation target files
-def read_sheet(sheet: Worksheet, output_dir: str):
+def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
     class Stage(Enum):
         IDScenario = 0
         InitialSegment = 1
@@ -153,7 +157,7 @@ def read_sheet(sheet: Worksheet, output_dir: str):
     conditions = ""
     h2c = {}
 
-    def _gen_header_to_col_dict(row: Tuple):
+    def _gen_header_to_col_dict(row: Tuple) -> Dict[str, int]:
         header_to_col = {}
         for col, h in enumerate(row):
             if h is None:
@@ -304,7 +308,7 @@ def read_sheet(sheet: Worksheet, output_dir: str):
     return True
 
 
-def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], conditions: str):
+def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], conditions: str) -> str:
     # Load actions into dict from concatenated JSON across segments
     all_actions_str = '{"AnyAction": ['
     for s in segments:
@@ -340,7 +344,11 @@ def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], condit
         dr_mgr_dict["DataRequest"] = []
         for dr in dr_mgr.get_data_requests():
             dr_dict = {}
-            # TODO: decimal format
+            dr_dict["DecimalFormat"] = {}
+            if dr.get_precision():
+                dr_dict["DecimalFormat"]["Precision"] = dr.get_precision()
+            if dr.has_notation():
+                dr_dict["DecimalFormat"]["Type"] = dr.get_notation().name
             dr_dict["Category"] = dr.get_category().name
             if dr.has_action_name():
                 dr_dict["ActionName"] = dr.get_action_name()

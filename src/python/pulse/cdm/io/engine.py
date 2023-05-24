@@ -3,7 +3,7 @@
 
 from typing import List
 
-from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEDataRequested, \
+from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEDataRequested, SEDecimalFormat, \
                              SEConditionManager, SEEngineInitialization, SEValidationTarget, \
                              SESegmentValidationTarget, SETimeSeriesValidationTarget
 from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
@@ -11,7 +11,7 @@ from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       AnyConditionData, ConditionListData, \
                                       PatientConfigurationData, \
                                       DataRequestData, DataRequestManagerData, \
-                                      DataRequestedData, DataRequestedListData, \
+                                      DataRequestedData, DataRequestedListData, DecimalFormatData, \
                                       EngineInitializationData, EngineInitializationListData, \
                                       LogMessagesData, ValidationTargetData, \
                                       SegmentValidationTargetData, SegmentValidationTargetListData, \
@@ -414,6 +414,7 @@ def serialize_patient_configuration_from_bind(src: PatientConfigurationData, dst
 
 # Data Requests and Manager
 def serialize_data_request_to_bind(src: SEDataRequest, dst: DataRequestData):
+    serialize_decimal_format_to_bind(src, dst.DecimalFormat)
     if src.has_action_name():
         dst.ActionName = src.get_action_name()
     if src.has_compartment_name():
@@ -504,6 +505,16 @@ def serialize_data_requested_list_from_string(src: str, dst: [SEDataRequested], 
         if e is None:
             raise Exception(str(id)+" not found in destination pool")
         serialize_data_requested_result_from_bind(result, e)
+
+def serialize_decimal_format_to_bind(src: SEDecimalFormat, dst: DecimalFormatData):
+    if src.has_notation():
+        dst.Type = src.get_notation().value
+    if src.has_precision():
+        dst.Precision = src.get_precision()
+def serialize_decimal_format_from_bind(src: DecimalFormatData, dst: SEDecimalFormat):
+    dst.clear()
+    dst.set_notation(eDecimalFormat_type(dst.Type))
+    dst.set_precision(dst.Precision)
 
 # Validation Targets
 def serialize_validation_target_to_bind(src: SEValidationTarget, dst: ValidationTargetData):

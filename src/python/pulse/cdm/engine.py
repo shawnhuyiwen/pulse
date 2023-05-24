@@ -5,7 +5,7 @@ import numpy as np
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 from pulse.cdm.scalars import SEScalarTime, SEScalarUnit
 
 class eSerializationFormat(Enum):
@@ -389,6 +389,45 @@ class SEConditionManager():
     def remove_initial_environmental_conditions(self):
         self._initial_environmental_conditions = None
 
+
+class eDecimalFormat_type(Enum):
+    SystemFormatting = 0
+    DefaultFloat = 1
+    FixedMantissa = 2
+    SignificantDigits = 3
+
+
+class SEDecimalFormat():
+    __slots__ = ["_precision", "_notation"]
+
+    def __init__(self, dfault = Optional['SEDecimalFormat']) -> None:
+        self.clear()
+        if dfault is not None:
+            Set(dfault)
+
+    def clear(self) -> None:
+        self._precision = None
+        self._notation = None
+
+    def set(self, f: 'SEDecimalFormat') -> None:
+        self._precision = f.get_precision()
+        self._notation = f.get_notation()
+
+    def set_precision(self, p: int) -> None:
+        self._precision = p
+    def get_precision(self) -> Union[int, None]:
+        return self._precision
+    def has_precision(self) -> bool:
+        return self._precision is not None
+
+    def set_notation(self, n: eDecimalFormat_type) -> None:
+        self._notation = n
+    def get_notation(self) -> Union[eDecimalFormat_type, None]:
+        return self._notation
+    def has_notation(self) -> bool:
+        return self._notation is not None
+
+
 class eDataRequest_category(Enum):
     Patient = 0
     Physiology = 1
@@ -406,10 +445,14 @@ class eDataRequest_category(Enum):
     Inhaler = 13
     MechanicalVentilator = 14
 
-class SEDataRequest:
+class SEDataRequest(SEDecimalFormat):
     __slots__ = ['_category', '_action_name', '_compartment_name', '_substance_name', '_property_name', '_unit']
 
-    def __init__(self, category: eDataRequest_category, action:str=None, compartment:str=None, substance:str=None, property:str=None, unit:SEScalarUnit=None):
+    def __init__(
+        self, category: eDataRequest_category, action:str=None, compartment:str=None, substance:str=None,
+        property:str=None, unit:SEScalarUnit=None, dfault: Optional[SEDecimalFormat]=None
+    ):
+        super().__init__(dfault)
         if category is None:
             raise Exception("Must provide a Data Request Category")
         if property is None:
@@ -622,6 +665,7 @@ class SEDataRequestManager:
         print("SimulationTime(s)={})".format(data_values[0]))
         for i in range(len(data_values)-1):
             print("{}={}".format(self._data_requests[i], data_values[i+1]))
+
 
 class SEEngineInitialization():
     __slots__ = ["id", "patient_configuration", "state_filename",
