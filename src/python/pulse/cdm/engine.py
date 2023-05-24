@@ -136,6 +136,7 @@ class SEAction(ABC):
     def is_valid(self):
         pass
 
+
 class SEAdvanceTime(SEAction):
     __slots__ = ["_action","_time"]
 
@@ -162,6 +163,36 @@ class SEAdvanceTime(SEAction):
     def __repr__(self):
         return ("Advance Time\n"
                 "  Time: {}").format(self._time)
+
+
+class SEAdvanceUntilStable(SEAction):
+    __slots__ = ["_criteria"]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._criteria = ""
+
+    def clear(self) -> None:
+        super().clear()
+        if self._criteria is not None:
+            self.invalidate_criteria()
+
+    def is_valid(self) -> bool:
+        return self.has_criteria()
+
+    def has_criteria(self) -> bool:
+        return self._criteria != ""
+    def get_criteria(self) -> str:
+        return self._criteria
+    def set_criteria(self, c: str) -> None:
+        self._criteria = c.replace('\\', '/')
+    def invalidate_criteria(self) -> None:
+        self._criteria = ""
+
+    def __repr__(self) -> str:
+        return ("Advance Until Stable\n"
+                "  Criteria: {}").format(self._criteria)
+
 
 class SECondition(ABC):
     __slots__ = ["_comment"]
@@ -607,6 +638,75 @@ class SEEngineInitialization():
         self.log_to_console = False
         self.keep_event_changes = False
         self.keep_log_messages = False
+
+
+class SESerializeRequested(SEAction):
+    __slots__ = ["_filename"]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._filename = ""
+
+    def clear(self) -> None:
+        super().clear()
+        self._filename = ""
+
+    def is_valid(self) -> bool:
+        return self.has_filename()
+
+    def has_filename(self) -> bool:
+        return self._filename != ""
+    def get_filename(self) -> str:
+        return self._filename
+    def set_filename(self, f: str) -> None:
+        self._filename = f.replace("\\", "/")
+    def invalidate_filename(self) -> None:
+        self._filename = ""
+
+    def __repr__(self) -> str:
+        return ("Serialize Requested\n"
+                "  Filename: {}").format(self._filename)
+
+
+class eSerializationType(Enum):
+    Save = 0
+    Load = 1
+
+
+class SESerializeState(SEAction):
+    __slots__ = ["_filename", "_type"]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._filename = ""
+        self._type = eSerializationType.Save
+
+    def clear(self) -> None:
+        super().clear()
+        self._filename = ""
+        self._type = eSerializationType.Save
+
+    def is_valid(self) -> bool:
+        return self.has_filename()
+
+    def get_type(self) -> eSerializationType:
+        return self._type
+    def set_type(self, t: eSerializationType):
+        self._type = t
+
+    def has_filename(self) -> bool:
+        return self._filename != ""
+    def get_filename(self) -> str:
+        return self._filename
+    def set_filename(self, f: str) -> None:
+        self._filename = f.replace("\\", "/")
+    def invalidate_filename(self) -> None:
+        self._filename = ""
+
+    def __repr__(self) -> str:
+        return ("Serialize State\n"
+                "  Filename: {}\n"
+                "  Type: {}").format(self._filename, self._type.name)
 
 
 class SEValidationTarget():

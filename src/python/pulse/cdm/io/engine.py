@@ -168,6 +168,18 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
             serialize_advance_time_to_bind(action, any_action.AdvanceTime)
             dst.AnyAction.append(any_action)
             continue
+        if isinstance(action, SEAdvanceUntilStable):
+            serialize_advance_until_stable_to_bind(action, any_action.AdvanceUntilStable)
+            dst.AnyAction.append(any_action)
+            continue
+        if isinstance(action, SESerializeRequested):
+            serialize_serialize_requested_to_bind(action, any_action.SerializeRequested)
+            dst.AnyAction.append(any_action)
+            continue
+        if isinstance(action, SESerializeState):
+            serialize_serialize_state_to_bind(action, any_action.SerializeState)
+            dst.AnyAction.append(any_action)
+            continue
         if isinstance(action, SEPatientAction):
             if isinstance(action, SEAcuteRespiratoryDistressSyndromeExacerbation):
                 serialize_acute_respiratory_distress_syndrome_exacerbation_to_bind(action, any_action.PatientAction.AcuteRespiratoryDistressSyndromeExacerbation)
