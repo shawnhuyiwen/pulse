@@ -450,11 +450,6 @@ def serialize_data_request_manager_to_bind(src: SEDataRequestManager, dst: DataR
             dst_dr = DataRequestData()
             serialize_data_request_to_bind(dr, dst_dr)
             dst.DataRequest.append(dst_dr)
-    if src.has_validation_targets():
-        for vt in src.get_validation_targets():
-            dst_vt = ValidationTargetData()
-            serialize_validation_target_to_bind(vt, dst_vt)
-            dst.ValidationTarget.append(dst_vt)
     dst.ResultsFilename = src.get_results_filename()
 
 def serialize_data_request_manager_from_bind(src: DataRequestManagerData, dst: SEDataRequestManager):

@@ -400,18 +400,14 @@ class eDecimalFormat_type(Enum):
 class SEDecimalFormat():
     __slots__ = ["_precision", "_notation"]
 
-    def __init__(self, dfault = Optional['SEDecimalFormat']) -> None:
+    def __init__(self, precision: Optional[int]=None, notation: Optional[eDecimalFormat_type]=None) -> None:
         self.clear()
-        if dfault is not None:
-            Set(dfault)
+        self._precision = precision
+        self._notation = notation
 
     def clear(self) -> None:
         self._precision = None
         self._notation = None
-
-    def set(self, f: 'SEDecimalFormat') -> None:
-        self._precision = f.get_precision()
-        self._notation = f.get_notation()
 
     def set_precision(self, p: int) -> None:
         self._precision = p
@@ -449,10 +445,11 @@ class SEDataRequest(SEDecimalFormat):
     __slots__ = ['_category', '_action_name', '_compartment_name', '_substance_name', '_property_name', '_unit']
 
     def __init__(
-        self, category: eDataRequest_category, action:str=None, compartment:str=None, substance:str=None,
-        property:str=None, unit:SEScalarUnit=None, dfault: Optional[SEDecimalFormat]=None
+        self, category: eDataRequest_category, action:str=None, compartment:str=None,
+        substance:str=None, property:str=None, unit:SEScalarUnit=None,
+        precision: Optional[int]=None, notation: Optional[eDecimalFormat_type]=None
     ):
-        super().__init__(dfault)
+        super().__init__(precision, notation)
         if category is None:
             raise Exception("Must provide a Data Request Category")
         if property is None:
@@ -635,10 +632,9 @@ class SEDataRequested: # TODO follow CDM get/set pattern?
 class SEDataRequestManager:
     __slots__ = ["_results_filename", "_samples_per_second", "_data_requests", "_validation_targets"]
 
-    def __init__(self, data_requests=[], validation_targets=[]):
+    def __init__(self, data_requests=[]):
         self.clear()
         self._data_requests = data_requests
-        self._validation_targets = validation_targets
 
     def clear(self):
         self._data_requests = []
@@ -649,10 +645,6 @@ class SEDataRequestManager:
     def has_data_requests(self): return len(self._data_requests)
     def get_data_requests(self): return self._data_requests
     def set_data_requests(self, requests): self._data_requests = requests
-
-    def has_validation_targets(self): return len(self._validation_targets)
-    def get_validation_targets(self): return self._validation_targets
-    def set_validation_targets(self, targets): self._validation_targets = targets
 
     def has_results_filename(self): return self._results_filename is not None
     def get_results_filename(self): return self._results_filename
@@ -883,7 +875,7 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
 
     def __init__(self):
         super().__init__()
-        self._target_type = eTargetType.Mean
+        self._target_type = self.eTargetType.Mean
         self._error = 100.0
         self._data = []
         self._comparison_value = 0.0
@@ -891,7 +883,7 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
     def clear(self):
         super().clear()
         self._comparison_type = self.eComparisonType.EqualTo
-        self._target_type = eTargetType.Mean
+        self._target_type = self.eTargetType.Mean
         self._target = np.nan
         self._target_max = np.nan
         self._target_min = np.nan
@@ -941,11 +933,11 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
         self._target_min = min
 
     def compute_error(self) -> bool:
-        if self._target_type == eTargetType.Minimum:
+        if self._target_type == self.eTargetType.Minimum:
             self._comparison_value = min(self._data)
-        elif self._target_type == eTargetType.Maximum:
+        elif self._target_type == self.eTargetType.Maximum:
             self._comparison_value = max(self._data)
-        elif self._target_type == eTargetType.Mean:
+        elif self._target_type == self.eTargetType.Mean:
             self._comparison_value = sum(self._data) / len(self._data) if self._data else np.nan
         else:
             return False

@@ -14,13 +14,14 @@ from openpyxl.utils.cell import get_column_letter
 from typing import Optional, Union
 from pycel import ExcelCompiler
 
-from pulse.cdm.engine import SEDataRequestManager, SEValidationTarget, eValidationTargetType
+from pulse.cdm.engine import SETimeSeriesValidationTarget
 from pulse.cdm.patient import SEPatient, eSex
 from pulse.cdm.scalars import get_unit, LengthUnit, MassUnit
 from pulse.cdm.utils.csv_utils import read_csv_into_df
 from pulse.cdm.utils.file_utils import get_data_dir
+from pulse.dataset.utils import generate_data_request
 
-from pulse.cdm.io.engine import serialize_data_request_manager_to_file
+from pulse.cdm.io.engine import serialize_time_series_validation_target_list_to_file
 from pulse.cdm.io.patient import serialize_patient_from_file
 
 
@@ -146,22 +147,28 @@ def read_sheet(sheet: Worksheet, evaluator: ExcelCompiler, output_dir: str):
             continue
 
         if vtb.tgt_file not in targets:
-            targets[vtb.tgt_file] = SEDataRequestManager()
-        dr_manager = targets[vtb.tgt_file]
-        vts = dr_manager.get_validation_targets() if dr_manager.has_validation_targets() else []
+            targets[vtb.tgt_file] = []
+        vts = targets[vtb.tgt_file]
 
         prop_split = [s.strip() for s in vtb.header.split("-")]
-        unit = None
-        try:
-            unit = get_unit(vtb.units.strip())
-        except:
-            _pulse_logger.warning(f"Could not identify unit: {vtb.units}")
         # TODO: Create other DR types
-        tgt = SEValidationTarget.create_liquid_compartment_validation_target(prop_split[0], prop_split[1], unit)
-        tgt.set_type(eValidationTargetType[vtb.algorithm])
-
+        dr = generate_data_request(
+            request_type="LiquidCompartment",
+            property_name=vtb.header.replace("*", ""),
+            unit_str=vtb.units.strip(),
+            precision=None)
+        # TODO: References and notes
+        tgt = SETimeSeriesValidationTarget()
+        tgt.set_header(dr.to_string())
 
         ref_val = vtb.ref_cell
+
+        algo = vtb.algorithm
+        if algo == "Max":
+            algo = "Maximum"
+        elif algo == "Min":
+            algo = "Minimum"
+        algo = SETimeSeriesValidationTarget.eTargetType[algo]
 
         # Evaluate if needed
         if isinstance(ref_val, str) and ref_val.startswith("="):
@@ -169,29 +176,27 @@ def read_sheet(sheet: Worksheet, evaluator: ExcelCompiler, output_dir: str):
                 cell_loc = f"{system}!{get_column_letter(VTB_REF_CELL+1)}{row_num+2}"
                 ref_val = evaluator.evaluate(cell_loc)
 
+        # TODO: Support other comparison types
         if isinstance(ref_val, str):
             s_vals = ref_val.strip()
             s_vals = s_vals.replace('[', ' ')
             s_vals = s_vals.replace(']', ' ')
             vals = [float(s) for s in s_vals.split(',')]
-            tgt.set_range_min(min(vals))
-            tgt.set_range_max(max(vals))
+            tgt.set_range(min(vals), max(vals), algo)
         elif isinstance(ref_val, numbers.Number):
             val = float(ref_val)
-            tgt.set_range_min(val)
-            tgt.set_range_max(val)
+            tgt.set_equal_to(val, algo)
         else:
             _pulse_logger.warning(f"Unknown reference value type {ref_val}")
             tgt.set_range_min(np.nan)
             tgt.set_range_max(np.nan)
 
         vts.append(tgt)
-        dr_manager.set_validation_targets(vts)
 
     for target in targets.keys():
         filename = f"{output_dir}{system}{'-' if target else ''}{target}.json"
         _pulse_logger.info(f"Writing {filename}")
-        serialize_data_request_manager_to_file(targets[target], filename)
+        serialize_time_series_validation_target_list_to_file(targets[target], filename)
 
     return True
 

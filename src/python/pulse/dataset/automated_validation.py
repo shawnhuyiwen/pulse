@@ -14,9 +14,9 @@ from openpyxl.worksheet.worksheet import Worksheet
 from typing import Dict, Hashable, List, Optional, Tuple
 
 from pulse.cdm.engine import SESegmentValidationTarget, eDataRequest_category, SEDataRequest
-from pulse.cdm.scalars import get_unit
 from pulse.cdm.scenario import SEScenario
 from pulse.cdm.utils.file_utils import get_data_dir
+from pulse.dataset.utils import generate_data_request
 
 from pulse.cdm.io.engine import serialize_segment_validation_target_list_to_file
 
@@ -47,88 +47,6 @@ def load_data(xls_file: str) -> None:
             continue
         if not read_sheet(workbook[s], output_dir):
             _pulse_logger.error(f"Unable to read {s} sheet")
-
-
-def generate_data_request(request_type: str, property_name: str, unit: str, precision: Optional[int]) -> SEDataRequest:
-    request_type = request_type.strip()
-    if request_type == "ActionCmpt" or request_type == "ActionSub":
-        category = eDataRequest_category.Action
-    else:
-        category = eDataRequest_category[request_type.strip()]
-    action = None
-    compartment = None
-    substance = None
-    property = None
-    unit = None if unit.strip().lower() == "unitless" else get_unit(unit)
-
-    props = property_name.strip().split("-")
-
-    if category == eDataRequest_category.Patient:
-        property = property_name
-    elif category == eDataRequest_category.Physiology:
-        property = property_name
-    elif category == eDataRequest_category.Environment:
-        property = property_name
-    elif category == eDataRequest_category.Action:
-        if request_type == "ActionCmpt":
-            action = props[0]
-            compartment = props[1]
-            property = props[2]
-        elif request_type == "ActionSub":
-            action = props[0]
-            substance = props[1]
-            property = props[2]
-        else:
-            action = props[0]
-            property = props[1]
-    elif category == eDataRequest_category.GasCompartment:
-        compartment = props[0]
-        if len(props) == 2:
-            property = props[1]
-        elif len(props) == 3:
-            substance = props[1]
-            property = props[2]
-        else:
-            raise ValueError(f"Invalid property name for GasCompartment Data Request: {property_name}")
-    elif category == eDataRequest_category.LiquidCompartment:
-        compartment = props[0]
-        if len(props) == 2:
-            property = props[1]
-        elif len(props) == 3:
-            substance = props[1]
-            property = props[2]
-        else:
-            raise ValueError(f"Invalid property name for LiquidCompartment Data Request: {property_name}")
-    elif category == eDataRequest_category.ThermalCompartment:
-        compartment = props[0]
-        property = props[1]
-    elif category == eDataRequest_category.TissueCompartment:
-        compartment = props[0]
-        property = props[1]
-    elif category == eDataRequest_category.Substance:
-        substance = props[0]
-        property = props[1]
-    elif category == eDataRequest_category.AnesthesiaMachine:
-        property = property_name
-    elif category == eDataRequest_category.BagValveMask:
-        property = property_name
-    elif category == eDataRequest_category.ECG:
-        property = property_name
-    elif category == eDataRequest_category.ECMO:
-        property = property_name
-    elif category == eDataRequest_category.Inhaler:
-        property = property_name
-    elif category == eDataRequest_category.MechanicalVentilator:
-        property = property_name
-    else:
-        raise ValueError(f"Unknown data request category: {request_type}")
-
-    d_fmt = None
-    if precision is not None:
-        d_fmt = SEDecimalFormat()
-        d_fmt.set_precision(precision)
-
-    return SEDataRequest(category, action, compartment, substance, property, unit, d_fmt)
 
 
 # Dataclass encapsulating information for a singular scenario "segment"
@@ -212,7 +130,7 @@ def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
                 dr = generate_data_request(
                     request_type=r[h2c["request type"]] if "request type" in h2c and isinstance(r[h2c["request type"]], str) else "",
                     property_name=r[h2c["property name"]] if "property name" in h2c and isinstance(r[h2c["property name"]], str) else "",
-                    unit=r[h2c["unit"]] if "unit" in h2c and isinstance(r[h2c["unit"]], str) else "",
+                    unit_str=r[h2c["unit"]] if "unit" in h2c and isinstance(r[h2c["unit"]], str) else "",
                     precision=r[h2c["precision"]],
                 )
                 drs.append(dr)
@@ -253,7 +171,7 @@ def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
                 dr = generate_data_request(
                     request_type=r[h2c["request type"]] if "request type" in h2c and isinstance(r[h2c["request type"]], str) else "",
                     property_name=r[h2c["property name"]] if "property name" in h2c and isinstance(r[h2c["property name"]], str) else "",
-                    unit=r[h2c["unit"]] if "unit" in h2c and isinstance(r[h2c["unit"]], str) else "",
+                    unit_str=r[h2c["unit"]] if "unit" in h2c and isinstance(r[h2c["unit"]], str) else "",
                     precision=None,
                 )
                 val_tgt = SESegmentValidationTarget()
@@ -344,11 +262,13 @@ def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], condit
         dr_mgr_dict["DataRequest"] = []
         for dr in dr_mgr.get_data_requests():
             dr_dict = {}
-            dr_dict["DecimalFormat"] = {}
+            dfmt_dict = {}
             if dr.get_precision():
-                dr_dict["DecimalFormat"]["Precision"] = dr.get_precision()
+                dfmt_dict["Precision"] = dr.get_precision()
             if dr.has_notation():
-                dr_dict["DecimalFormat"]["Type"] = dr.get_notation().name
+                dfmt_dict["Type"] = dr.get_notation().name
+            if dfmt_dict:
+                dr_dict["DecimalFormat"] = dfmt_dict
             dr_dict["Category"] = dr.get_category().name
             if dr.has_action_name():
                 dr_dict["ActionName"] = dr.get_action_name()
