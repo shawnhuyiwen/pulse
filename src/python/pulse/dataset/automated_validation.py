@@ -30,6 +30,7 @@ def load_data(xls_file: str) -> None:
     xls_basename = os.path.splitext(os.path.splitext(os.path.basename(xls_file))[0])[0]
     xls_basename_out = xls_basename[:-10] if xls_basename.lower().endswith("validation") else xls_basename
     output_dir = os.path.join(output_dir, xls_basename_out + "/")
+
     try:
         if os.path.isdir(output_dir):
             shutil.rmtree(output_dir)
@@ -181,12 +182,20 @@ def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
                 tgt_str = r[h2c["target"]]
                 tgt_str = tgt_str.strip().lower()
                 comparison_segment = int(r[h2c["comparison segment"]])
+                tgt_str_split = tgt_str.split(" ")
+                tgt_value = np.nan
                 if tgt_str.startswith("equalto"):
-                    val_tgt.set_equal_to(float(tgt_str.split(" ")[1]), comparison_segment)
+                    if len(tgt_str_split) > 1:
+                        tgt_value = float(tgt_str_split[1])
+                    val_tgt.set_equal_to(tgt_value, comparison_segment)
                 elif tgt_str.startswith("greaterthan"):
-                    val_tgt.set_greater_than(float(tgt_str.split(" ")[1]), comparison_segment)
+                    if len(tgt_str_split) > 1:
+                        tgt_value = float(tgt_str_split[1])
+                    val_tgt.set_greater_than(tgt_value, comparison_segment)
                 elif tgt_str.startswith("lessthan"):
-                    val_tgt.set_less_than(float(tgt_str.split(" ")[1]), comparison_segment)
+                    if len(tgt_str_split) > 1:
+                        tgt_value = float(tgt_str_split[1])
+                    val_tgt.set_less_than(tgt_value, comparison_segment)
                 elif tgt_str == "increase":
                     val_tgt.set_increase(comparison_segment)
                 elif tgt_str == "decrease":
@@ -252,8 +261,10 @@ def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], condit
             patient_config_dict["PatientFile"] = patient_config.get_patient_file()
         elif patient_config.has_patient():
             raise ValueError("Patient to JSON not implemented")
-        patient_config_dict["Conditions"] = all_conditions
-        patient_config_dict["DataRoot"] = patient_config.get_data_root_dir()
+        if all_conditions:
+            patient_config_dict["Conditions"] = all_conditions
+        if patient_config.get_data_root_dir() and patient_config.get_data_root_dir() != "./":
+            patient_config_dict["DataRoot"] = patient_config.get_data_root_dir()
 
     # Create data request manager dict
     dr_mgr = scenario.get_data_request_manager()
@@ -287,15 +298,20 @@ def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], condit
 
     # Compose full scenario dict
     scenario_dict = {}
-    scenario_dict["Name"] = scenario.get_name()
-    scenario_dict["Description"] = scenario.get_description()
+    if scenario.has_name():
+        scenario_dict["Name"] = scenario.get_name()
+    if scenario.has_description():
+        scenario_dict["Description"] = scenario.get_description()
     if scenario.has_patient_configuration():
         scenario_dict["PatientConfiguration"] = patient_config_dict
     elif scenario.has_engine_state():
         scenario_dict["EngineStateFile"] = scenario.get_engine_state()
-    scenario_dict["DataRequestFile"] = scenario.get_data_request_files()
-    scenario_dict["DataRequestManager"] = dr_mgr_dict
-    scenario_dict["AnyAction"] = all_actions
+    if scenario.get_data_request_files():
+        scenario_dict["DataRequestFile"] = scenario.get_data_request_files()
+    if dr_mgr_dict:
+        scenario_dict["DataRequestManager"] = dr_mgr_dict
+    if all_actions:
+        scenario_dict["AnyAction"] = all_actions
 
     return json.dumps(scenario_dict, indent=2)
 
@@ -303,4 +319,4 @@ def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], condit
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
-    load_data(get_data_dir() + "/human/adult/validation/Scenarios/AutomatedValidationTemplate.xlsx")
+    load_data(get_data_dir() + "/human/adult/validation/Scenarios/RespiratoryValidation.automated.xlsx")
