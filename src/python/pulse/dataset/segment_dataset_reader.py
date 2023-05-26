@@ -25,10 +25,11 @@ _pulse_logger = logging.getLogger('pulse')
 def load_data(xls_file: str) -> None:
     # Remove and recreate directory
     output_dir = "./validation/scenarios/"
+    results_dir = "./test_results/scenarios/"
     xls_basename = os.path.splitext(os.path.splitext(os.path.basename(xls_file))[0])[0]
     xls_basename_out = xls_basename[:-10] if xls_basename.lower().endswith("validation") else xls_basename
     output_dir = os.path.join(output_dir, xls_basename_out + "/")
-
+    results_dir = os.path.join(results_dir, xls_basename_out + "/")
     try:
         if os.path.isdir(output_dir):
             shutil.rmtree(output_dir)
@@ -44,7 +45,7 @@ def load_data(xls_file: str) -> None:
     for s in workbook.sheetnames:
         if s == "Notes":
             continue
-        if not read_sheet(workbook[s], output_dir):
+        if not read_sheet(workbook[s], output_dir, results_dir):
             _pulse_logger.error(f"Unable to read {s} sheet")
 
 
@@ -58,7 +59,7 @@ class ScenarioSegment:
 
 
 # Read xlsx sheet and generate corresponding scenario file and validation target files
-def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
+def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
     class Stage(Enum):
         IDScenario = 0
         InitialSegment = 1
@@ -225,6 +226,8 @@ def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
         segments.append(seg)
 
     scenario.get_data_request_manager().set_data_requests(drs)
+    full_results_dir = os.path.join(results_dir, scenario.get_name())
+    scenario.get_data_request_manager().set_results_filename(os.path.join(full_results_dir, "Results.csv"))
 
     # Write out scenario
     full_output_dir = os.path.join(output_dir, scenario.get_name())
@@ -232,7 +235,7 @@ def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
     filename = os.path.join(full_output_dir, scenario.get_name() + ".json")
     _pulse_logger.info(f"Writing {filename}")
     with open(filename, "w") as f:
-        f.write(write_scenario(scenario, segments, conditions))
+        f.write(write_scenario(scenario, segments, conditions, full_results_dir))
 
     # Write out validation target files
     for s in segments:
@@ -246,7 +249,7 @@ def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
     return True
 
 
-def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], conditions: str) -> str:
+def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], conditions: str, results_dir: str) -> str:
     # Load actions into dict from concatenated JSON across segments
     all_actions_str = '{"AnyAction": ['
     for idx, s in enumerate(segments):
@@ -256,7 +259,8 @@ def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], condit
         if idx == len(segments) - 1 and all_actions_str != '{"AnyAction": [':
             all_actions_str += ','
         all_actions_str += '{"SerializeRequested": {'
-        all_actions_str += f'"Filename": "Segment{s.id}.json"'
+        segment_file_name = os.path.join(results_dir, f"Segment{s.id}.json")
+        all_actions_str += f'"Filename": "{segment_file_name}"'
         all_actions_str += '}}'
         if idx != len(segments) - 1:
             all_actions_str += ','
@@ -314,7 +318,7 @@ def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], condit
 
             dr_mgr_dict["DataRequest"].append(dr_dict)
     if dr_mgr.get_results_filename():
-        dr_mgr_dict["ResultFilename"] = dr_mgr.get_results_filename()
+        dr_mgr_dict["ResultsFilename"] = dr_mgr.get_results_filename()
 
     # Compose full scenario dict
     scenario_dict = {}
