@@ -1,12 +1,12 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import os
+import time
+import shutil
 import logging
 import numbers
-import os
-import shutil
 import numpy as np
-import time
 from dataclasses import dataclass
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -16,17 +16,13 @@ from pycel import ExcelCompiler
 
 from pulse.cdm.engine import SETimeSeriesValidationTarget
 from pulse.cdm.patient import SEPatient, eSex
-from pulse.cdm.scalars import get_unit, LengthUnit, MassUnit
-from pulse.cdm.utils.csv_utils import read_csv_into_df
+from pulse.cdm.scalars import LengthUnit, MassUnit
 from pulse.cdm.utils.file_utils import get_data_dir
-from pulse.dataset.utils import generate_data_request
-
 from pulse.cdm.io.engine import serialize_time_series_validation_target_list_to_file
 from pulse.cdm.io.patient import serialize_patient_from_file
-
+from pulse.dataset.utils import generate_data_request
 
 _pulse_logger = logging.getLogger('pulse')
-
 
 def load_data(xls_file: str):
     # Remove and recreate directory

@@ -1,24 +1,22 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-import json
-import logging
-import numbers
-import numpy as np
 import os
+import json
 import shutil
-from dataclasses import dataclass, field
+import logging
+import numpy as np
 from enum import Enum
+from dataclasses import dataclass, field
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from typing import Dict, Hashable, List, Optional, Tuple
+from typing import Dict, Hashable, List, Tuple
 
-from pulse.cdm.engine import SESegmentValidationTarget, eDataRequest_category, SEDataRequest
+from pulse.cdm.engine import SESegmentValidationTarget
 from pulse.cdm.scenario import SEScenario
 from pulse.cdm.utils.file_utils import get_data_dir
-from pulse.dataset.utils import generate_data_request
-
 from pulse.cdm.io.engine import serialize_segment_validation_target_list_to_file
+from pulse.dataset.utils import generate_data_request
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -52,7 +50,7 @@ def load_data(xls_file: str) -> None:
 
 # Dataclass encapsulating information for a singular scenario "segment"
 @dataclass
-class ScenarioSegment():
+class ScenarioSegment:
     id: Hashable
     note: str = ""
     actions: str = ""
