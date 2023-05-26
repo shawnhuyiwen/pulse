@@ -227,7 +227,7 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
 
     scenario.get_data_request_manager().set_data_requests(drs)
     full_results_dir = os.path.join(results_dir, scenario.get_name())
-    scenario.get_data_request_manager().set_results_filename(os.path.join(full_results_dir, "Results.csv"))
+    scenario.get_data_request_manager().set_results_filename(os.path.join(full_results_dir, "Results.csv").replace("\\", "/"))
 
     # Write out scenario
     full_output_dir = os.path.join(output_dir, scenario.get_name())
@@ -259,7 +259,7 @@ def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], condit
         if idx == len(segments) - 1 and all_actions_str != '{"AnyAction": [':
             all_actions_str += ','
         all_actions_str += '{"SerializeRequested": {'
-        segment_file_name = os.path.join(results_dir, f"Segment{s.id}.json")
+        segment_file_name = os.path.join(results_dir, f"Segment{s.id}.json").replace("\\", "/")
         all_actions_str += f'"Filename": "{segment_file_name}"'
         all_actions_str += '}}'
         if idx != len(segments) - 1:
