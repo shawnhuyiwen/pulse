@@ -112,6 +112,14 @@ def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
                 if "conditions" in h2c and isinstance(r[h2c["conditions"]], str):
                     conditions = r[h2c["conditions"]]
 
+            seg = ScenarioSegment(
+                id = r[h2c["segment"]] if "segment" in h2c else "",
+                note = r[h2c["notes"]] if "notes" in h2c and isinstance(r[h2c["notes"]], str) else "",
+                actions = ""
+            )
+            segments.append(seg)
+            seg = None
+
             stage = Stage.DataRequests
         elif stage == Stage.DataRequests:
             # Header row
@@ -226,6 +234,8 @@ def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
     # Write out validation target files
     for s in segments:
         val_tgts = s.val_tgts
+        if not val_tgts:
+            continue
         filename = os.path.join(full_output_dir, f"Segment{s.id}ValidationTargets.json")
         _pulse_logger.info(f"Writing {filename}")
         serialize_segment_validation_target_list_to_file(val_tgts, filename)
@@ -236,8 +246,17 @@ def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
 def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], conditions: str) -> str:
     # Load actions into dict from concatenated JSON across segments
     all_actions_str = '{"AnyAction": ['
-    for s in segments:
+    for idx, s in enumerate(segments):
         all_actions_str += s.actions
+
+        # Add serialize requested action to end of every segment
+        if idx == len(segments) - 1 and all_actions_str != '{"AnyAction": [':
+            all_actions_str += ','
+        all_actions_str += '{"SerializeRequested": {'
+        all_actions_str += f'"Filename": "Segment{s.id}.json"'
+        all_actions_str += '}}'
+        if idx != len(segments) - 1:
+            all_actions_str += ','
     all_actions_str += ']}'
     all_actions = []
     if all_actions_str != '{"AnyAction": []}':

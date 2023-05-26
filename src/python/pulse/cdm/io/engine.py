@@ -565,12 +565,14 @@ def serialize_segment_validation_target_from_bind(src: SegmentValidationTargetDa
 def serialize_segment_validation_target_list_to_bind(src: List[SESegmentValidationTarget], dst: SegmentValidationTargetListData):
     for tgt in src:
         serialize_segment_validation_target_to_bind(tgt, dst.SegmentValidationTarget.add())
-def serialize_segment_validation_target_list_from_bind(src: SegmentValidationTargetListData, dst: List[SESegmentValidationTarget]):
+def serialize_segment_validation_target_list_from_bind(src: SegmentValidationTargetListData):
     dst = []
     for tgtData in src.SegmentValidationTarget:
         tgt = SESegmentValidationTarget()
         serialize_segment_validation_target_from_bind(tgtData, tgt)
         dst.append(tgt)
+
+    return dst
 def serialize_segment_validation_target_list_to_string(src: List[SESegmentValidationTarget], fmt: eSerializationFormat):
     dst = SegmentValidationTargetListData()
     serialize_segment_validation_target_list_to_bind(src, dst)
@@ -580,14 +582,14 @@ def serialize_segment_validation_target_list_to_file(src: List[SESegmentValidati
     file = open(filename, "w")
     n = file.write(string)
     file.close()
-def serialize_segment_validation_target_list_from_string(string: str, dst: List[SESegmentValidationTarget], fmt: eSerializationFormat):
+def serialize_segment_validation_target_list_from_string(string: str, fmt: eSerializationFormat):
     src = SegmentValidationTargetListData()
     json_format.Parse(string, src)
-    serialize_segment_validation_target_list_from_bind(src, dst)
-def serialize_segment_validation_target_list_from_file(filename: str, dst: SESegmentValidationTarget):
+    return serialize_segment_validation_target_list_from_bind(src)
+def serialize_segment_validation_target_list_from_file(filename: str):
     with open(filename) as f:
         string = f.read()
-    serialize_segment_validation_target_list_from_string(string, dst, eSerializationFormat.JSON)
+    return serialize_segment_validation_target_list_from_string(string, eSerializationFormat.JSON)
 
 def serialize_time_series_validation_target_to_bind(src: SETimeSeriesValidationTarget, dst: TimeSeriesValidationTargetData):
     serialize_validation_target_to_bind(src, dst.ValidationTarget)
@@ -616,12 +618,14 @@ def serialize_time_series_validation_target_from_bind(src: TimeSeriesValidationT
 def serialize_time_series_validation_target_list_to_bind(src: List[SETimeSeriesValidationTarget], dst: TimeSeriesValidationTargetListData):
     for tgt in src:
         serialize_time_series_validation_target_to_bind(tgt, dst.TimeSeriesValidationTarget.add())
-def serialize_time_series_validation_target_list_from_bind(src: TimeSeriesValidationTargetListData, dst: List[SETimeSeriesValidationTarget]):
+def serialize_time_series_validation_target_list_from_bind(src: TimeSeriesValidationTargetListData):
     dst = []
     for tgtData in src.TimeSeriesValidationTarget:
         tgt = SETimeSeriesValidationTarget()
         serialize_time_series_validation_target_from_bind(tgtData, tgt)
         dst.append(tgt)
+
+    return dst
 def serialize_time_series_validation_target_list_to_string(src: List[SETimeSeriesValidationTarget], fmt: eSerializationFormat):
     dst = TimeSeriesValidationTargetListData()
     serialize_time_series_validation_target_list_to_bind(src, dst)
@@ -631,11 +635,11 @@ def serialize_time_series_validation_target_list_to_file(src: List[SETimeSeriesV
     file = open(filename, "w")
     n = file.write(string)
     file.close()
-def serialize_time_series_validation_target_list_from_string(string: str, dst: List[SETimeSeriesValidationTarget], fmt: eSerializationFormat):
+def serialize_time_series_validation_target_list_from_string(string: str, fmt: eSerializationFormat):
     src = TimeSeriesValidationTargetListData()
     json_format.Parse(string, src)
-    serialize_time_series_validation_target_list_from_bind(src, dst)
-def serialize_time_series_validation_target_list_from_file(filename: str, dst: List[SETimeSeriesValidationTarget]):
+    return serialize_time_series_validation_target_list_from_bind(src)
+def serialize_time_series_validation_target_list_from_file(filename: str):
     with open(filename) as f:
         string = f.read()
-    serialize_time_series_validation_target_list_from_string(string, dst, eSerializationFormat.JSON)
+    return serialize_time_series_validation_target_list_from_string(string, eSerializationFormat.JSON)
