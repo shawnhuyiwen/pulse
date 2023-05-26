@@ -3,3 +3,4 @@ pandas
 matplotlib
 openpxyl
 pycel
+mdutils

@@ -214,6 +214,9 @@ def read_sheet(sheet: Worksheet, output_dir: str) -> bool:
                 else:
                     raise ValueError(f"Unable to identify comparison type: {r[h2c['target']]}")
 
+                if "notes" in h2c:
+                    val_tgt.set_notes(r[h2c["notes"]] if isinstance(r[h2c["notes"]], str) else "")
+
                 seg.val_tgts.append(val_tgt)
         else:
             raise ValueError(f"Unknown automated scenario validation stage: {stage}")
