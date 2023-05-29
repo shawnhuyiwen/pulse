@@ -5,6 +5,7 @@
 
 #include "cdm/PhysiologyEngine.h"
 #include "cdm/engine/SEEventManager.h"
+class DataTrack;
 
 class CDM_DECL SEDataRequested : public LoggerForward, public SEEventHandler
 {
@@ -15,8 +16,6 @@ public:
 
   SEDataRequested(const SEDataRequested&) = delete;
   SEDataRequested operator=(const SEDataRequested&) = delete;
-
-  virtual void SetEngine(const PhysiologyEngine& engine);
 
   virtual void Clear(); //clear memory
 
@@ -29,8 +28,8 @@ public:
   virtual bool IsActive() const;// Set when an Error or Fatal has been loggged
   virtual void SetIsActive(bool b);
 
-  virtual void PullDataRequested();
   virtual void ClearDataRequested();
+  virtual void PullDataRequested(double currentTime_s, DataTrack& tracker);
 
   virtual const std::vector<double>& GetValues() const;
 

@@ -23,11 +23,6 @@ SEDataRequested::~SEDataRequested()
 
 }
 
-void SEDataRequested::SetEngine(const PhysiologyEngine& engine)
-{
-  m_Engine = &engine;
-}
-
 bool SEDataRequested::SerializeToString(std::string& dst, eSerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, dst, m);
@@ -64,17 +59,13 @@ void SEDataRequested::SetIsActive(bool b)
   m_IsActive = b;
 }
 
-void SEDataRequested::PullDataRequested()
+void SEDataRequested::PullDataRequested(double currentTime_s, DataTrack& tracker)
 {
-  if (!m_Engine)
-    return;
   m_Values.clear();
-  double currentTime_s = m_Engine->GetSimulationTime(TimeUnit::s);
   m_Values.push_back(currentTime_s);
-  m_Engine->GetEngineTracker()->TrackData(currentTime_s);
-  size_t length = m_Engine->GetEngineTracker()->GetDataTrack().NumTracks() + 1;
-  for (size_t i = 1; i < length; i++)
-    m_Values.push_back(m_Engine->GetEngineTracker()->GetDataTrack().GetProbe(i - 1));
+  size_t length = tracker.NumTracks();
+  for (size_t i = 0; i < length; i++)
+    m_Values.push_back(tracker.GetProbe(i));
 }
 void SEDataRequested::ClearDataRequested()
 {

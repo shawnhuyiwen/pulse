@@ -14,6 +14,7 @@
 class DataTrack;
 class SEActionManager;
 class SEConditionManager;
+class SEDataRequested;
 class SEEngineTracker;
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/engine/SEEngineStabilization.h"
@@ -171,6 +172,7 @@ namespace pulse
 
     EngineState                           m_State;
     SEEngineTracker*                      m_EngineTrack;
+    SEDataRequested*                      m_DataRequested;
 
     SEScalarTime                          m_CurrentTime;
     SEScalarTime                          m_SimulationTime;
@@ -315,7 +317,7 @@ namespace pulse
     virtual bool Stabilize(const SEPatientConfiguration& patient_configuration);
 
     // Allocate all the models this engine supports
-    virtual void Allocate() = 0;
+    virtual void Allocate();
     virtual bool SetupPatient(const SEPatient& patient) = 0;
     // Based on what modles are used, setup order for the following
     virtual void InitializeModels();

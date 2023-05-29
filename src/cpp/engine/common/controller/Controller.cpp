@@ -28,8 +28,10 @@
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequested.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SESerializeRequested.h"
 #include "cdm/engine/SESerializeState.h"
 #include "cdm/engine/SEOverrides.h"
 #include "cdm/engine/SEEventManager.h"
@@ -52,6 +54,7 @@ namespace pulse
     m_AirwayMode = eAirwayMode::Free;
     m_Intubation = eSwitch::Off;
     m_EngineTrack = nullptr;
+    m_DataRequested = nullptr;
     m_AdvanceHandler = nullptr;
 
     m_CurrentTime.SetValue(0, TimeUnit::s);
@@ -63,6 +66,7 @@ namespace pulse
   Data::~Data()
   {
     SAFE_DELETE(m_EngineTrack);
+    SAFE_DELETE(m_DataRequested);
   }
 
   void Data::AdvanceCallback(double time_s)
@@ -232,6 +236,38 @@ namespace pulse
     Info("Version : " + PulseBuildInformation::Version());
     Info("GitHash : " + PulseBuildInformation::Hash());
     Info("Build Time : " + PulseBuildInformation::Time());
+  }
+
+  void Controller::Allocate()
+  {
+    // This is what's common among all of our currenly implemented engine
+    // If we need to create an engine without these, we can move these to 
+    // the engine specific controllers
+
+    // Create common objects we will use
+    m_Substances = new pulse::SubstanceManager(*this);
+
+    m_InitialPatient = new SEPatient(GetLogger());
+    m_CurrentPatient = new SEPatient(GetLogger());
+
+    m_Config = new PulseConfiguration(GetLogger());
+    m_Config->Initialize("");//Setup defaults that don't need files on disk
+
+    m_Actions = new SEActionManager(*m_Substances);
+    m_Conditions = new SEConditionManager(GetLogger());
+
+    m_EventManager = new SEEventManager(GetLogger());
+    m_DataRequested = new SEDataRequested();
+    GetLogger()->AddForward(m_DataRequested);
+    m_EventManager->ForwardEvents(m_DataRequested);
+
+    // Create our derived objects
+    m_BlackBoxes = new pulse::BlackBoxManager(*this);
+    m_Compartments = new CompartmentManager(*this);
+    m_Circuits = new pulse::CircuitManager(*this);
+
+    m_LogForward = new pulse::FatalListner(*m_EventManager, m_CurrentTime);
+    m_Logger->AddForward(m_LogForward);
   }
 
   bool Controller::SetConfigurationOverride(const SEEngineConfiguration* config)
@@ -606,14 +642,33 @@ namespace pulse
     if (adv != nullptr)
       return AdvanceModelTime(adv->GetTime(TimeUnit::s), TimeUnit::s);
 
-    const SESerializeState* serialize = dynamic_cast<const SESerializeState*>(&action);
-    if (serialize != nullptr)
+    const SESerializeRequested* serializeRequested = dynamic_cast<const SESerializeRequested*>(&action);
+    if (serializeRequested != nullptr)
     {
-      if (serialize->GetType() == eSerialization_Type::Save)
+      std::string output;
+      GetEngineTracker().TrackData();
+      m_DataRequested->PullDataRequested(GetSimulationTime().GetValue(TimeUnit::s), GetDataTrack());
+      m_DataRequested->SerializeToString(output, eSerializationFormat::JSON);
+      if (serializeRequested->HasFilename())
       {
-        if (serialize->HasFilename())
+        WriteFile(output, serializeRequested->GetFilename());
+      }
+      else
+      {
+        WriteFile(output, "RequestedData.json");
+      }
+
+      return true;
+    }
+
+    const SESerializeState* serializeState = dynamic_cast<const SESerializeState*>(&action);
+    if (serializeState != nullptr)
+    {
+      if (serializeState->GetType() == eSerialization_Type::Save)
+      {
+        if (serializeState->HasFilename())
         {
-          SerializeToFile(serialize->GetFilename());
+          SerializeToFile(serializeState->GetFilename());
         }
         else
         {
@@ -632,7 +687,7 @@ namespace pulse
         }
       }
       else
-        return SerializeFromFile(serialize->GetFilename());
+        return SerializeFromFile(serializeState->GetFilename());
       return true;
     }
 
