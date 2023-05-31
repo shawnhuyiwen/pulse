@@ -10,7 +10,7 @@
     "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "AnyAction": 
     [{
-      "Serialize": { "Type": "Save" }
+      "SerializeState": { "Type": "Save" }
     }]
     }
 }
