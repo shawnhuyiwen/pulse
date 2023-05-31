@@ -31,7 +31,7 @@ SESegmentValidationTarget::SESegmentValidationTarget() : SEValidationTarget()
 void SESegmentValidationTarget::Clear()
 {
   SEValidationTarget::Clear();
-  m_ComparisonType = eComparisonType::EqualToSegment;
+  m_ComparisonType = eComparisonType::None;
   m_TargetSegment = 0;
 }
 bool SESegmentValidationTarget::SerializeToString(const std::vector<const SESegmentValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
@@ -132,7 +132,7 @@ SETimeSeriesValidationTarget::SETimeSeriesValidationTarget() : SEValidationTarge
 void SETimeSeriesValidationTarget::Clear()
 {
   SEValidationTarget::Clear();
-  m_ComparisonType = eComparisonType::EqualToValue;
+  m_ComparisonType = eComparisonType::None;
   m_TargetType = eTargetType::Mean;
   m_Target = SEScalar::dNaN();
   m_TargetMaximum = SEScalar::dNaN();

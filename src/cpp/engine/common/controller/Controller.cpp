@@ -647,6 +647,7 @@ namespace pulse
     {
       std::string output;
       GetEngineTracker().TrackData();
+      m_DataRequested->ClearDataRequested();
       m_DataRequested->PullDataRequested(GetSimulationTime().GetValue(TimeUnit::s), GetDataTrack());
       m_DataRequested->SerializeToString(output, eSerializationFormat::JSON);
       if (serializeRequested->HasFilename())

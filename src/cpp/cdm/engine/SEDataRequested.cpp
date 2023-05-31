@@ -62,8 +62,13 @@ void SEDataRequested::SetIsActive(bool b)
 
 void SEDataRequested::PullDataRequested(double currentTime_s, DataTrack& tracker)
 {
-  auto& values = m_SegmentsPerSimTime_s[currentTime_s];
   size_t length = tracker.NumTracks();
+  if (m_Headers.empty())
+  {
+    for (size_t i = 0; i < length; i++)
+      m_Headers.push_back(tracker.GetProbeName(i));
+  }
+  auto& values = m_SegmentsPerSimTime_s[currentTime_s];
   for (size_t i = 0; i < length; i++)
     values.push_back(tracker.GetProbe(i));
 }

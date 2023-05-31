@@ -45,8 +45,8 @@ class SESegmentValidationTarget : public SEValidationTarget
 {
   friend class PBEngine;//friend the serialization class
 public:
-  enum class eComparisonType { EqualToValue = 0, EqualToSegment, GreaterThanValue, GreaterThanSegment,
-                              LessThanValue, LessThanSegment, TrendsToValue, TrendsToSegment, Range };
+  enum class eComparisonType { None=0, EqualToValue, EqualToSegment, GreaterThanValue, GreaterThanSegment,
+                               LessThanValue, LessThanSegment, TrendsToValue, TrendsToSegment, Range };
   SESegmentValidationTarget();
   virtual ~SESegmentValidationTarget() = default;
 
@@ -79,7 +79,7 @@ class SETimeSeriesValidationTarget : public SEValidationTarget
 {
   friend class PBEngine;//friend the serialization class
 public:
-  enum class eComparisonType { EqualToValue = 0, GreaterThanValue, LessThanValue, TrendsToValue, Range };
+  enum class eComparisonType { None=0, EqualToValue, GreaterThanValue, LessThanValue, TrendsToValue, Range };
   enum class eTargetType { Mean=0, Minimum, Maximum };
   SETimeSeriesValidationTarget();
   virtual ~SETimeSeriesValidationTarget() = default;

@@ -644,6 +644,7 @@ void PBEngine::Serialize(const SESegmentValidationTarget& src, CDM_BIND::Segment
     dst.mutable_range()->set_minimum(src.m_TargetMinimum);
     dst.mutable_range()->set_maximum(src.m_TargetMaximum);
     break;
+  default: break;
   }
 }
 void PBEngine::Load(const CDM_BIND::SegmentValidationTargetSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
@@ -731,6 +732,7 @@ void PBEngine::Serialize(const CDM_BIND::TimeSeriesValidationTargetData& src, SE
   case CDM_BIND::TimeSeriesValidationTargetData::kTrendsToValue:
     dst.SetGreaterThan(src.trendstovalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
     break;
+  default: break;
   }
 }
 CDM_BIND::TimeSeriesValidationTargetData* PBEngine::Unload(const SETimeSeriesValidationTarget& src)
@@ -841,6 +843,8 @@ void PBEngine::Serialize(const SEDataRequested& src, CDM_BIND::DataRequestedData
   {
     // TODO Write Event Changes
   }
+  for (std::string str : src.GetHeaders())
+    dst.mutable_headers()->Add(std::move(str));
   for (auto itr : src.GetAllValues())
   {
     auto segment = dst.add_segment();
