@@ -869,18 +869,18 @@ class SESegmentValidationTarget(SEValidationTarget):
         self._target_max = np.nan
         self._target_min = np.nan
         self._target_segment = segment
-    def set_trends_to(self, d: float):
+    def set_trends_to_value(self, d: float):
         self._comparison_type = self.eComparisonType.TrendsToValue
         self._target = d
         self._target_max = d
         self._target_min = d
         self._target_segment = 0
-    def set_range(self, min: float, max: float, segment: int):
+    def set_range(self, min: float, max: float):
         self._comparison_type = self.eComparisonType.Range
         self._target = np.nan
         self._target_max = max
         self._target_min = min
-        self._target_segment = segment
+        self._target_segment = 0
 
 
 class SESegmentValidationTargetSegment:

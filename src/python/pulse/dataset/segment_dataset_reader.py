@@ -176,39 +176,33 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
                 val_tgt.set_header(dr.to_string())
                 if isinstance(r[h2c["reference"]], str):
                     val_tgt.set_reference(r[h2c["reference"]])
-                tgt_str = r[h2c["target"]]
-                tgt_str = tgt_str.strip().lower()
-                comparison_segment = int(r[h2c["comparison segment"]])
-                tgt_str_split = tgt_str.split(" ")
-                if tgt_str.startswith("equalto"):
-                    if len(tgt_str_split) > 1:
-                        val_tgt.set_equal_to_value(float(tgt_str_split[1]))
-                    else:
-                        val_tgt.set_equal_to_segment(comparison_segment)
-                elif tgt_str.startswith("greaterthan"):
-                    if len(tgt_str_split) > 1:
-                        val_tgt.set_greater_than_value(float(tgt_str_split[1]))
-                    else:
-                        val_tgt.set_greater_than_segment(comparison_segment)
-                elif tgt_str.startswith("lessthan"):
-                    if len(tgt_str_split) > 1:
-                        val_tgt.set_less_than_value(float(tgt_str_split[1]))
-                    else:
-                        val_tgt.set_less_than_segment(comparison_segment)
-                elif tgt_str.startswith("trendsto"):
-                    if len(tgt_str_split) > 1:
-                        val_tgt.set_trends_to_value(float(tgt_str_split[1]))
-                    else:
-                        val_tgt.set_trends_to_segment(comparison_segment)
-                elif tgt_str.startswith("["):
-                    range_list = [float(val.strip()) for val in tgt_str[1:-1].split(",")]
-                    val_tgt.set_range(range_list[0], range_list[1], comparison_segment)
-                elif tgt_str == "notvalidating":
+                type_str = r[h2c["comparison type"]].strip().lower()
+                comparison_str = r[h2c["comparison segment/value"]]
+                if type_str == "equaltosegment":
+                    val_tgt.set_equal_to_segment(int(comparison_str))
+                elif type_str == "equaltovalue":
+                    val_tgt.set_equal_to_value(float(comparison_str))
+                elif type_str == "greaterthansegment":
+                    val_tgt.set_greater_than_segment(int(comparison_str))
+                elif type_str == "greaterthanvalue":
+                    val_tgt.set_greater_than_value(float(comparison_str))
+                elif type_str == "lessthansegment":
+                    val_tgt.set_less_than_segment(int(comparison_str))
+                elif type_str == "lessthanvalue":
+                    val_tgt.set_less_than_value(float(comparison_str))
+                elif type_str == "trendstosegment":
+                    val_tgt.set_trends_to_segment(int(comparison_str))
+                elif type_str == "trendstovalue":
+                    val_tgt.set_trends_to_value(float(comparison_str))
+                elif type_str == "range":
+                    range_list = [float(val.strip()) for val in comparison_str[1:-1].split(",")]
+                    val_tgt.set_range(range_list[0], range_list[1])
+                elif type_str == "notvalidating":
                     pass
-                elif tgt_str == "tbd":
+                elif type_str == "tbd":
                     _pulse_logger.warning("Found tbd target")
                 else:
-                    raise ValueError(f"Unable to identify comparison type: {r[h2c['target']]}")
+                    raise ValueError(f"Unable to identify comparison type: {type_str}")
 
                 if "notes" in h2c:
                     val_tgt.set_notes(r[h2c["notes"]] if isinstance(r[h2c["notes"]], str) else "")
