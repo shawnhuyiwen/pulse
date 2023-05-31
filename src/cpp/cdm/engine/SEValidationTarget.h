@@ -14,14 +14,8 @@ protected:
   SEValidationTarget() { Clear(); }
 public:
   virtual ~SEValidationTarget() = default;
-  enum class eComparisonType { EqualTo = 0, GreaterThan, LessThan, Increase, Decrease, Range };
 
-  virtual void Clear()
-  {
-    m_Header = "";
-    m_Reference = "";
-    m_Notes = "";
-  }
+  virtual void Clear();
   virtual bool IsValid();
 
   std::string GetHeader() const { return m_Header; }
@@ -33,25 +27,26 @@ public:
   std::string GetNotes() const { return m_Notes; }
   void SetNotes(const std::string& n) { m_Notes = n; }
 
-  eComparisonType GetComparisonType() const { return m_ComparisonType; }
   double GetTargetMaximum() const { return m_TargetMaximum; }
   double GetTargetMinimum() const { return m_TargetMinimum; }
   double GetTarget() const { return m_Target; }
 
 protected:
-  std::string     m_Header;
-  std::string     m_Reference;
-  std::string     m_Notes;
-  double          m_Target;
-  double          m_TargetMaximum;
-  double          m_TargetMinimum;
-  eComparisonType m_ComparisonType;
+  std::string                                m_Header;
+  std::string                                m_Reference;
+  std::string                                m_Notes;
+
+  double                                     m_Target;
+  double                                     m_TargetMaximum;
+  double                                     m_TargetMinimum;
 };
 
 class SESegmentValidationTarget : public SEValidationTarget
 {
   friend class PBEngine;//friend the serialization class
 public:
+  enum class eComparisonType { EqualToValue = 0, EqualToSegment, GreaterThanValue, GreaterThanSegment,
+                              LessThanValue, LessThanSegment, TrendsToValue, TrendsToSegment, Range };
   SESegmentValidationTarget();
   virtual ~SESegmentValidationTarget() = default;
 
@@ -61,24 +56,30 @@ public:
   static bool SerializeFromFile(const std::string& filename, std::vector<SESegmentValidationTarget*>& dst, Logger* logger);
 
   void Clear() override;
+  eComparisonType GetComparisonType() const { return m_ComparisonType; }
 
-  int    GetSegment() const { return m_Segment; }
+  int    GetTargetSegment() const { return m_TargetSegment; }
 
-  void   SetEqualTo(double d, int segment);
-  void   SetGreaterThan(double d, int segment);
-  void   SetLessThan(double d, int segment);
-  void   SetIncrease(int segment);
-  void   SetDecrease(int segment);
-  void   SetRange(double min, double max, int segment);
+  void   SetEqualToSegment(int segment);
+  void   SetEqualToValue(double d);
+  void   SetGreaterThanSegment(int segment);
+  void   SetGreaterThanValue(double d);
+  void   SetLessThanSegment(int segment);
+  void   SetLessThanValue(double d);
+  void   SetTrendsToSegment(int segment);
+  void   SetTrendsToValue(double d);
+  void   SetRange(double min, double max);
 
 protected:
-  int                                        m_Segment;
+  eComparisonType                            m_ComparisonType;
+  int                                        m_TargetSegment;
 };
 
 class SETimeSeriesValidationTarget : public SEValidationTarget
 {
   friend class PBEngine;//friend the serialization class
 public:
+  enum class eComparisonType { EqualToValue = 0, GreaterThanValue, LessThanValue, TrendsToValue, Range };
   enum class eTargetType { Mean=0, Minimum, Maximum };
   SETimeSeriesValidationTarget();
   virtual ~SETimeSeriesValidationTarget() = default;
@@ -91,12 +92,12 @@ public:
   static bool SerializeFromFile(const std::string& filename, std::vector<SETimeSeriesValidationTarget*>& dst, Logger* logger);
 
   eTargetType GetTargetType() const { return m_TargetType; }
+  eComparisonType GetComparisonType() const { return m_ComparisonType; }
 
   void   SetEqualTo(double d, eTargetType t);
   void   SetGreaterThan(double d, eTargetType t);
   void   SetLessThan(double d, eTargetType t);
-  void   SetIncrease(eTargetType t);
-  void   SetDecrease(eTargetType t);
+  void   SetTrendsTo(double d, eTargetType t);
   void   SetRange(double min, double max, eTargetType t);
 
   // Maybe we want a different class to do the comparision
@@ -108,6 +109,7 @@ public:
 
 protected:
   eTargetType                                m_TargetType;
+  eComparisonType                            m_ComparisonType;
 
   // Not serializing
   double                                     m_Error;

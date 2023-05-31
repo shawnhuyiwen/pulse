@@ -77,9 +77,18 @@ message DataRequestedData
 {
   int32                                                 ID                              = 1;/**<< @brief A unique id associated with this engine, required when using pools. */
   bool                                                  IsActive                        = 2;
-  repeated double                                       Value                           = 3;
-  repeated EventChangeData                              EventChange                     = 4;
-  LogMessagesData                                       LogMessages                     = 5;
+  repeated EventChangeData                              EventChange                     = 3;
+  LogMessagesData                                       LogMessages                     = 4;
+  
+  message SegmentData
+  {
+    double                                              SimTime_s                       = 1;
+    repeated double                                     Value                           = 2;
+  }
+
+  
+  repeated string                                       Headers                         = 5;
+  repeated SegmentData                                  Segment                         = 6; 
 }
 message DataRequestedListData
 {
@@ -89,41 +98,41 @@ message DataRequestedListData
 // This encapsulates a row from our System/Patient validation spreedsheet
 // It also encapsulates a segment property cell from a scenario validation spreedsheet
 
+message RangeData
+{
+  double                                                Minimum                         = 1;
+  double                                                Maximum                         = 2;
+}
 message ValidationTargetData
 {
-
-  enum eTrend
-  {
-    Increase = 0;
-    Decrease = 1;
-  }
-  message RangeData
-  {
-    double                                              Minimum                         = 1;
-    double                                              Maximum                         = 2;
-  }
+  
   string                                                Header                          = 1;
   string                                                Reference                       = 2;
   string                                                Notes                           = 3;
-  
-  oneof Expected
-  {
-    double                                              EqualTo                         = 4;
-    double                                              GreaterThan                     = 5;
-    double                                              LessThan                        = 6;
-    eTrend                                              Trend                           = 7;
-    RangeData                                           Range                           = 8;
-  }
 }
 message SegmentValidationTargetData
 {
   
   ValidationTargetData                                  ValidationTarget                = 1;
-  int32                                                 Segment                         = 2;
+  oneof Expected
+  {
+    double                                              EqualToValue                    = 2;
+    int32                                               EqualToSegment                  = 3;
+    double                                              GreaterThanValue                = 4;
+    int32                                               GreaterThanSegment              = 5;
+    double                                              LessThanValue                   = 6;
+    int32                                               LessThanSegment                 = 7;
+    double                                              TrendsToValue                   = 8;
+    int32                                               TrendsToSegment                 = 9;
+    RangeData                                           Range                           = 10;
+  }
 }
-message SegmentValidationTargetListData
+message SegmentValidationTargetSegmentData
 {
-  repeated SegmentValidationTargetData                  SegmentValidationTarget         = 1;
+
+  int32                                                 Segment                         = 1;
+  string                                                Notes                           = 2;
+  repeated SegmentValidationTargetData                  SegmentValidationTarget         = 3;
 }
 message TimeSeriesValidationTargetData
 {
@@ -135,6 +144,14 @@ message TimeSeriesValidationTargetData
   }
   ValidationTargetData                                  ValidationTarget                = 1;
   eType                                                 Type                            = 2;
+  oneof Expected
+  {
+    double                                              EqualToValue                    = 3;
+    double                                              GreaterThanValue                = 4;
+    double                                              LessThanValue                   = 5;
+    double                                              TrendsToValue                   = 6;
+    RangeData                                           Range                           = 7;
+  }
 }
 message TimeSeriesValidationTargetListData
 {

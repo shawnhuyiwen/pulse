@@ -31,7 +31,8 @@ public:
   virtual void ClearDataRequested();
   virtual void PullDataRequested(double currentTime_s, DataTrack& tracker);
 
-  virtual const std::vector<double>& GetValues() const;
+  virtual const std::vector<std::string>& GetHeaders() const;
+  virtual const std::map<double, std::vector<double>>& GetAllValues() const;
 
   virtual bool KeepLogMessages() const { return m_KeepLogMessages; }
   virtual void KeepLogMessages(bool b) { m_KeepLogMessages = b; }
@@ -50,12 +51,13 @@ public:
   void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override;
 
 protected:
-  int                             m_ID;
-  bool                            m_IsActive;
-  std::vector<double>             m_Values;
-  bool                            m_KeepEventChanges;
-  std::vector<SEEventChange>      m_EventChanges;
-  bool                            m_KeepLogMessages;
-  LogMessages                     m_LogMessages;
-  const PhysiologyEngine*         m_Engine;
+  int                                   m_ID;
+  bool                                  m_IsActive;
+  bool                                  m_KeepEventChanges;
+  std::vector<SEEventChange>            m_EventChanges;
+  bool                                  m_KeepLogMessages;
+  LogMessages                           m_LogMessages;
+  std::vector<std::string>              m_Headers;
+  std::map<double, std::vector<double>> m_SegmentsPerSimTime_s;
+  const PhysiologyEngine*               m_Engine;
 };

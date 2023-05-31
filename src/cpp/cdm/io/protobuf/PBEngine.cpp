@@ -564,29 +564,6 @@ void PBEngine::Serialize(const SEValidationTarget& src, CDM_BIND::ValidationTarg
   dst.set_header(src.m_Header);
   dst.set_reference(src.m_Reference);
   dst.set_notes(src.m_Notes);
-
-  switch (src.m_ComparisonType)
-  {
-  case SEValidationTarget::eComparisonType::EqualTo:
-    dst.set_equalto(src.m_Target);
-    break;
-  case SEValidationTarget::eComparisonType::GreaterThan:
-    dst.set_greaterthan(src.m_Target);
-    break;
-  case SEValidationTarget::eComparisonType::LessThan:
-    dst.set_lessthan(src.m_Target);
-    break;
-  case SEValidationTarget::eComparisonType::Increase:
-    dst.set_trend(CDM_BIND::ValidationTargetData::Increase);
-    break;
-  case SEValidationTarget::eComparisonType::Decrease:
-    dst.set_trend(CDM_BIND::ValidationTargetData::Decrease);
-    break;
-  case SEValidationTarget::eComparisonType::Range:
-    dst.mutable_range()->set_minimum(src.m_TargetMinimum);
-    dst.mutable_range()->set_maximum(src.m_TargetMaximum);
-    break;
-  }
 }
 void PBEngine::Load(const CDM_BIND::SegmentValidationTargetData& src, SESegmentValidationTarget& dst)
 {
@@ -596,31 +573,34 @@ void PBEngine::Load(const CDM_BIND::SegmentValidationTargetData& src, SESegmentV
 void PBEngine::Serialize(const CDM_BIND::SegmentValidationTargetData& src, SESegmentValidationTarget& dst)
 {
   PBEngine::Serialize(src.validationtarget(), dst);
-  auto& base = src.validationtarget();
-  switch (base.Expected_case())
+  switch (src.Expected_case())
   {
-  case CDM_BIND::ValidationTargetData::kEqualTo:
-    dst.SetEqualTo(base.equalto(), src.segment());
+  case CDM_BIND::SegmentValidationTargetData::kEqualToSegment:
+    dst.SetEqualToValue(src.equaltosegment());
     break;
-  case CDM_BIND::ValidationTargetData::kGreaterThan:
-    dst.SetGreaterThan(base.greaterthan(), src.segment());
+  case CDM_BIND::SegmentValidationTargetData::kEqualToValue:
+    dst.SetEqualToValue(src.equaltovalue());
     break;
-  case CDM_BIND::ValidationTargetData::kLessThan:
-    dst.SetLessThan(base.lessthan(), src.segment());
+  case CDM_BIND::SegmentValidationTargetData::kGreaterThanSegment:
+    dst.SetGreaterThanSegment(src.greaterthansegment());
     break;
-  case CDM_BIND::ValidationTargetData::kRange:
-    dst.SetRange(base.range().minimum(), base.range().maximum(), src.segment());
+  case CDM_BIND::SegmentValidationTargetData::kGreaterThanValue:
+    dst.SetGreaterThanValue(src.greaterthanvalue());
     break;
-  case CDM_BIND::ValidationTargetData::kTrend:
-    switch (base.trend())
-    {
-    case CDM_BIND::ValidationTargetData::Increase:
-      dst.SetIncrease(src.segment());
-      break;
-    case CDM_BIND::ValidationTargetData::Decrease:
-      dst.SetDecrease(src.segment());
-      break;
-    }
+  case CDM_BIND::SegmentValidationTargetData::kLessThanSegment:
+    dst.SetLessThanSegment(src.lessthansegment());
+    break;
+  case CDM_BIND::SegmentValidationTargetData::kLessThanValue:
+    dst.SetLessThanValue(src.lessthanvalue());
+    break;
+  case CDM_BIND::SegmentValidationTargetData::kTrendsToSegment:
+    dst.SetTrendsToSegment(src.trendstosegment());
+    break;
+  case CDM_BIND::SegmentValidationTargetData::kTrendsToValue:
+    dst.SetTrendsToValue(src.trendstovalue());
+    break;
+  case CDM_BIND::SegmentValidationTargetData::kRange:
+    dst.SetRange(src.range().minimum(), src.range().maximum());
     break;
   }
 }
@@ -633,13 +613,44 @@ CDM_BIND::SegmentValidationTargetData* PBEngine::Unload(const SESegmentValidatio
 void PBEngine::Serialize(const SESegmentValidationTarget& src, CDM_BIND::SegmentValidationTargetData& dst)
 {
   PBEngine::Serialize(src, *dst.mutable_validationtarget());
-  dst.set_segment(src.m_Segment);
+
+  switch (src.m_ComparisonType)
+  {
+  case SESegmentValidationTarget::eComparisonType::EqualToSegment:
+    dst.set_equaltosegment(src.m_Target);
+    break;
+  case SESegmentValidationTarget::eComparisonType::EqualToValue:
+    dst.set_equaltovalue(src.m_Target);
+    break;
+  case SESegmentValidationTarget::eComparisonType::GreaterThanSegment:
+    dst.set_greaterthansegment(src.m_Target);
+    break;
+  case SESegmentValidationTarget::eComparisonType::GreaterThanValue:
+    dst.set_greaterthanvalue(src.m_Target);
+    break;
+  case SESegmentValidationTarget::eComparisonType::LessThanSegment:
+    dst.set_lessthansegment(src.m_Target);
+    break;
+  case SESegmentValidationTarget::eComparisonType::LessThanValue:
+    dst.set_lessthanvalue(src.m_Target);
+    break;
+  case SESegmentValidationTarget::eComparisonType::TrendsToSegment:
+    dst.set_trendstosegment(src.m_Target);
+    break;
+  case SESegmentValidationTarget::eComparisonType::TrendsToValue:
+    dst.set_trendstovalue(src.m_Target);
+    break;
+  case SESegmentValidationTarget::eComparisonType::Range:
+    dst.mutable_range()->set_minimum(src.m_TargetMinimum);
+    dst.mutable_range()->set_maximum(src.m_TargetMaximum);
+    break;
+  }
 }
-void PBEngine::Load(const CDM_BIND::SegmentValidationTargetListData& src, std::vector<SESegmentValidationTarget*>& dst)
+void PBEngine::Load(const CDM_BIND::SegmentValidationTargetSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const CDM_BIND::SegmentValidationTargetListData& src, std::vector<SESegmentValidationTarget*>& dst)
+void PBEngine::Serialize(const CDM_BIND::SegmentValidationTargetSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
 {
   for (int i = 0; i < src.segmentvalidationtarget_size(); i++)
   {
@@ -651,7 +662,7 @@ void PBEngine::Serialize(const CDM_BIND::SegmentValidationTargetListData& src, s
 }
 bool PBEngine::SerializeFromString(const std::string& src, std::vector<SESegmentValidationTarget*>& dst, eSerializationFormat m, Logger* logger)
 {
-  CDM_BIND::SegmentValidationTargetListData data;
+  CDM_BIND::SegmentValidationTargetSegmentData data;
   if (!PBUtils::SerializeFromString(src, data, m, logger))
     return false;
   PBEngine::Serialize(data, dst);
@@ -659,19 +670,19 @@ bool PBEngine::SerializeFromString(const std::string& src, std::vector<SESegment
 }
 bool PBEngine::SerializeFromFile(const std::string& filename, std::vector<SESegmentValidationTarget*>& dst, Logger* logger)
 {
-  CDM_BIND::SegmentValidationTargetListData data;
+  CDM_BIND::SegmentValidationTargetSegmentData data;
   if (!PBUtils::SerializeFromFile(filename, data, logger))
     return false;
   PBEngine::Load(data, dst);
   return true;
 }
-CDM_BIND::SegmentValidationTargetListData* PBEngine::Unload(const std::vector<const SESegmentValidationTarget*>& src)
+CDM_BIND::SegmentValidationTargetSegmentData* PBEngine::Unload(const std::vector<const SESegmentValidationTarget*>& src)
 {
-  CDM_BIND::SegmentValidationTargetListData* dst = new CDM_BIND::SegmentValidationTargetListData();
+  CDM_BIND::SegmentValidationTargetSegmentData* dst = new CDM_BIND::SegmentValidationTargetSegmentData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const std::vector<const SESegmentValidationTarget*>& src, CDM_BIND::SegmentValidationTargetListData& dst)
+void PBEngine::Serialize(const std::vector<const SESegmentValidationTarget*>& src, CDM_BIND::SegmentValidationTargetSegmentData& dst)
 {
   for (const SESegmentValidationTarget* vt : src)
   {
@@ -680,7 +691,7 @@ void PBEngine::Serialize(const std::vector<const SESegmentValidationTarget*>& sr
 }
 bool PBEngine::SerializeToString(const std::vector<const SESegmentValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
-  CDM_BIND::SegmentValidationTargetListData data;
+  CDM_BIND::SegmentValidationTargetSegmentData data;
   PBEngine::Serialize(src, data);
   if (!PBUtils::SerializeToString(data, output, m, logger))
     return false;
@@ -688,7 +699,7 @@ bool PBEngine::SerializeToString(const std::vector<const SESegmentValidationTarg
 }
 bool PBEngine::SerializeToFile(const std::vector<const SESegmentValidationTarget*>& src, const std::string& filename, Logger* logger)
 {
-  CDM_BIND::SegmentValidationTargetListData data;
+  CDM_BIND::SegmentValidationTargetSegmentData data;
   PBEngine::Serialize(src, data);
   if (!PBUtils::SerializeToFile(data, filename, logger))
     return false;
@@ -703,31 +714,22 @@ void PBEngine::Load(const CDM_BIND::TimeSeriesValidationTargetData& src, SETimeS
 void PBEngine::Serialize(const CDM_BIND::TimeSeriesValidationTargetData& src, SETimeSeriesValidationTarget& dst)
 {
   PBEngine::Serialize(src.validationtarget(), dst);
-  auto& base = src.validationtarget();
-  switch (base.Expected_case())
+  switch (src.Expected_case())
   {
-  case CDM_BIND::ValidationTargetData::kEqualTo:
-    dst.SetEqualTo(base.equalto(), (SETimeSeriesValidationTarget::eTargetType)src.type());
+  case CDM_BIND::TimeSeriesValidationTargetData::kEqualToValue:
+    dst.SetEqualTo(src.equaltovalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
     break;
-  case CDM_BIND::ValidationTargetData::kGreaterThan:
-    dst.SetGreaterThan(base.greaterthan(), (SETimeSeriesValidationTarget::eTargetType)src.type());
+  case CDM_BIND::TimeSeriesValidationTargetData::kGreaterThanValue:
+    dst.SetGreaterThan(src.greaterthanvalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
     break;
-  case CDM_BIND::ValidationTargetData::kLessThan:
-    dst.SetLessThan(base.lessthan(), (SETimeSeriesValidationTarget::eTargetType)src.type());
+  case CDM_BIND::TimeSeriesValidationTargetData::kLessThanValue:
+    dst.SetLessThan(src.lessthanvalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
     break;
-  case CDM_BIND::ValidationTargetData::kRange:
-    dst.SetRange(base.range().minimum(), base.range().maximum(), (SETimeSeriesValidationTarget::eTargetType)src.type());
+  case CDM_BIND::TimeSeriesValidationTargetData::kRange:
+    dst.SetRange(src.range().minimum(), src.range().maximum(), (SETimeSeriesValidationTarget::eTargetType)src.type());
     break;
-  case CDM_BIND::ValidationTargetData::kTrend:
-    switch (base.trend())
-    {
-    case CDM_BIND::ValidationTargetData::Increase:
-      dst.SetIncrease((SETimeSeriesValidationTarget::eTargetType)src.type());
-      break;
-    case CDM_BIND::ValidationTargetData::Decrease:
-      dst.SetDecrease((SETimeSeriesValidationTarget::eTargetType)src.type());
-      break;
-    }
+  case CDM_BIND::TimeSeriesValidationTargetData::kTrendsToValue:
+    dst.SetGreaterThan(src.trendstovalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
     break;
   }
 }
@@ -741,6 +743,25 @@ void PBEngine::Serialize(const SETimeSeriesValidationTarget& src, CDM_BIND::Time
 {
   PBEngine::Serialize(src, *dst.mutable_validationtarget());
   dst.set_type((CDM_BIND::TimeSeriesValidationTargetData_eType)src.m_TargetType);
+  switch (src.m_ComparisonType)
+  {
+  case SETimeSeriesValidationTarget::eComparisonType::EqualToValue:
+    dst.set_equaltovalue(src.m_Target);
+    break;
+  case SETimeSeriesValidationTarget::eComparisonType::GreaterThanValue:
+    dst.set_greaterthanvalue(src.m_Target);
+    break;
+  case SETimeSeriesValidationTarget::eComparisonType::LessThanValue:
+    dst.set_lessthanvalue(src.m_Target);
+    break;
+  case SETimeSeriesValidationTarget::eComparisonType::TrendsToValue:
+    dst.set_trendstovalue(src.m_Target);
+    break;
+  case SETimeSeriesValidationTarget::eComparisonType::Range:
+    dst.mutable_range()->set_minimum(src.m_TargetMinimum);
+    dst.mutable_range()->set_maximum(src.m_TargetMaximum);
+    break;
+  }
 }
 void PBEngine::Load(const CDM_BIND::TimeSeriesValidationTargetListData& src, std::vector<SETimeSeriesValidationTarget*>& dst)
 {
@@ -820,8 +841,13 @@ void PBEngine::Serialize(const SEDataRequested& src, CDM_BIND::DataRequestedData
   {
     // TODO Write Event Changes
   }
-  for(double d : src.GetValues())
-    dst.add_value(d);
+  for (auto itr : src.GetAllValues())
+  {
+    auto segment = dst.add_segment();
+    segment->set_simtime_s(itr.first);
+    for (double d : itr.second)
+      segment->add_value(d);
+  }
 }
 bool PBEngine::SerializeToString(const SEDataRequested& src, std::string& dst, eSerializationFormat m)
 {

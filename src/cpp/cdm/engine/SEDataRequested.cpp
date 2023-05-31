@@ -36,9 +36,10 @@ void SEDataRequested::Clear()
 {
   m_ID = -1;
   m_IsActive = false;
-  m_Values.clear();
   m_EventChanges.clear();
   m_LogMessages.Clear();
+  m_Headers.clear();
+  m_SegmentsPerSimTime_s.clear();
 }
 
 int SEDataRequested::GetID() const
@@ -61,22 +62,16 @@ void SEDataRequested::SetIsActive(bool b)
 
 void SEDataRequested::PullDataRequested(double currentTime_s, DataTrack& tracker)
 {
-  m_Values.clear();
-  m_Values.push_back(currentTime_s);
+  auto& values = m_SegmentsPerSimTime_s[currentTime_s];
   size_t length = tracker.NumTracks();
   for (size_t i = 0; i < length; i++)
-    m_Values.push_back(tracker.GetProbe(i));
+    values.push_back(tracker.GetProbe(i));
 }
 void SEDataRequested::ClearDataRequested()
 {
-  m_Values.clear();
+  m_SegmentsPerSimTime_s.clear();
   m_EventChanges.clear();
   m_LogMessages.Clear();
-}
-
-const std::vector<double>& SEDataRequested::GetValues() const
-{
-  return m_Values;
 }
 
 const std::vector<SEEventChange>& SEDataRequested::GetEventChanges() const
@@ -122,4 +117,13 @@ void SEDataRequested::ForwardFatal(const std::string& msg)
   m_IsActive = false;
   if (m_KeepLogMessages)
     m_LogMessages.fatal_msgs.push_back(msg);
+}
+
+const std::vector<std::string>& SEDataRequested::GetHeaders() const
+{
+  return m_Headers;
+}
+const std::map<double, std::vector<double>>& SEDataRequested::GetAllValues() const
+{
+  return m_SegmentsPerSimTime_s;
 }
