@@ -5,7 +5,8 @@ from typing import List
 
 from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEDataRequested, SEDecimalFormat, \
                              SEConditionManager, SEEngineInitialization, SEValidationTarget, \
-                             SESegmentValidationTarget, SETimeSeriesValidationTarget
+                             SESegmentValidationTarget, SESegmentValidationTargetSegment, \
+                             SETimeSeriesValidationTarget
 from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       ActionListData, ActionMapData, \
                                       AnyConditionData, ConditionListData, \
@@ -14,7 +15,7 @@ from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       DataRequestedData, DataRequestedListData, DecimalFormatData, \
                                       EngineInitializationData, EngineInitializationListData, \
                                       LogMessagesData, ValidationTargetData, \
-                                      SegmentValidationTargetData, SegmentValidationTargetListData, \
+                                      SegmentValidationTargetData, SegmentValidationTargetSegmentData, \
                                       TimeSeriesValidationTargetData, TimeSeriesValidationTargetListData
 from pulse.cdm.bind.Events_pb2 import ActiveEventListData, EventChangeListData
 
@@ -487,10 +488,20 @@ def serialize_engine_initializations_to_string(src: [SEEngineInitialization], fm
 
 def serialize_data_requested_result_from_bind(src: DataRequestedData, dst: SEDataRequested):
     dst.is_active = src.IsActive
-    if not dst.is_active:
-        return
-    # TODO FINISH HIM!!
-    # dst.results = src.Results
+    dst.id = src.ID
+    dst.headers = list(src.Headers)
+    for segment in src.Segment:
+        dst.segments_per_sim_time_s[segment.SimTime_s] = list(segment.Value)
+def serialize_data_requested_result_from_string(string: str, fmt: eSerializationFormat):
+    src = DataRequestedData()
+    json_format.Parse(string, src)
+    dst = SEDataRequested()
+    serialize_data_requested_result_from_bind(src, dst)
+    return dst
+def serialize_data_requested_result_from_file(filename: str):
+    with open(filename) as f:
+        string = f.read()
+    return serialize_data_requested_result_from_string(string, eSerializationFormat.JSON)
 
 def serialize_data_requested_list_from_string(src: str, dst: [SEDataRequested], fmt: eSerializationFormat):
     results = DataRequestedListData()
@@ -516,22 +527,6 @@ def serialize_validation_target_to_bind(src: SEValidationTarget, dst: Validation
     dst.Header = src.get_header()
     dst.Reference = src.get_reference()
     dst.Notes = src.get_notes()
-
-    if src.get_comparison_type() == SEValidationTarget.eComparisonType.EqualTo:
-        dst.EqualTo = src.get_target()
-    elif src.get_comparison_type() == SEValidationTarget.eComparisonType.GreaterThan:
-        dst.GreaterThan = src.get_target()
-    elif src.get_comparison_type() == SEValidationTarget.eComparisonType.LessThan:
-        dst.LessThan = src.get_target()
-    elif src.get_comparison_type() == SEValidationTarget.eComparisonType.Increase:
-        dst.Trend = ValidationTargetData.eTrend.Increase
-    elif src.get_comparison_type() == SEValidationTarget.eComparisonType.Decrease:
-        dst.Trend = ValidationTargetData.eTrend.Decrease
-    elif src.get_comparison_type() == SEValidationTarget.eComparisonType.Range:
-        dst.Range.Minimum = src.get_target_minimum()
-        dst.Range.Maximum = src.get_target_maximum()
-    else:
-        raise ValueError(f"Unknown comparison type: {src.get_comparison_type()}")
 def serialize_validation_target_from_bind(src: ValidationTargetData, dst: SEValidationTarget):
     dst.clear()
     dst.set_header(src.Header)
@@ -540,81 +535,122 @@ def serialize_validation_target_from_bind(src: ValidationTargetData, dst: SEVali
 
 def serialize_segment_validation_target_to_bind(src: SESegmentValidationTarget, dst: SegmentValidationTargetData):
     serialize_validation_target_to_bind(src, dst.ValidationTarget)
-    dst.Segment = src.get_segment()
+    if src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.EqualToSegment:
+        dst.EqualToSegment = src.get_target_segment()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.EqualToValue:
+        dst.EqualToValue = src.get_target()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.GreaterThanSegment:
+        dst.GreaterThanSegment = src.get_target_segment()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.GreaterThanValue:
+        dst.GreaterThanValue = src.get_target()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.LessThanSegment:
+        dst.LessThanSegment = src.get_target_segment()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.LessThanValue:
+        dst.LessThanValue = src.get_target()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.TrendsToSegment:
+        dst.TrendsToSegment = src.get_target_segment()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.TrendsToValue:
+        dst.TrendsToValue = src.get_target()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.Range:
+        dst.Range.Minimum = src.get_target_minimum()
+        dst.Range.Maximum = src.get_target_maximum()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.NotValidating:
+        pass
+    else:
+        raise ValueError(f"Unknown comparison type: {src.get_comparison_type()}")
 def serialize_segment_validation_target_from_bind(src: SegmentValidationTargetData, dst: SESegmentValidationTarget):
     dst.clear()
     serialize_validation_target_from_bind(src.ValidationTarget, dst)
-    base = src.ValidationTarget
-    if base.HasField("EqualTo"):
-        dst.set_equal_to(base.EqualTo, src.Segment)
-    elif base.HasField("GreaterThan"):
-        dst.set_greater_than(base.GreaterThan, src.Segment)
-    elif base.HasField("LessThan"):
-        dst.set_less_than(base.LessThan, src.Segment)
-    elif base.HasField("Trend"):
-        if base.Trend == ValidationTargetData.eTrend.Increase:
-            dst.set_increase(src.Segment)
-        elif base.Trend == ValidationTargetData.eTrend.Decrease:
-            dst.set_decrease(src.Segment)
-        else:
-            raise ValueError(f"Unknown trend: {base.Trend}")
-    elif base.HasField("Range"):
-        dst.set_range(base.Range.Minimum, base.Range.Maximum, src.Segment)
-    else:
-        raise ValueError(f"Unknown expected field: {base.WhichOneOf('Expected')}")
-def serialize_segment_validation_target_list_to_bind(src: List[SESegmentValidationTarget], dst: SegmentValidationTargetListData):
-    for tgt in src:
+    if src.HasField("EqualToSegment"):
+        dst.set_equal_to_segment(src.EqualToSegment)
+    elif src.HasField("EqualToValue"):
+        dst.set_equal_to_value(src.EqualToValue)
+    elif src.HasField("GreaterThanSegment"):
+        dst.set_greater_than_segment(src.GreaterThanSegment)
+    elif src.HasField("GreaterThanValue"):
+        dst.set_greater_than_value(src.GreaterThanValue)
+    elif src.HasField("LessThanSegment"):
+        dst.set_less_than_segment(src.LessThanSegment)
+    elif src.HasField("LessThanValue"):
+        dst.set_less_than_value(src.LessThanValue)
+    elif src.HasField("TrendsToSegment"):
+        dst.set_trends_to_segment(src.TrendsToSegment)
+    elif src.HasField("TrendsToValue"):
+        dst.set_trends_to_value(src.TrendsTo)
+    elif src.HasField("Range"):
+        dst.set_range(src.Range.Minimum, src.Range.Maximum)
+    else: # No validation
+        pass
+def serialize_segment_validation_target_segment_to_bind(src: SESegmentValidationTargetSegment, dst: SegmentValidationTargetSegmentData):
+    dst.Segment = src.get_segment_id()
+    dst.Notes = src.get_notes()
+    for tgt in src.get_validation_targets():
         serialize_segment_validation_target_to_bind(tgt, dst.SegmentValidationTarget.add())
-def serialize_segment_validation_target_list_from_bind(src: SegmentValidationTargetListData):
-    dst = []
+def serialize_segment_validation_target_segment_from_bind(src: SegmentValidationTargetSegmentData):
+    dst = SESegmentValidationTargetSegment()
+
+    dst.set_notes(src.Notes)
+    dst.set_segment_id(src.Segment)
+
+    tgts = []
     for tgtData in src.SegmentValidationTarget:
         tgt = SESegmentValidationTarget()
         serialize_segment_validation_target_from_bind(tgtData, tgt)
-        dst.append(tgt)
+        tgts.append(tgt)
+    dst.set_validation_targets(tgts)
 
     return dst
-def serialize_segment_validation_target_list_to_string(src: List[SESegmentValidationTarget], fmt: eSerializationFormat):
-    dst = SegmentValidationTargetListData()
-    serialize_segment_validation_target_list_to_bind(src, dst)
+def serialize_segment_validation_target_segment_to_string(src: SESegmentValidationTargetSegment, fmt: eSerializationFormat):
+    dst = SegmentValidationTargetSegmentData()
+    serialize_segment_validation_target_segment_to_bind(src, dst)
     return json_format.MessageToJson(dst, True, True)
-def serialize_segment_validation_target_list_to_file(src: List[SESegmentValidationTarget], filename: str):
-    string = serialize_segment_validation_target_list_to_string(src, eSerializationFormat.JSON)
+def serialize_segment_validation_target_segment_to_file(src: SESegmentValidationTargetSegment, filename: str):
+    string = serialize_segment_validation_target_segment_to_string(src, eSerializationFormat.JSON)
     file = open(filename, "w")
     n = file.write(string)
     file.close()
-def serialize_segment_validation_target_list_from_string(string: str, fmt: eSerializationFormat):
-    src = SegmentValidationTargetListData()
+def serialize_segment_validation_target_segment_from_string(string: str, fmt: eSerializationFormat):
+    src = SegmentValidationTargetSegmentData()
     json_format.Parse(string, src)
-    return serialize_segment_validation_target_list_from_bind(src)
-def serialize_segment_validation_target_list_from_file(filename: str):
+    return serialize_segment_validation_target_segment_from_bind(src)
+def serialize_segment_validation_target_segment_from_file(filename: str):
     with open(filename) as f:
         string = f.read()
-    return serialize_segment_validation_target_list_from_string(string, eSerializationFormat.JSON)
+    return serialize_segment_validation_target_segment_from_string(string, eSerializationFormat.JSON)
 
 def serialize_time_series_validation_target_to_bind(src: SETimeSeriesValidationTarget, dst: TimeSeriesValidationTargetData):
     serialize_validation_target_to_bind(src, dst.ValidationTarget)
+    if src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.EqualToValue:
+        dst.EqualToValue = src.get_target()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.GreaterThanValue:
+        dst.GreaterThanValue = src.get_target()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.LessThanValue:
+        dst.LessThanValue = src.get_target()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.TrendsToValue:
+        dst.TrendsToValue = src.get_target()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.Range:
+        dst.Range.Minimum = src.get_target_minimum()
+        dst.Range.Maximum = src.get_target_maximum()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.NotValidating:
+        pass
+    else:
+        raise ValueError(f"Unknown comparison type: {src.get_comparison_type()}")
     dst.Type = src.get_target_type().value
 def serialize_time_series_validation_target_from_bind(src: TimeSeriesValidationTargetData, dst: SETimeSeriesValidationTarget):
     dst.clear()
     serialize_validation_target_from_bind(src.ValidationTarget, dst)
-    base = src.ValidationTarget
-    if base.HasField("EqualTo"):
-        dst.set_equal_to(base.EqualTo, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    elif base.HasField("GreaterThan"):
-        dst.set_greater_than(base.GreaterThan, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    elif base.HasField("LessThan"):
-        dst.set_less_than(base.LessThan, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    elif base.HasField("Trend"):
-        if base.Trend == ValidationTargetData.eTrend.Increase:
-            dst.set_increase(SETimeSeriesValidationTarget.eTargetType(src.Type))
-        elif base.Trend == ValidationTargetData.eTrend.Decrease:
-            dst.set_decrease(SETimeSeriesValidationTarget.eTargetType(src.Type))
-        else:
-            raise ValueError(f"Unknown trend: {base.Trend}")
-    elif base.HasField("Range"):
-        dst.set_range(base.Range.Minimum, base.Range.Maximum, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    else:
-        raise ValueError(f"Unknown expected field: {base.WhichOneOf('Expected')}")
+    if src.HasField("EqualToValue"):
+        dst.set_equal_to(src.EqualToValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif src.HasField("GreaterThanValue"):
+        dst.set_greater_than(src.GreaterThanValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif src.HasField("LessThanValue"):
+        dst.set_less_than(src.LessThanValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif src.HasField("TrendsToValue"):
+        dst.set_trends_to(src.TrendsToValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif src.HasField("Range"):
+        dst.set_range(src.Range.Minimum, src.Range.Maximum, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    else: # No validation
+        pass
 def serialize_time_series_validation_target_list_to_bind(src: List[SETimeSeriesValidationTarget], dst: TimeSeriesValidationTargetListData):
     for tgt in src:
         serialize_time_series_validation_target_to_bind(tgt, dst.TimeSeriesValidationTarget.add())

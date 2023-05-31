@@ -75,10 +75,32 @@ def generate_percent_difference_span(expected: float, calculated: float, epsilon
     return generate_percentage_span(percent, precision)
 
 
-def generate_percentage_span(percentage, precision):
-    if percentage <= 10:
+def percent_change(expected: float, calculated: float, epsilon: float, verbose: bool=True):
+    # Check for 'invalid' numbers
+    if np.isnan(expected) or np.isnan(calculated) or np.isinf(expected) or np.isinf(calculated):
+        if verbose:
+            _pulse_logger.warning(f"While finding percent change from values 'expected' = {expected} and " \
+                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
+        if (np.isnan(expected) and np.isnan(calculated)) or (np.isinf(expected) and np.isinf(calculated)):
+           return 0.0
+        return np.nan
+
+    # Special cases
+    if expected == 0.0 and calculated == 0.0:
+        return 0.0
+    elif expected == 0.0 or calculated == 0.0:
+        if abs(expected + calculated) < epsilon:
+            return 0.0
+        elif expected == 0.0:
+            return float('inf')
+
+    return (calculated - expected) / abs(expected) * 100.0
+
+
+def generate_percentage_span(percentage, precision, success=10, warning=30):
+    if percentage <= success:
         c = '"success"'
-    elif percentage <= 30:
+    elif percentage <= warning:
         c = '"warning"'
     else:
         c = '"danger"'

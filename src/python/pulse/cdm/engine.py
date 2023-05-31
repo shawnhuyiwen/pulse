@@ -618,15 +618,13 @@ class SEDataRequest(SEDecimalFormat):
         return self._unit
 
 class SEDataRequested: # TODO follow CDM get/set pattern?
-    __slots__ = ['id', 'is_active', 'values']
+    __slots__ = ['id', 'is_active', 'headers', 'segments_per_sim_time_s']
 
     def __init__(self):
         self.id = -1
         self.is_active = False
-        self.values = OrderedDict()
-
-    def get_value(self, index: int):
-        return list(self.values.items())[index][1]
+        self.headers = []
+        self.segments_per_sim_time_s = {}
 
 
 class SEDataRequestManager:
@@ -746,32 +744,21 @@ class SESerializeState(SEAction):
 
 
 class SEValidationTarget():
-    __slots__ = ["_header", "_reference", "_notes", "_target", "_target_max", "_target_min", "_comparison_type"]
-
-    class eComparisonType(Enum):
-        EqualTo = 0
-        GreaterThan = 1
-        LessThan = 2
-        Increase = 3
-        Decrease = 4
-        Range = 5
+    __slots__ = ["_header", "_reference", "_notes", "_target", "_target_min", "_target_max"]
 
     def __init__(self):
         self.clear()
 
     def __repr__(self):
         return f'SEValidationTarget({self._header}, {self._reference}, {self._notes}, ' \
-               f'{self._target}, {self._target_max}, {self._target_min}, {self._comparison_type})'
+               f'{self._target}, {self._target_min}, {self._target_max})'
 
     def __str__(self):
         return f'SEValidationTarget:\n\tHeader: {self._header}\n\tReference: {self._reference}' \
                 f'\n\tNotes: {self._notes}\n\tTarget: {self._target}\n\tTarget Range: '\
-                f'[{self._target_min}, {self._target_max}]\n\tComparison Type: {self._comparison_type}'
+                f'[{self._target_min}, {self._target_max}]'
 
     def is_valid() -> bool:
-        if self._comparison_type == self.eComparisonTypeIncrease or \
-            self._comparison_type == self.eComparisonTypeDecrease:
-            return True
         if np.isnan(self._target) and np.isnan(self._target_max):
             return False
         return True
@@ -780,6 +767,9 @@ class SEValidationTarget():
         self._header = ""
         self._reference = ""
         self._notes = ""
+        self._target = np.nan
+        self._target_min = np.nan
+        self._target_max = np.nan
 
     def get_header(self) -> str:
         return self._header
@@ -796,8 +786,6 @@ class SEValidationTarget():
     def set_notes(self, n: str):
         self._notes = n
 
-    def get_comparison_type(self) -> eComparisonType:
-        return self._comparison_type
     def get_target_maximum(self) -> float:
         return self._target_max
     def get_target_minimum(self) -> float:
@@ -807,66 +795,156 @@ class SEValidationTarget():
 
 
 class SESegmentValidationTarget(SEValidationTarget):
-    __slots__ = ["_segment"]
+    __slots__ = ["_comparison_type", "_target_segment"]
+
+    class eComparisonType(Enum):
+        NotValidating = 0
+        EqualToValue = 1
+        EqualToSegment = 2
+        GreaterThanValue = 3
+        GreaterThanSegment = 4
+        LessThanValue = 5
+        LessThanSegment = 6
+        TrendsToValue = 7
+        TrendsToSegment = 8
+        Range = 9
 
     def __init__(self):
         super().__init__()
-        self._segment = 0
+        self._comparison_type = self.eComparisonType.NotValidating
+        self._target_segment = np.nan
 
     def __repr__(self):
-        return f'SESegmentValidationTarget({super().__repr__()}, {self._segment})'
+        return f'SESegmentValidationTarget({super().__repr__()}, {self._segment}, {self._comparison_type})'
 
     def clear(self):
         super().clear()
-        self._comparison_type = self.eComparisonType.EqualTo
-        self._target = np.nan
-        self._target_max = np.nan
-        self._target_min = np.nan
-        self._segment = 0
+        self._comparison_type = self.eComparisonType.NotValidating
+        self._target_segment = np.nan
 
-    def get_segment(self) -> int:
-        return self._segment
+    def get_comparison_type(self) -> eComparisonType:
+        return self._comparison_type
+    def get_target_segment(self) -> int:
+        return self._target_segment
 
-    def set_equal_to(self, d: float, segment: int):
-        self._comparison_type = self.eComparisonType.EqualTo
-        self._target = d
-        self._target_max = d
-        self._target_min = d
-        self._segment = segment
-    def set_greater_than(self, d: float, segment: int):
-        self._comparison_type = self.eComparisonType.GreaterThan
-        self._target = d
-        self._target_max = d
-        self._target_min = d
-        self._segment = segment
-    def set_less_than(self, d: float, segment: int):
-        self._comparison_type = self.eComparisonType.LessThan
-        self._target = d
-        self._target_max = d
-        self._target_min = d
-        self._segment = segment
-    def set_increase(self, segment: int):
-        self._comparison_type = self.eComparisonType.Increase
+    def set_equal_to_segment(self, segment: int):
+        self._comparison_type = self.eComparisonType.EqualToSegment
         self._target = np.nan
         self._target_max = np.nan
         self._target_min = np.nan
-        self._segment = segment
-    def set_decrease(self, segment: int):
-        self._comparison_type = self.eComparisonType.Decrease
+        self._target_segment = segment
+    def set_equal_to_value(self, d: float):
+        self._comparison_type = self.eComparisonType.EqualToValue
+        self._target = d
+        self._target_max = d
+        self._target_min = d
+        self._target_segment = 0
+    def set_greater_than_segment(self, segment: int):
+        self._comparison_type = self.eComparisonType.GreaterThanSegment
         self._target = np.nan
         self._target_max = np.nan
         self._target_min = np.nan
-        self._segment = segment
+        self._target_segment = segment
+    def set_greater_than_value(self, d: float):
+        self._comparison_type = self.eComparisonType.GreaterThanValue
+        self._target = d
+        self._target_max = d
+        self._target_min = d
+        self._target_segment = 0
+    def set_less_than_segment(self, segment: int):
+        self._comparison_type = self.eComparisonType.LessThanSegment
+        self._target = np.nan
+        self._target_max = np.nan
+        self._target_min = np.nan
+        self._target_segment = segment
+    def set_less_than_value(self, d: float):
+        self._comparison_type = self.eComparisonType.LessThanValue
+        self._target = d
+        self._target_max = d
+        self._target_min = d
+        self._target_segment = 0
+    def set_trends_to_segment(self, segment: int):
+        self._comparison_type = self.eComparisonType.TrendsToSegment
+        self._target = np.nan
+        self._target_max = np.nan
+        self._target_min = np.nan
+        self._target_segment = segment
+    def set_trends_to(self, d: float):
+        self._comparison_type = self.eComparisonType.TrendsToValue
+        self._target = d
+        self._target_max = d
+        self._target_min = d
+        self._target_segment = 0
     def set_range(self, min: float, max: float, segment: int):
         self._comparison_type = self.eComparisonType.Range
         self._target = np.nan
         self._target_max = max
         self._target_min = min
-        self._segment = segment
+        self._target_segment = segment
+
+
+class SESegmentValidationTargetSegment:
+    __slots__ = ["_segment_id", "_notes", "_validation_targets", "_actions"]
+
+    def __init__(self):
+        self._segment_id = 0
+        self._notes = ""
+        self._validation_targets = []
+
+        # Not serializing
+        self._actions = ""
+
+    def clear(self) -> None:
+        self._notes = ""
+        self._validation_targets = []
+
+        self._actions = ""
+
+    def get_segment_id(self) -> int:
+        return self._segment_id
+    def set_segment_id(self, id: int) -> None:
+        self._segment_id = id
+
+    def has_notes(self) -> bool:
+        return len(self._notes) > 0
+    def get_notes(self) -> str:
+        return self._notes
+    def set_notes(self, notes: str) -> None:
+        self._notes = notes
+    def invalidate_notes(self) -> None:
+        self._notes = ""
+
+    def has_validation_targets(self) -> bool:
+        return len(self._validation_targets) > 0
+    def get_validation_targets(self) -> List[SESegmentValidationTarget]:
+        return self._validation_targets
+    def add_validation_target(self, tgt: SESegmentValidationTarget) -> None:
+        self._validation_targets.append(tgt)
+    def set_validation_targets(self, tgts: List[SESegmentValidationTarget]) -> None:
+        self._validation_targets = tgts
+    def invalidate_validation_targets(self) -> None:
+        self._validation_targets = []
+
+    def has_actions(self) -> bool:
+        return len(self._actions) > 0
+    def get_actions(self) -> str:
+        return self._actions
+    def set_actions(self, actions: str) -> None:
+        self._actions = actions
+    def invalidate_actions(self) -> None:
+        self._actions = ""
 
 
 class SETimeSeriesValidationTarget(SEValidationTarget):
-    __slots__ = ["_target_type", "_error", "_data", "_comparison_value"]
+    __slots__ = ["_target_type", "_error", "_data", "_comparison_type", "_comparison_value"]
+
+    class eComparisonType(Enum):
+        NotValidating = 0
+        EqualToValue = 1
+        GreaterThanValue = 2
+        LessThanValue = 3
+        TrendsToValue = 4
+        Range = 5
 
     class eTargetType(Enum):
         Mean = 0
@@ -875,6 +953,7 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
 
     def __init__(self):
         super().__init__()
+        self._comparison_type = self.eComparisonType.NotValidating
         self._target_type = self.eTargetType.Mean
         self._error = 100.0
         self._data = []
@@ -882,45 +961,38 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
 
     def clear(self):
         super().clear()
-        self._comparison_type = self.eComparisonType.EqualTo
+        self._comparison_type = self.eComparisonType.NotValidating
         self._target_type = self.eTargetType.Mean
-        self._target = np.nan
-        self._target_max = np.nan
-        self._target_min = np.nan
 
         self._error = np.nan
         self._data = []
         self._comparison_value = np.nan
 
+    def get_comparison_type(self) -> eComparisonType:
+        return self._comparison_type
     def get_target_type(self) -> eTargetType:
         return self._target_type
 
     def set_equal_to(self, d: float, t: eTargetType):
-        self._comparison_type = self.eComparisonType.EqualTo
+        self._comparison_type = self.eComparisonType.EqualToValue
         self._target_type = t
         self._target = d
         self._target_max = d
         self._target_min = d
     def set_greater_than(self, d: float, t: eTargetType):
-        self._comparison_type = self.eComparisonType.GreaterThan
+        self._comparison_type = self.eComparisonType.GreaterThanValue
         self._target_type = t
         self._target = d
         self._target_max = d
         self._target_min = d
     def set_less_than(self, d: float, t: eTargetType):
-        self._comparison_type = self.eComparisonType.LessThan
+        self._comparison_type = self.eComparisonType.LessThanValue
         self._target_type = t
         self._target = d
         self._target_max = d
         self._target_min = d
-    def set_increase(self, d: float, t: eTargetType):
-        self._comparison_type = self.eComparisonType.Increase
-        self._target_type = t
-        self._target = np.nan
-        self._target_max = np.nan
-        self._target_min = np.nan
-    def set_decrease(self, d: float, t: eTargetType):
-        self._comparison_type = self.eComparisonType.Decrease
+    def set_trends_to(self, d: float, t: eTargetType):
+        self._comparison_type = self.eComparisonType.TrendsToValue
         self._target_type = t
         self._target = np.nan
         self._target_max = np.nan

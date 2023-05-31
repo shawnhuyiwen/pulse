@@ -12,10 +12,10 @@ from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from typing import Dict, Hashable, List, Tuple
 
-from pulse.cdm.engine import SESegmentValidationTarget
+from pulse.cdm.engine import SESegmentValidationTarget, SESegmentValidationTargetSegment
 from pulse.cdm.scenario import SEScenario
 from pulse.cdm.utils.file_utils import get_data_dir
-from pulse.cdm.io.engine import serialize_segment_validation_target_list_to_file
+from pulse.cdm.io.engine import serialize_segment_validation_target_segment_to_file
 from pulse.dataset.utils import generate_data_request
 
 
@@ -47,15 +47,6 @@ def load_data(xls_file: str) -> None:
             continue
         if not read_sheet(workbook[s], output_dir, results_dir):
             _pulse_logger.error(f"Unable to read {s} sheet")
-
-
-# Dataclass encapsulating information for a singular scenario "segment"
-@dataclass
-class ScenarioSegment:
-    id: Hashable
-    note: str = ""
-    actions: str = ""
-    val_tgts: List[SESegmentValidationTarget] = field(default_factory=list)
 
 
 # Read xlsx sheet and generate corresponding scenario file and validation target files
@@ -113,11 +104,10 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
                 if "conditions" in h2c and isinstance(r[h2c["conditions"]], str):
                     conditions = r[h2c["conditions"]]
 
-            seg = ScenarioSegment(
-                id = r[h2c["segment"]] if "segment" in h2c else "",
-                note = r[h2c["notes"]] if "notes" in h2c and isinstance(r[h2c["notes"]], str) else "",
-                actions = ""
-            )
+            seg = SESegmentValidationTargetSegment()
+            if "segment" in h2c:
+                seg.set_segment_id(int(r[h2c["segment"]]))
+            seg.set_notes(r[h2c["notes"]] if "notes" in h2c and isinstance(r[h2c["notes"]], str) else "")
             segments.append(seg)
             seg = None
 
@@ -152,11 +142,11 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
                 h2c = _gen_header_to_col_dict(r)
                 continue
 
-            seg = ScenarioSegment(
-                id = r[h2c["segment"]] if "segment" in h2c else "",
-                note = r[h2c["notes"]] if "notes" in h2c and isinstance(r[h2c["notes"]], str) else "",
-                actions = r[h2c["actions"]] if "actions" in h2c and isinstance(r[h2c["actions"]], str) else ""
-            )
+            seg = SESegmentValidationTargetSegment()
+            if "segment" in h2c:
+                seg.set_segment_id(int(r[h2c["segment"]]))
+            seg.set_notes(r[h2c["notes"]] if "notes" in h2c and isinstance(r[h2c["notes"]], str) else "")
+            seg.set_actions(r[h2c["actions"]] if "actions" in h2c and isinstance(r[h2c["actions"]], str) else "")
 
             stage = Stage.ValidationTargets
         # Validation targets, comparison type/to, reference/notes
@@ -190,26 +180,31 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
                 tgt_str = tgt_str.strip().lower()
                 comparison_segment = int(r[h2c["comparison segment"]])
                 tgt_str_split = tgt_str.split(" ")
-                tgt_value = np.nan
                 if tgt_str.startswith("equalto"):
                     if len(tgt_str_split) > 1:
-                        tgt_value = float(tgt_str_split[1])
-                    val_tgt.set_equal_to(tgt_value, comparison_segment)
+                        val_tgt.set_equal_to_value(float(tgt_str_split[1]))
+                    else:
+                        val_tgt.set_equal_to_segment(comparison_segment)
                 elif tgt_str.startswith("greaterthan"):
                     if len(tgt_str_split) > 1:
-                        tgt_value = float(tgt_str_split[1])
-                    val_tgt.set_greater_than(tgt_value, comparison_segment)
+                        val_tgt.set_greater_than_value(float(tgt_str_split[1]))
+                    else:
+                        val_tgt.set_greater_than_segment(comparison_segment)
                 elif tgt_str.startswith("lessthan"):
                     if len(tgt_str_split) > 1:
-                        tgt_value = float(tgt_str_split[1])
-                    val_tgt.set_less_than(tgt_value, comparison_segment)
-                elif tgt_str == "increase":
-                    val_tgt.set_increase(comparison_segment)
-                elif tgt_str == "decrease":
-                    val_tgt.set_decrease(comparison_segment)
+                        val_tgt.set_less_than_value(float(tgt_str_split[1]))
+                    else:
+                        val_tgt.set_less_than_segment(comparison_segment)
+                elif tgt_str.startswith("trendsto"):
+                    if len(tgt_str_split) > 1:
+                        val_tgt.set_trends_to_value(float(tgt_str_split[1]))
+                    else:
+                        val_tgt.set_trends_to_segment(comparison_segment)
                 elif tgt_str.startswith("["):
                     range_list = [float(val.strip()) for val in tgt_str[1:-1].split(",")]
                     val_tgt.set_range(range_list[0], range_list[1], comparison_segment)
+                elif tgt_str == "notvalidating":
+                    pass
                 elif tgt_str == "tbd":
                     _pulse_logger.warning("Found tbd target")
                 else:
@@ -218,7 +213,7 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
                 if "notes" in h2c:
                     val_tgt.set_notes(r[h2c["notes"]] if isinstance(r[h2c["notes"]], str) else "")
 
-                seg.val_tgts.append(val_tgt)
+                seg.add_validation_target(val_tgt)
         else:
             raise ValueError(f"Unknown automated scenario validation stage: {stage}")
 
@@ -239,27 +234,27 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
 
     # Write out validation target files
     for s in segments:
-        val_tgts = s.val_tgts
-        if not val_tgts:
+        if not s.has_validation_targets():
             continue
-        filename = os.path.join(full_output_dir, f"Segment{s.id}ValidationTargets.json")
+        filename = os.path.join(full_output_dir, f"Segment{s.get_segment_id()}ValidationTargets.json")
         _pulse_logger.info(f"Writing {filename}")
-        serialize_segment_validation_target_list_to_file(val_tgts, filename)
+        serialize_segment_validation_target_segment_to_file(s, filename)
 
     return True
 
 
-def write_scenario(scenario: SEScenario, segments: List[ScenarioSegment], conditions: str, results_dir: str) -> str:
+def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationTargetSegment],
+                   conditions: str, results_dir: str) -> str:
     # Load actions into dict from concatenated JSON across segments
     all_actions_str = '{"AnyAction": ['
     for idx, s in enumerate(segments):
-        all_actions_str += s.actions
+        all_actions_str += s.get_actions()
 
         # Add serialize requested action to end of every segment
         if idx == len(segments) - 1 and all_actions_str != '{"AnyAction": [':
             all_actions_str += ','
         all_actions_str += '{"SerializeRequested": {'
-        segment_file_name = os.path.join(results_dir, f"Segment{s.id}.json").replace("\\", "/")
+        segment_file_name = os.path.join(results_dir, f"Segment{s.get_segment_id()}.json").replace("\\", "/")
         all_actions_str += f'"Filename": "{segment_file_name}"'
         all_actions_str += '}}'
         if idx != len(segments) - 1:
