@@ -1,104 +1,67 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 package com.kitware.pulse.cdm.engine;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.cdm.bind.Engine.SegmentValidationTargetData;
-import com.kitware.pulse.cdm.bind.Engine.SegmentValidationTargetListData;
-import com.kitware.pulse.utilities.FileUtils;
 
 public class SESegmentValidationTarget extends SEValidationTarget
 {
-  public int m_Segment;
+  public enum eComparisonType
+  {
+    EqualToValue, EqualToSegment, GreaterThanValue, GreaterThanSegment,
+    LessThanValue, LessThanSegment, TrendToValue, TrendToSegment, Range
+  }
+  protected eComparisonType m_ComparisonType;
+  protected int m_TargetSegment;
   
   public SESegmentValidationTarget()
   {
     super();
   }
 
-  
   public void clear()
   {
     super.clear();
-    m_Segment = 0;
+    m_TargetSegment = 0;
   }
-  
-  public static List<SESegmentValidationTarget> readFile(String fileName) throws InvalidProtocolBufferException
-  {
-    SegmentValidationTargetListData.Builder builder = SegmentValidationTargetListData.newBuilder();
-    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
-    List<SESegmentValidationTarget> list = new ArrayList<SESegmentValidationTarget>();
-    SESegmentValidationTarget.load(builder.build(), list);
-    return list;
-  }
-  public static void writeFile(List<SESegmentValidationTarget> tgts, String fileName) throws InvalidProtocolBufferException
-  {
-    FileUtils.writeFile(fileName, JsonFormat.printer().print(SESegmentValidationTarget.unload(tgts)));
-  }
-  public static void load(SegmentValidationTargetListData src, List<SESegmentValidationTarget> dst)
-  {
-    for(SegmentValidationTargetData data : src.getSegmentValidationTargetList())
-    {
-      SESegmentValidationTarget vt = new SESegmentValidationTarget();
-      SESegmentValidationTarget.load(data, vt);
-    }
-  }
-  public static SegmentValidationTargetListData unload(List<SESegmentValidationTarget> src)
-  {
-    SegmentValidationTargetListData.Builder dst = SegmentValidationTargetListData.newBuilder();
-    unload(src,dst);
-    return dst.build();
-  }
-  protected static void unload(List<SESegmentValidationTarget> src, SegmentValidationTargetListData.Builder dst)
-  {
-    for(SESegmentValidationTarget vt : src)
-    {
-      dst.addSegmentValidationTarget(SESegmentValidationTarget.unload(vt));
-    }
-  }
-  
-  
+
   public static void load(SegmentValidationTargetData src, SESegmentValidationTarget dst)
   {
     SEValidationTarget.load(src.getValidationTarget(), dst);
-    switch(src.getValidationTarget().getExpectedCase())
+    switch(src.getExpectedCase())
     {
-      case EQUALTO:
-        dst.setEqualTo(src.getValidationTarget().getEqualTo(), src.getSegment());
+      case EQUALTOSEGMENT:
+        dst.setEqualToSegment(src.getEqualToSegment());
         break;
-      case GREATERTHAN:
-        dst.setGreaterThan(src.getValidationTarget().getGreaterThan(), src.getSegment());
+      case EQUALTOVALUE:
+        dst.setEqualToValue(src.getEqualToValue());
         break;
-      case LESSTHAN:
-        dst.setLessThan(src.getValidationTarget().getLessThan(), src.getSegment());
+      case GREATERTHANSEGMENT:
+        dst.setGreaterThanSegment(src.getGreaterThanSegment());
         break;
-      case TREND:
-        switch(src.getValidationTarget().getTrend())
-        {
-          case Increase:
-            dst.setIncrease(src.getSegment());
-            break;
-          case Decrease:
-            dst.setDecrease(src.getSegment());
-            break;
-          default:
-            break;
-        }
+      case GREATERTHANVALUE:
+        dst.setGreaterThanValue(src.getGreaterThanValue());
+        break;
+      case LESSTHANSEGMENT:
+        dst.setLessThanSegment(src.getLessThanSegment());
+        break;
+      case LESSTHANVALUE:
+        dst.setLessThanValue(src.getLessThanValue());
+        break;
+      case TRENDSTOSEGMENT:
+        dst.setLessThanSegment(src.getLessThanSegment());
+        break;
+      case TRENDSTOVALUE:
+        dst.setLessThanValue(src.getLessThanValue());
         break;
       case RANGE:
         dst.setRange(
-            src.getValidationTarget().getRange().getMinimum(),
-            src.getValidationTarget().getRange().getMaximum(),
-            src.getSegment());
+            src.getRange().getMinimum(),
+            src.getRange().getMaximum());
         break;
       default:
         break;
     }
-
-    dst.m_Segment = src.getSegment();
   }
   public static SegmentValidationTargetData unload(SESegmentValidationTarget src)
   {
@@ -109,58 +72,115 @@ public class SESegmentValidationTarget extends SEValidationTarget
   protected static void unload(SESegmentValidationTarget src, SegmentValidationTargetData.Builder dst)
   {
     SEValidationTarget.unload(src,dst.getValidationTargetBuilder());
-    dst.setSegment(src.m_Segment);
+    switch(src.m_ComparisonType)
+    {
+      case EqualToSegment:
+        dst.setEqualToSegment(src.m_TargetSegment);
+        break;
+      case EqualToValue:
+        dst.setEqualToValue(src.m_Target);
+        break;
+      case GreaterThanSegment:
+        dst.setGreaterThanSegment(src.m_TargetSegment);
+        break;
+      case GreaterThanValue:
+        dst.setGreaterThanValue(src.m_Target);
+        break;
+      case LessThanSegment:
+        dst.setLessThanSegment(src.m_TargetSegment);
+        break;
+      case LessThanValue:
+        dst.setLessThanValue(src.m_Target);
+        break;
+      case TrendToSegment:
+        dst.setTrendsToSegment(src.m_TargetSegment);
+        break;
+      case TrendToValue:
+        dst.setTrendsToValue(src.m_Target);
+        break;
+      case Range:
+        dst.getRangeBuilder().setMinimum(src.m_TargetMinimum);
+        dst.getRangeBuilder().setMaximum(src.m_TargetMaximum);
+        dst.getRangeBuilder().build();
+        break;
+    }
   }
 
-  public int GetSegment() { return m_Segment; }
-  
-  public void setEqualTo(double d, int segment)
+  public int GetTargetSegment() { return m_TargetSegment; }
+
+  public void setEqualToSegment(int s)
   {
-    m_Target = d;
-    m_TargetMaximum = d;
-    m_TargetMinimum = d;
-    m_Segment = segment;
-    m_ComparisonType = eComparisonType.EqualTo;
+    m_Target = Double.NaN;
+    m_TargetMaximum = Double.NaN;
+    m_TargetMinimum = Double.NaN;
+    m_TargetSegment = s;
+    m_ComparisonType = eComparisonType.EqualToSegment;
   }
-  public void setGreaterThan(double d, int segment)
+  public void setEqualToValue(double d)
   {
     m_Target = d;
     m_TargetMaximum = d;
     m_TargetMinimum = d;
-    m_Segment = segment;
-    m_ComparisonType = eComparisonType.GreaterThan;
+    m_TargetSegment = 0;
+    m_ComparisonType = eComparisonType.EqualToValue;
+  }
+  public void setGreaterThanSegment(int s)
+  {
+    m_Target = Double.NaN;
+    m_TargetMaximum = Double.NaN;
+    m_TargetMinimum = Double.NaN;
+    m_TargetSegment = s;
+    m_ComparisonType = eComparisonType.GreaterThanSegment;
     
   }
-  public void setLessThan(double d, int segment)
+  public void setGreaterThanValue(double d)
   {
     m_Target = d;
     m_TargetMaximum = d;
     m_TargetMinimum = d;
-    m_Segment = segment;
-    m_ComparisonType = eComparisonType.LessThan;
+    m_TargetSegment = 0;
+    m_ComparisonType = eComparisonType.GreaterThanValue;
+    
   }
-  public void setIncrease(int segment)
+  public void setLessThanSegment(int s)
   {
     m_Target = Double.NaN;
     m_TargetMaximum = Double.NaN;
     m_TargetMinimum = Double.NaN;
-    m_Segment = segment;
-    m_ComparisonType = eComparisonType.Increase;
+    m_TargetSegment = s;
+    m_ComparisonType = eComparisonType.LessThanSegment;
   }
-  public void setDecrease(int segment)
+  public void setLessThanValue(double d)
+  {
+    m_Target = d;
+    m_TargetMaximum = d;
+    m_TargetMinimum = d;
+    m_TargetSegment = 0;
+    m_ComparisonType = eComparisonType.LessThanValue;
+  }
+  public void setTrendsToSegment(int s)
   {
     m_Target = Double.NaN;
     m_TargetMaximum = Double.NaN;
     m_TargetMinimum = Double.NaN;
-    m_Segment = segment;
-    m_ComparisonType = eComparisonType.Decrease;
+    m_TargetSegment = s;
+    m_ComparisonType = eComparisonType.TrendToSegment;
   }
-  public void setRange(double min, double max, int segment)
+  public void setTrendsToValue(double d)
+  {
+    m_Target = d;
+    m_TargetMaximum = d;
+    m_TargetMinimum = d;
+    m_TargetSegment = 0;
+    m_ComparisonType = eComparisonType.TrendToValue;
+  }
+  public void setRange(double min, double max)
   {
     m_Target = Double.NaN;
     m_TargetMaximum = max;
     m_TargetMinimum = min;
-    m_Segment = segment;
+    m_TargetSegment = 0;
     m_ComparisonType = eComparisonType.Range;
   }
+  public eComparisonType getComparisonType() { return m_ComparisonType; }
 }

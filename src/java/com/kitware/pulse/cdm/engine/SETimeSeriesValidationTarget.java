@@ -13,6 +13,11 @@ import com.kitware.pulse.utilities.FileUtils;
 
 public class SETimeSeriesValidationTarget extends SEValidationTarget
 {
+  public enum eComparisonType
+  {
+    EqualToValue, GreaterThanValue, LessThanValue, TrendToValue, Range
+  }
+  protected eComparisonType m_ComparisonType;
   protected eType m_TargetType;
   
   public SETimeSeriesValidationTarget()
@@ -25,6 +30,7 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
   {
     super.clear();
     m_TargetType = eType.Mean;
+    m_ComparisonType = eComparisonType.EqualToValue;
   }
   
   public static List<SETimeSeriesValidationTarget> readFile(String fileName) throws InvalidProtocolBufferException
@@ -64,34 +70,24 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
   public static void load(TimeSeriesValidationTargetData src, SETimeSeriesValidationTarget dst)
   {
     SEValidationTarget.load(src.getValidationTarget(), dst);
-    switch(src.getValidationTarget().getExpectedCase())
+    switch(src.getExpectedCase())
     {
-      case EQUALTO:
-        dst.setEqualTo(src.getValidationTarget().getEqualTo(), src.getType());
+      case EQUALTOVALUE:
+        dst.setEqualToValue(src.getEqualToValue(), src.getType());
         break;
-      case GREATERTHAN:
-        dst.setGreaterThan(src.getValidationTarget().getGreaterThan(), src.getType());
+      case GREATERTHANVALUE:
+        dst.setGreaterThanValue(src.getGreaterThanValue(), src.getType());
         break;
-      case LESSTHAN:
-        dst.setLessThan(src.getValidationTarget().getLessThan(), src.getType());
+      case LESSTHANVALUE:
+        dst.setLessThanValue(src.getLessThanValue(), src.getType());
         break;
-      case TREND:
-        switch(src.getValidationTarget().getTrend())
-        {
-          case Increase:
-            dst.setIncrease(src.getType());
-            break;
-          case Decrease:
-            dst.setDecrease(src.getType());
-            break;
-          default:
-            break;
-        }
+      case TRENDSTOVALUE:
+        dst.setLessThanValue(src.getLessThanValue(), src.getType());
         break;
       case RANGE:
         dst.setRange(
-            src.getValidationTarget().getRange().getMinimum(),
-            src.getValidationTarget().getRange().getMaximum(),
+            src.getRange().getMinimum(),
+            src.getRange().getMaximum(),
             src.getType());
         break;
       default:
@@ -110,50 +106,62 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
   {
     SEValidationTarget.unload(src,dst.getValidationTargetBuilder());
     dst.setType(src.m_TargetType);
+    switch(src.m_ComparisonType)
+    {
+      case EqualToValue:
+        dst.setEqualToValue(src.m_Target);
+        break;
+      case GreaterThanValue:
+        dst.setGreaterThanValue(src.m_Target);
+        break;
+      case LessThanValue:
+        dst.setLessThanValue(src.m_Target);
+        break;
+      case TrendToValue:
+        dst.setTrendsToValue(src.m_Target);
+        break;
+      case Range:
+        dst.getRangeBuilder().setMinimum(src.m_TargetMinimum);
+        dst.getRangeBuilder().setMaximum(src.m_TargetMaximum);
+        dst.getRangeBuilder().build();
+        break;
+    }
   }
 
   public eType getTargetType() { return m_TargetType; }
   
-  public void setEqualTo(double d, eType t)
+  public void setEqualToValue(double d, eType t)
   {
     m_Target = d;
     m_TargetMaximum = d;
     m_TargetMinimum = d;
     m_TargetType = t;
-    m_ComparisonType = eComparisonType.EqualTo;
+    m_ComparisonType = eComparisonType.EqualToValue;
   }
-  public void setGreaterThan(double d, eType t)
+  public void setGreaterThanValue(double d, eType t)
   {
     m_Target = d;
     m_TargetMaximum = d;
     m_TargetMinimum = d;
     m_TargetType = t;
-    m_ComparisonType = eComparisonType.GreaterThan;
+    m_ComparisonType = eComparisonType.GreaterThanValue;
     
   }
-  public void setLessThan(double d, eType t)
+  public void setLessThanValue(double d, eType t)
   {
     m_Target = d;
     m_TargetMaximum = d;
     m_TargetMinimum = d;
     m_TargetType = t;
-    m_ComparisonType = eComparisonType.LessThan;
+    m_ComparisonType = eComparisonType.LessThanValue;
   }
-  public void setIncrease(eType t)
+  public void setTrendToValue(double d, eType t)
   {
-    m_Target = Double.NaN;
-    m_TargetMaximum = Double.NaN;
-    m_TargetMinimum = Double.NaN;
+    m_Target = d;
+    m_TargetMaximum = d;
+    m_TargetMinimum = d;
     m_TargetType = t;
-    m_ComparisonType = eComparisonType.Increase;
-  }
-  public void setDecrease(eType t)
-  {
-    m_Target = Double.NaN;
-    m_TargetMaximum = Double.NaN;
-    m_TargetMinimum = Double.NaN;
-    m_TargetType = t;
-    m_ComparisonType = eComparisonType.Decrease;
+    m_ComparisonType = eComparisonType.TrendToValue;
   }
   public void setRange(double min, double max, eType t)
   {
@@ -163,4 +171,6 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
     m_TargetType = t;
     m_ComparisonType = eComparisonType.Range;
   }
+
+  public eComparisonType getComparisonType() { return m_ComparisonType; }
 }
