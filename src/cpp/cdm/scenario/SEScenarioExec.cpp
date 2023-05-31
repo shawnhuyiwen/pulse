@@ -112,8 +112,14 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
     m_DataRequestFilesSearch.insert(scenarioDir);
   }
   delete config;
-
-  if (!m_ScenarioFilename.empty())
+  std::string csvFilenamePostfix = "";
+  if (sce.GetDataRequestManager().HasResultsFilename())
+  {
+    // This is where we put results/logs if specified
+    std::string ext;
+    SplitPathFilenameExt(sce.GetDataRequestManager().GetResultFilename(), m_OutputRootDirectory, m_BaseFilename, ext);
+  }
+  else if (!m_ScenarioFilename.empty())
   {
     std::string ext;
     // Set the output to the same location as the scenario file
@@ -130,6 +136,7 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
       if (!sceRelPath.empty())
         m_OutputRootDirectory = "./test_results/scenarios/" + sceRelPath;
     }
+    csvFilenamePostfix = "Results";
   }
   else if (sce.HasName())
   {
@@ -143,12 +150,14 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
     {
       m_OutputRootDirectory = "./test_results/scenarios/";
     }
+    csvFilenamePostfix = "Results";
   }
   else
   {
     m_BaseFilename = "Pulse";
     m_OutputRootDirectory = "./test_results/scenarios";
     sce.Warning("Unable to name scenario output, writing log to './Pulse.log'");
+    csvFilenamePostfix = "Results";
   }
 
   if (m_OrganizeOutputDirectory==eSwitch::On)
@@ -164,7 +173,7 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
   }
 
   m_LogFilename = m_OutputRootDirectory + "/" + m_BaseFilename + ".log";
-  m_DataRequestCSVFilename = m_OutputRootDirectory + "/" + m_BaseFilename + "Results.csv";
+  m_DataRequestCSVFilename = m_OutputRootDirectory + "/" + m_BaseFilename + csvFilenamePostfix + ".csv";
   if (m_AutoSerializeAfterActions == eSwitch::On)
   {
     if (m_ReloadSerializedState == eSwitch::Off)
