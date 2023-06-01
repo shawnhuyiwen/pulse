@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 import os
+import sys
 import json
 import shutil
 import logging
@@ -332,4 +333,19 @@ def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationTarge
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
-    load_data(get_data_dir() + "/human/adult/validation/Scenarios/RespiratoryValidation.automated.xlsx")
+    xlsx_file = None
+
+    if len(sys.argv) < 2:
+        _pulse_logger.error("Expected inputs : <xlsx validation file path>")
+        sys.exit(1)
+
+    if os.path.isfile(sys.argv[1]):
+        xlsx_file = sys.argv[1]
+    elif os.path.isfile(get_data_dir()+sys.argv[1]):
+        xlsx_file = get_data_dir()+sys.argv[1]
+
+    if xlsx_file is None:
+        _pulse_logger.error("Please provide a valid xlsx file")
+        sys.exit(1)
+
+    load_data(xlsx_file)

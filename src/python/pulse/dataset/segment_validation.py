@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 import os
+import sys
 import logging
 import numpy as np
 from typing import Dict, List
@@ -247,6 +248,23 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dic
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
-    targets_dir = "./validation/scenarios/Respiratory/AirwayObstructionVaried/"
-    results_dir = "./test_results/scenarios/Respiratory/AirwayObstructionVaried/"
+    targets_dir = None
+    results_dir = None
+
+    if len(sys.argv) < 3:
+        _pulse_logger.error("Expected inputs : <validation targets directory> <results directory>")
+        sys.exit(1)
+
+    if os.path.exists(sys.argv[1]):
+        targets_dir = sys.argv[1]
+    else:
+        _pulse_logger.error("Please provide a valid validation targets directory")
+        sys.exit(1)
+
+    if os.path.exists(sys.argv[2]):
+        results_dir = sys.argv[2]
+    else:
+        _pulse_logger.error("Please provide a valid results directory")
+        sys.exit(1)
+
     validate(targets_dir, results_dir)

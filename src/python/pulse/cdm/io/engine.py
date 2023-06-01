@@ -579,8 +579,10 @@ def serialize_segment_validation_target_from_bind(src: SegmentValidationTargetDa
         dst.set_trends_to_value(src.TrendsTo)
     elif src.HasField("Range"):
         dst.set_range(src.Range.Minimum, src.Range.Maximum)
-    else: # No validation
+    elif src.WhichOneof('Expected') is None:  # Not validating
         pass
+    else:
+        raise ValueError(f"Unknown expected field: {src.WhichOneOf('Expected')}")
 def serialize_segment_validation_target_segment_to_bind(src: SESegmentValidationTargetSegment, dst: SegmentValidationTargetSegmentData):
     dst.Segment = src.get_segment_id()
     dst.Notes = src.get_notes()
@@ -649,8 +651,10 @@ def serialize_time_series_validation_target_from_bind(src: TimeSeriesValidationT
         dst.set_trends_to(src.TrendsToValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
     elif src.HasField("Range"):
         dst.set_range(src.Range.Minimum, src.Range.Maximum, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    else: # No validation
+    elif src.WhichOneof('Expected') is None:  # Not validating
         pass
+    else:
+        raise ValueError(f"Unknown expected field: {src.WhichOneOf('Expected')}")
 def serialize_time_series_validation_target_list_to_bind(src: List[SETimeSeriesValidationTarget], dst: TimeSeriesValidationTargetListData):
     for tgt in src:
         serialize_time_series_validation_target_to_bind(tgt, dst.TimeSeriesValidationTarget.add())
