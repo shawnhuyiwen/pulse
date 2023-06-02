@@ -217,7 +217,7 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
 
     scenario.get_data_request_manager().set_data_requests(drs)
     full_results_dir = os.path.join(results_dir, scenario.get_name())
-    scenario.get_data_request_manager().set_results_filename(os.path.join(full_results_dir, "Results.csv").replace("\\", "/"))
+    scenario.get_data_request_manager().set_results_filename(os.path.join(full_results_dir, f"{scenario.get_name()}.csv").replace("\\", "/"))
 
     # Write out scenario
     full_output_dir = os.path.join(output_dir, scenario.get_name())

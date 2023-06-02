@@ -49,7 +49,9 @@ def validate(targets_dir: str, results_dir: str) -> None:
 
 
     scenario_name = os.path.basename(os.path.dirname(targets_dir))
-    md_filename = os.path.join(targets_dir, scenario_name + "Validation.md")
+    md_dir = os.path.join(results_dir, "docs/markdown/")
+    os.makedirs(md_dir, exist_ok=True)
+    md_filename = os.path.join(md_dir, f"{scenario_name}Validation.md")
     md_file = MdUtils(file_name=md_filename, title=scenario_name + " Validation")
 
     # Evaluate targets and create markdown tables for each segment
@@ -237,11 +239,11 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dic
 
     return [
         header,
-        expected_str,
+        expected_str if expected_str else "&nbsp;",
         f"{engine_val:.{value_precision}G}",
-        err_str,
-        change_str,
-        tgt.get_notes()
+        err_str if err_str else "&nbsp;",
+        change_str if change_str else "&nbsp;",
+        tgt.get_notes() if tgt.get_notes() else "&nbsp;"
         ]
 
 
