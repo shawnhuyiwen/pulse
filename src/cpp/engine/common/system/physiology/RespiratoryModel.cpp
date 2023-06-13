@@ -3153,8 +3153,8 @@ namespace pulse
 
       m_RightPleuralNode->GetNextVolume().SetReadOnly(false);
       m_RightPleuralNode->GetVolume().SetReadOnly(false);
-      m_RightPleuralNode->GetNextVolume().IncrementValue(m_LeftAlveoliDecrease_L - leftAlveoliDecrease_L, VolumeUnit::L);
-      m_RightPleuralNode->GetVolume().IncrementValue(m_LeftAlveoliDecrease_L - leftAlveoliDecrease_L, VolumeUnit::L);
+      m_RightPleuralNode->GetNextVolume().IncrementValue(m_RightAlveoliDecrease_L - rightAlveoliDecrease_L, VolumeUnit::L);
+      m_RightPleuralNode->GetVolume().IncrementValue(m_RightAlveoliDecrease_L - rightAlveoliDecrease_L, VolumeUnit::L);
       m_RightPleuralNode->GetNextVolume().SetReadOnly(true);
       m_RightPleuralNode->GetVolume().SetReadOnly(true);
     }
