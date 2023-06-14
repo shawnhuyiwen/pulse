@@ -54,7 +54,8 @@ class CSVComparison(SETestReport):
 
         # Remove and recreate directory
         try:
-            shutil.rmtree(self.report_dir)
+            if os.path.exists(self.report_dir):
+                shutil.rmtree(self.report_dir)
         except OSError as e:
             _pulse_logger.warning(f"Could not remove old report directory: {self.report_dir}")
         os.makedirs(self.report_dir)

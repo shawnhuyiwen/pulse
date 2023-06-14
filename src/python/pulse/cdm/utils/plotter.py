@@ -168,7 +168,8 @@ def csv_plotter(csv: str, benchmark: bool = False):
 
     # Remove and recreate directory
     try:
-        shutil.rmtree(output_dir)
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
     except OSError as e:
         _pulse_logger.warning(f"Could not remove old report directory: {output_dir}")
     os.makedirs(output_dir)
@@ -228,7 +229,7 @@ def csv_plotter(csv: str, benchmark: bool = False):
         else:
             legend_success = False
         if not legend_success:
-            _pulse_logger.error(f"Failed to create legend {output_filepath}")
+            _pulse_logger.error(f"Failed to create legend {output_dir}")
             config.set_plot_actions(False)
             config.set_plot_events(False)
 
