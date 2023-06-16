@@ -3,7 +3,8 @@
   [
     { "DecimalFormat": { "Precision": 1 }, "Category": "Patient",    "PropertyName": "Weight", "Unit": "kg" },
 
-    { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "HeartRate", "Unit": "1/min" },
+    { "DecimalFormat": { "Precision": 3 }, "Category": "ECG",        "PropertyName": "Lead3ElectricPotential",            "Unit": "mV" },
+    { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "HeartRate",                         "Unit": "1/min" },
     { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "HeartStrokeVolume",                 "Unit": "mL" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction",             "Unit": "unitless" },
     { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BloodVolume",                       "Unit": "L" },
@@ -22,6 +23,7 @@
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "OxygenSaturation",                  "Unit": "unitless" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "CarbonDioxideSaturation",           "Unit": "unitless" },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalCarbonDioxideFraction",     "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalCarbonDioxidePressure",     "Unit": "mmHg" },
     { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TotalAlveolarVentilation",          "Unit": "L/min" },
     { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TranspulmonaryPressure",            "Unit": "cmH2O" },
     { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "CoreTemperature",                   "Unit": "degC" },
