@@ -8,6 +8,7 @@ import numpy as np
 from typing import Dict, List
 from mdutils.mdutils import MdUtils
 
+import PyPulse
 from pulse.cdm.engine import SESegmentValidationTarget, SESegmentValidationTargetSegment
 from pulse.cdm.utils.math_utils import generate_percentage_span, percent_change, percent_difference
 from pulse.cdm.io.engine import serialize_segment_validation_target_segment_from_file, \
@@ -99,8 +100,22 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dic
     if seg_id not in results:
         raise Exception(f"Segment {seg_id} not found in results")
     if header not in results[seg_id]:
-        raise Exception(f'{header} not found in Segment {seg_id} results')
-    engine_val = results[seg_id][header]
+        # Check for a different unit
+        engine_val = None
+        paren_idx = header.find("(")
+        if paren_idx != -1:
+            unitless_header = header[:paren_idx]
+            val_unit = header[paren_idx+1:-1]
+            for key in results[seg_id].keys():
+                if key.startswith(unitless_header):
+                    engine_unit = key[key.find("(")+1:-1]
+                    engine_val = PyPulse.convert(results[seg_id][key], engine_unit, val_unit)
+                    break
+
+        if engine_val is None:
+            raise Exception(f'{header} not found in Segment {seg_id} results')
+    else:
+        engine_val = results[seg_id][header]
 
     if compare_type == SESegmentValidationTarget.eComparisonType.EqualToSegment or \
         compare_type == SESegmentValidationTarget.eComparisonType.EqualToValue:
