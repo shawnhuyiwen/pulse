@@ -3,24 +3,25 @@
 
 import sys
 import logging
-from typing import List
+from typing import List, Optional, Set
 from pathlib import Path
 
 
 _pulse_logger = logging.getLogger('pulse')
 
 
-def process_file(fpath: Path, t_dir: Path, d_dir: Path) -> None:
+def process_file(fpath: Path, t_dir: Path, d_dir: Path, ancestors: Optional[Set[Path]]=None) -> None:
+    if ancestors is None:
+        ancestors = set()
+
     out_fname = d_dir.resolve() / fpath.stem
     out_fname = out_fname.with_suffix(out_fname.suffix+".md")
 
-    processed_files = set()
-
-    def _process_file(fpath: Path) -> List[str]:
+    def _process_file(fpath: Path, ancestors: Set[Path]) -> List[str]:
         _pulse_logger.info(f"Processing file: {fpath}")
-        if fpath.resolve() in processed_files:
+        if fpath.resolve() in ancestors:
             raise RuntimeError(f"Circular insert involving {fpath} detected. Aborting.")
-        processed_files.add(fpath.resolve())
+        ancestors.add(fpath.resolve())
 
         try:
             in_file = open(fpath, 'r')
@@ -33,28 +34,29 @@ def process_file(fpath: Path, t_dir: Path, d_dir: Path) -> None:
 
         out_lines = []
         for line in lines:
-            if line.find("@insert") > -1:
-                i_name = line[line.find(" "):].strip()
+            if "@insert" in line:
+                stripped_line = line.strip()
+                i_name = stripped_line[stripped_line.find(" "):].strip()
                 f = Path(i_name)
                 _pulse_logger.info(f"Inserting {i_name}")
                 if not f.exists():
                     # Try to process this file so it is in the dst directory
                     inserting = f.name
                     f = t_dir.resolve() / inserting
-                    process_file(f, t_dir, d_dir)
+                    process_file(f, t_dir, d_dir, ancestors.copy())
                     i_out_fname = d_dir.resolve() / f.stem
                     i_out_fname = i_out_fname.with_suffix(i_out_fname.suffix+".md")
                     with open(i_out_fname, "r") as i_out:
                         i_lines = i_out.readline()
                         out_lines.extend(i_lines)
                 else:
-                    out_lines.extend(_process_file(f))
+                    out_lines.extend(_process_file(f, ancestors.copy()))
             else:
                 out_lines.append(line)
         return out_lines
 
     with open(out_fname, 'w') as out_file:
-        out_file.writelines(_process_file(fpath))
+        out_file.writelines(_process_file(fpath, ancestors.copy()))
 
 
 if __name__ == "__main__":
@@ -84,5 +86,4 @@ if __name__ == "__main__":
                 "<Directory to place processed files> [Directory where to find tables for insert tags]"
         )
     except Exception as e:
-        _pulse_logger.error("Unable to create single validation table file.")
         _pulse_logger.error(e)
