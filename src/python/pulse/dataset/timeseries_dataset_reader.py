@@ -1,13 +1,13 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-import os
 import sys
 import time
 import shutil
 import logging
 import numbers
 import numpy as np
+from pathlib import Path
 from dataclasses import dataclass
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -25,21 +25,21 @@ from pulse.dataset.utils import generate_data_request
 
 _pulse_logger = logging.getLogger('pulse')
 
-def load_data(xls_file: str):
+def load_data(xls_file: Path):
     # Remove and recreate directory
-    output_dir = "./validation/"
-    xls_basename = os.path.splitext(os.path.basename(xls_file))[0]
+    output_dir = Path("./validation/")
+    xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
     xls_basename_out = xls_basename[:-4] if xls_basename.lower().endswith("data") else xls_basename
-    output_dir = os.path.join(output_dir, xls_basename_out + "/")
+    output_dir = output_dir / xls_basename_out
     try:
-        if os.path.isdir(output_dir):
+        if output_dir.is_dir():
             shutil.rmtree(output_dir)
-        os.makedirs(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
     except OSError as e:
         _pulse_logger.error(f"Unable to clean directories")
         return
 
-    if not os.path.isfile(xls_file):
+    if not xls_file.is_file():
         _pulse_logger.error(f"Could not find xls file {xls_file}")
         return
 
@@ -47,38 +47,36 @@ def load_data(xls_file: str):
 
     # Copy file to preserve original state through patient updates
     timestr = time.strftime("%Y%m%d-%H%M%S")
-    xls_edit = os.path.join(os.path.dirname(xls_file), f"{xls_basename}_{timestr}.xlsx")
+    xls_edit = xls_file.parent / f"{xls_basename}_{timestr}.xlsx"
 
     # Iterate through patients
-    patient_dir = "./patients/"
+    patient_dir = Path("./patients/")
     try:
-        if os.path.isdir(patient_dir):
-            for patient_file in os.listdir(patient_dir):
-                f = os.path.join(patient_dir, patient_file)
-                if os.path.isfile(f) and patient_file.endswith(".json"):
-                    update_patient(f, xls_file, xls_edit)
-                    full_output_path = output_dir + patient_file[:-5] + "/"
-                    os.makedirs(full_output_path)
+        if patient_dir.is_dir():
+            for patient_file in patient_dir.glob("*.json"):
+                update_patient(patient_file, xls_file, xls_edit)
+                full_output_path = output_dir / patient_file.stem
+                full_output_path.mkdir(parents=True, exist_ok=True)
 
-                    workbook = load_workbook(filename=xls_edit, data_only=False)
-                    evaluator = ExcelCompiler(filename=xls_edit)
-                    for system in workbook.sheetnames:
-                        if system == "Patient":
-                            continue
-                        if not read_sheet(workbook[system], evaluator, full_output_path):
-                            _pulse_logger.error(f"Unable to read {system} sheet")
+                workbook = load_workbook(filename=xls_edit, data_only=False)
+                evaluator = ExcelCompiler(filename=xls_edit)
+                for system in workbook.sheetnames:
+                    if system == "Patient":
+                        continue
+                    if not read_sheet(workbook[system], evaluator, full_output_path):
+                        _pulse_logger.error(f"Unable to read {system} sheet")
     except:
         # Clean up temporary file no matter what
-        if os.path.isfile(xls_edit):
-            os.remove(xls_edit)
+        if xls_edit.is_file():
+            xls_edit.unlink()
         raise
 
     # Remove temp file
-    if os.path.isfile(xls_edit):
-        os.remove(xls_edit)
+    if xls_edit.is_file():
+        xls_edit.unlink()
 
 
-def update_patient(patient_file: str, xls_file: str, new_file: Optional[str]=None):
+def update_patient(patient_file: Path, xls_file: Path, new_file: Optional[Path]=None):
     p = SEPatient()
     serialize_patient_from_file(patient_file, p)
 
@@ -99,7 +97,7 @@ def update_patient(patient_file: str, xls_file: str, new_file: Optional[str]=Non
     workbook.save(filename=new_file)
 
 
-def read_sheet(sheet: Worksheet, evaluator: ExcelCompiler, output_dir: str):
+def read_sheet(sheet: Worksheet, evaluator: ExcelCompiler, output_dir: Path):
     system = sheet.title
     targets = {}
 
@@ -202,19 +200,17 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     logging.getLogger("pycel").setLevel(logging.WARNING)
 
-    xlsx_file = None
+    xls_file = None
 
     if len(sys.argv) < 2:
-        _pulse_logger.error("Expected inputs : <xlsx validation file path>")
+        _pulse_logger.error("Expected inputs : <xls validation file path>")
         sys.exit(1)
 
-    if os.path.isfile(sys.argv[1]):
-        xlsx_file = sys.argv[1]
-    elif os.path.isfile(get_data_dir()+sys.argv[1]):
-        xlsx_file = get_data_dir()+sys.argv[1]
+    xls_file = Path(sys.argv[1])
+    if not xls_file.is_file():
+        xls_file = Path(get_data_dir()+sys.argv[1])
+        if not xls_file.is_file():
+            _pulse_logger.error("Please provide a valid xls file")
+            sys.exit(1)
 
-    if xlsx_file is None:
-        _pulse_logger.error("Please provide a valid xlsx file")
-        sys.exit(1)
-
-    load_data(xlsx_file)
+    load_data(xls_file)

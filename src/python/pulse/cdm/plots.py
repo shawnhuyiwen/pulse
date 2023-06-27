@@ -1,12 +1,12 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from copy import deepcopy
 from enum import Enum
+from pathlib import Path
+from copy import deepcopy
 from operator import attrgetter
 from typing import Dict, List, Optional, Set, Tuple
 import logging
-import os
 import pandas as pd
 
 from pulse.cdm.scalars import SEScalar, SEScalarLength
@@ -197,7 +197,7 @@ class SEPlotConfig():
         if self._omit_events_with is None:
             self._omit_events_with = []
         if self._output_path_override is None:
-            self._output_path_override = "./verification/Plots/"
+            self._output_path_override = Path("./verification/Plots/")
         if self._percent_of_baseline_mode is None:
             self._percent_of_baseline_mode = ePercentageOfBaselineMode.Off
         if self._plot_actions is None:
@@ -246,7 +246,7 @@ class SEPlotConfig():
         if omit_events_with is not None:
             self._omit_events_with = list(omit_events_with)
         if output_path_override is not None:
-            self._output_path_override = output_path_override
+            self._output_path_override = Path(output_path_override)
         if percent_of_baseline_mode is not None:
             self._percent_of_baseline_mode = percent_of_baseline_mode
         if plot_actions is not None:
@@ -421,7 +421,7 @@ class SEPlotConfig():
     def get_output_path_override(self):
         return self._output_path_override
     def set_output_path_override(self, output_path: str):
-        self._output_path_override = output_path
+        self._output_path_override = Path(output_path)
     def has_output_path_override(self):
         return self._output_path_override is not None
     def invalidate_output_path_override(self):
@@ -554,7 +554,7 @@ class SEPlotSource():
         end_row: Optional[int]=None, row_skip: Optional[int]=None
     ):
         self._csv_data = csv_data
-        self._log_file = log_file
+        self._log_file = Path(log_file) if log_file is not None else log_file
         self._label = label
         self._line_format = line_format if line_format is not None else ""
         self._line_width = line_width
@@ -578,7 +578,7 @@ class SEPlotSource():
     def get_log_file(self):
         return self._log_file
     def set_log_file(self, log_file: str):
-        self._log_file = self._filepath_replacement(log_file)
+        self._log_file = Path(self._filepath_replacement(log_file))
     def has_log_file(self):
         return self._log_file is not None
     def invalidate_log_file(self):
@@ -591,10 +591,10 @@ class SEPlotSource():
                 idx = self._csv_data.rfind("Results.csv")
                 if idx == -1:
                     idx = self._csv_data.rfind(".csv")
-                self._log_file = self._csv_data[:idx] + ".log"
+                self._log_file = Path(self._csv_data[:idx] + ".log")
 
         # Ensure log file exists
-        if not os.path.exists(self._log_file):
+        if not self._log_file.is_file():
             _pulse_logger.error(f"Could not find corresponding log file: {self._csv_data}")
             return False
 
@@ -703,15 +703,16 @@ class SEPlotSource():
         # Perform replacement if needed
         self._csv_data = self._filepath_replacement(self._csv_data)
 
-        if os.path.exists(self._csv_data):
+        csv_file = Path(self._csv_data)
+        if csv_file.is_file():
             kwargs = {}
             if self._row_skip:
                 # Keep header and every _row_skip-th row starting with first data row
                 kwargs = {"skiprows": lambda i: i != 0 and ((i-1) % self._row_skip)}
 
-            self._df = read_csv_into_df(self._csv_data, replace_slashes=False, **kwargs)
+            self._df = read_csv_into_df(csv_file, replace_slashes=False, **kwargs)
         else:
-            _pulse_logger.error(f"File not found: {self._csv_data}")
+            _pulse_logger.error(f"File not found: {csv_file}")
 
 class SESeries():
     __slots__ = ["_plot_config", "_output_filename", "_title",

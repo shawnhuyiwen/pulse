@@ -1,13 +1,13 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-import os
 import sys
 import json
 import shutil
 import logging
 import numpy as np
 from enum import Enum
+from pathlib import Path
 from dataclasses import dataclass, field
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -23,18 +23,18 @@ from pulse.dataset.utils import generate_data_request
 _pulse_logger = logging.getLogger('pulse')
 
 
-def load_data(xls_file: str) -> None:
+def load_data(xls_file: Path) -> None:
     # Remove and recreate directory
-    output_dir = "./validation/scenarios/"
-    results_dir = "./test_results/scenarios/"
-    xls_basename = os.path.splitext(os.path.splitext(os.path.basename(xls_file))[0])[0]
+    output_dir = Path("./validation/scenarios/")
+    results_dir = Path("./test_results/scenarios/")
+    xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
     xls_basename_out = xls_basename[:-10] if xls_basename.lower().endswith("validation") else xls_basename
-    output_dir = os.path.join(output_dir, xls_basename_out + "/")
-    results_dir = os.path.join(results_dir, xls_basename_out + "/")
+    output_dir = output_dir / xls_basename_out
+    results_dir = results_dir / xls_basename_out
     try:
-        if os.path.isdir(output_dir):
+        if output_dir.is_dir():
             shutil.rmtree(output_dir)
-        os.makedirs(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
     except OSError as e:
         _pulse_logger.error(f"Unable to clean directories")
         return
@@ -51,7 +51,7 @@ def load_data(xls_file: str) -> None:
 
 
 # Read xlsx sheet and generate corresponding scenario file and validation target files
-def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
+def read_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path) -> bool:
     class Stage(Enum):
         IDScenario = 0
         InitialSegment = 1
@@ -216,13 +216,14 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
         segments.append(seg)
 
     scenario.get_data_request_manager().set_data_requests(drs)
-    full_results_dir = os.path.join(results_dir, scenario.get_name())
-    scenario.get_data_request_manager().set_results_filename(os.path.join(full_results_dir, f"{scenario.get_name()}.csv").replace("\\", "/"))
+    full_results_dir = results_dir / scenario.get_name()
+    scenario.get_data_request_manager().set_results_filename(str(full_results_dir / f"{scenario.get_name()}.csv"))
 
     # Write out scenario
-    full_output_dir = os.path.join(output_dir, scenario.get_name())
-    os.makedirs(full_output_dir)
-    filename = os.path.join(full_output_dir, scenario.get_name() + ".json")
+    full_output_dir = output_dir / scenario.get_name()
+
+    full_output_dir.mkdir(parents=True, exist_ok=True)
+    filename = full_output_dir / (scenario.get_name() + ".json")
     _pulse_logger.info(f"Writing {filename}")
     with open(filename, "w") as f:
         f.write(write_scenario(scenario, segments, conditions, full_results_dir))
@@ -231,7 +232,7 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
     for s in segments:
         if not s.has_validation_targets():
             continue
-        filename = os.path.join(full_output_dir, f"Segment{s.get_segment_id()}ValidationTargets.json")
+        filename = full_output_dir / f"Segment{s.get_segment_id()}ValidationTargets.json"
         _pulse_logger.info(f"Writing {filename}")
         serialize_segment_validation_target_segment_to_file(s, filename)
 
@@ -239,7 +240,7 @@ def read_sheet(sheet: Worksheet, output_dir: str, results_dir: str) -> bool:
 
 
 def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationTargetSegment],
-                   conditions: str, results_dir: str) -> str:
+                   conditions: str, results_dir: Path) -> str:
     # Load actions into dict from concatenated JSON across segments
     all_actions_str = '{"AnyAction": ['
     for idx, s in enumerate(segments):
@@ -249,7 +250,7 @@ def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationTarge
         if idx == len(segments) - 1 and all_actions_str != '{"AnyAction": [':
             all_actions_str += ','
         all_actions_str += '{"SerializeRequested": {'
-        segment_file_name = os.path.join(results_dir, f"Segment{s.get_segment_id()}.json").replace("\\", "/")
+        segment_file_name = results_dir / f"Segment{s.get_segment_id()}.json"
         all_actions_str += f'"Filename": "{segment_file_name}"'
         all_actions_str += '}}'
         if idx != len(segments) - 1:
@@ -333,19 +334,17 @@ def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationTarge
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
-    xlsx_file = None
+    xls_file = None
 
     if len(sys.argv) < 2:
-        _pulse_logger.error("Expected inputs : <xlsx validation file path>")
+        _pulse_logger.error("Expected inputs : <xls validation file path>")
         sys.exit(1)
 
-    if os.path.isfile(sys.argv[1]):
-        xlsx_file = sys.argv[1]
-    elif os.path.isfile(get_data_dir()+sys.argv[1]):
-        xlsx_file = get_data_dir()+sys.argv[1]
+    xls_file = Path(sys.argv[1])
+    if not xls_file.is_file():
+        xls_file = Path(get_data_dir()+sys.argv[1])
+        if not xls_file.is_file():
+            _pulse_logger.error("Please provide a valid xls file")
+            sys.exit(1)
 
-    if xlsx_file is None:
-        _pulse_logger.error("Please provide a valid xlsx file")
-        sys.exit(1)
-
-    load_data(xlsx_file)
+    load_data(xls_file)

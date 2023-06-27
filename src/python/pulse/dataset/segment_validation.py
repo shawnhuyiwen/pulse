@@ -1,11 +1,11 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-import os
 import sys
 import logging
 import numpy as np
 import pytablewriter as ptw
+from pathlib import Path
 from typing import Dict, List
 from textwrap import TextWrapper
 from pytablewriter.style import Style
@@ -20,45 +20,39 @@ from pulse.cdm.io.engine import serialize_segment_validation_target_segment_from
 _pulse_logger = logging.getLogger('pulse')
 
 
-def validate(targets_dir: str, results_dir: str) -> None:
+def validate(targets_dir: Path, results_dir: Path) -> None:
     # Get all validation targets from files
     val_segments = {}
-    for filename in os.listdir(targets_dir):
-        prefix = "Segment"
-        postfix = "ValidationTargets.json"
-        if not filename.endswith(postfix):
-            continue
+    prefix = "Segment"
+    postfix = "ValidationTargets.json"
+    for filename in targets_dir.glob(f"{prefix}*{postfix}"):
+        seg_id = int(filename.name[len(prefix):-len(postfix)])
 
-        seg_id = int(filename[len(prefix):-len(postfix)])
-
-        val_segments[seg_id] = serialize_segment_validation_target_segment_from_file(os.path.join(targets_dir, filename))
+        val_segments[seg_id] = serialize_segment_validation_target_segment_from_file(filename)
 
     # Get all results from files
     results = {}
-    for filename in os.listdir(results_dir):
-        prefix = "Segment"
-        postfix = ".json"
-        if not filename.startswith(prefix) or not filename.endswith(postfix):
-            continue
+    prefix = "Segment"
+    postfix = ".json"
+    for filename in results_dir.glob(f"{prefix}*{postfix}"):
+        seg_id = int(filename.name[len(prefix):-len(postfix)])
 
-        seg_id = int(filename[len(prefix):-len(postfix)])
-
-        drr = serialize_data_requested_result_from_file(os.path.join(results_dir, filename))
+        drr = serialize_data_requested_result_from_file(filename)
         # In this case the DRR will only have one timestep, so get values from there
         drr_values = drr.segments_per_sim_time_s[list(drr.segments_per_sim_time_s.keys())[0]]
         results[seg_id] = {
             header: value for header, value in zip(drr.headers, drr_values)
         }
 
-    scenario_name = os.path.basename(os.path.dirname(targets_dir))
-    md_dir = os.path.join(results_dir, "docs/markdown/")
-    os.makedirs(md_dir, exist_ok=True)
+    scenario_name = targets_dir.name
+    md_dir = results_dir / "docs/markdown/"
+    md_dir.mkdir(parents=True, exist_ok=True)
 
     # Evaluate targets and create markdown tables for each segment
     headers = ["Property Name", "Validation", "Engine Value", "Percent Error", "Percent Change", "Notes"]
     text_wrapper = TextWrapper(width=150) # Increase markdown readability
     for seg_id in sorted(val_segments.keys()):
-        md_filename = os.path.join(md_dir, f"{scenario_name}-Segment{seg_id}Validation.md")
+        md_filename = md_dir / f"{scenario_name}-Segment{seg_id}Validation.md"
         table_data = []
 
         val_segment = val_segments[seg_id]
@@ -269,15 +263,14 @@ if __name__ == "__main__":
         _pulse_logger.error("Expected inputs : <validation targets directory> <results directory>")
         sys.exit(1)
 
-    if os.path.exists(sys.argv[1]):
-        targets_dir = sys.argv[1]
-    else:
+    targets_dir = Path(sys.argv[1])
+    results_dir = Path(sys.argv[2])
+
+    if not targets_dir.is_dir():
         _pulse_logger.error("Please provide a valid validation targets directory")
         sys.exit(1)
 
-    if os.path.exists(sys.argv[2]):
-        results_dir = sys.argv[2]
-    else:
+    if not results_dir.is_dir():
         _pulse_logger.error("Please provide a valid results directory")
         sys.exit(1)
 

@@ -3,8 +3,8 @@
 
 import sys
 import logging
-from typing import List, Optional, Set
 from pathlib import Path
+from typing import List, Optional, Set
 
 
 _pulse_logger = logging.getLogger('pulse')
