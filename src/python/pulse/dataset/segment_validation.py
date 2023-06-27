@@ -5,8 +5,10 @@ import os
 import sys
 import logging
 import numpy as np
+import pytablewriter as ptw
 from typing import Dict, List
-from mdutils.mdutils import MdUtils
+from textwrap import TextWrapper
+from pytablewriter.style import Style
 
 import PyPulse
 from pulse.cdm.engine import SESegmentValidationTarget, SESegmentValidationTargetSegment
@@ -48,42 +50,37 @@ def validate(targets_dir: str, results_dir: str) -> None:
             header: value for header, value in zip(drr.headers, drr_values)
         }
 
-
     scenario_name = os.path.basename(os.path.dirname(targets_dir))
     md_dir = os.path.join(results_dir, "docs/markdown/")
     os.makedirs(md_dir, exist_ok=True)
-    md_filename = os.path.join(md_dir, f"{scenario_name}Validation.md")
-    md_file = MdUtils(file_name=md_filename, title=scenario_name + " Validation")
 
     # Evaluate targets and create markdown tables for each segment
+    headers = ["Property Name", "Validation", "Engine Value", "Percent Error", "Percent Change", "Notes"]
+    text_wrapper = TextWrapper(width=150) # Increase markdown readability
     for seg_id in sorted(val_segments.keys()):
-        table_data = [[
-            "Property Name",
-            "Validation",
-            "Engine Value",
-            "Percent Error",
-            "Percent Change",
-            "Notes"
-        ]]
+        md_filename = os.path.join(md_dir, f"{scenario_name}-Segment{seg_id}Validation.md")
+        table_data = []
 
         val_segment = val_segments[seg_id]
         for tgt in val_segment.get_validation_targets():
             table_data.append(evaluate(seg_id, tgt, results))
 
+        # Only write file if we have data
         if val_segment.has_validation_targets():
-            md_file.new_header(1, f"Segment {seg_id}")
-            if val_segment.has_notes():
-                md_file.new_paragraph(val_segment.get_notes())
-                md_file.new_paragraph()
-            md_file.new_table(
-                columns=len(table_data[0]),
-                rows=len(table_data),
-                text=[item for sublist in table_data for item in sublist],
-                text_align="left"
-            )
+            with open(md_filename, "w") as md_file:
+                _pulse_logger.info(f"Writing {md_filename}")
 
-    _pulse_logger.info(f"Writing {md_filename}")
-    md_file.create_md_file()
+                if val_segment.has_notes():
+                    md_file.writelines(text_wrapper.fill(val_segment.get_notes()))
+                    md_file.write("\n\n")
+
+                table_writer = ptw.MarkdownTableWriter(
+                    headers = headers,
+                    value_matrix=table_data,
+                    column_styles=[Style(align="left")] * len(headers)
+                )
+                table_writer.stream = md_file
+                table_writer.write_table()
 
 
 def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dict[str, float]]) -> List[str]:
