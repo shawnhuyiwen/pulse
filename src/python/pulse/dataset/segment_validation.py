@@ -4,14 +4,13 @@
 import sys
 import logging
 import numpy as np
-import pytablewriter as ptw
 from pathlib import Path
 from typing import Dict, List
 from textwrap import TextWrapper
-from pytablewriter.style import Style
 
 import PyPulse
 from pulse.cdm.engine import SESegmentValidationTarget, SESegmentValidationTargetSegment
+from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.math_utils import generate_percentage_span, percent_change, percent_difference
 from pulse.cdm.io.engine import serialize_segment_validation_target_segment_from_file, \
                                 serialize_data_requested_result_from_file
@@ -50,6 +49,8 @@ def validate(targets_dir: Path, results_dir: Path) -> None:
 
     # Evaluate targets and create markdown tables for each segment
     headers = ["Property Name", "Validation", "Engine Value", "Percent Error", "Percent Change", "Notes"]
+    fields = list(range(len(headers)))
+    align = [('<', '<')] * len(headers)
     text_wrapper = TextWrapper(width=150) # Increase markdown readability
     for seg_id in sorted(val_segments.keys()):
         md_filename = md_dir / f"{scenario_name}-Segment{seg_id}Validation.md"
@@ -68,13 +69,13 @@ def validate(targets_dir: Path, results_dir: Path) -> None:
                     md_file.writelines(text_wrapper.fill(val_segment.get_notes()))
                     md_file.write("\n\n")
 
-                table_writer = ptw.MarkdownTableWriter(
-                    headers = headers,
-                    value_matrix=table_data,
-                    column_styles=[Style(align="left")] * len(headers)
+                table(
+                    md_file,
+                    table_data,
+                    fields,
+                    headers,
+                    align
                 )
-                table_writer.stream = md_file
-                table_writer.write_table()
 
 
 def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dict[str, float]]) -> List[str]:

@@ -10,9 +10,9 @@
 left_rule = {'<': ':', '^': ':', '>': '-'}
 right_rule = {'<': '-', '^': ':', '>': ':'}
 
-def evalute_field(record, field_spec):
+def evaluate_field(record, field_spec):
     """
-    Evalute a field of a record using the type of the field_spec as a guide.
+    Evaluate a field of a record using the type of the field_spec as a guide.
     """
     if type(field_spec) is int:
         return str(record[field_spec])
@@ -52,7 +52,7 @@ def table(file, records, fields, headings, alignment = None):
     columns = [[] for i in range(num_columns)]
     for record in records:
         for i, field in enumerate(fields):
-            columns[i].append(evalute_field(record, field))
+            columns[i].append(evaluate_field(record, field))
 
     # Fill out any missing alignment characters.
     extended_align = alignment if alignment != None else []
