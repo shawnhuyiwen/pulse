@@ -26,18 +26,21 @@ namespace pulse
     NervousModel(Data& data);
     virtual ~NervousModel();
 
-    void Clear();
+    void Clear() override;
 
     // Set members to a stable homeostatic state
-    void Initialize();
+    void Initialize() override;
     // Set pointers and other member variables common to both homeostatic initialization and loading a state
-    void SetUp();
+    void SetUp() override;
 
-    void AtSteadyState();
-    void PreProcess();
-    void Process(bool solve_and_transport = true);
-    void PostProcess(bool solve_and_transport = true);
+    void AtSteadyState() override;
+    void PreProcess() override;
+    void Process(bool solve_and_transport = true) override;
+    void PostProcess(bool solve_and_transport = true) override;
 
+
+    virtual void SetBaroreceptorFeedback(eSwitch s) override;
+    virtual void SetChemoreceptorFeedback(eSwitch s) override;
 
   protected:
     void ComputeExposedModelParameters() override;
@@ -47,6 +50,8 @@ namespace pulse
     void ChemoreceptorFeedback();
     void SetPupilEffects();
     void CerebralSpinalFluidUpdates();
+    void SetBaselines();
+
 
     // Serializable member variables (Set in Initialize and in schema)
     bool   m_BaroreceptorFeedbackStatus;

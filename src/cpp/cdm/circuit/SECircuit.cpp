@@ -56,7 +56,6 @@ void SECircuit<CIRCUIT_TYPES>::StateChange()
   {
     if (!p->HasValidElements())
     {
-      ///\error Fatal: Invalid Path in the Circuit.
       m_ss << p->GetName() << " has invalid elements";
       Fatal(m_ss);
     }
@@ -65,7 +64,6 @@ void SECircuit<CIRCUIT_TYPES>::StateChange()
     //Flow sources are defined using NextFlowSource
     /* if (p->HasNextFlux())
     {
-    ///\error Fatal: Invalid Path in the Circuit.
     m_ss << p->GetName() << " has flux and will be ignored and overwritten. Use a flux source.";
     Warning(m_ss);
     }*/
@@ -126,7 +124,6 @@ void SECircuit<CIRCUIT_TYPES>::StateChange()
       auto paths = GetConnectedPaths(*n);
       if(paths->size() != 2)
       {
-        ///\error Fatal: Invalid Blackbox in the Circuit.
         Fatal(n->GetName() + " has invalid black box configuration, must have only 2 paths associated");
       }
     }
@@ -134,7 +131,6 @@ void SECircuit<CIRCUIT_TYPES>::StateChange()
 
   if ((m_ValvePaths.size()+m_PolarizedElementPaths.size()) > 64)
   {
-    ///\error Fatal: There are too many assumed state options.  The Circuit solver can only handle up to 64 Diodes and Polar Elements in a single circuit (i.e. ~1.8e19 possible combinations).
     Fatal("There are too many assumed state options.  The Circuit solver can only handle up to 64 Diodes and Polar Elements in a single circuit (i.e. ~1.8e19 possible combinations).");
   }
 }
@@ -336,7 +332,7 @@ const std::vector<PathType*>* SECircuit<CIRCUIT_TYPES>::GetTargetPaths(const Nod
   auto itr = m_TargetPathMap.find(&node);
   if (itr == m_TargetPathMap.end())
   {
-    Error("Circuit does not have path information for node",node.GetName());
+    Error("Circuit does not have path information for node : " + node.GetName());
     return nullptr;
   }
   return itr->second;
@@ -360,7 +356,7 @@ const std::vector<PathType*>* SECircuit<CIRCUIT_TYPES>::GetSourcePaths(const Nod
   auto itr = m_SourcePathMap.find(&node);
   if (itr == m_SourcePathMap.end())
   {
-    Error("Circuit does not have path information for node", node.GetName());
+    Error("Circuit does not have path information for node : " + node.GetName());
     return nullptr;
   }
   return itr->second;
@@ -384,7 +380,7 @@ const std::vector<PathType*>* SECircuit<CIRCUIT_TYPES>::GetConnectedPaths(const 
   auto itr = m_ConnectedPathMap.find(&node);
   if (itr == m_ConnectedPathMap.end())
   {
-    Error("Circuit does not have path information for node", node.GetName());
+    Error("Circuit does not have path information for node : " + node.GetName());
     return nullptr;
   }
   return itr->second;

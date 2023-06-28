@@ -9,10 +9,6 @@
 
 class SEMechanicalVentilatorConfiguration;
 
-// Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
-enum class eMechanicalVentilator_DriverWaveform { NullDriverWaveform = 0, Square, Exponential, Ramp, Sinusoidal, Sigmoidal };
-extern const std::string& eMechanicalVentilator_DriverWaveform_Name(eMechanicalVentilator_DriverWaveform m);
-
 class CDM_DECL SEMechanicalVentilatorSettings : public Loggable
 {
   friend class PBMechanicalVentilator;//friend the serialization class
@@ -33,6 +29,7 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
+  virtual bool HasConnection() const;
   virtual eSwitch GetConnection() const;
   virtual void SetConnection(eSwitch c);
 
@@ -72,6 +69,7 @@ public:
   virtual SEScalarTime& GetExpirationCycleTime();
   virtual double GetExpirationCycleTime(const TimeUnit& unit) const;
 
+  virtual bool HasExpirationCycleRespiratoryModel() const;
   virtual eSwitch GetExpirationCycleRespiratoryModel() const;
   virtual void SetExpirationCycleRespiratoryModel(eSwitch c);
 
@@ -83,8 +81,9 @@ public:
   virtual SEScalarPressureTimePerVolume& GetExpirationValveResistance();
   virtual double GetExpirationValveResistance(const PressureTimePerVolumeUnit& unit) const;
 
-  virtual eMechanicalVentilator_DriverWaveform GetExpirationWaveform() const;
-  virtual void SetExpirationWaveform(eMechanicalVentilator_DriverWaveform w);
+  virtual bool HasExpirationWaveform() const;
+  virtual eDriverWaveform GetExpirationWaveform() const;
+  virtual void SetExpirationWaveform(eDriverWaveform w);
 
   virtual bool HasExpirationWaveformPeriod() const;
   virtual SEScalarTime& GetExpirationWaveformPeriod();
@@ -126,6 +125,7 @@ public:
   virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
   virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
 
+  virtual bool HasInspirationPatientTriggerRespiratoryModel() const;
   virtual eSwitch GetInspirationPatientTriggerRespiratoryModel() const;
   virtual void SetInspirationPatientTriggerRespiratoryModel(eSwitch c);
 
@@ -161,8 +161,9 @@ public:
   virtual SEScalarVolume& GetYPieceVolume();
   virtual double GetYPieceVolume(const VolumeUnit& unit) const;
 
-  virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
-  virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
+  virtual bool HasInspirationWaveform() const;
+  virtual eDriverWaveform GetInspirationWaveform() const;
+  virtual void SetInspirationWaveform(eDriverWaveform w);
 
   virtual bool HasInspirationWaveformPeriod() const;
   virtual SEScalarTime& GetInspirationWaveformPeriod();
@@ -208,7 +209,7 @@ protected:
   SEScalarPressureTimePerVolume*               m_ExpirationValveResistance;
   SEScalarVolume*                              m_ExpirationLimbVolume;
   SEScalarVolume*                              m_ExpirationValveVolume;
-  eMechanicalVentilator_DriverWaveform         m_ExpirationWaveform;
+  eDriverWaveform                              m_ExpirationWaveform;
   SEScalarTime*                                m_ExpirationWaveformPeriod;
 
   // Inspiratory Limit Properties (Only set 1)
@@ -234,7 +235,7 @@ protected:
   SEScalarPressureTimePerVolume*               m_InspirationValveResistance;
   SEScalarVolume*                              m_InspirationLimbVolume;
   SEScalarVolume*                              m_InspirationValveVolume;
-  eMechanicalVentilator_DriverWaveform         m_InspirationWaveform;
+  eDriverWaveform                              m_InspirationWaveform;
   SEScalarTime*                                m_InspirationWaveformPeriod;
 
   SEScalarVolume*                              m_YPieceVolume;

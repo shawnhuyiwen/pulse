@@ -18,6 +18,21 @@
         { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "CarbonDioxide", "PropertyName": "AlveolarTransfer", "Unit": "mL/s" },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Oxygen",        "PropertyName": "AlveolarTransfer", "Unit": "mL/s" },
         
+        
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "FatTissue",         "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "BoneTissue",        "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "BrainTissue",       "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "GutTissue",         "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "LeftKidneyTissue",  "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "RightKidneyTissue", "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "LiverTissue",       "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "LeftLungTissue",    "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "RightLungTissue",   "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "MuscleTissue",      "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "MyocardiumTissue",  "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "SkinTissue",        "PropertyName": "TotalVolume", "Unit": "mL" },
+        { "DecimalFormat": { }, "Category": "TissueCompartment", "CompartmentName": "SpleenTissue",      "PropertyName": "TotalVolume", "Unit": "mL" },
+        
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "FatTissueExtracellular",         "PropertyName": "Volume", "Unit": "mL" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BoneTissueExtracellular",        "PropertyName": "Volume", "Unit": "mL" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BrainTissueExtracellular",       "PropertyName": "Volume", "Unit": "mL" },
@@ -31,6 +46,7 @@
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumTissueExtracellular",  "PropertyName": "Volume", "Unit": "mL" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "SkinTissueExtracellular",        "PropertyName": "Volume", "Unit": "mL" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "SpleenTissueExtracellular",      "PropertyName": "Volume", "Unit": "mL" },
+        
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "FatTissueExtracellular",         "PropertyName": "Pressure", "Unit": "mmHg" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BoneTissueExtracellular",        "PropertyName": "Pressure", "Unit": "mmHg" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BrainTissueExtracellular",       "PropertyName": "Pressure", "Unit": "mmHg" },
@@ -44,6 +60,7 @@
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumTissueExtracellular",  "PropertyName": "Pressure", "Unit": "mmHg" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "SkinTissueExtracellular",        "PropertyName": "Pressure", "Unit": "mmHg" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "SpleenTissueExtracellular",      "PropertyName": "Pressure", "Unit": "mmHg" },
+        
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "FatTissueExtracellular",         "PropertyName": "InFlow", "Unit": "mL/s" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BoneTissueExtracellular",        "PropertyName": "InFlow", "Unit": "mL/s" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BrainTissueExtracellular",       "PropertyName": "InFlow", "Unit": "mL/s" },
@@ -57,6 +74,7 @@
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumTissueExtracellular",  "PropertyName": "InFlow", "Unit": "mL/s" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "SkinTissueExtracellular",        "PropertyName": "InFlow", "Unit": "mL/s" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "SpleenTissueExtracellular",      "PropertyName": "InFlow", "Unit": "mL/s" },
+        
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "FatTissueIntracellular",         "PropertyName": "Volume", "Unit": "mL" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BoneTissueIntracellular",        "PropertyName": "Volume", "Unit": "mL" },
         { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "BrainTissueIntracellular",       "PropertyName": "Volume", "Unit": "mL" },

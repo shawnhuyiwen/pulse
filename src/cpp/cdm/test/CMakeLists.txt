@@ -3,10 +3,12 @@ add_library_ex(CommonDataModelTests
   H_FILES
     CommonDataModelTest.h
   CPP_FILES
+    ActionTest.cpp
     AdvancedCircuitTest.cpp
     BasicCircuitTest.cpp
     BlackBoxTest.cpp
     CommonDataModelTest.cpp
+    ConvertScenarioLogs.cpp
     GasCompartmentTest.cpp
     LiquidCompartmentTest.cpp
     ReadPatientDirectory.cpp

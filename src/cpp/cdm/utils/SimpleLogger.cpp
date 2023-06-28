@@ -6,8 +6,6 @@
 #include "cdm/utils/FileUtils.h"
 #include "cdm/properties/SEScalarTime.h"
 
-const std::string Loggable::empty("");
-
 class log_lib
 {
 public:
@@ -21,12 +19,13 @@ public:
       _file.close();
   }
 
-  bool log(Logger::Level requested_level)
+  bool log(Logger::Level requested_level) const
   {
     return requested_level >= _log_level;
   }
-  void log(Logger::Level requested_level, const std::string& out)
+  void log(Logger::Level requested_level, const std::string& fmtMsg)
   {
+    std::scoped_lock lock(_mutex);
     if (!_log_to_console && !_log_to_file)
       return;
     if (_last_requested_level != requested_level)
@@ -51,10 +50,11 @@ public:
       }
       _last_requested_level = requested_level;
     }
+
     if (_log_to_console)
-      std::cout << _str_requested_level << out << "\n";
+      std::cout << _str_requested_level << " " << fmtMsg << "\n";
     if (_log_to_file)
-      _file << _str_requested_level << out << std::endl;
+      _file << _str_requested_level << " " << fmtMsg << std::endl;
   }
 
   bool _log_to_console = false;
@@ -64,10 +64,8 @@ public:
   Logger::Level _last_requested_level = Logger::Level::Info;
 
   std::ofstream _file;
+  std::mutex    _mutex;
 };
-
-void Logger::Initialize() {}
-void Logger::Deinitialize() {}
 
 //logger constructor
 Logger::Logger(const std::string& logFilename)
@@ -146,135 +144,142 @@ void Logger::RemoveForwards()
   m_Forwards.clear();
 }
 
-std::string Logger::FormatLogMessage(const std::string& msg, const std::string& origin)
+std::string Logger::FormatLogMessage(const std::string& msg)
 {
-  m_ss.str("");
-  m_ss.clear();
+  std::string out = "";
   if (m_time != nullptr && m_time->IsValid())
-    m_ss << "[" << *m_time << "] " << msg;
-  else
-    m_ss << msg;
-  if (msg.empty())
-    return origin;
-  return origin + " : " + m_ss.str();
+    out += "[" + m_time->ToString() + "] ";
+
+  if (!msg.empty())
+    out += msg;
+
+  return out;
 }
 
-void Logger::Debug(std::string const& msg, const std::string& origin)
+void Logger::Debug(std::string const& msg)
 {
   if (_log_lib->log(Level::Debug))
   {
-    _log_lib->log(Level::Debug, FormatLogMessage(msg, origin));
+    std::string fmtMsg = FormatLogMessage(msg);
+    _log_lib->log(Level::Debug, fmtMsg);
     for (auto fwd : m_Forwards)
-      fwd->ForwardDebug(m_ss.str().c_str(), origin.c_str());
+      fwd->ForwardDebug(fmtMsg);
   }
 }
 
-void Logger::Debug(std::stringstream& msg, const std::string& origin)
+void Logger::Debug(std::stringstream& msg)
 {
-  Debug(msg.str(), origin);
+  Debug(msg.str());
   msg.str("");
   msg.clear();
 }
-void Logger::Debug(std::ostream& msg, const std::string& origin)
+void Logger::Debug(std::ostream& msg)
 {
   std::stringstream ss;
   ss << msg.rdbuf();
-  Debug(ss.str(), origin);
+  Debug(ss.str());
 }
 
-void Logger::Info(const std::string& msg, const std::string& origin)
+void Logger::Info(const std::string& msg)
 {
   if (_log_lib->log(Level::Info))
   {
-    _log_lib->log(Level::Info, FormatLogMessage(msg, origin));
+    std::string fmtMsg = FormatLogMessage(msg);
+    _log_lib->log(Level::Info, fmtMsg);
     for (auto fwd : m_Forwards)
-      fwd->ForwardInfo(m_ss.str().c_str(), origin.c_str());
+      fwd->ForwardInfo(fmtMsg);
   }
 }
 
-void Logger::Info(std::stringstream& msg, const std::string& origin)
+void Logger::Info(std::stringstream& msg)
 {
-  Info(msg.str(), origin);
+  Info(msg.str());
   msg.str("");
   msg.clear();
 }
 
-void Logger::Info(const std::stringstream& msg, const std::string& origin)
+void Logger::Info(const std::stringstream& msg)
 {
-  Info(msg.str(), origin);
+  Info(msg.str());
 }
 
-void Logger::Info(std::ostream& msg, const std::string& origin)
+void Logger::Info(std::ostream& msg)
 {
   std::stringstream ss;
   ss << msg.rdbuf();
-  Info(ss.str(), origin);
+  Info(ss.str());
 }
 
-void Logger::Warning(const std::string& msg, const std::string& origin)
+void Logger::Warning(const std::string& msg)
 {
   if (_log_lib->log(Level::Warn))
   {
-    _log_lib->log(Level::Warn, FormatLogMessage(msg, origin));
+    std::string fmtMsg = FormatLogMessage(msg);
+    _log_lib->log(Level::Warn, fmtMsg);
     for (auto fwd : m_Forwards)
-      fwd->ForwardWarning(m_ss.str().c_str(), origin.c_str());
+      fwd->ForwardWarning(fmtMsg);
   }
 }
-void Logger::Warning(std::stringstream& msg, const std::string& origin)
+void Logger::Warning(std::stringstream& msg)
 {
-  Warning(msg.str(), origin);
+  Warning(msg.str());
   msg.str("");
   msg.clear();
 }
-void Logger::Warning(std::ostream& msg, const std::string& origin)
+void Logger::Warning(std::ostream& msg)
 {
   std::stringstream ss;
   ss << msg.rdbuf();
-  Warning(ss.str(), origin);
+  Warning(ss.str());
 }
 
-void Logger::Error(const std::string& msg, const std::string& origin)
+void Logger::Error(const std::string& msg)
 {
   if (_log_lib->log(Level::Error))
   {
-    _log_lib->log(Level::Error, FormatLogMessage(msg, origin));
+    std::string fmtMsg = FormatLogMessage(msg);
+    _log_lib->log(Level::Error, fmtMsg);
     for (auto fwd : m_Forwards)
-      fwd->ForwardError(m_ss.str().c_str(), origin.c_str());
+      fwd->ForwardError(fmtMsg);
   }
 }
-void Logger::Error(std::stringstream& msg, const std::string& origin)
+void Logger::Error(std::stringstream& msg)
 {
-  Error(msg.str(), origin);
+  Error(msg.str());
   msg.str("");
   msg.clear();
 }
-void Logger::Error(std::ostream& msg, const std::string& origin)
+void Logger::Error(std::ostream& msg)
 {
   std::stringstream ss;
   ss << msg.rdbuf();
-  Error(ss.str(), origin);
+  Error(ss.str());
 }
 
-void Logger::Fatal(const std::string& msg, const std::string& origin)
+void Logger::Fatal(const std::string& msg)
 {
   if (_log_lib->log(Level::Fatal))
   {
-    _log_lib->log(Level::Fatal, FormatLogMessage(msg, origin));
-    for (auto fwd : m_Forwards)
-      fwd->ForwardFatal(m_ss.str().c_str(), origin.c_str());
+    std::string fmtMsg = FormatLogMessage(msg);
+    _log_lib->log(Level::Fatal, fmtMsg);
+    // Going through forwards in reverse, as our controller handler will be first
+    // And that will kick out an exception and halt the engine, so let's let
+    // the other forwards process this fatal first, before we halt the engine
+    for (auto fwd = m_Forwards.rbegin(); fwd != m_Forwards.rend(); ++fwd)
+      (*fwd)->ForwardFatal(fmtMsg);
   }
 }
-void Logger::Fatal(std::stringstream& msg, const std::string& origin)
+void Logger::Fatal(std::stringstream& msg)
 {
-  Fatal(msg.str(), origin);
+  Fatal(msg.str());
   msg.str("");
   msg.clear();
 }
-void Logger::Fatal(std::ostream& msg, const std::string& origin)
+void Logger::Fatal(std::ostream& msg)
 {
   std::stringstream ss;
   ss << msg.rdbuf();
-  Fatal(ss.str(), origin);
+  Fatal(ss.str());
 }
 
 Loggable::Loggable(Logger* logger)
@@ -312,99 +317,99 @@ void Loggable::SetLogger(Logger& logger)
   m_Logger = &logger;
 }
 
-void Loggable::Debug(const std::string& msg, const std::string& origin) const
+void Loggable::Debug(const std::string& msg) const
 {
   if (m_Logger)
-    m_Logger->Debug(msg, origin);
+    m_Logger->Debug(msg);
 }
-void Loggable::Debug(std::stringstream& msg, const std::string& origin) const
+void Loggable::Debug(std::stringstream& msg) const
 {
-  Debug(msg.str(), origin);
+  Debug(msg.str());
   msg.str("");
   msg.clear();
 }
-void Loggable::Debug(std::ostream& msg, const std::string& origin) const
+void Loggable::Debug(std::ostream& msg) const
 {
   std::stringstream ss;
   ss << msg.rdbuf();
-  Debug(ss.str(), origin);
+  Debug(ss.str());
 }
 
-void Loggable::Info(const std::stringstream& msg, const std::string& origin) const
+void Loggable::Info(const std::stringstream& msg) const
 {
-  Info(msg.str(), origin);
+  Info(msg.str());
 }
 
-void Loggable::Info(std::ostream& msg, const std::string& origin) const
+void Loggable::Info(std::ostream& msg) const
 {
   std::stringstream ss;
   ss << msg.rdbuf();
-  Info(ss.str(), origin);
+  Info(ss.str());
 }
 
-void Loggable::Warning(const std::string& msg, const std::string& origin) const
+void Loggable::Warning(const std::string& msg) const
 {
   if (m_Logger)
-    m_Logger->Warning(msg, origin);
+    m_Logger->Warning(msg);
 }
-void Loggable::Warning(std::stringstream& msg, const std::string& origin) const
+void Loggable::Warning(std::stringstream& msg) const
 {
-  Warning(msg.str(), origin);
+  Warning(msg.str());
   msg.str("");
   msg.clear();
 }
-void Loggable::Warning(std::ostream& msg, const std::string& origin) const
+void Loggable::Warning(std::ostream& msg) const
 {
   std::stringstream ss;
   ss << msg.rdbuf();
-  Warning(ss.str(), origin);
+  Warning(ss.str());
 }
 
-void Loggable::Error(const std::string& msg, const std::string& origin) const
+void Loggable::Error(const std::string& msg) const
 {
   if (m_Logger)
-    m_Logger->Error(msg, origin);
+    m_Logger->Error(msg);
 }
-void Loggable::Error(std::stringstream& msg, const std::string& origin) const
+void Loggable::Error(std::stringstream& msg) const
 {
-  Error(msg.str(), origin);
+  Error(msg.str());
   msg.str("");
   msg.clear();
 }
-void Loggable::Error(std::ostream& msg, const std::string& origin) const
+void Loggable::Error(std::ostream& msg) const
 {
   std::stringstream ss;
   ss << msg.rdbuf();
-  Error(ss.str(), origin);
+  Error(ss.str());
 }
 
-void Loggable::Info(const std::string& msg, const std::string& origin) const
+void Loggable::Info(const std::string& msg) const
 {
   if (m_Logger)
-    m_Logger->Info(msg, origin);
+    m_Logger->Info(msg);
 }
-void Loggable::Info(std::stringstream& msg, const std::string& origin) const
+void Loggable::Info(std::stringstream& msg) const
 {
-  Info(msg.str(), origin);
+  Info(msg.str());
   msg.str("");
   msg.clear();
 }
 
-void Loggable::Fatal(const std::string& msg, const std::string& origin) const
+void Loggable::Fatal(const std::string& msg) const
 {
-  std::cerr << "FATAL:" << msg << " : " << origin << std::endl;
+  std::cerr << "FATAL:" << msg << std::endl;
   if (m_Logger)
-    m_Logger->Fatal(msg, origin);
+    m_Logger->Fatal(msg);
 }
-void Loggable::Fatal(std::stringstream& msg, const std::string& origin) const
+void Loggable::Fatal(std::stringstream& msg) const
 {
-  Fatal(msg.str(), origin);
+  Fatal(msg.str());
   msg.str("");
   msg.clear();
 }
-void Loggable::Fatal(std::ostream& msg, const std::string& origin) const
+void Loggable::Fatal(std::ostream& msg) const
 {
   std::stringstream ss;
   ss << msg.rdbuf();
-  Fatal(ss.str(), origin);
+  Fatal(ss.str());
 }

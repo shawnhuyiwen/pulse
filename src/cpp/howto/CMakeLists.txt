@@ -1,7 +1,11 @@
+if(${PROJECT_NAME}_LIBS_ONLY)
+  return()
+endif()
 
 add_executable_ex(HowToDriver
   EngineHowTo.cpp
   EngineHowTo.h
+  HowTo-ACLS.cpp
   HowTo-AirwayObstruction.cpp
   HowTo-AnesthesiaMachine.cpp
   HowTo-Arrhythmia.cpp
@@ -10,21 +14,22 @@ add_executable_ex(HowToDriver
   HowTo-BolusDrug.cpp
   HowTo-BrainInjury.cpp
   HowTo-CombatMultitrauma.cpp
-  HowTo-ConcurrentEngines.cpp
   HowTo-ConsumeNutrients.cpp
   HowTo-COPD.cpp
   HowTo-COVID19Ventilated.cpp
   HowTo-CPR.cpp
   HowTo-CreateAPatient.cpp
+  HowTo-ECMO.cpp
   HowTo-EngineUse.cpp
   HowTo-EnvironmentChange.cpp
   HowTo-Exercise.cpp
+  HowTo-ExpandedVasculature.cpp
   HowTo-Hemorrhage.cpp
+  HowTo-Hemothorax.cpp
   HowTo-LobarPneumonia.cpp
   HowTo-MechanicalVentilation.cpp
   HowTo-MechanicalVentilator.cpp
   HowTo-PulmonaryFibrosis.cpp
-  HowTo-PulmonaryFunctionTest.cpp
   HowTo-PulseEnginePool.cpp
   HowTo-RespiratoryMechanics.cpp
   HowTo-RunScenario.cpp
@@ -32,6 +37,7 @@ add_executable_ex(HowToDriver
   HowTo-RunThreaded.h
   HowTo-Sandbox.cpp
   HowTo-ScenarioBase.cpp
+  HowTo-ScenarioFromLog.cpp
   HowTo-Serialize.cpp
   HowTo-Smoke.cpp
   HowTo-TensionPneumothorax.cpp

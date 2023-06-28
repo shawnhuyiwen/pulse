@@ -71,12 +71,3 @@ double SEExercise::GetIntensity() const
     return SEScalar::dNaN();
   return m_Intensity->GetValue();
 }
-
-void SEExercise::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Exercise";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  str << "\n\tIntensity: "; HasIntensity() ? str << *m_Intensity : str << "NaN";
-  str << std::flush;
-}

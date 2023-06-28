@@ -1,0 +1,89 @@
+syntax = "proto3";
+package pulse.study.bind.patient_variability;
+option java_package = "com.kitware.pulse.study.bind.patient_variability";
+option csharp_namespace = "pulse.study.bind.patient_variability";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Patient.proto";
+import "pulse/cdm/bind/PatientActions.proto";
+import "pulse/cdm/bind/TestReport.proto";
+
+
+
+message PatientStateData
+{
+
+  /** @brief Enumeration for engine failure types */
+  enum eFailure
+  {
+    None=0;               /**<< @brief No stabilization failures. */
+    FailedSetup=1;        /**<< @brief SetupPatient could not create a valid Pulse patient with provided patient values. */
+    FailedStabilization=2;/**<< @brief Pulse was unable to stabilize to provided/computed patient values. */
+    RuntimeError=3;       /**<< @brief Error running the engine with (optional) actions. */
+    FatalRuntimeError=4;  /**<< @brief Fatal error running the engine with (optional) actions. */
+  }
+
+  uint32                                                  ID                                = 1;
+  string                                                  OutputBaseFilename                = 2;
+  double                                                  MaxSimulationTime_s               = 3;
+  double                                                  FinalSimulationTime_s             = 4;/**<< @brief We could stop the sim early (ex. due to hemorrhage) */
+  // Requested Patient
+  pulse.cdm.bind.PatientData                              Patient                           = 5;
+  pulse.cdm.bind.PatientData                              SetupPatient                      = 6;
+  // Stabilization Info
+  eFailure                                                Failure                           = 7;
+  double                                                  StabilizationTime_s               = 8;
+  
+  // Run Modes
+  oneof RunMode
+  {
+    HemorrhageData                                        Hemorrhage                        = 9;
+    ValidationData                                        Validation                        = 10;
+  }
+
+  message ValidationData
+  {
+    map<string,pulse.cdm.bind.PropertyValidationListData> ValidationMap                     = 1;
+  }
+  
+  message HemorrhageData
+  {
+    // Initial Conditions
+    pulse.cdm.bind.HemorrhageData                         Action                            = 1;/**<< @brief Hemorrhage Action. */
+    double                                                StartTime_s                       = 3;/**<< @brief How far into the simulation does the hemorrhage occur. */
+    double                                                TriageTime_s                      = 4;/**<< @brief How far into the simulation does the triage occur. */
+
+    // Results
+    // Values at the time of hemorrhage
+    double                                                InitialBloodVolume_mL             = 5;
+    double                                                InitialCardiacOutput_L_Per_min    = 6;
+    double                                                InitialHeartRate_bpm              = 7;
+    double                                                InitialMeanArterialPressure_mmHg  = 8;
+    double                                                InitialHemorrhageFlow_mL_Per_s    = 9;/**<< @brief Not constant throughout the simulation. */
+    // Values at triage time
+    double                                                TriageBloodLoss_mL                = 10;
+    double                                                TriageCardiacOutput_L_Per_min     = 11;
+    double                                                TriageHeartRate_bpm               = 12;
+    double                                                TriageHemorrhageFlow_mL_Per_s     = 13;/**<< @brief Not constant throughout the simulation. */
+    double                                                TriageMeanArterialPressure_mmHg   = 14;
+    // Values at patient death, or at final sim time, as defined by MaxSimulationTime
+    double                                                FinalBloodLoss_mL                 = 15;
+    double                                                FinalCardiacOutput_L_Per_min      = 16;
+    double                                                FinalHeartRate_bpm                = 17;
+    double                                                FinalHemorrhageFlow_mL_Per_s      = 18;/**<< @brief Not constant throughout the simulation. */
+    double                                                FinalMeanArterialPressure_mmHg    = 19;
+  }
+}
+
+message PatientStateListData
+{
+  repeated PatientStateData      PatientState               = 1;
+}
+
+message LogData
+{
+  repeated string                Info                       = 1;
+  repeated string                Warning                    = 2;
+  repeated string                Error                      = 3;
+  repeated string                Fatal                      = 4;
+}

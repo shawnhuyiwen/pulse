@@ -92,7 +92,8 @@ public class Reconfiguration
       }
       catch(Exception ex)
       {
-        Log.error("Error reconfiguring config file : "+configFile, ex);
+        Log.error("Error reconfiguring config file : "+configFile);
+        Log.error(ex.getMessage());
       }  
     }
   }

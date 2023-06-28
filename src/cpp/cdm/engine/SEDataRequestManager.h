@@ -21,6 +21,13 @@ public:
   bool SerializeFromString(const std::string& src, eSerializationFormat m);
   bool SerializeFromFile(const std::string& filename);
 
+  // Only serialize our data requests, for portability
+  bool SerializeDataRequestsToString(std::string& output, eSerializationFormat m) const;
+  bool SerializeDataRequestsToFile(const std::string& filename) const;
+  bool SerializeDataRequestsFromString(const std::string& src, eSerializationFormat m);
+  bool SerializeDataRequestsFromFile(const std::string& filename);
+  bool MergeDataRequestFile(const std::string& filename);
+
   bool HasResultsFilename() const { return !m_ResultsFilename.empty(); }
   std::string GetResultFilename() const { return m_ResultsFilename; }
   void SetResultsFilename(const std::string& name) { m_ResultsFilename = name; }
@@ -88,6 +95,9 @@ public:
   SEDataRequest& CreateECGDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreateECGDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
+  SEDataRequest& CreateECMODataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateECMODataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
   SEDataRequest& CreateInhalerDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreateInhalerDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
@@ -119,9 +129,11 @@ protected:
   SEDataRequest* FindSubstanceDataRequest(const std::string& substance, const std::string& property);
   SEDataRequest* FindAnesthesiaMachineDataRequest(const std::string& property);
   SEDataRequest* FindECGDataRequest(const std::string& property);
+  SEDataRequest* FindECMODataRequest(const std::string& property);
   SEDataRequest* FindInhalerDataRequest(const std::string& property);
   SEDataRequest* FindMechanicalVentilatorDataRequest(const std::string& property);
 
+  SEDataRequest& CopyDataRequest(const SEDataRequest& src, bool updateExisting);
   void Remove(const SEDataRequest& dr);
   // Methods to find data requests so we don't keep making the same one
   SEValidationTarget* FindValidationTarget(const SEValidationTarget& dr);

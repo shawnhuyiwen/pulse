@@ -94,7 +94,8 @@ public class PlotDriver
         }
         catch(Exception e)
         {
-          Log.error("Plotter couldn't plot job "+job.name+". Check your config file line.", e);
+          Log.error("Plotter couldn't plot job "+job.name+". Check your config file line.");
+          Log.error(e.getMessage());
           continue;
         }
         job.Reset();
@@ -143,7 +144,8 @@ public class PlotDriver
     public Integer        fontSize = 22;
     public Integer        legendFontSize = 15;
     public String         outputFilename = null;
-    public boolean        percentOfBaseline = false;
+    public boolean        xPercentOfBaseline = false;
+    public boolean        yPercentOfBaseline = false;
 
     public boolean        skipAllActions = false;
     public boolean        skipAllEvents = false;
@@ -172,9 +174,6 @@ public class PlotDriver
     public String         Y1Label = null;
     public String         X2Label = null;
     public String         Y2Label = null;
-    
-    public String         PFTFile = null;
-
     
     //Null all allocated data so it can be cleaned up
     public void Reset()
@@ -301,7 +300,11 @@ public class PlotDriver
             else if(directive.equalsIgnoreCase("LegendOnly")) 
             { job.legendOnly = true; continue; }
             else if(directive.equalsIgnoreCase("PercentOfBaseline")) 
-            { job.percentOfBaseline = true; continue; }
+            { job.yPercentOfBaseline = true; job.xPercentOfBaseline = true; continue; }
+            else if(directive.equalsIgnoreCase("XPercentOfBaseline")) 
+            { job.yPercentOfBaseline = false; job.xPercentOfBaseline = true; continue; }
+            else if(directive.equalsIgnoreCase("YPercentOfBaseline")) 
+            { job.yPercentOfBaseline = true; job.xPercentOfBaseline = false; continue; }
           }
           else
           {
@@ -415,8 +418,6 @@ public class PlotDriver
             {job.dataPath = cfg.getValidationDirectory()+"/"+value; continue;}
             else if(key.equalsIgnoreCase("DataPathVerificationOverride"))
             {job.dataPath = cfg.getVerificationDirectory()+"/"+value; continue;}
-            else if(key.equalsIgnoreCase("PFTFile"))
-            {job.PFTFile = value; continue;}
             else if(key.equalsIgnoreCase("OutputOverride"))
             {job.outputDir = value; continue;}
             else if(key.equalsIgnoreCase("FontSize"))
@@ -434,7 +435,8 @@ public class PlotDriver
     }
     catch (IOException e)
     {
-      Log.error("Ouch",e);
+      Log.error("Ouch");
+      Log.error(e.getMessage());
     }
   }
 

@@ -16,11 +16,13 @@ class PULSE_DECL PulseScenario : public SEScenario
   friend PBScenario;//friend the serialization class
 public:
 
+  PulseScenario(std::string const& dataDir = "./");
   PulseScenario(Logger* logger, std::string const& dataDir = "./");
   virtual ~PulseScenario();
 
-  virtual void Clear();
-  virtual void Copy(const PulseScenario& src);
+  void Clear();
+  using SEScenario::Copy;
+  void Copy(const PulseScenario& src);
 
   bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;

@@ -9,7 +9,12 @@
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/io/protobuf/PBScenario.h"
+#include "cdm/utils/FileUtils.h"
 
+SEScenario::SEScenario(std::string const& dataDir) : SEScenario(nullptr, dataDir)
+{
+
+}
 SEScenario::SEScenario(Logger* logger, std::string const& dataDir) : Loggable(logger)
 {
   m_PatientConfiguration = nullptr;
@@ -35,6 +40,7 @@ void SEScenario::Clear()
     m_PatientConfiguration->Clear();
   DELETE_VECTOR(m_Actions);
   m_DataRequestMgr->Clear();
+  m_DataRequestFiles.clear();
 }
 
 void SEScenario::Copy(const SEScenario& src)
@@ -134,7 +140,37 @@ const std::vector<SEAction*>& SEScenario::GetActions()
 {
   return m_Actions;
 }
-const std::vector<const SEAction*>& SEScenario::GetActions() const
+const std::vector<const SEAction*> SEScenario::GetActions() const
 {
-  return *((std::vector<const SEAction*>*) & m_Actions);
+  return std::vector<const SEAction*>(m_Actions.begin(), m_Actions.end());
+}
+
+bool SEScenario::ProcessDataRequestFiles(const std::set<std::string>& search)
+{
+  bool err=false;
+  std::string found;
+  for (std::string drFile : m_DataRequestFiles)
+  {
+    found = "";
+    for (std::string s : search)
+    {
+      if (FindFileInFilePath(s, drFile, found))
+        break;
+    }
+    if(!found.empty())
+    {
+      Info("Merging DataRequest File: " + found);
+      if (!m_DataRequestMgr->MergeDataRequestFile(found))
+      {
+        err = true;
+        Error("Unable to merge file: " + found);
+      }
+    }
+    else
+    {
+      Error("Unable to find file: " + drFile);
+      err = true;
+    }
+  }
+  return !err;
 }

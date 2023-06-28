@@ -56,7 +56,7 @@ namespace HowTo_MechanicalVentilator
       // data_values[0] is ALWAYS the simulation time in seconds
       // The rest of the data values are in order of the data_requests list provided
 
-      if (!pulse.SerializeFromFile("./states/StandardMale@0s.pbb", data_mgr))
+      if (!pulse.SerializeFromFile("./states/StandardMale@0s.json", data_mgr))
       {
         Console.WriteLine("Error Initializing Pulse!");
         return;
@@ -138,8 +138,8 @@ namespace HowTo_MechanicalVentilator
       SEMechanicalVentilatorConfiguration mv_config = new SEMechanicalVentilatorConfiguration();
       SEMechanicalVentilatorSettings mv = mv_config.GetSettings();
       mv.SetConnection(eSwitch.On);
-      mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform.Square);
-      mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform.Square);
+      mv.SetInspirationWaveform(eDriverWaveform.Square);
+      mv.SetExpirationWaveform(eDriverWaveform.Square);
       mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit.cmH2O);
       mv.GetPositiveEndExpiredPressure().SetValue(10.0, PressureUnit.cmH2O);
       SESubstanceFraction fractionFiO2 = mv.GetFractionInspiredGas("Oxygen");

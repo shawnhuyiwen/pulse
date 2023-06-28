@@ -15,7 +15,7 @@
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarTemperature.h"
 
-SEEnvironmentActionCollection::SEEnvironmentActionCollection(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
+SEEnvironmentActionCollection::SEEnvironmentActionCollection(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
   m_ChangeEnvironmentalConditions = nullptr;
   m_ThermalApplication = nullptr;
@@ -54,7 +54,6 @@ bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& act
     return true;
   }
 
-  /// \error Unsupported Action
   Error("Unsupported Environment Action");
   return false;
 }
@@ -66,7 +65,7 @@ bool SEEnvironmentActionCollection::HasChangeEnvironmentalConditions() const
 SEChangeEnvironmentalConditions& SEEnvironmentActionCollection::GetChangeEnvironmentalConditions()
 {
   if (m_ChangeEnvironmentalConditions == nullptr)
-    m_ChangeEnvironmentalConditions = new SEChangeEnvironmentalConditions();
+    m_ChangeEnvironmentalConditions = new SEChangeEnvironmentalConditions(GetLogger());
   return *m_ChangeEnvironmentalConditions;
 }
 const SEChangeEnvironmentalConditions* SEEnvironmentActionCollection::GetChangeEnvironmentalConditions() const
@@ -86,7 +85,7 @@ bool SEEnvironmentActionCollection::HasThermalApplication() const
 SEThermalApplication& SEEnvironmentActionCollection::GetThermalApplication()
 {
   if (m_ThermalApplication == nullptr)
-    m_ThermalApplication = new SEThermalApplication();
+    m_ThermalApplication = new SEThermalApplication(GetLogger());
   return *m_ThermalApplication;
 }
 const SEThermalApplication* SEEnvironmentActionCollection::GetThermalApplication() const

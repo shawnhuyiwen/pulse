@@ -16,20 +16,22 @@ public class PatientValidation extends ValidationTool
     DEFAULT_DIRECTORY = cfg.getValidationDirectory();
     DEFAULT_FILE = "PatientValidationData.xlsx";
     TABLE_TYPE = "Patient";
-    HEADER_PREPEND = "Patient";
     VALIDATION_FOLDER = "patients";
+    patientValidation = true;
   }
   public static void main(String[] args)
   {
     JNIBridge.initialize();
-    Log.info("Running with agrs : "+Arrays.toString(args));
     PatientValidation me = new PatientValidation();
     if(args.length==0)
     {
       me.loadData("TEST");
     }
     else
-    {      
+    {
+      if(args.length>=2 && args[1].equals("false"))
+        Log.output2Console = false;
+      Log.info("Running with agrs : "+Arrays.toString(args));
       me.loadData(args[0]);
     }
   }
@@ -52,6 +54,7 @@ public class PatientValidation extends ValidationTool
       writer.println("|Height                            |"+patient.getHeight());
       writer.println("|BodyDensity                       |"+patient.getBodyDensity());
       writer.println("|BodyFatFraction                   |"+patient.getBodyFatFraction());
+      writer.println("|BodyMassIndex                     |"+patient.getBodyMassIndex());
       writer.println("|LeanBodyMass                      |"+patient.getLeanBodyMass());
       writer.println("|IdealBodyWeight                   |"+patient.getIdealBodyWeight());
       writer.println("|AlveoliSurfaceArea                |"+patient.getAlveoliSurfaceArea());
@@ -62,6 +65,7 @@ public class PatientValidation extends ValidationTool
       writer.println("|DiastolicArterialPressureBaseline |"+patient.getDiastolicArterialPressureBaseline());
       writer.println("|HeartRateBaseline                 |"+patient.getHeartRateBaseline());
       writer.println("|MeanArterialPressureBaseline      |"+patient.getMeanArterialPressureBaseline());
+      writer.println("|PulsePressureBaseline             |"+patient.getPulsePressureBaseline());
       writer.println("|RespirationRateBaseline           |"+patient.getRespirationRateBaseline());
       writer.println("|SystolicArterialPressureBaseline  |"+patient.getSystolicArterialPressureBaseline());
       writer.println("|TidalVolumeBaseline               |"+patient.getTidalVolumeBaseline());
@@ -79,7 +83,8 @@ public class PatientValidation extends ValidationTool
     }
     catch(Exception ex)
     {
-      Log.error("Error writing validation table for "+sheetName,ex);
+      Log.error("Error writing validation table for "+sheetName);
+      Log.error(ex.getMessage());
       writer.close();
     }
   }

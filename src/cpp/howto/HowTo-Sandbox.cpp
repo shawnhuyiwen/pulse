@@ -18,6 +18,25 @@
 #include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/utils/FileUtils.h"
 
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/properties/SEScalar0To1.h"
+
+class ActionLogger : public LoggerForward
+{
+public:
+  void ForwardDebug(const std::string& msg) override { std::cout << "[DEBUG] " << msg << std::endl; }
+  void ForwardInfo(const std::string& msg) override
+  {
+    if (msg.find("[Action]") != std::string::npos)
+      std::cout << "[INFO] " << msg.substr(0, msg.find(",")) << "\n" << SEAction::PrettyPrint(msg);
+    else
+      std::cout << "[INFO] " << msg << std::endl;
+  }
+  void ForwardWarning(const std::string& msg) override { std::cout << "[WARN] " << msg << std::endl; }
+  void ForwardError(const std::string& msg) override { std::cout << "[ERROR] " << msg << std::endl; }
+  void ForwardFatal(const std::string& msg) override { std::cout << "[FATAL] " << msg << std::endl; }
+};
+
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// A place to do experiment with Pulse
@@ -30,11 +49,13 @@ void HowToSandbox()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Sandbox.log");
   pe->GetLogger()->Info("HowTo_Sandbox");
+  ActionLogger handler;
+  pe->GetLogger()->AddForward(&handler);
 
   // Create a specific patient near hypotention
   // This also writes out the file, and subsequent runs will load that state
   // If you want to change the initial patient state, just delete the state file
-  std::string stateFile = "./test_results/HowTo_SandboxPatient.json";
+  std::string stateFile = "./states/StandardMale@0s.json";
   if (!FileExists(stateFile))
   {
     SEPatientConfiguration pc;
@@ -65,6 +86,14 @@ void HowToSandbox()
   pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Norepinephrine", "BloodConcentration", MassPerVolumeUnit::ug_Per_L);
   pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Norepinephrine", "PlasmaConcentration", MassPerVolumeUnit::ug_Per_L);
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowTo_Sandbox.csv");
+
+  SEHemorrhage h;
+  h.SetCompartment(eHemorrhage_Compartment::LargeIntestine);
+  h.SetType(eHemorrhage_Type::External);
+  h.GetSeverity().SetValue(0.75);
+  h.GetFlowRate().SetValue(5, VolumePerTimeUnit::mL_Per_s);
+  std::cout << SEAction::PrettyPrint(h.ToJSON());
+  pe->ProcessAction(h);
 
   bool norepiActive = false;
   SESubstanceInfusion nInfuse(*pe->GetSubstanceManager().GetSubstance("Norepinephrine"));

@@ -44,7 +44,7 @@ void HowToHemorrhage()
   pe->GetLogger()->LogToConsole(true);
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.log");
   pe->GetLogger()->Info("HowTo_Hemorrhage");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.pbb"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -79,13 +79,17 @@ void HowToHemorrhage()
   // Hemorrhage Starts - instantiate a hemorrhage action and have the engine process it
   SEHemorrhage hemorrhageLeg;
   hemorrhageLeg.GetSeverity().SetValue(0.8);
-  hemorrhageLeg.SetExternal(SEHemorrhage::ExternalCompartment::RightLeg);
+  hemorrhageLeg.SetCompartment(eHemorrhage_Compartment::RightLeg);
   // Optionally, You can set the flow rate of the hemorrhage,
   // This needs to be provided the proper flow rate associated with the anatomy
   // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
   // It is intended to interact with sensors or with something continuously monitoring physiology and updating the flow
   //hemorrhageLeg.GetFlowRate().SetValue(250,VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
+
+  // You can set hemorrhages on internal organs, and also set the type for Internal or External
+  // Using Internal will pool the blood in the abdominal cavity
+  // Using External will let the blood flow out of the body
 
   // Advance some time to let the body bleed out a bit
   if(!AdvanceAndTrackTime_s(300, *pe)) // Check the return of advance time, if your hemorrhage is too extreme, the engine will enter an unsolvable/irreversable state
@@ -113,8 +117,7 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() << "Total Hemorrhaged Volume : " << pe->GetCardiovascularSystem()->GetTotalHemorrhagedVolume(VolumeUnit::mL) << "mL");
 
   // Hemorrhage is sealed
-  hemorrhageLeg.SetType(eHemorrhage_Type::External);
-  hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//location of hemorrhage
+  hemorrhageLeg.SetCompartment(eHemorrhage_Compartment::RightLeg);//location of hemorrhage
   //hemorrhageLeg.GetSeverity().SetValue(0.);// Stop the hemorrhage
   // You can switch between severity and flow if you want,
   // But you will need to invalidate the severity for the flow to be used

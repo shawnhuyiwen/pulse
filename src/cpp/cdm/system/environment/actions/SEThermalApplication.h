@@ -13,6 +13,9 @@ public:
   SEThermalApplication(Logger* logger=nullptr);
   virtual ~SEThermalApplication();
 
+  static constexpr char const* Name = "Thermal Application";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEThermalApplication& src, bool /*preserveState*/=false);
 
@@ -34,8 +37,6 @@ public:
   virtual SEAppliedTemperature& GetAppliedTemperature();
   virtual const SEAppliedTemperature* GetAppliedTemperature() const;
   virtual void RemoveAppliedTemperature();
-
-  virtual void ToString(std::ostream& str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

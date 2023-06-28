@@ -100,7 +100,7 @@ void SEElectroCardioGramWaveform::GenerateActiveCycle(const SEScalarFrequency& h
   {
     double bps = hr.GetValue(FrequencyUnit::Per_s);
     double cycleTime_s = 1 / bps;
-    size_t numCyclePoints = std::ceil(cycleTime_s / step.GetValue(TimeUnit::s))+1;
+    size_t numCyclePoints = (size_t)(std::ceil(cycleTime_s / step.GetValue(TimeUnit::s))+1);
     // Interpolate original to our desired cycle points
     GeneralMath::LinearInterpolator1(GetActiveCycle().GetData(), numCyclePoints);
     if (m_ActiveIndex >= numCyclePoints)

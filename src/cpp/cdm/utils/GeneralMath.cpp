@@ -20,7 +20,9 @@
 #include "cdm/properties/SEScalarOsmolarity.h"
 #include "cdm/properties/SEScalarOsmolality.h"
 
+PUSH_EIGEN_WARNINGS
 #include "unsupported/Eigen/Splines"
+POP_EIGEN_WARNINGS
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -238,7 +240,7 @@ double GeneralMath::PercentTolerance(double expected, double calculated, double 
     {
       if (std::abs(calculated) > epsilon)
       {
-        ///\todo reevaluate how to handle this - it potentially causes a problem during stabilization
+        //todo: reevaluate how to handle this - it potentially causes a problem during stabilization
         //throw CommonDataModelException("Percent Tolerance is NaN");
         return 100.0;
       }
@@ -258,14 +260,14 @@ double GeneralMath::PercentTolerance(double expected, double calculated, double 
   return err;
 }
 
-void GeneralMath::Combinations(std::vector<int> maxValues, std::vector<std::vector<int>>& permutations)
+void GeneralMath::Combinations(std::vector<size_t> maxValues, std::vector<std::vector<size_t>>& permutations)
 {
   int Oidx = 0;
-  int numVals = 1;
+  size_t numVals = 1;
   size_t Olength = maxValues.size();
-  std::vector<int> *current, *next;
+  std::vector<size_t> *current, *next;
 
-  for (int i = 0; i < Olength; i++)
+  for (size_t i = 0; i < Olength; i++)
     numVals *= maxValues[Oidx] + 1;
   permutations.clear();
   permutations.resize(numVals);
@@ -279,7 +281,7 @@ void GeneralMath::Combinations(std::vector<int> maxValues, std::vector<std::vect
     next = &permutations[perm++];
     Copy(*current, *next);
     current = next;
-    for (int i = 0; i <= Olength; i++)
+    for (size_t i = 0; i <= Olength; i++)
     {
       if (++(*current)[i] > maxValues[i])
       {
@@ -294,6 +296,21 @@ void GeneralMath::Combinations(std::vector<int> maxValues, std::vector<std::vect
     //  std::cout << (*current)[c] << " ";
     //std::cout << std::endl;
   }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Performs a 1D linear interpolation between two points given the percent between start/finish
+///
+/// \param  start      initial value
+/// \param  finish     target value
+/// \param  percent    percent to interpolate between initial and target
+///
+/// \return the value between initial and target at the given percent
+//--------------------------------------------------------------------------------------------------
+double GeneralMath::LinearInterpolator(double initial, double target, double percent)
+{
+  return initial + ((target - initial) * percent);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -334,6 +351,29 @@ double GeneralMath::LinearInterpolator(double x1, double x2, double y1, double y
 
   return yPrime;
 }
+
+double GeneralMath::PiecewiseLinearInterpolator(const std::vector<std::pair<double, double>>& points, double x)
+{
+  for (unsigned int i = 1; i < points.size(); ++i) 
+  {
+    if (x <= points[i].first)
+    {
+      if (i == 0)
+      {
+        return SEScalar::dNaN(); // return NaN if x is less than all x values in the points
+      }
+
+      double x1 = points.at(i - 1).first;
+      double y1 = points.at(i - 1).second;
+      double x2 = points[i].first;
+      double y2 = points[i].second;
+      return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+    }
+  }
+
+  return SEScalar::dNaN(); // return NaN if x is greater than all x values in the points
+}
+
 
 // --------------------------------------------------------------------------------------------------
 /// \brief
@@ -557,8 +597,8 @@ bool GeneralMath::LinearInterpolator(std::vector<double>& v, size_t newSize)
     return true; // Done
   if (newSize > v.size())// Expand
   {
-    size_t half = std::floor(v.size() / 2);
-    size_t quarter = std::floor(half / 2);
+    size_t half = (size_t)std::floor(v.size() / 2);
+    size_t quarter = (size_t)std::floor(half / 2);
     // Insert middle
     InsertInterpolation(v, half);
     if (newSize == v.size())
@@ -579,8 +619,8 @@ bool GeneralMath::LinearInterpolator(std::vector<double>& v, size_t newSize)
     if (newSize <= 2)
       return false;// Nothing we can do with this...
 
-    size_t half = std::floor(v.size() / 2);
-    size_t quarter = std::floor(half / 2);
+    size_t half = (size_t)std::floor(v.size() / 2);
+    size_t quarter = (size_t)std::floor(half / 2);
     // Insert middle
 
     RemoveInterpolation(v, half);
@@ -598,7 +638,7 @@ bool GeneralMath::LinearInterpolator(std::vector<double>& v, size_t newSize)
       return true; // Done
   }
   // Recurse until equal sizes
-  LinearInterpolator(v, newSize);
+  return LinearInterpolator(v, newSize);
 }
 
 void GeneralMath::SplineInterpolater(std::vector<double>& v, size_t newSize)
@@ -619,9 +659,22 @@ void GeneralMath::SplineInterpolater(std::vector<double>& v, size_t newSize)
 
   v.clear();
   v.reserve(newSize);
-  for (int i = 0; i < newSize; ++i)
+  for (size_t i = 0; i < newSize; ++i)
   {
     auto point = spline((double)i / (newSize - 1));
     v.push_back(point.coeffRef(0));
   }
+}
+
+double GeneralMath::Damper(double targetValue, double previousValue, double dampenFraction_perSec, double timeStep_s)
+{
+  double change = targetValue - previousValue;
+  change *= dampenFraction_perSec * timeStep_s;
+  return previousValue + change;
+}
+
+double GeneralMath::ParbolicInterpolator(double min, double max, double factor)
+{
+  double a = max - min;
+  return a * factor * factor + min;
 }

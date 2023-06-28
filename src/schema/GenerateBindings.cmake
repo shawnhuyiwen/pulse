@@ -1,5 +1,24 @@
 
 set(SCHEMA_SRC ${SRC_ROOT}/schema)
+set(CDM_DIR "pulse/cdm/bind")
+set(ENGINE_DIR "pulse/engine/bind")
+set(STUDY_DIR "pulse/study/bind")
+# Let the build also know package locations
+get_directory_property(hasParent PARENT_DIRECTORY)
+if(hasParent)
+  set(CDM_PACKAGE ${CDM_DIR} PARENT_SCOPE)
+  set(ENGINE_PACKAGE ${ENGINE_DIR} PARENT_SCOPE)
+  set(STUDY_PACKAGE ${STUDY_DIR} PARENT_SCOPE)
+endif()
+
+if(EXISTS ${NATIVE_BIND_DIR})
+  # Let's copy this directory to our build
+  message(STATUS "!! NOT generating bindings !!!")
+  message(STATUS "Copying binding directory from " ${NATIVE_BIND_DIR})
+  message(STATUS " to " ${CMAKE_BINARY_DIR}/src/cpp)
+  file(COPY ${NATIVE_BIND_DIR} DESTINATION ${CMAKE_BINARY_DIR}/src/cpp)
+  return()
+endif()
 
 if( Protobuf_PROTOC_EXECUTABLE )
   set(BINDER ${Protobuf_PROTOC_EXECUTABLE})
@@ -10,20 +29,8 @@ endif()
 if( NOT protobuf_SRC )
   set(protobuf_SRC CACHE PATH "Location of protobuf source code")
   message(FATAL_ERROR "Please specify protobuf_SRC")
-  
 else()
   message(STATUS "protobuf_SRC is located at ${protobuf_SRC}")
-endif()
-
-set(CDM_DIR "pulse/cdm/bind")
-set(ENGINE_DIR "pulse/engine/bind")
-set(STUDY_DIR "pulse/study/bind")
-# Let the build also know package locations
-get_directory_property(hasParent PARENT_DIRECTORY)
-if(hasParent)
-  set(CDM_PACKAGE ${CDM_DIR} PARENT_SCOPE)
-  set(ENGINE_PACKAGE ${ENGINE_DIR} PARENT_SCOPE)
-  set(STUDY_PACKAGE ${STUDY_DIR} PARENT_SCOPE)
 endif()
 
 macro(delete_bindings _root)

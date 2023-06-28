@@ -12,6 +12,7 @@ import com.kitware.pulse.cdm.actions.SEAction;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData;
+import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData.eCompartment;
 import com.kitware.pulse.cdm.conditions.SECondition;
 import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEActiveEvent;
@@ -76,15 +77,10 @@ public class HowTo_EngineUse
     private static final Logger LOG = LoggerFactory.getLogger("CppPulseEngine"); // select a name that makes it clear where these logs are coming from
 
     @Override public void handleDebug(String msg) { LOG.debug(msg); }
-    @Override public void handleDebug(String msg, Throwable t) { LOG.debug(msg, t); }
     @Override public void handleInfo(String msg)  { LOG.info(msg); }
-    @Override public void handleInfo(String msg, Throwable t)  { LOG.info(msg, t); }
     @Override public void handleWarn(String msg)  { LOG.warn(msg); }
-    @Override public void handleWarn(String msg, Throwable t)  { LOG.warn(msg, t); }
     @Override public void handleError(String msg) { LOG.error(msg); }
-    @Override public void handleError(String msg, Throwable t) { LOG.error(msg, t); }
     @Override public void handleFatal(String msg) { LOG.error("FATAL: {}", msg); }
-    @Override public void handleFatal(String msg, Throwable t) { LOG.error("FATAL: {}", msg, t); }
   }
 
   protected static class MyEventHandler implements SEEventHandler
@@ -266,8 +262,7 @@ public class HowTo_EngineUse
 
     // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
     SEHemorrhage h = new SEHemorrhage();
-    h.setType(HemorrhageData.eType.External);
-    h.setCompartment("RightLegVasculature");
+    h.setCompartment(eCompartment.RightLeg);
     h.getSeverity().setValue(0.8);
     // Optionally, You can set the flow rate of the hemorrhage,
     // This needs to be provided the proper flow rate associated with the anatomy
@@ -361,6 +356,11 @@ public class HowTo_EngineUse
       Log.error("Failed to get patient assessment");
     Log.info("Red Blood Count "+cbc.getRedBloodCellCount());
     Log.info("White Blood Count "+cbc.getWhiteBloodCellCount());
+    
+    // Release any files
+    // We can keep using this engine if we want
+    // We just need to reinitialize it
+    pe.clear();
 
     // Be nice to your memory and deallocate the native memory associated with this engine if you are done with it
     pe.cleanUp();

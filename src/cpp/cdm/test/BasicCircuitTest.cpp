@@ -4568,6 +4568,213 @@ void CommonDataModelTest::BasicCircuitTest(const std::string& outputDirectory)
   trk1.WriteTrackToFile(sOutputFile.c_str());
 }
 
+void CommonDataModelTest::MultiphysicsElectricalCircuitTest(const std::string& outputDirectory)
+{
+  m_Logger = new Logger(outputDirectory + "/MultiphysicsCircuit.log");
+  double timeStep_s = 1.0 / 50.0;
+  DataTrack dataTrack;
+  SEElectricalCircuitCalculator electricalCalculator(m_Logger);
+
+  //Create circuit
+  SEElectricalCircuit* electricalCircuit = &m_Circuits->CreateElectricalCircuit("Electrical");
+
+  //Create nodes
+  SEElectricalCircuitNode& Ground = electricalCircuit->CreateNode("Ground");
+  SEElectricalCircuitNode& Node1 = electricalCircuit->CreateNode("Node1");
+  SEElectricalCircuitNode& Node2 = electricalCircuit->CreateNode("Node2");
+  SEElectricalCircuitNode& Node3 = electricalCircuit->CreateNode("Node3");
+  SEElectricalCircuitNode& Node4 = electricalCircuit->CreateNode("Node4");
+  Ground.SetAsReferenceNode();
+  Ground.GetNextVoltage().SetValue(0, ElectricPotentialUnit::V);
+  Node3.GetNextCharge().SetValue(1, ElectricChargeUnit::C);
+
+  //Create paths with components
+  SEElectricalCircuitPath& Path1 = electricalCircuit->CreatePath(Ground, Node1, "Path1");
+  Path1.GetVoltageSourceBaseline().SetValue(0, ElectricPotentialUnit::V);
+  SEElectricalCircuitPath& Path2 = electricalCircuit->CreatePath(Node1, Node2, "Path2");
+  Path2.GetResistanceBaseline().SetValue(0.5, ElectricResistanceUnit::Ohm);
+  SEElectricalCircuitPath& Path3 = electricalCircuit->CreatePath(Node2, Node3, "Path3");
+  Path3.GetInductanceBaseline().SetValue(0.3, ElectricInductanceUnit::H);
+  SEElectricalCircuitPath& Path4 = electricalCircuit->CreatePath(Node3, Ground, "Path4");
+  Path4.GetCapacitanceBaseline().SetValue(5, ElectricCapacitanceUnit::F);
+  SEElectricalCircuitPath& Path5 = electricalCircuit->CreatePath(Node2, Node4, "Path5");
+  Path5.SetNextDiode(eGate::Closed);
+  SEElectricalCircuitPath& Path6 = electricalCircuit->CreatePath(Ground, Node4, "Path6");
+  Path6.SetNextValve(eGate::Open);
+
+  electricalCircuit->SetNextAndCurrentFromBaselines();
+  electricalCircuit->StateChange();
+
+  double currentTime_s = 0.0;
+  double endTime_s = 20;
+  while (currentTime_s < endTime_s)
+  {
+    //PreProcess - Update the circuit
+    //Update the potential source sinusoid
+    double potential = 25 * sin(currentTime_s);
+    Path1.GetNextVoltageSource().SetValue(potential, ElectricPotentialUnit::V);
+
+    //Flip the diode at the right time
+    if (currentTime_s > 15)
+    {
+      Path5.SetNextDiode(eGate::Open);
+    }
+
+    //Process - Solve the circuit
+    electricalCalculator.Process(*electricalCircuit, timeStep_s);
+
+    //PostProcess - Advance time
+    electricalCalculator.PostProcess(*electricalCircuit);
+
+    //Track state of circuit
+    dataTrack.Track(currentTime_s, *electricalCircuit);
+
+    currentTime_s += timeStep_s;
+  }
+
+  m_Circuits->Clear();
+  std::string sOutputFile = outputDirectory + "/MultiphysicsCircuitElectrical.csv";
+  dataTrack.WriteTrackToFile(sOutputFile.c_str());
+}
+
+void CommonDataModelTest::MultiphysicsFluidCircuitTest(const std::string& outputDirectory)
+{
+  m_Logger = new Logger(outputDirectory + "/MultiphysicsCircuit.log");
+  double timeStep_s = 1.0 / 50.0;
+  DataTrack dataTrack;
+  SEFluidCircuitCalculator fluidCalculator(m_Logger);
+
+  //Create circuit
+  SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
+
+  //Create nodes
+  SEFluidCircuitNode& Ground = fluidCircuit->CreateNode("Ground");
+  SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
+  SEFluidCircuitNode& Node2 = fluidCircuit->CreateNode("Node2");
+  SEFluidCircuitNode& Node3 = fluidCircuit->CreateNode("Node3");
+  SEFluidCircuitNode& Node4 = fluidCircuit->CreateNode("Node4");
+  Ground.SetAsReferenceNode();
+  Ground.GetNextPressure().SetValue(0, PressureUnit::Pa);
+  Node3.GetNextVolume().SetValue(1, VolumeUnit::m3);
+
+  //Create paths with components
+  SEFluidCircuitPath& Path1 = fluidCircuit->CreatePath(Ground, Node1, "Path1");
+  Path1.GetPressureSourceBaseline().SetValue(0, PressureUnit::Pa);
+  SEFluidCircuitPath& Path2 = fluidCircuit->CreatePath(Node1, Node2, "Path2");
+  Path2.GetResistanceBaseline().SetValue(0.5, PressureTimePerVolumeUnit::Pa_s_Per_m3);
+  SEFluidCircuitPath& Path3 = fluidCircuit->CreatePath(Node2, Node3, "Path3");
+  Path3.GetInductanceBaseline().SetValue(0.3, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3);
+  SEFluidCircuitPath& Path4 = fluidCircuit->CreatePath(Node3, Ground, "Path4");
+  Path4.GetComplianceBaseline().SetValue(5, VolumePerPressureUnit::m3_Per_Pa);
+  SEFluidCircuitPath& Path5 = fluidCircuit->CreatePath(Node2, Node4, "Path5");
+  Path5.SetNextSwitch(eGate::Closed);
+  SEFluidCircuitPath& Path6 = fluidCircuit->CreatePath(Ground, Node4, "Path6");
+  Path6.SetNextValve(eGate::Open);
+
+  fluidCircuit->SetNextAndCurrentFromBaselines();
+  fluidCircuit->StateChange();
+
+  double currentTime_s = 0.0;
+  double endTime_s = 20;
+  while (currentTime_s < endTime_s)
+  {
+    //PreProcess - Update the circuit
+    //Update the potential source sinusoid
+    double potential = 25 * sin(currentTime_s);
+    Path1.GetNextPressureSource().SetValue(potential, PressureUnit::Pa);
+
+    //Flip the switch at the right time
+    if (currentTime_s > 15)
+    {
+      Path5.SetNextSwitch(eGate::Open);
+    }
+
+    //Process - Solve the circuit
+    fluidCalculator.Process(*fluidCircuit, timeStep_s);
+
+    //PostProcess - Advance time
+    fluidCalculator.PostProcess(*fluidCircuit);
+
+    //Track state of circuit
+    dataTrack.Track(currentTime_s, *fluidCircuit);
+
+    currentTime_s += timeStep_s;
+  }
+
+  m_Circuits->Clear();
+  std::string sOutputFile = outputDirectory + "/MultiphysicsCircuitFluid.csv";
+  dataTrack.WriteTrackToFile(sOutputFile.c_str());
+}
+
+void CommonDataModelTest::MultiphysicsThermalCircuitTest(const std::string& outputDirectory)
+{
+  m_Logger = new Logger(outputDirectory + "/MultiphysicsCircuit.log");
+  double timeStep_s = 1.0 / 50.0;
+  DataTrack dataTrack;
+  SEThermalCircuitCalculator thermalCalculator(m_Logger);
+
+  //Create circuit
+  SEThermalCircuit* thermalCircuit = &m_Circuits->CreateThermalCircuit("Thermal");
+
+  //Create nodes
+  SEThermalCircuitNode& Ground = thermalCircuit->CreateNode("Ground");
+  SEThermalCircuitNode& Node1 = thermalCircuit->CreateNode("Node1");
+  SEThermalCircuitNode& Node2 = thermalCircuit->CreateNode("Node2");
+  SEThermalCircuitNode& Node3 = thermalCircuit->CreateNode("Node3");
+  SEThermalCircuitNode& Node4 = thermalCircuit->CreateNode("Node4");
+  Ground.SetAsReferenceNode();
+  Ground.GetNextTemperature().SetValue(0, TemperatureUnit::K);
+  Node3.GetNextHeat().SetValue(1, EnergyUnit::J);
+
+  //Create paths with components
+  SEThermalCircuitPath& Path1 = thermalCircuit->CreatePath(Ground, Node1, "Path1");
+  Path1.GetTemperatureSourceBaseline().SetValue(0, TemperatureUnit::K);
+  SEThermalCircuitPath& Path2 = thermalCircuit->CreatePath(Node1, Node2, "Path2");
+  Path2.GetResistanceBaseline().SetValue(0.5, HeatResistanceUnit::K_Per_W);
+  SEThermalCircuitPath& Path3 = thermalCircuit->CreatePath(Node2, Node3, "Path3");
+  Path3.GetInductanceBaseline().SetValue(0.3, HeatInductanceUnit::K_s_Per_W);
+  SEThermalCircuitPath& Path4 = thermalCircuit->CreatePath(Node3, Ground, "Path4");
+  Path4.GetCapacitanceBaseline().SetValue(5, HeatCapacitanceUnit::J_Per_K);
+  SEThermalCircuitPath& Path5 = thermalCircuit->CreatePath(Node2, Node4, "Path5");
+  Path5.SetNextSwitch(eGate::Closed);
+  SEThermalCircuitPath& Path6 = thermalCircuit->CreatePath(Ground, Node4, "Path6");
+  Path6.SetNextValve(eGate::Open);
+
+  thermalCircuit->SetNextAndCurrentFromBaselines();
+  thermalCircuit->StateChange();
+
+  double currentTime_s = 0.0;
+  double endTime_s = 20;
+  while (currentTime_s < endTime_s)
+  {
+    //PreProcess - Update the circuit
+    //Update the potential source sinusoid
+    double potential = 25 * sin(currentTime_s);
+    Path1.GetNextTemperatureSource().SetValue(potential, TemperatureUnit::K);
+
+    //Flip the switch at the right time
+    if (currentTime_s > 15)
+    {
+      Path5.SetNextSwitch(eGate::Open);
+    }
+
+    //Process - Solve the circuit
+    thermalCalculator.Process(*thermalCircuit, timeStep_s);
+
+    //PostProcess - Advance time
+    thermalCalculator.PostProcess(*thermalCircuit);
+
+    //Track state of circuit
+    dataTrack.Track(currentTime_s, *thermalCircuit);
+
+    currentTime_s += timeStep_s;
+  }
+
+  m_Circuits->Clear();
+  std::string sOutputFile = outputDirectory + "/MultiphysicsCircuitThermal.csv";
+  dataTrack.WriteTrackToFile(sOutputFile.c_str());
+}
+
 void CommonDataModelTest::SeriesRCDCTest(const std::string& outputDirectory)
 {
   TestSetup7SeriesRCDC();
@@ -5309,6 +5516,6 @@ void CommonDataModelTest::TestCircuitSerialization(const std::string& fileName)
   if (!PBCircuit::LoadCircuitManagerFile(*m_Circuits,fileName))
   {
     m_Circuits->Clear();
-    m_Circuits->Error("Unable to load file " + fileName,"TestCircuitSerialization");
+    m_Circuits->Error("Unable to load file " + fileName);
   }
 }

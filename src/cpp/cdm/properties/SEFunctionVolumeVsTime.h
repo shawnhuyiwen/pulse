@@ -12,7 +12,7 @@ public:
   SEFunctionVolumeVsTime();
   virtual ~SEFunctionVolumeVsTime();
 
-  virtual void Clear();
+  void Clear() override;
   void Copy(const SEFunction& src) = delete;
   void Copy(const SEFunctionVolumeVsTime& src);
 

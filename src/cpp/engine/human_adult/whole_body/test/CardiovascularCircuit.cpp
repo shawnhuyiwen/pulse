@@ -155,9 +155,9 @@ namespace pulse { namespace human_adult_whole_body
       //cv.m_TuningFile = sTestDirectory + "/Tune" + sTestName + "CircuitOutput.csv";//For Debugging
       cv.Initialize();
     }
-    catch (PhysiologyEngineException ex)
+    catch (PhysiologyEngineException& ex)
     {
-      testCase.AddFailure("Failed test case " + sTestName);
+      testCase.AddFailure("Failed test case " + sTestName + " : " + ex.what());
     }
     testCase.GetDuration().SetValue(timer.GetElapsedTime_s("TestCase"), TimeUnit::s);
   }
@@ -322,8 +322,6 @@ namespace pulse { namespace human_adult_whole_body
     //double testTime_s = 1200;
     double timeStep_s = 1.0 / 90;
     double heartFreq_Per_s = heartRate_bpm / 60.0; // 72 beats per min * 1 min per 60 s = beats per s
-    double aortaPressure;
-    double venousPressure;
 
     SELiquidCompartmentGraph& cvGraph = pc.GetCompartments().GetActiveCardiovascularGraph();
 
@@ -364,8 +362,6 @@ namespace pulse { namespace human_adult_whole_body
       cv.TunePaths(systemicResistanceScale, systemicComplianceScale, aortaResistanceScale, aortaComplianceScale, rightHeartResistanceScale, venaCavaComplianceScale);
     }
 
-    SEFluidCircuitNode* Aorta = cvCircuit.GetNode("Aorta1");
-    SEFluidCircuitNode* VenaCava = cvCircuit.GetNode("VenaCava");
     SEFluidCircuitPath* RightCompliance = cvCircuit.GetPath(pulse::CardiovascularPath::RightHeart1ToRightHeart3);
     SEFluidCircuitPath* LeftCompliance = cvCircuit.GetPath(pulse::CardiovascularPath::LeftHeart1ToLeftHeart3);
 
@@ -374,8 +370,6 @@ namespace pulse { namespace human_adult_whole_body
 
     for (unsigned int i = 0; i < (testTime_s / timeStep_s); i++)
     {
-      aortaPressure = Aorta->GetPressure(PressureUnit::mmHg);
-      venousPressure = VenaCava->GetPressure(PressureUnit::mmHg);
       switch (driverType)
       {
       case Sinusoid:
@@ -636,8 +630,8 @@ namespace pulse { namespace human_adult_whole_body
     circuitFile.close();
     cvGraphFile.close();
 
-    ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
-    pc.GetLogger()->Info(ss, "CardiovascularCircuitAndTransportTest");
+    ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run CardiovascularCircuitAndTransportTest";
+    pc.GetLogger()->Info(ss);
   }
 
   void EngineTest::SinusoidHeartDriver(double time_s, double heartFreq_Per_s, double& lHeartElastance, double& rHeartElastance)
@@ -690,7 +684,7 @@ namespace pulse { namespace human_adult_whole_body
     // Note: You could scale the amplitude/elastance of the driver if want (We didn't at the time I wrote it, but its possible!)
     double heartRate_bpm = 72;// Note, you should always pass in a bpm other than <=0 for a well named file
     ss << heartRate_bpm;
-    const double comp = 1.0, res = 1.0, vol = 1, sysRes = 1, sysComp = 1, aortaRes = 0.7, aortaComp = 0.7, venaRes = 1, venaComp = 1;
+    const double comp = 1.0, res = 1.0, vol = 1;
 
     //for (double rFactor = 0.3; rFactor <= 1.7; rFactor += 0.1)
     //{

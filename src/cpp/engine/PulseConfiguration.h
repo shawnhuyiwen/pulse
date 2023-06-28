@@ -59,6 +59,9 @@ public:
   virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == eSwitch::On; }
   virtual void EnableWritePatientBaselineFile(eSwitch s) { m_WritePatientBaselineFile = (s == eSwitch::NullSwitch) ? eSwitch::Off : s; }
 
+  virtual void SetInitialPatientBaselineFilepath(const std::string& filepath) { m_InitialPatientBaselineFilepath = filepath; }
+  virtual std::string GetInitialPatientBaselineFilepath() { return m_InitialPatientBaselineFilepath; }
+
   virtual bool HasOverrides() const;
   virtual SEScalarProperties& GetOverrides();
   virtual const SEScalarProperties& GetOverrides() const;
@@ -73,6 +76,7 @@ protected:
   SETimedStabilization*         m_TimedStabilization;
   SEDynamicStabilization*       m_DynamicStabilization;
   eSwitch                       m_WritePatientBaselineFile;
+  std::string                   m_InitialPatientBaselineFilepath;
 
   SEScalarProperties            m_Overrides;
   SEScalarProperties            m_Modifiers;
@@ -130,6 +134,9 @@ public:
   virtual SEScalar& GetStandardPulmonaryCapillaryCoverage();
   virtual double GetStandardPulmonaryCapillaryCoverage() const;
 
+  virtual eSwitch UseExpandedVasculature() const { return m_UseExpandedVasculature; }
+  virtual void UseExpandedVasculature(eSwitch s);
+  
   virtual eSwitch TuneCardiovascularCircuit() const { return m_TuneCardiovascularCircuit; }
   virtual void TuneCardiovascularCircuit(eSwitch s) { m_TuneCardiovascularCircuit = s; }
 
@@ -143,6 +150,7 @@ protected:
   SEScalarPressurePerVolume* m_RightHeartElastanceMaximum;
   SEScalarPressurePerVolume* m_RightHeartElastanceMinimum;
   SEScalar*                  m_StandardPulmonaryCapillaryCoverage;
+  eSwitch                    m_UseExpandedVasculature;
   eSwitch                    m_TuneCardiovascularCircuit;
   std::string                m_CardiovascularTuningFile;
 
@@ -603,17 +611,20 @@ public:
   virtual SEScalarPressure& GetVentilatoryOcclusionPressure();
   virtual double GetVentilatoryOcclusionPressure(const PressureUnit& unit) const;
 
+  virtual eSwitch UseExpandedRespiratory() const { return m_UseExpandedRespiratory; }
+  virtual void UseExpandedRespiratory(eSwitch s);
 
 protected:
-  SEScalarPressure* m_CentralControllerCO2PressureSetPoint;
-  SEScalar* m_CentralVentilatoryControllerGain;
-  SEScalarTime* m_MinimumAllowableInpiratoryAndExpiratoryPeriod;
-  SEScalarVolume* m_MinimumAllowableTidalVolume;
-  SEScalarPressure* m_PeripheralControllerCO2PressureSetPoint;
-  SEScalar* m_PeripheralVentilatoryControllerGain;
-  SEScalarVolumePerTime* m_PulmonaryVentilationRateMaximum;
-  SEScalarVolume* m_VentilationTidalVolumeIntercept;
-  SEScalarPressure* m_VentilatoryOcclusionPressure;;
+  SEScalarPressure*       m_CentralControllerCO2PressureSetPoint;
+  SEScalar*               m_CentralVentilatoryControllerGain;
+  SEScalarTime*           m_MinimumAllowableInpiratoryAndExpiratoryPeriod;
+  SEScalarVolume*         m_MinimumAllowableTidalVolume;
+  SEScalarPressure*       m_PeripheralControllerCO2PressureSetPoint;
+  SEScalar*               m_PeripheralVentilatoryControllerGain;
+  SEScalarVolumePerTime*  m_PulmonaryVentilationRateMaximum;
+  SEScalarVolume*         m_VentilationTidalVolumeIntercept;
+  SEScalarPressure*       m_VentilatoryOcclusionPressure;
+  eSwitch                 m_UseExpandedRespiratory;
 
   /////////////
   /** Tissue */

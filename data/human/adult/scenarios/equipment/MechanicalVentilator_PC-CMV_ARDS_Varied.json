@@ -10,101 +10,31 @@
               "RightLungAffected": { "Scalar0To1": { "Value": 1.0 } } } } }
       ] }
   },
+  "DataRequestFile": [
+    "StandardDataRequests.json",
+    "RespiratoryDataRequests.json",
+    "EquipmentDataRequests.json",
+    "MechanicalVentilatorDataRequests.json"
+  ],
   "DataRequestManager":
   {
     "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 1 }, "PropertyName": "Weight", "Unit": "kg" },
-      
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "HeartRate", "Unit": "1/min" },
-      
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "HeartStrokeVolume",                 "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BloodVolume",                       "Unit": "L" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "ExtravascularFluidVolume",          "Unit": "L" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "ArterialPressure",                  "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "MeanArterialPressure",              "Unit": "mmHg" },
-      { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "SystolicArterialPressure",          "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "DiastolicArterialPressure",         "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "CardiacOutput",                     "Unit": "L/min" },
-      { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "HemoglobinContent",                 "Unit": "g" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "CentralVenousPressure",             "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "PulmonaryCapillariesWedgePressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TidalVolume",                       "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TotalLungVolume",                   "Unit": "L" },      
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "CarbonDioxideSaturation",           "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TotalAlveolarVentilation",          "Unit": "L/min" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TranspulmonaryPressure",            "Unit": "cmH2O" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "CoreTemperature",                   "Unit": "degC" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "SkinTemperature",                   "Unit": "degC" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "RespiratoryExchangeRatio",          "Unit": "unitless" },
-      { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "OxygenConsumptionRate",             "Unit": "mL/min" },
-      { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "CarbonDioxideProductionRate",       "Unit": "mL/min" },
-      { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "GlomerularFiltrationRate",          "Unit": "mL/min" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "RenalBloodFlow",                    "Unit": "L/min" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "UrineProductionRate",               "Unit": "mL/min" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "LeftAfferentArterioleResistance",   "Unit": "mmHg min/mL" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RightAfferentArterioleResistance",  "Unit": "mmHg min/mL" },
-      
-      { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli", "PropertyName": "Pressure", "Unit": "cmH2O" },
-      { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "PropertyName": "Pressure", "Unit": "cmH2O" },
-      
-      { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg"},
-      { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "Carina",       "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment", "CompartmentName": "Carina",       "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },      
-      
-      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",     "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",     "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "RightTubules", "SubstanceName": "Sodium",        "PropertyName": "Concentration",   "Unit": "g/L" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftTubules",  "SubstanceName": "Sodium",        "PropertyName": "Concentration",   "Unit": "g/L" },
-      
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Oxygen",        "PropertyName": "AlveolarTransfer",    "Unit": "mL/s" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "CarbonDioxide", "PropertyName": "AlveolarTransfer",    "Unit": "mL/s" },
-      { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "BloodConcentration",  "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },    
-      
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                             "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryFlow",                            "Unit": "L/s" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",                      "Unit": "cmH2O" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction",                              "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarArterialGradient",                   "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",                      "Unit": "cmH2O" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalPulmonaryVentilation",                  "Unit": "L/min" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "FractionOfInsipredOxygen",                   "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "SaturationAndFractionOfInspiredOxygenRatio", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "OxygenationIndex",                           "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "OxygenSaturationIndex",                      "Unit": "cmH2O" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "MeanAirwayPressure",                         "Unit": "cmH2O" },      
-    
-      { "DecimalFormat": { "Precision": 2 }, "Category": "GasCompartment", "CompartmentName": "Carina", "PropertyName": "OutFlow", "Unit": "L/s" },
-    
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" },
-      
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "RespirationRate",                   "Unit": "1/min" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",        "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance",    "Unit": "cmH2O s/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",     "Unit": "cmH2O s/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",               "Unit": "L/cmH2O" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BloodPH"                            },      
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HorowitzIndex",                     "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "OxygenSaturation",                  "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalCarbonDioxidePressure",     "Unit": "mmHg" }
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "OxygenSaturationIndex",                      "Unit": "cmH2O" }
     ]
   },
   "AnyAction":
   [
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
-  
+
   { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
-  
+
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
-  
+
   { "PatientAction": { "Dyspnea": { "Severity": { "Scalar0To1": { "Value": 1.0 } } } } },
-  
+
   {
     "EquipmentAction": {
       "MechanicalVentilatorConfiguration": {
@@ -125,18 +55,18 @@
         }
       }
     }
-  },  
+  },
 
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
-  
-  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
+
+  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
       {
         "Severity": { "Scalar0To1": { "Value": 0.6 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
         "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
       }}
     },
-  
+
   {
     "EquipmentAction": {
       "MechanicalVentilatorConfiguration": {
@@ -157,18 +87,18 @@
         }
       }
     }
-  },  
+  },
 
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
-  
-  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
+
+  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
       {
         "Severity": { "Scalar0To1": { "Value": 0.9 }},
         "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
         "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
       }}
     },
-  
+
   {
       "EquipmentAction": {
         "MechanicalVentilatorConfiguration": {
@@ -189,8 +119,8 @@
           }
         }
       }
-    },  
-  
+    },
+
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "min" } } } }
   ]
 }

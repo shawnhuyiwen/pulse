@@ -89,7 +89,7 @@ void SEBagValveMask::ProcessConfiguration(SEBagValveMaskConfiguration& config, S
     // Update the action with the file contents
     std::string cfg_file = config.GetConfigurationFile();
     if (!config.GetConfiguration().SerializeFromFile(cfg_file, subMgr))
-      Error("Unable to load configuration file", "SEBagValveMask::ProcessConfiguration");
+      Error("Unable to load configuration file");
     Merge(config.GetConfiguration(), subMgr);
   }
 }

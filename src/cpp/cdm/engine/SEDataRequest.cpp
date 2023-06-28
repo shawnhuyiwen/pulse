@@ -6,6 +6,15 @@
 #include "cdm/utils/unitconversion/UCCommon.h"
 #include "cdm/io/protobuf/PBEngine.h"
 
+std::string Space2Underscore(const std::string& str)
+{
+  std::string s = str; 
+  std::transform(s.begin(), s.end(), s.begin(), [](char ch) {
+    return ch == ' ' ? '_' : ch;
+  });
+  return s;
+}
+
 SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 {
   Set(dr);
@@ -186,7 +195,7 @@ void SEDataRequest::SetRequestedUnit(const std::string& unit)
 }
 bool SEDataRequest::HasRequestedUnit() const
 {
-  return m_RequestedUnit.empty()?false:true;
+  return m_RequestedUnit.empty()||m_RequestedUnit=="unitless" ? false : true;
 }
 void SEDataRequest::InvalidateRequestedUnit()
 {
@@ -211,4 +220,186 @@ void SEDataRequest::InvalidateUnit()
   m_Unit = nullptr;
 }
 
+std::string SEDataRequest::ToString() const
+{
+  std::string str;
+  switch (m_Category)
+  {
+  case eDataRequest_Category::Action:
+    str = GetActionName() + "-";
+    break;
+  case eDataRequest_Category::Patient:
+    str = "Patient-";
+    break;
+  case eDataRequest_Category::AnesthesiaMachine:
+    str = "AnesthesiaMachine-";
+    break;
+  case eDataRequest_Category::BagValveMask:
+    str = "BagValveMask-";
+    break;
+  case eDataRequest_Category::ECG:
+    str = "ECG-";
+    break;
+  case eDataRequest_Category::ECMO:
+    str = "ECMO-";
+    break;
+  case eDataRequest_Category::Inhaler:
+    str = "Inhaler-";
+    break;
+  case eDataRequest_Category::MechanicalVentilator:
+    str = "MechanicalVentilator-";
+    break;
+  case eDataRequest_Category::GasCompartment:
+  case eDataRequest_Category::LiquidCompartment:
+  case eDataRequest_Category::ThermalCompartment:
+  case eDataRequest_Category::TissueCompartment:
+    str += GetCompartmentName() + "-";
+    if (HasSubstanceName())
+      str += " - " + GetSubstanceName();
+    break;
+  case eDataRequest_Category::Substance:
+    str += GetSubstanceName() + "-";
+    break;
+  }
+  str += m_PropertyName;
+  if (HasRequestedUnit())
+    str += " ("+m_RequestedUnit+")";
+  return str;
+}
 
+std::string SEDataRequest::GetHeaderName() const
+{
+  std::stringstream ss;
+  // These categories can have properties named the same as a Physiology property
+  // So we prefix these with their category, as physiology is assumed
+  if(GetCategory() == eDataRequest_Category::Patient)
+    ss << "Patient-";
+  else if(GetCategory() == eDataRequest_Category::AnesthesiaMachine)
+    ss << "AnesthesiaMachine-";
+  else if (GetCategory() == eDataRequest_Category::BagValveMask)
+    ss << "BagValveMask-";
+  else if (GetCategory() == eDataRequest_Category::ECG)
+    ss << "ECG-";
+  else if (GetCategory() == eDataRequest_Category::ECMO)
+    ss << "ECMO-";
+  else if (GetCategory() == eDataRequest_Category::Inhaler)
+    ss << "Inhaler-";
+  else if (GetCategory() == eDataRequest_Category::MechanicalVentilator)
+    ss << "MechanicalVentilator-";
+
+  switch (GetCategory())
+  {
+    case eDataRequest_Category::Patient:
+    case eDataRequest_Category::Physiology:
+    case eDataRequest_Category::Environment:
+    case eDataRequest_Category::AnesthesiaMachine:
+    case eDataRequest_Category::ECG:
+    case eDataRequest_Category::Inhaler:
+    case eDataRequest_Category::MechanicalVentilator:
+    {
+      if (!HasUnit() && !HasRequestedUnit())
+        ss << GetPropertyName();
+      else if(HasUnit())
+        ss << GetPropertyName() << "(" << *GetUnit() << ")";
+      else // Requested Unit
+        ss << GetPropertyName() << "(" << GetRequestedUnit() << ")";
+
+      return Space2Underscore(ss.str());
+    }
+    case eDataRequest_Category::Action:
+    {
+      if (HasCompartmentName() && HasSubstanceName())
+      {
+        if (!HasUnit() && !HasRequestedUnit())
+          ss << GetActionName() << "-" << GetCompartmentName() << "-" << GetSubstanceName() << "-" << GetPropertyName();
+        else if(HasUnit())
+           ss << GetActionName() << "-" << GetCompartmentName() << "-" << GetSubstanceName() << "-" << GetPropertyName() << "(" << *GetUnit() << ")";
+        else //Requested unit
+          ss << GetActionName() << "-" << GetCompartmentName() << "-" << GetSubstanceName() << "-" << GetPropertyName() << "(" << GetRequestedUnit() << ")";
+      }
+      else if (HasCompartmentName())
+      {
+        if (!HasUnit() && !HasRequestedUnit())
+          ss << GetActionName() << "-" << GetCompartmentName() << "-" << GetPropertyName();
+        else if(HasUnit())
+          ss << GetActionName() << "-" << GetCompartmentName() << "-" << GetPropertyName() << "(" << *GetUnit() << ")";
+        else //Requested unit
+          ss << GetActionName() << "-" << GetCompartmentName() << "-" << GetPropertyName() << "(" << GetRequestedUnit() << ")";
+      }
+      else if (HasSubstanceName())
+      {
+        if (!HasUnit() && !HasRequestedUnit())
+          ss << GetActionName() << "-" << GetSubstanceName() << "-" << GetPropertyName();
+        else if(HasUnit())
+          ss << GetActionName() << "-" << GetSubstanceName() << "-" << GetPropertyName() << "(" << *GetUnit() << ")";
+        else //Requested unit
+          ss << GetActionName() << "-" << GetSubstanceName() << "-" << GetPropertyName() << "(" << GetRequestedUnit() << ")";
+      }
+      else
+      {
+        if (!HasUnit() && !HasRequestedUnit())
+          ss << GetActionName() << "-" << GetPropertyName();
+        else if(HasUnit())
+          ss << GetActionName() << "-" << GetPropertyName() << "(" << *GetUnit() << ")";
+        else //Requested unit
+          ss << GetActionName() << "-" << GetPropertyName() << "(" << GetRequestedUnit() << ")";
+      }
+
+      return Space2Underscore(ss.str());
+    }
+    case eDataRequest_Category::GasCompartment:
+    case eDataRequest_Category::LiquidCompartment:
+    case eDataRequest_Category::ThermalCompartment:
+    case eDataRequest_Category::TissueCompartment:
+    {
+      if (HasSubstanceName())
+      {
+        if (!HasUnit() && !HasRequestedUnit())
+          ss << GetCompartmentName() << "-" << GetSubstanceName() << "-" << GetPropertyName();
+        else if(HasUnit())
+          ss << GetCompartmentName() << "-" << GetSubstanceName() << "-" << GetPropertyName() << "(" << *GetUnit() << ")";
+        else //Requested unit
+          ss << GetCompartmentName() << "-" << GetSubstanceName() << "-" << GetPropertyName() << "(" << GetRequestedUnit() << ")";
+      }
+      else
+      {
+        if (!HasUnit() && !HasRequestedUnit())
+          ss << GetCompartmentName() << "-" << GetPropertyName();
+        else if(HasUnit())
+          ss << GetCompartmentName() << "-" << GetPropertyName() << "(" << *GetUnit() << ")";
+        else //Requested unit
+          ss << GetCompartmentName() << "-" << GetPropertyName() << "(" << GetRequestedUnit() << ")";
+      }
+
+      return Space2Underscore(ss.str());
+    }
+    case eDataRequest_Category::Substance:
+    {
+      if (HasCompartmentName())
+      {
+        if (!HasUnit() && !HasRequestedUnit())
+          ss << GetSubstanceName() << "-" << GetCompartmentName() << "-" << GetPropertyName();
+        else if(HasUnit())
+          ss << GetSubstanceName() << "-" << GetCompartmentName() << "-" << GetPropertyName() << "(" << *GetUnit() << ")";
+        else //Requested unit
+          ss << GetSubstanceName() << "-" << GetCompartmentName() << "-" << GetPropertyName() << "(" << GetRequestedUnit() << ")";
+
+        return ss.str();
+      }
+      else
+      {
+        if (!HasUnit() && !HasRequestedUnit())
+          ss << GetSubstanceName() << "-" << GetPropertyName();
+        else if(HasUnit())
+          ss << GetSubstanceName() << "-" << GetPropertyName() << "(" << *GetUnit() << ")";
+        else //Requested unit
+          ss << GetSubstanceName() << "-" << GetPropertyName() << "(" << GetRequestedUnit() << ")";
+        
+        return Space2Underscore(ss.str());
+      }
+    }
+    default:
+      return "";
+  }
+
+}

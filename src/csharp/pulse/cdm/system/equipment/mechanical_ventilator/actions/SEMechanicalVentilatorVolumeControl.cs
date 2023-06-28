@@ -13,9 +13,13 @@ namespace Pulse.CDM
     protected eMechanicalVentilator_VolumeControlMode mode;
     protected SEScalarVolumePerTime                   flow;
     protected SEScalar0To1                            fractionInspiredOxygen;
+    SEScalarVolumePerTime                             inspirationPatientTriggerFlow;
+    SEScalarPressure                                  inspirationPatientTriggerPressure;
+    eDriverWaveform                                   inspirationWaveform;
     protected SEScalarTime                            inspiratoryPeriod;
     protected SEScalarPressure                        positiveEndExpiredPressure;
     protected SEScalarFrequency                       respirationRate;
+    protected SEScalarTime                            slope;
     protected SEScalarVolume                          tidalVolume;
 
     public SEMechanicalVentilatorVolumeControl()
@@ -23,9 +27,13 @@ namespace Pulse.CDM
       mode = eMechanicalVentilator_VolumeControlMode.AssistedControl;
       flow = null;
       fractionInspiredOxygen = null;
+      inspirationPatientTriggerFlow = null;
+      inspirationPatientTriggerPressure = null;
+      inspirationWaveform = eDriverWaveform.NullDriverWaveform;
       inspiratoryPeriod = null;
       positiveEndExpiredPressure = null;
       respirationRate = null;
+      slope = null;
       tidalVolume = null;
     }
 
@@ -41,12 +49,20 @@ namespace Pulse.CDM
         GetFlow().Set(other.GetFlow());
       if (other.HasFractionInspiredOxygen())
         GetFractionInspiredOxygen().Set(other.GetFractionInspiredOxygen());
+      if (other.HasInspirationPatientTriggerFlow())
+        GetInspirationPatientTriggerFlow().Set(other.GetInspirationPatientTriggerFlow());
+      if (other.HasInspirationPatientTriggerPressure())
+        GetInspirationPatientTriggerPressure().Set(other.GetInspirationPatientTriggerPressure());
+      if (other.HasInspirationWaveform())
+        SetInspirationWaveform(other.GetInspirationWaveform());
       if (other.HasInspiratoryPeriod())
         GetInspiratoryPeriod().Set(other.GetInspiratoryPeriod());
       if (other.HasPositiveEndExpiredPressure())
         GetPositiveEndExpiredPressure().Set(other.GetPositiveEndExpiredPressure());
       if (other.HasRespirationRate())
         GetRespirationRate().Set(other.GetRespirationRate());
+      if (other.HasSlope())
+        GetSlope().Set(other.GetSlope());
       if (other.HasTidalVolume())
         GetTidalVolume().Set(other.GetTidalVolume());
     }
@@ -59,12 +75,19 @@ namespace Pulse.CDM
         flow.Invalidate();
       if (fractionInspiredOxygen != null)
         fractionInspiredOxygen.Invalidate();
+      if (inspirationPatientTriggerFlow != null)
+        inspirationPatientTriggerFlow.Invalidate();
+      if (inspirationPatientTriggerPressure != null)
+        inspirationPatientTriggerPressure.Invalidate();
+      inspirationWaveform = eDriverWaveform.NullDriverWaveform;
       if (inspiratoryPeriod != null)
         inspiratoryPeriod.Invalidate();
       if (positiveEndExpiredPressure != null)
         positiveEndExpiredPressure.Invalidate();
       if (respirationRate != null)
         respirationRate.Invalidate();
+      if (slope != null)
+        slope.Invalidate();
       if (tidalVolume != null)
         tidalVolume.Invalidate();
     }
@@ -72,11 +95,11 @@ namespace Pulse.CDM
     public override bool IsValid()
     {
       return HasFlow() &&
-        HasFractionInspiredOxygen() &&
-        HasInspiratoryPeriod() &&
-        HasPositiveEndExpiredPressure() &&
-        HasRespirationRate() &&
-        HasTidalVolume();
+             HasFractionInspiredOxygen() &&
+             HasPositiveEndExpiredPressure() &&
+             HasRespirationRate() &&
+             HasTidalVolume();
+      // Everything else is optional
     }
 
     public eMechanicalVentilator_VolumeControlMode GetMode()
@@ -109,6 +132,42 @@ namespace Pulse.CDM
         fractionInspiredOxygen = new SEScalar0To1();
       return fractionInspiredOxygen;
     }
+
+    public bool HasInspirationWaveform()
+    {
+      return inspirationWaveform != eDriverWaveform.NullDriverWaveform;
+    }
+    public eDriverWaveform GetInspirationWaveform()
+    {
+      return inspirationWaveform;
+    }
+    public void SetInspirationWaveform(eDriverWaveform w)
+    {
+      inspirationWaveform = w;
+    }
+
+    public bool HasInspirationPatientTriggerFlow()
+    {
+      return inspirationPatientTriggerFlow == null ? false : inspirationPatientTriggerFlow.IsValid();
+    }
+    public SEScalarVolumePerTime GetInspirationPatientTriggerFlow()
+    {
+      if (inspirationPatientTriggerFlow == null)
+        inspirationPatientTriggerFlow = new SEScalarVolumePerTime();
+      return inspirationPatientTriggerFlow;
+    }
+
+    public bool HasInspirationPatientTriggerPressure()
+    {
+      return inspirationPatientTriggerPressure == null ? false : inspirationPatientTriggerPressure.IsValid();
+    }
+    public SEScalarPressure GetInspirationPatientTriggerPressure()
+    {
+      if (inspirationPatientTriggerPressure == null)
+        inspirationPatientTriggerPressure = new SEScalarPressure();
+      return inspirationPatientTriggerPressure;
+    }
+
     public bool HasInspiratoryPeriod()
     {
       return inspiratoryPeriod == null ? false : inspiratoryPeriod.IsValid();
@@ -139,6 +198,18 @@ namespace Pulse.CDM
         respirationRate = new SEScalarFrequency();
       return respirationRate;
     }
+
+    public bool HasSlope()
+    {
+      return slope == null ? false : slope.IsValid();
+    }
+    public SEScalarTime GetSlope()
+    {
+      if (slope == null)
+        slope = new SEScalarTime();
+      return slope;
+    }
+
     public bool HasTidalVolume()
     {
       return tidalVolume == null ? false : tidalVolume.IsValid();
@@ -156,11 +227,14 @@ namespace Pulse.CDM
       str += "\n\tMode: " + this.mode;
       str += "\n\tFlow: " + (HasFlow() ? GetFlow().ToString() : "Not Provided");
       str += "\n\tFractionInspiredOxygen: " + (HasFractionInspiredOxygen() ? GetFractionInspiredOxygen().ToString() : "Not Provided");
+      str += "\n\tInspirationPatientTriggerFlow: " + (HasInspirationPatientTriggerFlow() ? GetInspirationPatientTriggerFlow().ToString() : "Not Provided");
+      str += "\n\tInspirationPatientTriggerPressure: " + (HasInspirationPatientTriggerPressure() ? GetInspirationPatientTriggerPressure().ToString() : "Not Provided");
+      str += "\n\tInspirationWaveform: " + (HasInspirationWaveform() ? GetInspirationWaveform().ToString() : "Not Provided");
       str += "\n\tInspiratoryPeriod: " + (HasInspiratoryPeriod() ? GetInspiratoryPeriod().ToString() : "Not Provided");
       str += "\n\tPositiveEndExpiredPressure: " + (HasPositiveEndExpiredPressure() ? GetPositiveEndExpiredPressure().ToString() : "Not Provided");
       str += "\n\tRespirationRate: " + (HasRespirationRate() ? GetRespirationRate().ToString() : "Not Provided");
+      str += "\n\tSlope: " + (HasSlope() ? GetSlope().ToString() : "Not Provided");
       str += "\n\tTidalVolume: " + (HasTidalVolume() ? GetTidalVolume().ToString() : "Not Provided");
-
 
       return str;
     }

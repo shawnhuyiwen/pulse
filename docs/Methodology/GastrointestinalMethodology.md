@@ -17,7 +17,7 @@ Water is digested from the stomach into a gut/chyme compartment and aborbed into
 Introduction
 ------------
 
-### %Gastrointestinal Physiology
+### Gastrointestinal Physiology
 
 The %Gastrointestinal tract is responsible for consuming and digesting food, absorbing nutrients, and expelling waste.
 The tract consists of the stomach and intestines breaking down food into usable nutrients for the body. 
@@ -25,7 +25,7 @@ After being eaten, food is stored in the stomach, gradually digested, then relea
 At this point, nutrients are either quickly absorbed into the blood through the intestinal wall or further broken down prior to absorption. 
 An overview of the digestive tract is shown in Figure 1.
 
-<img src="./Images/GI/DigestiveTractDetail.png">
+<a href="./Images/GI/DigestiveTractDetail.png"><img src="./Images/GI/DigestiveTractDetail.png"></a>
 <center>
 <i>
 Figure 1. The human digestive tract is composed of several distinct sections @cite LadyofHats2006Digestive. 
@@ -115,7 +115,7 @@ Features, Capabilities, and Dependencies
 ### Circuit
 
 @anchor GI-circuit
-<img src="./Images/GI/GICircuit.png">
+<a href="./Images/GI/GICircuit.png"><img src="./Images/GI/GICircuit.png"></a>
 <center>
 <i>
 Figure 2. The %GI circuit is made up of nodes and paths with elements and is connected to extravascular tissue and the cardiovascular system.
@@ -175,14 +175,14 @@ Concentrations are not solely a function of GI; other systems are potentially us
 <center>
 *Table 2. Macronutrient mass in the stomach, and blood as a function of time.*
 
-|  Macronutrient/Substance |               Stomach Mass(g) / Volume(mL)  vs. Time(s)                |         Blood Concentration (ug/mL) / Volume (mL) vs. Time (s)           |
-|:---:                     |:---:                                                                   |:---:                                                                     |
-| Carbohydrate/Glucose     | <img src="./plots/GI/6hr_StomachCarbs.jpg" height="200" width="400">   | <img src="./plots/GI/6hr_BloodGlucose.jpg" height="200" width="400">    |
-| Fat/Tristearin           | <img src="./plots/GI/6hr_StomachFat.jpg" height="200" width="400">     | <img src="./plots/GI/6hr_BloodTristearin.jpg" height="200" width="400"> |
-| Protein/Urea             | <img src="./plots/GI/6hr_StomachProtein.jpg" height="200" width="400"> | <img src="./plots/GI/6hr_BloodUrea.jpg" height="200" width="400">       |
-| Calcium                  | <img src="./plots/GI/6hr_StomachCalcium.jpg" height="200" width="400"> | <img src="./plots/GI/6hr_BloodCalcium.jpg" height="200" width="400">    |
-| Sodium                   | <img src="./plots/GI/6hr_StomachSodium.jpg" height="200" width="400">  | <img src="./plots/GI/6hr_BloodSodium.jpg" height="200" width="400">     |
-| Water                    | <img src="./plots/GI/6hr_StomachWater.jpg" height="200" width="400">   | <img src="./plots/GI/6hr_BV.jpg" height="200" width="400">              |
+|Macronutrient/Substance|                                    Stomach Mass(g) / Volume(mL)  vs. Time(s)                                         |                               Blood Concentration (ug/mL) / Volume (mL) vs. Time (s)                                   |
+|:---:                  |:---:                                                                                                                 |:---:                                                                                                                   |
+|Carbohydrate/Glucose   |<a href="./plots/GI/6hr_StomachCarbs.jpg"><img src="./plots/GI/6hr_StomachCarbs.jpg" height="200" width="400"></a>    |<a href="./plots/GI/6hr_BloodGlucose.jpg"><img src="./plots/GI/6hr_BloodGlucose.jpg" height="200" width="400"></a>      |
+|Fat/Tristearin         |<a href="./plots/GI/6hr_StomachFat.jpg"><img src="./plots/GI/6hr_StomachFat.jpg" height="200" width="400"></a>        |<a href="./plots/GI/6hr_BloodTristearin.jpg"><img src="./plots/GI/6hr_BloodTristearin.jpg" height="200" width="400"></a>|
+|Protein/Urea           |<a href="./plots/GI/6hr_StomachProtein.jpg"><img src="./plots/GI/6hr_StomachProtein.jpg" height="200" width="400"></a>|<a href="./plots/GI/6hr_BloodUrea.jpg"><img src="./plots/GI/6hr_BloodUrea.jpg" height="200" width="400"></a>            |
+|Calcium                |<a href="./plots/GI/6hr_StomachCalcium.jpg"><img src="./plots/GI/6hr_StomachCalcium.jpg" height="200" width="400"></a>|<a href="./plots/GI/6hr_BloodCalcium.jpg"><img src="./plots/GI/6hr_BloodCalcium.jpg" height="200" width="400"></a>      |
+|Sodium                 |<a href="./plots/GI/6hr_StomachSodium.jpg"><img src="./plots/GI/6hr_StomachSodium.jpg" height="200" width="400"></a>  |<a href="./plots/GI/6hr_BloodSodium.jpg"><img src="./plots/GI/6hr_BloodSodium.jpg" height="200" width="400"></a>        |
+|Water                  |<a href="./plots/GI/6hr_StomachWater.jpg"><img src="./plots/GI/6hr_StomachWater.jpg" height="200" width="400"></a>    |<a href="./plots/GI/6hr_BV.jpg"><img src="./plots/GI/6hr_BV.jpg" height="200" width="400"></a>                          |
 </center>
 
 As seen in Table 2, the macronutrient masses in the stomach are depleted based on different digestion rates and eventually reach zero. 

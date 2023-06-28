@@ -60,6 +60,10 @@ public:
   virtual SEScalarPressure& GetCerebralPerfusionPressure();
   virtual double GetCerebralPerfusionPressure(const PressureUnit& unit) const;
 
+  virtual bool HasCoronaryPerfusionPressure() const;
+  virtual SEScalarPressure& GetCoronaryPerfusionPressure();
+  virtual double GetCoronaryPerfusionPressure(const PressureUnit& unit) const;
+
   virtual bool HasDiastolicArterialPressure() const;
   virtual SEScalarPressure& GetDiastolicArterialPressure();
   virtual double GetDiastolicArterialPressure(const PressureUnit& unit) const;
@@ -114,6 +118,10 @@ public:
   virtual bool HasPulmonaryArterialPressure() const;
   virtual SEScalarPressure& GetPulmonaryArterialPressure();
   virtual double GetPulmonaryArterialPressure(const PressureUnit& unit) const;
+
+  virtual bool HasPulmonaryCapillariesCoverageFraction() const;
+  virtual SEScalar0To1& GetPulmonaryCapillariesCoverageFraction();
+  virtual double GetPulmonaryCapillariesCoverageFraction() const;
 
   virtual bool HasPulmonaryCapillariesWedgePressure() const;
   virtual SEScalarPressure& GetPulmonaryCapillariesWedgePressure();
@@ -175,6 +183,10 @@ public:
   virtual SEScalarVolume& GetTotalHemorrhagedVolume();
   virtual double GetTotalHemorrhagedVolume(const VolumeUnit& unit) const;
 
+  virtual bool HasTotalPulmonaryPerfusion() const;
+  virtual SEScalarVolumePerTime& GetTotalPulmonaryPerfusion();
+  virtual double GetTotalPulmonaryPerfusion(const VolumePerTimeUnit& unit) const;
+
 protected:
 
   SEScalarPressure*                      m_ArterialPressure;
@@ -184,6 +196,7 @@ protected:
   SEScalarPressure*                      m_CentralVenousPressure;
   SEScalarVolumePerTime*                 m_CerebralBloodFlow;
   SEScalarPressure*                      m_CerebralPerfusionPressure;
+  SEScalarPressure*                      m_CoronaryPerfusionPressure;
   SEScalarPressure*                      m_DiastolicArterialPressure;
   SEScalarPressure*                      m_DiastolicLeftHeartPressure;
   SEScalarPressure*                      m_DiastolicRightHeartPressure;
@@ -198,6 +211,7 @@ protected:
   SEScalarPressure*                      m_MeanCentralVenousPressure;
   SEScalarVolumePerTime*                 m_MeanSkinFlow;
   SEScalarPressure*                      m_PulmonaryArterialPressure;
+  SEScalar0To1*                          m_PulmonaryCapillariesCoverageFraction;
   SEScalarPressure*                      m_PulmonaryCapillariesWedgePressure;
   SEScalarPressure*                      m_PulmonaryDiastolicArterialPressure;
   SEScalarPressure*                      m_PulmonaryMeanArterialPressure;
@@ -213,4 +227,5 @@ protected:
   SEScalarPressureTimePerVolume*         m_SystemicVascularResistance;
   SEScalarVolumePerTime*                 m_TotalHemorrhageRate;
   SEScalarVolume*                        m_TotalHemorrhagedVolume;
+  SEScalarVolumePerTime*                 m_TotalPulmonaryPerfusion;
 };

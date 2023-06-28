@@ -20,8 +20,9 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
-#include "cdm/patient/actions/SEChestCompressionForce.h"
-#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestCompression.h"
+#include "cdm/patient/actions/SEChestCompressionAutomated.h"
+#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
 #include "cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "cdm/patient/actions/SEConsciousRespiration.h"
@@ -33,6 +34,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEDyspnea.h"
 #include "cdm/patient/actions/SEExercise.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SEHemothorax.h"
 #include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
@@ -47,6 +49,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
 #include "cdm/patient/actions/SESupplementalOxygen.h"
 #include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SETubeThoracostomy.h"
 #include "cdm/patient/actions/SEUrinate.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceCompound.h"
@@ -286,68 +289,123 @@ void PBPatientAction::Copy(const SEBronchoconstriction& src, SEBronchoconstricti
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const CDM_BIND::ChestCompressionForceData& src, SEChestCompressionForce& dst)
+void PBPatientAction::Load(const CDM_BIND::ChestCompressionData& src, SEChestCompression& dst)
 {
   dst.Clear();
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionForceData& src, SEChestCompressionForce& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionData& src, SEChestCompression& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_force())
     PBProperty::Load(src.force(), dst.GetForce());
+  else if (src.has_depth())
+    PBProperty::Load(src.depth(), dst.GetDepth());
+
+  if (src.has_compressionperiod())
+    PBProperty::Load(src.compressionperiod(), dst.GetCompressionPeriod());
 }
-CDM_BIND::ChestCompressionForceData* PBPatientAction::Unload(const SEChestCompressionForce& src)
+CDM_BIND::ChestCompressionData* PBPatientAction::Unload(const SEChestCompression& src)
 {
-  CDM_BIND::ChestCompressionForceData* dst = new CDM_BIND::ChestCompressionForceData();
+  CDM_BIND::ChestCompressionData* dst = new CDM_BIND::ChestCompressionData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEChestCompressionForce& src, CDM_BIND::ChestCompressionForceData& dst)
+void PBPatientAction::Serialize(const SEChestCompression& src, CDM_BIND::ChestCompressionData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasForce())
     dst.set_allocated_force(PBProperty::Unload(*src.m_Force));
+  else if (src.HasDepth())
+    dst.set_allocated_depth(PBProperty::Unload(*src.m_Depth));
+
+  if (src.HasCompressionPeriod())
+    dst.set_allocated_compressionperiod(PBProperty::Unload(*src.m_CompressionPeriod));
 }
-void PBPatientAction::Copy(const SEChestCompressionForce& src, SEChestCompressionForce& dst)
+void PBPatientAction::Copy(const SEChestCompression& src, SEChestCompression& dst)
 {
   dst.Clear();
-  CDM_BIND::ChestCompressionForceData data;
+  CDM_BIND::ChestCompressionData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const CDM_BIND::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
+void PBPatientAction::Load(const CDM_BIND::ChestCompressionAutomatedData& src, SEChestCompressionAutomated& dst)
 {
   dst.Clear();
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionAutomatedData& src, SEChestCompressionAutomated& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_forcescale())
-    PBProperty::Load(src.forcescale(), dst.GetForceScale());
-  if (src.has_forceperiod())
-    PBProperty::Load(src.forceperiod(), dst.GetForcePeriod());
+  if (src.has_force())
+    PBProperty::Load(src.force(), dst.GetForce());
+  else if (src.has_depth())
+    PBProperty::Load(src.depth(), dst.GetDepth());
+
+  if (src.has_appliedforcefraction())
+    PBProperty::Load(src.appliedforcefraction(), dst.GetAppliedForceFraction());
+  if (src.has_compressionfrequency())
+    PBProperty::Load(src.compressionfrequency(), dst.GetCompressionFrequency());
 }
-CDM_BIND::ChestCompressionForceScaleData* PBPatientAction::Unload(const SEChestCompressionForceScale& src)
+CDM_BIND::ChestCompressionAutomatedData* PBPatientAction::Unload(const SEChestCompressionAutomated& src)
 {
-  CDM_BIND::ChestCompressionForceScaleData* dst = new CDM_BIND::ChestCompressionForceScaleData();
+  CDM_BIND::ChestCompressionAutomatedData* dst = new CDM_BIND::ChestCompressionAutomatedData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEChestCompressionForceScale& src, CDM_BIND::ChestCompressionForceScaleData& dst)
+void PBPatientAction::Serialize(const SEChestCompressionAutomated& src, CDM_BIND::ChestCompressionAutomatedData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasForceScale())
-    dst.set_allocated_forcescale(PBProperty::Unload(*src.m_ForceScale));
-  if (src.HasForcePeriod())
-    dst.set_allocated_forceperiod(PBProperty::Unload(*src.m_ForcePeriod));
+  if (src.HasForce())
+    dst.set_allocated_force(PBProperty::Unload(*src.m_Force));
+  else if (src.HasDepth())
+    dst.set_allocated_depth(PBProperty::Unload(*src.m_Depth));
+
+  if (src.HasAppliedForceFraction())
+    dst.set_allocated_appliedforcefraction(PBProperty::Unload(*src.m_AppliedForceFraction));
+  if (src.HasCompressionFrequency())
+    dst.set_allocated_compressionfrequency(PBProperty::Unload(*src.m_CompressionFrequency));
 }
-void PBPatientAction::Copy(const SEChestCompressionForceScale& src, SEChestCompressionForceScale& dst)
+void PBPatientAction::Copy(const SEChestCompressionAutomated& src, SEChestCompressionAutomated& dst)
 {
   dst.Clear();
-  CDM_BIND::ChestCompressionForceScaleData data;
+  CDM_BIND::ChestCompressionAutomatedData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
+void PBPatientAction::Load(const CDM_BIND::ChestCompressionInstantaneousData& src, SEChestCompressionInstantaneous& dst)
+{
+  dst.Clear();
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionInstantaneousData& src, SEChestCompressionInstantaneous& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_force())
+    PBProperty::Load(src.force(), dst.GetForce());
+  else if (src.has_depth())
+    PBProperty::Load(src.depth(), dst.GetDepth());
+}
+CDM_BIND::ChestCompressionInstantaneousData* PBPatientAction::Unload(const SEChestCompressionInstantaneous& src)
+{
+  CDM_BIND::ChestCompressionInstantaneousData* dst = new CDM_BIND::ChestCompressionInstantaneousData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEChestCompressionInstantaneous& src, CDM_BIND::ChestCompressionInstantaneousData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasForce())
+    dst.set_allocated_force(PBProperty::Unload(*src.m_Force));
+  else if (src.HasDepth())
+    dst.set_allocated_depth(PBProperty::Unload(*src.m_Depth));
+}
+void PBPatientAction::Copy(const SEChestCompressionInstantaneous& src, SEChestCompressionInstantaneous& dst)
+{
+  dst.Clear();
+  CDM_BIND::ChestCompressionInstantaneousData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -448,7 +506,7 @@ void PBPatientAction::Serialize(const CDM_BIND::ConsciousRespirationData& src, S
       PBPatientAction::Load(command.useinhaler(), dst.AddUseInhaler());
       break;
     default:
-      dst.Warning("Ignoring unknown Conscious Respiration Command : " + command.Command_case());
+      dst.Warning("Ignoring unknown Conscious Respiration Command : " + std::to_string(command.Command_case()));
       continue;
     }
     dst.m_Commands.back()->SetComment(command.comment());
@@ -463,6 +521,7 @@ CDM_BIND::ConsciousRespirationData* PBPatientAction::Unload(const SEConsciousRes
 void PBPatientAction::Serialize(const SEConsciousRespiration& src, CDM_BIND::ConsciousRespirationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_startimmediately(src.StartImmediately());
   for (SEConsciousRespirationCommand* cmd : src.m_Commands)
   {
     CDM_BIND::AnyConsciousRespirationCommandData* cmdData = dst.add_command();
@@ -718,8 +777,8 @@ void PBPatientAction::Load(const CDM_BIND::HemorrhageData& src, SEHemorrhage& ds
 void PBPatientAction::Serialize(const CDM_BIND::HemorrhageData& src, SEHemorrhage& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  dst.m_Compartment = src.compartment();
-  dst.SetType((eHemorrhage_Type)src.type());
+  dst.SetCompartment((eHemorrhage_Compartment)src.compartment());
+  dst.m_Type = (eHemorrhage_Type)src.type();
   if (src.has_flowrate())
     PBProperty::Load(src.flowrate(), dst.GetFlowRate());
   if (src.has_severity())
@@ -736,8 +795,7 @@ CDM_BIND::HemorrhageData* PBPatientAction::Unload(const SEHemorrhage& src)
 void PBPatientAction::Serialize(const SEHemorrhage& src, CDM_BIND::HemorrhageData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasCompartment())
-    dst.set_compartment(src.m_Compartment);
+  dst.set_compartment((CDM_BIND::HemorrhageData::eCompartment)src.m_Compartment);
   dst.set_type((CDM_BIND::HemorrhageData::eType)src.m_Type);
   if (src.HasFlowRate())
     dst.set_allocated_flowrate(PBProperty::Unload(*src.m_FlowRate));
@@ -750,6 +808,48 @@ void PBPatientAction::Copy(const SEHemorrhage& src, SEHemorrhage& dst)
 {
   dst.Clear();
   CDM_BIND::HemorrhageData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
+void PBPatientAction::Load(const CDM_BIND::HemothoraxData& src, SEHemothorax& dst)
+{
+  dst.Clear();
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::HemothoraxData& src, SEHemothorax& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  dst.SetSide((eSide)src.side());
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+  if (src.has_flowrate())
+    PBProperty::Load(src.flowrate(), dst.GetFlowRate());
+  if (src.has_totalbloodvolume())
+    PBProperty::Load(src.totalbloodvolume(), dst.GetTotalBloodVolume());
+}
+CDM_BIND::HemothoraxData* PBPatientAction::Unload(const SEHemothorax& src)
+{
+  CDM_BIND::HemothoraxData* dst = new CDM_BIND::HemothoraxData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEHemothorax& src, CDM_BIND::HemothoraxData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSide())
+    dst.set_side((CDM_BIND::eSide)src.m_Side);
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+  if (src.HasFlowRate())
+    dst.set_allocated_flowrate(PBProperty::Unload(*src.m_FlowRate));
+  if (src.HasTotalBloodVolume())
+    dst.set_allocated_totalbloodvolume(PBProperty::Unload(*src.m_TotalBloodVolume));
+}
+void PBPatientAction::Copy(const SEHemothorax& src, SEHemothorax& dst)
+{
+  dst.Clear();
+  CDM_BIND::HemothoraxData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -768,7 +868,7 @@ void PBPatientAction::Serialize(const CDM_BIND::ImpairedAlveolarExchangeExacerba
     PBProperty::Load(src.impairedfraction(), dst.GetImpairedFraction());
   else if (src.has_impairedsurfacearea())
     PBProperty::Load(src.impairedsurfacearea(), dst.GetImpairedSurfaceArea());
-  
+
 }
 CDM_BIND::ImpairedAlveolarExchangeExacerbationData* PBPatientAction::Unload(const SEImpairedAlveolarExchangeExacerbation& src)
 {
@@ -805,6 +905,8 @@ void PBPatientAction::Serialize(const CDM_BIND::IntubationData& src, SEIntubatio
   dst.SetType((eIntubation_Type)src.type());
   if (src.has_airwayresistance())
     PBProperty::Load(src.airwayresistance(), dst.GetAirwayResistance());
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
 }
 CDM_BIND::IntubationData* PBPatientAction::Unload(const SEIntubation& src)
 {
@@ -818,6 +920,8 @@ void PBPatientAction::Serialize(const SEIntubation& src, CDM_BIND::IntubationDat
   dst.set_type((CDM_BIND::IntubationData::eType)src.m_Type);
   if (src.HasAirwayResistance())
     dst.set_allocated_airwayresistance(PBProperty::Unload(*src.m_AirwayResistance));
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
 void PBPatientAction::Copy(const SEIntubation& src, SEIntubation& dst)
 {
@@ -912,7 +1016,7 @@ void PBPatientAction::Serialize(const CDM_BIND::MechanicalVentilationData& src, 
     }
     if (sub->GetState() != eSubstance_State::Liquid && sub->GetState() != eSubstance_State::Solid)
     {
-      dst.Error("Ignoring an environmental conditions aerosol that is not a gas : " + scData.name());
+      dst.Error("Ignoring an environmental conditions aerosol that is not a liquid or solid : " + scData.name());
       continue;
     }
     PBSubstance::Load(scData, dst.GetAerosol(*sub));
@@ -1112,6 +1216,7 @@ void PBPatientAction::Serialize(const CDM_BIND::RespiratoryMechanicsConfiguratio
     dst.SetSettingsFile(src.settingsfile());
   else if (src.has_settings())
     PBPhysiology::Load(src.settings(), dst.GetSettings());
+  dst.SetAppliedRespiratoryCycle((eAppliedRespiratoryCycle)src.appliedcycle());
   dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::RespiratoryMechanicsConfigurationData* PBPatientAction::Unload(const SERespiratoryMechanicsConfiguration& src)
@@ -1127,6 +1232,7 @@ void PBPatientAction::Serialize(const SERespiratoryMechanicsConfiguration& src, 
     dst.set_settingsfile(src.m_SettingsFile);
   else if (src.HasSettings())
     dst.set_allocated_settings(PBPhysiology::Unload(*src.m_Settings));
+  dst.set_appliedcycle((CDM_BIND::eAppliedRespiratoryCycle)src.m_AppliedRespiratoryCycle);
   dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 void PBPatientAction::Copy(const SERespiratoryMechanicsConfiguration& src, SERespiratoryMechanicsConfiguration& dst)
@@ -1333,6 +1439,40 @@ void PBPatientAction::Copy(const SETensionPneumothorax& src, SETensionPneumothor
   PBPatientAction::Serialize(data, dst);
 }
 
+void PBPatientAction::Load(const CDM_BIND::TubeThoracostomyData& src, SETubeThoracostomy& dst)
+{
+  dst.Clear();
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::TubeThoracostomyData& src, SETubeThoracostomy& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  dst.SetSide((eSide)src.side());
+  if (src.has_flowrate())
+    PBProperty::Load(src.flowrate(), dst.GetFlowRate());
+}
+CDM_BIND::TubeThoracostomyData* PBPatientAction::Unload(const SETubeThoracostomy& src)
+{
+  CDM_BIND::TubeThoracostomyData* dst = new CDM_BIND::TubeThoracostomyData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SETubeThoracostomy& src, CDM_BIND::TubeThoracostomyData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSide())
+    dst.set_side((CDM_BIND::eSide)src.m_Side);
+  if (src.HasFlowRate())
+    dst.set_allocated_flowrate(PBProperty::Unload(*src.m_FlowRate));
+}
+void PBPatientAction::Copy(const SETubeThoracostomy& src, SETubeThoracostomy& dst)
+{
+  dst.Clear();
+  CDM_BIND::TubeThoracostomyData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
 void PBPatientAction::Load(const CDM_BIND::UrinateData& src, SEUrinate& dst)
 {
   dst.Clear();
@@ -1365,9 +1505,9 @@ void PBPatientAction::Load(const CDM_BIND::UseInhalerData& src, SEUseInhaler& ds
   dst.Clear();
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const CDM_BIND::UseInhalerData& src, SEUseInhaler& dst)
+void PBPatientAction::Serialize(const CDM_BIND::UseInhalerData& /*src*/, SEUseInhaler& /*dst*/)
 {
-  
+
 }
 CDM_BIND::UseInhalerData* PBPatientAction::Unload(const SEUseInhaler& src)
 {
@@ -1375,7 +1515,7 @@ CDM_BIND::UseInhalerData* PBPatientAction::Unload(const SEUseInhaler& src)
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEUseInhaler& src, CDM_BIND::UseInhalerData& dst)
+void PBPatientAction::Serialize(const SEUseInhaler& /*src*/, CDM_BIND::UseInhalerData& /*dst*/)
 {
 
 }
@@ -1440,16 +1580,22 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.bronchoconstriction(), *a);
     return a;
   }
-  case CDM_BIND::AnyPatientActionData::ActionCase::kChestCompressionForce:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kChestCompression:
   {
-    SEChestCompressionForce* a = new SEChestCompressionForce();
-    PBPatientAction::Load(any.chestcompressionforce(), *a);
+    SEChestCompression* a = new SEChestCompression();
+    PBPatientAction::Load(any.chestcompression(), *a);
     return a;
   }
-  case CDM_BIND::AnyPatientActionData::ActionCase::kChestCompressionForceScale:
+  case CDM_BIND::AnyPatientActionData::ActionCase::kChestCompressionInstantaneous:
   {
-    SEChestCompressionForceScale* a = new SEChestCompressionForceScale();
-    PBPatientAction::Load(any.chestcompressionforcescale(), *a);
+    SEChestCompressionInstantaneous* a = new SEChestCompressionInstantaneous();
+    PBPatientAction::Load(any.chestcompressioninstantaneous(), *a);
+    return a;
+  }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kChestCompressionAutomated:
+  {
+    SEChestCompressionAutomated* a = new SEChestCompressionAutomated();
+    PBPatientAction::Load(any.chestcompressionautomated(), *a);
     return a;
   }
   case CDM_BIND::AnyPatientActionData::ActionCase::kChestOcclusiveDressing:
@@ -1492,6 +1638,12 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
   {
     SEHemorrhage* a = new SEHemorrhage();
     PBPatientAction::Load(any.hemorrhage(), *a);
+    return a;
+  }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kHemothorax:
+  {
+    SEHemothorax* a = new SEHemothorax();
+    PBPatientAction::Load(any.hemothorax(), *a);
     return a;
   }
   case CDM_BIND::AnyPatientActionData::ActionCase::kImpairedAlveolarExchangeExacerbation:
@@ -1553,7 +1705,7 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     const SESubstance* sub = subMgr.GetSubstance(any.substancebolus().substance());
     if (sub == nullptr)
     {
-      subMgr.Error("Unknown substance " + any.substancebolus().substance(), "PBPatientAction::Load");
+      subMgr.Error("Unknown substance " + any.substancebolus().substance());
       return nullptr;
     }
     SESubstanceBolus* a = new SESubstanceBolus(*sub);
@@ -1565,7 +1717,7 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     const SESubstance* sub = subMgr.GetSubstance(any.substanceinfusion().substance());
     if (sub == nullptr)
     {
-      subMgr.Error("Unknown substance " + any.substanceinfusion().substance(), "PBPatientAction::Load");
+      subMgr.Error("Unknown substance " + any.substanceinfusion().substance());
       return nullptr;
     }
     SESubstanceInfusion* a = new SESubstanceInfusion(*sub);
@@ -1577,7 +1729,7 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     const SESubstanceCompound* subC = subMgr.GetCompound(any.substancecompoundinfusion().substancecompound());
     if (subC == nullptr)
     {
-      subMgr.Error("Unknown substance compound " + any.substancecompoundinfusion().substancecompound(), "PBPatientAction::Load");
+      subMgr.Error("Unknown substance compound " + any.substancecompoundinfusion().substancecompound());
       return nullptr;
     }
     SESubstanceCompoundInfusion* a = new SESubstanceCompoundInfusion(*subC);
@@ -1596,14 +1748,25 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.tensionpneumothorax(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kTubeThoracostomy:
+  {
+    SETubeThoracostomy* a = new SETubeThoracostomy();
+    PBPatientAction::Load(any.tubethoracostomy(), *a);
+    return a;
+  }
   case CDM_BIND::AnyPatientActionData::ActionCase::kUrinate:
   {
     SEUrinate* a = new SEUrinate();
     PBPatientAction::Load(any.urinate(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientActionData::ActionCase::ACTION_NOT_SET:
+  {
+    subMgr.Warning("AnyPatienActionData Action is empty...was that intended?");
+    return nullptr;
   }
-  subMgr.Error("Unknown action type : " + any.Action_case());
+  }
+  subMgr.Error("Unknown action type : " + std::to_string(any.Action_case()));
   return nullptr;
 }
 CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action)
@@ -1657,16 +1820,22 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
     any->set_allocated_bronchoconstriction(PBPatientAction::Unload(*b));
     return any;
   }
-  const SEChestCompressionForce* ccf = dynamic_cast<const SEChestCompressionForce*>(&action);
-  if (ccf != nullptr)
+  const SEChestCompression* cc = dynamic_cast<const SEChestCompression*>(&action);
+  if (cc != nullptr)
   {
-    any->set_allocated_chestcompressionforce(PBPatientAction::Unload(*ccf));
+    any->set_allocated_chestcompression(PBPatientAction::Unload(*cc));
     return any;
   }
-  const SEChestCompressionForceScale* ccfs = dynamic_cast<const SEChestCompressionForceScale*>(&action);
-  if (ccfs != nullptr)
+  const SEChestCompressionAutomated* cca = dynamic_cast<const SEChestCompressionAutomated*>(&action);
+  if (cca != nullptr)
   {
-    any->set_allocated_chestcompressionforcescale(PBPatientAction::Unload(*ccfs));
+    any->set_allocated_chestcompressionautomated(PBPatientAction::Unload(*cca));
+    return any;
+  }
+  const SEChestCompressionInstantaneous* cci = dynamic_cast<const SEChestCompressionInstantaneous*>(&action);
+  if (cci != nullptr)
+  {
+    any->set_allocated_chestcompressioninstantaneous(PBPatientAction::Unload(*cci));
     return any;
   }
   const SEChestOcclusiveDressing* chd = dynamic_cast<const SEChestOcclusiveDressing*>(&action);
@@ -1709,6 +1878,12 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
   if (h != nullptr)
   {
     any->set_allocated_hemorrhage(PBPatientAction::Unload(*h));
+    return any;
+  }
+  const SEHemothorax* hemo = dynamic_cast<const SEHemothorax*>(&action);
+  if (hemo != nullptr)
+  {
+    any->set_allocated_hemothorax(PBPatientAction::Unload(*hemo));
     return any;
   }
   const SEImpairedAlveolarExchangeExacerbation* imaee = dynamic_cast<const SEImpairedAlveolarExchangeExacerbation*>(&action);
@@ -1799,6 +1974,12 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
   if (tp != nullptr)
   {
     any->set_allocated_tensionpneumothorax(PBPatientAction::Unload(*tp));
+    return any;
+  }
+  const SETubeThoracostomy* tt = dynamic_cast<const SETubeThoracostomy*>(&action);
+  if (tt != nullptr)
+  {
+    any->set_allocated_tubethoracostomy(PBPatientAction::Unload(*tt));
     return any;
   }
   const SEUrinate* u = dynamic_cast<const SEUrinate*>(&action);

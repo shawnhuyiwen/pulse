@@ -18,6 +18,18 @@ namespace pulse
   */
   class PULSE_DECL SaturationCalculator : public Loggable
   {
+    struct CompartmentState
+    {
+      SELiquidSubstanceQuantity* subO2Q = nullptr;
+      SELiquidSubstanceQuantity* subCO2Q = nullptr;
+      SELiquidSubstanceQuantity* subCOQ = nullptr;
+      SELiquidSubstanceQuantity* subHbCOQ = nullptr;
+      SELiquidSubstanceQuantity* subHCO3Q = nullptr;
+      SELiquidSubstanceQuantity* subHbQ = nullptr;
+      SELiquidSubstanceQuantity* subHbO2Q = nullptr;
+      SELiquidSubstanceQuantity* subHbCO2Q = nullptr;
+      SELiquidSubstanceQuantity* subHbO2CO2Q = nullptr;
+    };
     friend class Controller;
     friend struct error_functor;
     friend class EngineTest;
@@ -28,13 +40,13 @@ namespace pulse
     bool Setup();
 
     void SetBodyState(const SEScalarMassPerVolume& AlbuminConcentration, const SEScalar0To1& Hematocrit, const SEScalarTemperature& Temperature, const SEScalarAmountPerVolume& StrongIonDifference, const SEScalarAmountPerVolume& Phosphate);
-    void CalculateBloodGasDistribution(SELiquidCompartment& cmpt);
-    void CalculateCarbonMonoxideSpeciesDistribution(SELiquidCompartment& cmpt);
+    void CalculateBloodGasDistribution(SELiquidCompartment& cmpt) const;
+    void CalculateCarbonMonoxideSpeciesDistribution(CompartmentState& cs, SELiquidCompartment& cmpt) const;
 
   protected:
     // Stewart Model + Dash-Bassingthwaighte Model + Henderson-Hasselbach Model
-    void CalculateHemoglobinSaturations(double O2PartialPressureGuess_mmHg, double CO2PartialPressureGuess_mmHg, double pH, double temperature_C, double  hematocrit, double& OxygenSaturation, double& CarbonDioxideSaturation, double CO2_scaling_factor);
-    bool DistributeHemoglobinBySaturation();
+    void CalculateHemoglobinSaturations(CompartmentState& cs, double O2PartialPressureGuess_mmHg, double CO2PartialPressureGuess_mmHg, double pH, double temperature_C, double  hematocrit, double& OxygenSaturation, double& CarbonDioxideSaturation, double CO2_scaling_factor) const;
+    bool DistributeHemoglobinBySaturation(CompartmentState& cs) const;
 
     Data& m_data;
     std::stringstream ss;
@@ -48,25 +60,6 @@ namespace pulse
     SESubstance* m_HbCO;
     SESubstance* m_HCO3;
     SESubstance* m_HbCO2;
-    // Used for conversions
-    double m_O2_g_Per_mol;
-    double m_CO2_g_Per_mol;
-    double m_HCO3_g_Per_mol;
-    double m_Hb_g_Per_mol;
-    double m_HbO2_g_Per_mol;
-    double m_HbCO2_g_Per_mol;
-    double m_HbO2CO2_g_Per_mol;
-    // This is the current compartment and the quantities we are balancing
-    SELiquidCompartment* m_cmpt;
-    SELiquidSubstanceQuantity* m_subO2Q;
-    SELiquidSubstanceQuantity* m_subCO2Q;
-    SELiquidSubstanceQuantity* m_subCOQ;
-    SELiquidSubstanceQuantity* m_subHbCOQ;
-    SELiquidSubstanceQuantity* m_subHCO3Q;
-    SELiquidSubstanceQuantity* m_subHbQ;
-    SELiquidSubstanceQuantity* m_subHbO2Q;
-    SELiquidSubstanceQuantity* m_subHbCO2Q;
-    SELiquidSubstanceQuantity* m_subHbO2CO2Q;
     // The current state of the body to balance to
     double m_albumin_g_per_L;
     double m_hematocrit;

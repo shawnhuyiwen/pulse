@@ -56,6 +56,8 @@ namespace pulse
     }
     if (src.writepatientbaselinefile() != CDM_BIND::eSwitch::NullSwitch)
       dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
+    if (!src.patientbaselinefilepath().empty())
+      dst.SetInitialPatientBaselineFilepath(src.patientbaselinefilepath());
 
     for (auto& [name, m] : src.modifiers())
       dst.GetModifiers()[name] = SEScalarPair(m.value(), m.unit());
@@ -92,6 +94,8 @@ namespace pulse
         PBProperty::Load(config.rightheartelastanceminimum(), dst.GetRightHeartElastanceMinimum());
       if (config.has_standardpulmonarycapillarycoverage())
         PBProperty::Load(config.standardpulmonarycapillarycoverage(), dst.GetStandardPulmonaryCapillaryCoverage());
+      if (config.useexpandedvasculature() != CDM_BIND::eSwitch::NullSwitch)
+        dst.UseExpandedVasculature((eSwitch)config.useexpandedvasculature());
       if (config.tunecardiovascularcircuit() != CDM_BIND::eSwitch::NullSwitch)
         dst.TuneCardiovascularCircuit((eSwitch)config.tunecardiovascularcircuit());
       dst.CardiovascularTuningFile(config.cardiovasculartuningfile());
@@ -345,6 +349,8 @@ namespace pulse
         PBProperty::Load(config.ventilationtidalvolumeintercept(), dst.GetVentilationTidalVolumeIntercept());
       if (config.has_ventilatoryocclusionpressure())
         PBProperty::Load(config.ventilatoryocclusionpressure(), dst.GetVentilatoryOcclusionPressure());
+      if (config.useexpandedrespiratory() != CDM_BIND::eSwitch::NullSwitch)
+        dst.UseExpandedRespiratory((eSwitch)config.useexpandedrespiratory());
     }
 
     // Tissue
@@ -372,6 +378,7 @@ namespace pulse
       dst.set_allocated_timestep(PBProperty::Unload(*src.m_TimeStep));
     dst.set_allowdynamictimestep((CDM_BIND::eSwitch)src.m_AllowDynamicTimeStep);
     dst.set_writepatientbaselinefile((CDM_BIND::eSwitch)src.m_WritePatientBaselineFile);
+    dst.set_patientbaselinefilepath(src.m_InitialPatientBaselineFilepath);
 
     for (auto const& [name, m] : src.GetModifiers())
     {
@@ -413,6 +420,7 @@ namespace pulse
       cv->set_allocated_rightheartelastanceminimum(PBProperty::Unload(*src.m_RightHeartElastanceMinimum));
     if (src.HasStandardPulmonaryCapillaryCoverage())
       cv->set_allocated_standardpulmonarycapillarycoverage(PBProperty::Unload(*src.m_StandardPulmonaryCapillaryCoverage));
+    cv->set_useexpandedvasculature((CDM_BIND::eSwitch)src.m_UseExpandedVasculature);
     cv->set_tunecardiovascularcircuit((CDM_BIND::eSwitch)src.m_TuneCardiovascularCircuit);
     cv->set_cardiovasculartuningfile(src.m_CardiovascularTuningFile);
 
@@ -601,6 +609,7 @@ namespace pulse
       resp->set_allocated_ventilationtidalvolumeintercept(PBProperty::Unload(*src.m_VentilationTidalVolumeIntercept));
     if (src.HasVentilatoryOcclusionPressure())
       resp->set_allocated_ventilatoryocclusionpressure(PBProperty::Unload(*src.m_VentilatoryOcclusionPressure));
+    resp->set_useexpandedrespiratory((CDM_BIND::eSwitch)src.m_UseExpandedRespiratory);
 
     // Tissue
     PULSE_BIND::ConfigurationData_TissueConfigurationData* tissue = dst.mutable_tissueconfiguration();

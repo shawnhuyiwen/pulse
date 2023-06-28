@@ -17,9 +17,11 @@
 #include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/patient/actions/SEArrhythmia.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
-#include "cdm/patient/actions/SEChestCompressionForce.h"
-#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestCompression.h"
+#include "cdm/patient/actions/SEChestCompressionAutomated.h"
+#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SEHemothorax.h"
 #include "cdm/patient/actions/SEPericardialEffusion.h"
 // Dependent Systems
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
@@ -39,6 +41,7 @@
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarLength.h"
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarMassPerVolume.h"
 #include "cdm/properties/SEScalar0To1.h"
@@ -57,19 +60,29 @@
 #include "cdm/properties/SEScalarArea.h"
 #include "cdm/properties/SEScalarPressureTimePerVolumeArea.h"
 #include "cdm/properties/SERunningAverage.h"
+#include "cdm/properties/SETemporalInterpolator.h"
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/GeneralMath.h"
 
-//Flag for printing the driver/cycle timing
+//Flag for setting things constant to test
 //Should be commented out, unless debugging/tuning
-//#define LOG_TIMING
+//#define TUNING
 
 namespace pulse
 {
+  // Helper method adding a hierarchy of compartments for sampling
+  void SampleCompartment(SECompartmentManager& cmptMgr, SELiquidCompartment& cmpt)
+  {
+    cmptMgr.SampleByCardiacCyle(cmpt);
+    if (cmpt.HasChildren())
+      for (SELiquidCompartment* child : cmpt.GetChildren())
+        SampleCompartment(cmptMgr, *child);
+  }
+
   CardiovascularModel::CardiovascularModel(Data& data) : CardiovascularSystem(data.GetLogger()), Model(data)
   {
-    m_transporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, data.GetLogger());
-    m_circuitCalculator = new SEFluidCircuitCalculator(VolumePerPressureUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL, data.GetLogger());
+    m_Transporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, data.GetLogger());
+    m_CircuitCalculator = new SEFluidCircuitCalculator(VolumePerPressureUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL, data.GetLogger());
     m_CardiacCycleArterialPressure_mmHg = new SERunningAverage();
     m_CardiacCycleArterialCO2PartialPressure_mmHg = new SERunningAverage();
     m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg = new SERunningAverage();
@@ -78,14 +91,23 @@ namespace pulse
     m_CardiacCyclePulmonaryArteryPressure_mmHg = new SERunningAverage();
     m_CardiacCycleCentralVenousPressure_mmHg = new SERunningAverage();
     m_CardiacCycleSkinFlow_mL_Per_s = new SERunningAverage();
+
+    m_HeartRateBaseline_Per_min = new SETemporalInterpolator();
+    m_HeartComplianceModifier = new SETemporalInterpolator();
+    m_AortaComplianceModifier = new SETemporalInterpolator();
+    m_VenaCavaComplianceModifier = new SETemporalInterpolator();
+    m_PulmonaryComplianceModifier = new SETemporalInterpolator();
+    m_SystemicVascularResistanceModifier = new SETemporalInterpolator();
+    m_SystemicVascularComplianceModifier = new SETemporalInterpolator();
     Clear();
   }
 
   CardiovascularModel::~CardiovascularModel()
   {
     Clear();
-    delete m_transporter;
-    delete m_circuitCalculator;
+
+    delete m_Transporter;
+    delete m_CircuitCalculator;
     delete m_CardiacCycleArterialPressure_mmHg;
     delete m_CardiacCycleArterialCO2PartialPressure_mmHg;
     delete m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg;
@@ -94,6 +116,14 @@ namespace pulse
     delete m_CardiacCyclePulmonaryArteryPressure_mmHg;
     delete m_CardiacCycleCentralVenousPressure_mmHg;
     delete m_CardiacCycleSkinFlow_mL_Per_s;
+
+    delete m_HeartRateBaseline_Per_min;
+    delete m_HeartComplianceModifier;
+    delete m_AortaComplianceModifier;
+    delete m_VenaCavaComplianceModifier;
+    delete m_PulmonaryComplianceModifier;
+    delete m_SystemicVascularResistanceModifier;
+    delete m_SystemicVascularComplianceModifier;
   }
 
   void CardiovascularModel::Clear()
@@ -103,53 +133,31 @@ namespace pulse
     m_CirculatoryCircuit = nullptr;
     m_CirculatoryGraph = nullptr;
 
-    m_AortaCompliance = nullptr;
-    m_AortaResistance = nullptr;
-    m_VenaCavaCompliance = nullptr;
-    m_RightHeartResistance = nullptr;
-
-    m_MainPulmonaryArteries = nullptr;
-    m_LeftHeart2 = nullptr;
-
-    m_LeftPulmonaryArteriesToVeins = nullptr;
-    m_LeftPulmonaryArteriesToCapillaries = nullptr;
-    m_RightPulmonaryArteriesToVeins = nullptr;
-    m_RightPulmonaryArteriesToCapillaries = nullptr;
+    m_AortaCompliancePath = nullptr;
+    m_AortaResistancePath = nullptr;
+    m_VenaCavaCompliancePath = nullptr;
+    m_RightHeartResistancePath = nullptr;
 
     m_InternalHemorrhageToAorta = nullptr;
-    m_pAortaToBone = nullptr;
-    m_pAortaToBrain = nullptr;
-    m_pBrainToVenaCava = nullptr;
-    m_pAortaToLiver = nullptr;
-    m_pAortaToLeftKidney = nullptr;
-    m_pAortaToLargeIntestine = nullptr;
-    m_pAortaToMuscle = nullptr;
-    m_pMuscleToVenaCava = nullptr;
-    m_pAortaToMyocardium = nullptr;
-    m_pMyocardiumToVenaCava = nullptr;
-    m_pAortaToRightKidney = nullptr;
-    m_pAortaToSkin = nullptr;
-    m_pAortaToSmallIntestine = nullptr;
-    m_pAortaToSplanchnic = nullptr;
-    m_pAortaToSpleen = nullptr;
+    m_AortaToBrain = nullptr;
+    m_BrainToVenaCava = nullptr;
+    m_AortaToMyocardium = nullptr;
+    m_MyocardiumToVenaCava = nullptr;
 
-    m_pGndToAbdominalCavity = nullptr;
-    m_pAbdominalCavityToGnd = nullptr;
+    m_GndToAbdominalCavity = nullptr;
+    m_AbdominalCavityToGnd = nullptr;
 
-    m_pGndToPericardium = nullptr;
-    m_pPericardiumToGnd = nullptr;
-    m_pRightHeartToGnd = nullptr;
-    m_pRightHeart = nullptr;
-    m_pLeftHeartToGnd = nullptr;
-    m_pLeftHeart = nullptr;
+    m_GndToPericardium = nullptr;
+    m_PericardiumToGnd = nullptr;
+    m_RightHeartToGnd = nullptr;
+    m_RightHeart = nullptr;
+    m_LeftHeartToGnd = nullptr;
+    m_LeftHeart = nullptr;
     m_LeftHeartToAorta = nullptr;
-
-    m_leftRenalArteryPath = nullptr;
-    m_rightRenalArteryPath = nullptr;
 
     m_Aorta = nullptr;
     m_AortaCO2 = nullptr;
-    m_Groundcmpt = nullptr;
+    m_Ground = nullptr;
     m_LeftHeart = nullptr;
     m_LeftPulmonaryCapillaries = nullptr;
     m_LeftPulmonaryArteries = nullptr;
@@ -162,19 +170,50 @@ namespace pulse
     m_VenaCava = nullptr;
     m_AbdominalCavity = nullptr;
 
-    m_leftPleuralCavity = nullptr;
-    m_rightPleuralCavity = nullptr;
+    m_LeftPleuralCavity = nullptr;
+    m_RightPleuralCavity = nullptr;
     m_PleuralCavity = nullptr;
     m_Ambient = nullptr;
 
-    m_CardiacCycleArterialPressure_mmHg->Clear();
-    m_CardiacCycleArterialCO2PartialPressure_mmHg->Clear();
-    m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Clear();
-    m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Clear();
-    m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Clear();
-    m_CardiacCyclePulmonaryArteryPressure_mmHg->Clear();
-    m_CardiacCycleCentralVenousPressure_mmHg->Clear();
-    m_CardiacCycleSkinFlow_mL_Per_s->Clear();
+    m_StartSystole = false;
+    m_StartCardiacArrest = false;
+    m_TransitionArrhythmia = false;
+    m_MAPCollapse_mmHg = 20;
+    m_MinIndividialSystemicResistance_mmHg_s_Per_mL = 0.1;
+
+    m_HeartCompliancePaths.clear();
+    m_AortaCompliancePaths.clear();
+    m_VenaCavaCompliancePaths.clear();
+    m_PulmonaryCompliancePaths.clear();
+    m_SystemicCompliancePaths.clear();
+    m_SystemicResistancePaths.clear();
+    m_MuscleResistancePaths.clear();
+    m_SkinPaths.clear();
+
+    m_LeftPulmonaryArteriesToVeins.clear();
+    m_LeftPulmonaryArteriesToCapillaries.clear();
+    m_RightPulmonaryArteriesToVeins.clear();
+    m_RightPulmonaryArteriesToCapillaries.clear();
+
+    m_CardiacCycleArterialPressure_mmHg->Invalidate();
+    m_CardiacCycleArterialCO2PartialPressure_mmHg->Invalidate();
+    m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Invalidate();
+    m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Invalidate();
+    m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Invalidate();
+    m_CardiacCyclePulmonaryArteryPressure_mmHg->Invalidate();
+    m_CardiacCycleCentralVenousPressure_mmHg->Invalidate();
+    m_CardiacCycleSkinFlow_mL_Per_s->Invalidate();
+    m_LeftCardiacCyclePerfusionVolumes_mL.clear();
+    m_RightCardiacCyclePerfusionVolumes_mL.clear();
+
+
+    m_HeartRateBaseline_Per_min->Invalidate();
+    m_HeartComplianceModifier->Invalidate();
+    m_AortaComplianceModifier->Invalidate();
+    m_VenaCavaComplianceModifier->Invalidate();
+    m_PulmonaryComplianceModifier->Invalidate();
+    m_SystemicVascularResistanceModifier->Invalidate();
+    m_SystemicVascularComplianceModifier->Invalidate();
 
     DELETE_MAP_SECOND(m_HemorrhageTrack);
   }
@@ -193,11 +232,11 @@ namespace pulse
 
     m_HeartRhythm = eHeartRhythm::NormalSinus;
 
-    m_StartSystole = true;
+    m_StartSystole = false;
     m_HeartFlowDetected = false;
+    m_FullyCompressedHeart = false;
 
     m_DriverCyclePeriod_s = 60 / m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
-    m_CurrentCardiacCycleTime_s = m_DriverCyclePeriod_s;
     m_CurrentDriverCycleTime_s = 0.0;
 
     //Heart Elastance Parameters
@@ -209,12 +248,28 @@ namespace pulse
     m_LeftHeartElastanceMax_mmHg_Per_mL  = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
     m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
 
-    // CPR and Cardiac Arrest control
+    // Arrhythmia Parameters
     m_StartCardiacArrest = false;
-    m_CompressionTime_s = 0.0;
-    m_CompressionRatio = 0.0;
-    m_CompressionPeriod_s = 0.0;
+    m_TransitionArrhythmia = false;
     m_CardiacArrestVitalsUpdateTimer_s = 0;
+
+    m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+
+    m_StabilizedHeartRateBaseline_Per_min = 0;
+    m_StabilizedMeanArterialPressureBaseline_mmHg = 0;
+    m_HeartRateBaseline_Per_min->Set(m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min));
+    m_HeartComplianceModifier->Set(1.0);
+    m_AortaComplianceModifier->Set(1.0);
+    m_VenaCavaComplianceModifier->Set(1.0);
+    m_PulmonaryComplianceModifier->Set(1.0);
+    m_SystemicVascularResistanceModifier->Set(1.0);
+    m_SystemicVascularComplianceModifier->Set(1.0);
+
+    // CPR
+    m_CompressionFrequencyCurrentTime_s = 0;
+    m_CompressionFrequencyDuration_s = 0;
+    m_CompressionPeriod_s = 0;
+    m_CompressionPeriodCurrentTime_s = 0;
 
     //Initialize system data based on patient file inputs
     GetHeartRate().Set(m_data.GetCurrentPatient().GetHeartRateBaseline());
@@ -224,13 +279,13 @@ namespace pulse
     m_CardiacCycleAortaPressureHigh_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
     m_CardiacCycleAortaPressureLow_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
     m_CardiacCycleDiastolicVolume_mL = 0.0;
-    m_CardiacCycleLeftHeartPressureHigh_mmHg = 130;
-    m_CardiacCycleLeftHeartPressureLow_mmHg = 8;
+    m_CardiacCycleLeftHeartPressureHigh_mmHg = m_CardiacCycleAortaPressureHigh_mmHg;
+    m_CardiacCycleLeftHeartPressureLow_mmHg = m_CardiacCycleAortaPressureLow_mmHg;
     m_CardiacCycleStrokeVolume_mL = 0;
     m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = 26;
     m_CardiacCyclePulmonaryArteryPressureLow_mmHg = 9;
-    m_CardiacCycleRightHeartPressureHigh_mmHg = 30;
-    m_CardiacCycleRightHeartPressureLow_mmHg = 2;
+    m_CardiacCycleRightHeartPressureHigh_mmHg = m_CardiacCycleAortaPressureHigh_mmHg;
+    m_CardiacCycleRightHeartPressureLow_mmHg = m_CardiacCycleAortaPressureLow_mmHg;
     GetMeanArterialPressure().SetValue((2. / 3. * m_CardiacCycleAortaPressureLow_mmHg) + (1. / 3. * m_CardiacCycleAortaPressureHigh_mmHg), PressureUnit::mmHg);
     m_CardiacCycleArterialPressure_mmHg->Sample(GetMeanArterialPressure().GetValue(PressureUnit::mmHg));
     GetPulmonaryMeanArterialPressure().SetValue(15, PressureUnit::mmHg);
@@ -247,10 +302,12 @@ namespace pulse
     GetPulmonaryArterialPressure().SetValue(90, PressureUnit::mmHg);
     GetPulmonaryMeanCapillaryFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
     GetPulmonaryMeanShuntFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
+    GetTotalPulmonaryPerfusion().SetValue(0, VolumePerTimeUnit::mL_Per_s);
+    GetPulmonaryCapillariesCoverageFraction().SetValue(m_data.GetConfiguration().GetStandardPulmonaryCapillaryCoverage());
 
     GetMeanSkinFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
-    GetCardiacOutput().SetValue(5600, VolumePerTimeUnit::mL_Per_min);
-    GetHeartStrokeVolume().SetValue(78, VolumeUnit::mL);
+    GetCardiacOutput().SetValue(m_data.GetCurrentPatient().GetSex() == ePatient_Sex::Male ? 5600 : 4900, VolumePerTimeUnit::mL_Per_min);
+    GetHeartStrokeVolume().SetValue(GetCardiacOutput(VolumePerTimeUnit::mL_Per_min)/GetHeartRate(FrequencyUnit::Per_min), VolumeUnit::mL);
     GetHeartEjectionFraction().SetValue(0.55);
     GetCardiacIndex().SetValue(3.0, VolumePerTimeAreaUnit::mL_Per_min_m2);
     GetPulmonaryVascularResistance().SetValue(0.14, PressureTimePerVolumeUnit::mmHg_min_Per_mL);
@@ -279,16 +336,14 @@ namespace pulse
   void CardiovascularModel::SetUp()
   {
     m_HemorrhageTrack.clear();
-    m_minIndividialSystemicResistance_mmHg_s_Per_mL = 0.1;
 
-    //Circuits
-    m_CirculatoryCircuit = &m_data.GetCircuits().GetActiveCardiovascularCircuit();
-    m_CirculatoryGraph = &m_data.GetCompartments().GetActiveCardiovascularGraph();
+    m_LeftCardiacCyclePerfusionVolumes_mL.clear();
+    m_RightCardiacCyclePerfusionVolumes_mL.clear();
+
     //Compartments
     m_Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
     m_AortaCO2 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
-    m_Brain = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
-    m_Groundcmpt = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Ground);
+    m_Ground = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Ground);
     m_LeftPulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryArteries);
     m_RightPulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryArteries);
     m_LeftPulmonaryVeins = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryVeins);
@@ -299,93 +354,414 @@ namespace pulse
     m_Pericardium = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Pericardium);
     m_LeftHeart = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftHeart);
     m_RightHeart = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightHeart);
+    m_Abdomen = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
     m_AbdominalCavity = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::AbdominalCavity);
     //Respiratory Compartments
-    m_leftPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftPleuralCavity);
-    m_rightPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightPleuralCavity);
+    m_LeftPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftPleuralCavity);
+    m_RightPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightPleuralCavity);
     m_PleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::PleuralCavity);
     m_Ambient = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+
+    //Circuits
+    m_CirculatoryCircuit = &m_data.GetCircuits().GetActiveCardiovascularCircuit();
+    m_CirculatoryGraph = &m_data.GetCompartments().GetActiveCardiovascularGraph();
     //Nodes
-    m_MainPulmonaryArteries = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::MainPulmonaryArteries);
-    m_LeftHeart2 = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::LeftHeart2);
-    m_Ground = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::Ground);
+    m_GroundNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::Ground);
+    m_LeftPulmonaryVeinsNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::LeftPulmonaryVeins1);
+    m_RightPulmonaryVeinsNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::RightPulmonaryVeins1);
+    m_AbdominalCavityNode = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::AbdominalCavity1);
     //Paths
-    m_LeftPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteriesToLeftPulmonaryVeins);
-    m_LeftPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteriesToLeftPulmonaryCapillaries);
-    m_RightPulmonaryArteriesToVeins = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryVeins);
-    m_RightPulmonaryArteriesToCapillaries = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryCapillaries);
+    if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
+    {
+      //Not yet implemented
+    }
+    else
+    {
+      m_LeftPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryVeins1));
+      m_LeftPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1));
+
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryVeins1));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryCapillaries1));
+    }
+
+    m_AortaCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToAorta4);
+    m_AortaResistancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
+    m_VenaCavaCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCava1ToGround);
 
     m_InternalHemorrhageToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAorta4);
-    m_pAortaToBone = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBone1);
-    m_pAortaToBrain = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
-    m_pBrainToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
-    m_pAortaToLiver = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLiver1);
-    m_pAortaToLeftKidney = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLeftKidney1);
-    m_pAortaToLargeIntestine = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLargeIntestine);
-    m_pAortaToMuscle = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMuscle1);
-    m_pMuscleToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Muscle1ToMuscle2);
-    m_pAortaToMyocardium = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMyocardium1);
-    m_pMyocardiumToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Myocardium1ToMyocardium2);
-    m_pAortaToRightKidney = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToRightKidney1);
-    m_pAortaToSkin = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSkin1);
-    m_pAortaToSmallIntestine = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSmallIntestine);
-    m_pAortaToSplanchnic = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSplanchnic);
-    m_pAortaToSpleen = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSpleen);
+    m_GndToAbdominalCavity = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAbdominalCavity1);
+    m_AbdominalCavityToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::AbdominalCavity1ToGround);
 
-    m_pBrainResistanceDownstream = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
-    m_pBrainResistanceUpstream = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
+    m_LeftPulmonaryVeinsLeak = m_RightPulmonaryVeinsLeak = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak1ToGround);
+    m_RightPulmonaryVeinsLeak = m_RightPulmonaryVeinsLeak = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak1ToGround);
 
-    m_pGndToAbdominalCavity = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAbdominalCavity1);
-    m_pAbdominalCavityToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::AbdominalCavity1ToGround);
+    m_LeftRenalArteryPath = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryToAfferentArteriole);
+    m_RightRenalArteryPath = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryToAfferentArteriole);
 
-    m_pGndToPericardium = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToPericardium1);
-    m_pPericardiumToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Pericardium1ToGround);
-    m_pRightHeartToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightHeart3ToGround);
-    m_pRightHeart = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightHeart1ToRightHeart3);
-    m_pLeftHeartToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftHeart3ToGround);
-    m_pLeftHeart = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftHeart1ToLeftHeart3);
+    m_GndToPericardium = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToPericardium1);
+    m_PericardiumToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Pericardium1ToGround);
+    m_RightHeartToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightHeart3ToGround);
+    m_RightHeartCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightHeart1ToRightHeart3);
+    m_RightHeartResistancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCava1ToRightHeart2);
+    m_LeftHeartToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftHeart3ToGround);
+    m_LeftHeartCompliancePath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftHeart1ToLeftHeart3);
     m_LeftHeartToAorta = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftHeart1ToAorta2);
 
-    /// \todo We are assuming that the complex renal system is connected. Make it agnostic.
-    m_leftRenalArteryPath = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryToAfferentArteriole);
-    m_rightRenalArteryPath = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryToAfferentArteriole);
+    // Setup Default vs. Expanded Circuit Parameters
+    if (m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::On)
+    {
+      // For Metabolic Tone Response
+      m_AortaToBrain = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Aorta5ToIntracranial1);
+      m_AortaToMyocardium = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Aorta5ToMyocardium1);
+      m_BrainToVenaCava = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial3ToVenaCava2);
+      m_MyocardiumToVenaCava = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium3ToVenaCava2);
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMuscle1ToTorso2));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMuscle1ToRightArm2));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMuscle1ToLeftArm2));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMuscle1ToRightLeg2));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMuscle1ToLeftLeg2));
 
-    m_systemicResistancePaths.clear();
-    m_systemicCompliancePaths.clear();
-    std::vector<SEFluidCircuitNode*> venousNodes;
-    SEFluidCircuitNode* aorta = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::Aorta1);
-    for (SEFluidCircuitPath* path : m_CirculatoryCircuit->GetPaths())
-    {
-      if (&path->GetSourceNode() == aorta && path->HasResistanceBaseline())
+      m_Brain = m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedVascularCompartment::Intracranial);
+      m_BrainResistanceDownstreamPath = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial2ToIntracranial3);
+      m_BrainResistanceUpstreamPath = m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial1ToIntracranial2);
+
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoSkin1));
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmSkin1));
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmSkin1));
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegSkin1));
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegSkin1));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial1ToExtracranial2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial2ToExtracranial3));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial1ToIntracranial2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial2ToIntracranial3));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium1ToMyocardium2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium2ToMyocardium3));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToLiver1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToSplanchnic1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToSpleen1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToSmallIntestine1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToLargeIntestine1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::PortalVein1ToLiver1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Liver1ToLiver2));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmBone1ToRightArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmFat1ToRightArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMuscle1ToRightArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmSkin1ToRightArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToRightArmMicrovasculature1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMicrovasculature1ToRightArm2));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmBone1ToLeftArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmFat1ToLeftArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMuscle1ToLeftArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmSkin1ToLeftArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmMicrovasculature1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMicrovasculature1ToLeftArm2));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoBone1ToTorso2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoFat1ToTorso2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMuscle1ToTorso2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoSkin1ToTorso2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToTorsoMicrovasculature1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMicrovasculature1ToTorso2));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegBone1ToRightLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegFat1ToRightLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMuscle1ToRightLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegSkin1ToRightLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegMicrovasculature1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMicrovasculature1ToRightLeg2));
+
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegBone1ToLeftLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegFat1ToLeftLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMuscle1ToLeftLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegSkin1ToLeftLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegMicrovasculature1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMicrovasculature1ToLeftLeg2));
+
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Extracranial3ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Intracranial3ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium2ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Myocardium3ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArmMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightArm2ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArmMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftArm2ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::TorsoMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Torso2ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLegMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightLeg2ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegBone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegFat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMuscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegSkin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLegMicrovasculature1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftLeg2ToGround));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Gut1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Liver1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Liver2ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Splanchnic1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::Spleen1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LargeIntestine1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::SmallIntestine1ToGround));
+
+      if (!m_data.GetConfiguration().IsRenalEnabled())
       {
-        m_systemicResistancePaths.push_back(path);
-        venousNodes.push_back(&path->GetTargetNode());
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftKidney1ToLeftKidney2));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightKidney1ToRightKidney2));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::LeftKidney3ToVenaCava2));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::ExpandedCardiovascularPath::RightKidney3ToVenaCava2));
+
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryCompliance));
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryCompliance));
+
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalVeinCompliance));
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalVeinCompliance));
       }
     }
-    for (SEFluidCircuitPath* path : m_CirculatoryCircuit->GetPaths())
+    else
     {
-      for (SEFluidCircuitNode* node : venousNodes)
+      // For Metabolic Tone Response
+      m_AortaToBrain = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
+      m_BrainToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
+      m_AortaToMyocardium = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMyocardium1);
+      m_MyocardiumToVenaCava = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Myocardium1ToMyocardium2);
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMuscle1));
+      m_MuscleResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Muscle1ToMuscle2));
+
+      m_Brain = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
+      m_BrainResistanceDownstreamPath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2);
+      m_BrainResistanceUpstreamPath = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1);
+
+      m_SkinPaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSkin1));
+
+      // Arterial Side
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBrain1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMyocardium1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToRightArm1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLeftArm1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToRightLeg1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLeftLeg1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToFat1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToMuscle1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSkin1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToBone1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLiver1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSplanchnic1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSpleen1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLargeIntestine1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToSmallIntestine1));
+      // Venous Side
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToBrain2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Myocardium1ToMyocardium2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightArm1ToRightArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftArm1ToLeftArm2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightLeg1ToRightLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftLeg1ToLeftLeg2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Fat1ToFat2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Muscle1ToMuscle2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Skin1ToSkin2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Bone1ToBone2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Liver1ToLiver2));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LargeIntestine1ToPortalVein1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Splanchnic1ToPortalVein1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Spleen1ToPortalVein1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::SmallIntestine1ToPortalVein1));
+      m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::PortalVein1ToLiver1));
+
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Brain1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Myocardium1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightArm1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftArm1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightLeg1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftLeg1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Fat1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Muscle1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Skin1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Bone1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Liver1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Splanchnic1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Spleen1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LargeIntestine1ToGround));
+      m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::SmallIntestine1ToGround));
+
+      if (!m_data.GetConfiguration().IsRenalEnabled())
       {
-        if (&path->GetSourceNode() == node)
-        {
-          if (path->HasResistanceBaseline())
-            m_systemicResistancePaths.push_back(path);
-          if (path->HasComplianceBaseline())
-            m_systemicCompliancePaths.push_back(path);
-          break;
-        }
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToLeftKidney1));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToRightKidney1));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftKidney1ToLeftKidney2));
+        m_SystemicResistancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightKidney1ToRightKidney2));
+
+        //TODO: Aaron: isn't this path removed when the renal system is enabled? Shouldn't you take here the paths RightRenalArteryCompliance, RightGlomerularCapillariesCompliance, etc?
+        // Probably you don't want to optimize/modify these values, but some blood volume are not considered in this way. Right?
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftKidney1ToGround));
+        m_SystemicCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightKidney1ToGround));
       }
     }
-    // Add the portal vein!
-    SEFluidCircuitPath* p = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::PortalVeinToLiver1);
-    if (!Contains(m_systemicResistancePaths, (*p)))
-      m_systemicResistancePaths.push_back(p);
-    m_AortaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta1ToAorta4);
-    m_AortaResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
-    m_VenaCavaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
-    m_RightHeartResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToRightHeart2);
-    m_ArrhythmiaHeartElastanceModifier = 1.0;
-    m_ArrhythmiaVascularToneModifier = 1.0;
+
+    // Setup our vectors for vascular tone modifiers
+    m_AortaCompliancePaths.push_back(m_AortaCompliancePath);
+    m_VenaCavaCompliancePaths.push_back(m_VenaCavaCompliancePath);
+    m_HeartCompliancePaths.push_back(m_LeftHeartCompliancePath);
+    m_HeartCompliancePaths.push_back(m_RightHeartCompliancePath);
+
+    if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
+    {
+      //Not yet implemented
+    }
+    else
+    {
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillaries1ToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryCapillaries1ToGround));
+    }
+
+    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToGround));
+    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToGround));
+    
+    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeins1ToGround));
+    m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeins1ToGround));
+
+    // Add the expanded kidney paths
+    if (m_data.GetConfiguration().IsRenalEnabled())
+    {
+      SEFluidCircuitPath* p;
+      // Add kidney resistance paths
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryToAfferentArteriole);
+      if (!Contains(m_SystemicResistancePaths, (*p)))
+        m_SystemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightAfferentArterioleToGlomerularCapillaries);
+      if (!Contains(m_SystemicResistancePaths, (*p)))
+        m_SystemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightGlomerularCapillariesToEfferentArteriole);
+      if (!Contains(m_SystemicResistancePaths, (*p)))
+        m_SystemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightEfferentArterioleToPeritubularCapillaries);
+      if (!Contains(m_SystemicResistancePaths, (*p)))
+        m_SystemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightPeritubularCapillariesToRenalVein);
+      if (!Contains(m_SystemicResistancePaths, (*p)))
+        m_SystemicResistancePaths.push_back(p);
+      //p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalVeinToVenaCavaConnection);
+      //if (!Contains(m_SystemicResistancePaths, (*p)))
+      //  m_SystemicResistancePaths.push_back(p);
+    
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryToAfferentArteriole);
+      if (!Contains(m_SystemicResistancePaths, (*p)))
+        m_SystemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftAfferentArterioleToGlomerularCapillaries);
+      if (!Contains(m_SystemicResistancePaths, (*p)))
+        m_SystemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftGlomerularCapillariesToEfferentArteriole);
+      if (!Contains(m_SystemicResistancePaths, (*p)))
+        m_SystemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftEfferentArterioleToPeritubularCapillaries);
+      if (!Contains(m_SystemicResistancePaths, (*p)))
+        m_SystemicResistancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftPeritubularCapillariesToRenalVein);
+      if (!Contains(m_SystemicResistancePaths, (*p)))
+        m_SystemicResistancePaths.push_back(p);
+      //p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalVeinToVenaCavaConnection);
+      //if (!Contains(m_SystemicResistancePaths, (*p)))
+      //  m_SystemicResistancePaths.push_back(p);
+    
+      // Add Compliance Paths
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryCompliance);
+      if (!Contains(m_SystemicCompliancePaths, (*p)))
+        m_SystemicCompliancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightGlomerularCapillariesCompliance);
+      if (!Contains(m_SystemicCompliancePaths, (*p)))
+        m_SystemicCompliancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalVeinCompliance);
+      if (!Contains(m_SystemicCompliancePaths, (*p)))
+        m_SystemicCompliancePaths.push_back(p);
+    
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryCompliance);
+      if (!Contains(m_SystemicCompliancePaths, (*p)))
+        m_SystemicCompliancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftGlomerularCapillariesCompliance);
+      if (!Contains(m_SystemicCompliancePaths, (*p)))
+        m_SystemicCompliancePaths.push_back(p);
+      p = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalVeinCompliance);
+      if (!Contains(m_SystemicCompliancePaths, (*p)))
+        m_SystemicCompliancePaths.push_back(p);
+    }
+    // Track average flows by cardiac cycle the following compartments and their children
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LargeIntestine));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftArm));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftLeg));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightArm));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightLeg));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Skin));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::SmallIntestine));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Splanchnic));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Spleen));
+    SampleCompartment(m_data.GetCompartments(), *m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava));
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -413,9 +789,10 @@ namespace pulse
       m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetDiastolicArterialPressure());
       m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetSystolicArterialPressure());
       m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
-      // Keep this for moving between arrhythmia's, note InitialPatient is pre conditions
+      // Keep these for moving between arrhythmia's, note InitialPatient is pre conditions
       m_StabilizedHeartRateBaseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
-      m_StabilizedMAPBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+      m_HeartRateBaseline_Per_min->Set(m_StabilizedHeartRateBaseline_Per_min);
+      m_StabilizedMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
 
       if (m_data.GetState() == EngineState::AtInitialStableState)
       {// At Resting State, apply conditions if we have them
@@ -461,8 +838,7 @@ namespace pulse
     // Maximum 30% reduction
     if (rf > 0.3)
     {
-      /// \error if too much hemoglobin is removed, we will no longer meet validation, so set to maximum amount that can be removed.
-      Error("Cannot remove more than 30% of hemoglobin in anemia in the Pulse Engine. Setting value to 30% and continuing.", "CardiovascularModel::Anemia");
+      Error("Cannot remove more than 30% of hemoglobin in anemia in the Pulse Engine. Setting value to 30% and continuing.");
       rf = 0.3;
     }
     // Empirical resistance modification
@@ -535,19 +911,17 @@ namespace pulse
     if (deltaVolume_mL > 1000.0)
     {
       Error("Cannot specify volume accumulation greater than 1000 mL. Accumulated volume is now set at 1000 mL.");
-      /// \error Cannot specify volume accumulation greater than 1000 mL. Accumulated volume is now set at 1000 mL.
       deltaVolume_mL = 1000.0;
     }
     else if (deltaVolume_mL < 0.0)
     {
       Error("Cannot specify volume accumulation less than 0 mL. Accumulated volume is now set at 0 mL.");
-      /// \error Cannot specify volume accumulation less than 0 mL. Accumulated volume is now set at 0 mL.
       deltaVolume_mL = 0.0;
     }
 
     //Just throw this all on at once
     //Only do this for a single time-step!
-    m_pGndToPericardium->GetNextFlowSource().SetValue(deltaVolume_mL / m_data.GetTimeStep_s(), VolumePerTimeUnit::mL_Per_s);
+    m_GndToPericardium->GetNextFlowSource().SetValue(deltaVolume_mL / m_data.GetTimeStep_s(), VolumePerTimeUnit::mL_Per_s);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -561,41 +935,37 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::ChronicRenalStenosis()
   {
-    ///\todo move this to CV
+    //todo: move this to CV
     double LeftOcclusionFraction = m_data.GetConditions().GetChronicRenalStenosis().GetLeftKidneySeverity().GetValue();
     double RightOcclusionFraction = m_data.GetConditions().GetChronicRenalStenosis().GetRightKidneySeverity().GetValue();
 
     if (LeftOcclusionFraction < 0.0)
     {
-      /// \error Cannot specify left occlusion fraction less than zero
       Error("Cannot specify left occlusion fraction less than zero. Renal resistances remain unchanged."); //Specify resistance is the same in error
       return;
     }
 
     if (RightOcclusionFraction < 0.0)
     {
-      /// \error Cannot specify right occlusion fraction less than zero
       Error("Cannot specify right occlusion fraction less than zero. Renal resistances remain unchanged.");
       return;
     }
 
     if (LeftOcclusionFraction > 1.0)
     {
-      /// \error Cannot specify left occlusion fraction greater than one
       Error("Cannot specify left occlusion fraction greater than one. Renal resistances remain unchanged.");
       return;
     }
 
     if (RightOcclusionFraction > 1.0)
     {
-      /// \error Cannot specify right occlusion fraction greater than one
       Error("Cannot specify right occlusion fraction greater than  one. Renal resistances remain unchanged.");
       return;
     }
 
     //Aorta1ToAfferentArteriole paths are equivalent to the renal artery in Pulse. Resistance increases on these paths to represent renal arterial stenosis
-    double currentLeftResistance_mmHg_s_Per_mL = m_leftRenalArteryPath->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double currentRightResistance_mmHg_s_Per_mL = m_rightRenalArteryPath->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double currentLeftResistance_mmHg_s_Per_mL = m_LeftRenalArteryPath->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double currentRightResistance_mmHg_s_Per_mL = m_RightRenalArteryPath->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
     //The base resistance is a tuned parameter that allows for adequate flow reduction to the kidneys with the logarithmic functional form chosen
     double baseResistance_mmHg_s_Per_mL = 10.0;
@@ -605,8 +975,8 @@ namespace pulse
     double newLeftResistance_mmHg_s_Per_mL = GeneralMath::ExponentialDecayFunction(baseResistance_mmHg_s_Per_mL, openResistance_mmHg_s_Per_mL, currentLeftResistance_mmHg_s_Per_mL, LeftOcclusionFraction);
     double newRightResistance_mmHg_s_Per_mL = GeneralMath::ExponentialDecayFunction(baseResistance_mmHg_s_Per_mL, openResistance_mmHg_s_Per_mL, currentRightResistance_mmHg_s_Per_mL, RightOcclusionFraction);
 
-    m_leftRenalArteryPath->GetResistanceBaseline().SetValue(newLeftResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    m_rightRenalArteryPath->GetResistanceBaseline().SetValue(newRightResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_LeftRenalArteryPath->GetResistanceBaseline().SetValue(newLeftResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_RightRenalArteryPath->GetResistanceBaseline().SetValue(newRightResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -615,13 +985,17 @@ namespace pulse
   ///
   /// \details
   /// This function calculates the appropriate modifications to the cardiovascular
-  /// circuit for the time within the cardiac cycle and it processes the actions on the 
+  /// circuit for the time within the cardiac cycle and it processes the actions on the
   /// cardiovascular system.
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::PreProcess()
   {
-    HeartDriver();
+    //m_data.GetDataTrack().Probe(*m_CirculatoryCircuit);
     ProcessActions();
+
+    HeartDriver();
+    UpdatePulmonaryCapillaries();
+    CalculateHemothorax();
     CalculatePleuralCavityVenousEffects();
   }
 
@@ -641,8 +1015,8 @@ namespace pulse
   {
     if (solve_and_transport)
     {
-      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
-      m_transporter->Transport(*m_CirculatoryGraph, m_data.GetTimeStep_s());
+      m_CircuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
+      m_Transporter->Transport(*m_CirculatoryGraph, m_data.GetTimeStep_s());
     }
     CalculateVitalSigns();
     ComputeExposedModelParameters();
@@ -662,7 +1036,7 @@ namespace pulse
   void CardiovascularModel::PostProcess(bool solve_and_transport)
   {
     if (solve_and_transport)
-      m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
+      m_CircuitCalculator->PostProcess(*m_CirculatoryCircuit);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -677,10 +1051,12 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CalculateVitalSigns()
   {
+    // Tell the cmpt mgr to sample any cmpts by cardiac cycle
+    m_data.GetCompartments().SampleByCardiacCyle(m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle));
     // Grab data from the circuit in order to calculate a running mean
     const double AortaNodePressure_mmHg = m_Aorta->GetPressure(PressureUnit::mmHg);
     const double AortaNodeCO2PartialPressure_mmHg = m_AortaCO2 == nullptr ? 0 : m_AortaCO2->GetPartialPressure(PressureUnit::mmHg); // This is here so we can Tune circuit w/o substances
-     const double LeftPulmonaryArteryVolume_mL = m_LeftPulmonaryArteries->GetVolume(VolumeUnit::mL);
+    const double LeftPulmonaryArteryVolume_mL = m_LeftPulmonaryArteries->GetVolume(VolumeUnit::mL);
     const double RightPulmonaryArteryVolume_mL = m_RightPulmonaryArteries->GetVolume(VolumeUnit::mL);
     const double TotalPulmonaryArteryVolume_mL = LeftPulmonaryArteryVolume_mL + RightPulmonaryArteryVolume_mL;
     const double LeftPulmonaryArteryPressure_mmHg = m_LeftPulmonaryArteries->GetPressure(PressureUnit::mmHg);
@@ -694,26 +1070,44 @@ namespace pulse
 
     const double PulmonaryArteryNodePressure_mmHg = (LeftPulmonaryArteryVolume_mL * LeftPulmonaryArteryPressure_mmHg + RightPulmonaryArteryVolume_mL * RightPulmonaryArteryPressure_mmHg) / TotalPulmonaryArteryVolume_mL;
     const double PulmVeinNodePressure_mmHg = (LeftPulmonaryVeinVolume_mL * LeftPulmonaryVeinPressure_mmHg + RightPulmonaryVeinVolume_mL * RightPulmonaryVeinPressure_mmHg) / TotalPulmonaryVeinVolume_mL;
-    const double PulmCapFlow_mL_Per_s = m_LeftPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s)
-      + m_RightPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
-    const double PulmShuntFlow_mL_Per_s = m_LeftPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s)
-      + m_RightPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+
+    double PulmCapFlow_mL_Per_s = 0.0;
+    for (unsigned int iter = 0; iter < m_LeftPulmonaryArteriesToCapillaries.size(); iter++)
+    {
+      double pulmonaryCapillaryFlow_mL_Per_s = m_LeftPulmonaryArteriesToCapillaries.at(iter)->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+      PulmCapFlow_mL_Per_s += pulmonaryCapillaryFlow_mL_Per_s;
+      double perfusionVolume_mL = pulmonaryCapillaryFlow_mL_Per_s * m_data.GetTimeStep_s();
+      m_LeftCardiacCyclePerfusionVolumes_mL.at(iter) += perfusionVolume_mL;
+    }
+    for (unsigned int iter = 0; iter < m_RightPulmonaryArteriesToCapillaries.size(); iter++)
+    {
+      double pulmonaryCapillaryFlow_mL_Per_s = m_RightPulmonaryArteriesToCapillaries.at(iter)->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+      PulmCapFlow_mL_Per_s += pulmonaryCapillaryFlow_mL_Per_s;
+      double perfusionVolume_mL = pulmonaryCapillaryFlow_mL_Per_s * m_data.GetTimeStep_s();
+      m_RightCardiacCyclePerfusionVolumes_mL.at(iter) += perfusionVolume_mL;
+    }
+
+    double PulmShuntFlow_mL_Per_s = 0.0;
+    for (auto leftShuntPath : m_LeftPulmonaryArteriesToVeins)
+    {
+      PulmShuntFlow_mL_Per_s += leftShuntPath->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+    }
+    for (auto rightShuntPath : m_RightPulmonaryArteriesToVeins)
+    {
+      PulmShuntFlow_mL_Per_s += rightShuntPath->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+    }
 
     const double VenaCavaPressure_mmHg = m_VenaCava->GetPressure(PressureUnit::mmHg);
-
-    const double SkinFlow_mL_Per_s = m_pAortaToSkin->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
     const double LHeartFlow_mL_Per_s = m_LeftHeartToAorta->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
     const double LHeartVolume_mL = m_LeftHeart->GetVolume(VolumeUnit::mL);
     const double LHeartPressure_mmHg = m_LeftHeart->GetPressure(PressureUnit::mmHg);
     const double RHeartPressure_mmHg = m_RightHeart->GetPressure(PressureUnit::mmHg);
-   
 
-    const double muscleFlow_mL_Per_s = m_pAortaToMuscle->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+    double SkinFlow_mL_Per_s = 0;
+    for(SEFluidCircuitPath* path : m_SkinPaths)
+      SkinFlow_mL_Per_s += path->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
-    const double gutFlow_mL_Per_s = m_pAortaToLargeIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
-      m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
-      m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
-
+    m_FullyCompressedHeart = false;
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
       m_CardiacArrestVitalsUpdateTimer_s += m_data.GetTimeStep_s();
@@ -726,35 +1120,16 @@ namespace pulse
     else
     {
       // Test to see if the cardiac cycle is starting, compressing blood out of the heart
-      // If so, push data into the CDM
       if (LHeartFlow_mL_Per_s > 0.1 && !m_HeartFlowDetected)
       {
         // Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
         m_HeartFlowDetected = true;
-        double HeartRate_Per_s = 1.0 / m_CurrentCardiacCycleTime_s;
-        GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
-#ifdef LOG_TIMING
-        Info("Heart flow starting");
-        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-        Info("  -Setting CDM Heart Rate to: " + std::to_string(HeartRate_Per_s * 60.0));
-        Info("  -Setting Current Cardiac Cycle Time to 0");
-#endif
-        m_CurrentCardiacCycleTime_s = 0;
-        RecordAndResetCardiacCycle();
       }
-      else
-        m_CurrentCardiacCycleTime_s += m_data.GetTimeStep_s();
-
       // Check to see if the cardiac cycle has completed, fully compressed the blood from the heart
       if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
       {
         m_HeartFlowDetected = false;
-#ifdef LOG_TIMING
-        Info("Heart flow stopped");
-        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-#endif
+        m_FullyCompressedHeart = true;
       }
     }
 
@@ -780,8 +1155,10 @@ namespace pulse
     if (LHeartVolume_mL > m_CardiacCycleDiastolicVolume_mL)
       m_CardiacCycleDiastolicVolume_mL = LHeartVolume_mL;
 
-    // Increment stroke volume. Get samples for running means
+    // Increment stroke volume and pulmonary flows
     m_CardiacCycleStrokeVolume_mL += LHeartFlow_mL_Per_s * m_data.GetTimeStep_s();
+
+    //Get samples for running means
     m_CardiacCycleArterialPressure_mmHg->Sample(AortaNodePressure_mmHg);
     m_CardiacCycleArterialCO2PartialPressure_mmHg->Sample(AortaNodeCO2PartialPressure_mmHg);
     m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Sample(PulmVeinNodePressure_mmHg);
@@ -794,12 +1171,10 @@ namespace pulse
     if (m_CardiacCycleAortaPressureLow_mmHg < -2.0)
     {
       Fatal("Diastolic pressure has fallen below zero.");
-      /// \error Fatal: Diastolic pressure has fallen below -2
     }
     if (m_CardiacCycleAortaPressureHigh_mmHg > 700.0)
     {
       Fatal("Systolic pressure has exceeded physiologic range.");
-      /// \error Fatal: Systolic pressure has exceeded 700
     }
 
     // Pressures\Flows from circuit
@@ -814,7 +1189,6 @@ namespace pulse
     {// Don't throw events if we are initializing
 
     // Check for hypovolemic shock
-    /// \event Patient: Hypovolemic Shock: blood volume below 65% of its normal value
       if (GetBloodVolume().GetValue(VolumeUnit::mL) <= (m_data.GetConfiguration().GetMinimumBloodVolumeFraction() * m_data.GetCurrentPatient().GetBloodVolumeBaseline(VolumeUnit::mL)))
       {
         m_data.GetEvents().SetEvent(eEvent::HypovolemicShock, true, m_data.GetSimulationTime());
@@ -824,7 +1198,7 @@ namespace pulse
         m_data.GetEvents().SetEvent(eEvent::HypovolemicShock, false, m_data.GetSimulationTime());
       }
 
-      if (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) <= 20)
+      if (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) <= m_MAPCollapse_mmHg)
       {
         m_data.GetEvents().SetEvent(eEvent::CardiovascularCollapse, true, m_data.GetSimulationTime());
       }
@@ -838,7 +1212,6 @@ namespace pulse
         GetSystolicArterialPressure(PressureUnit::mmHg) < 90.0 &&
         GetPulmonaryCapillariesWedgePressure(PressureUnit::mmHg) > 15.0)
       {
-        /// \event Patient: Cardiogenic Shock: Cardiac Index has fallen below 2.2 L/min-m^2, Systolic Arterial Pressure is below 90 mmHg, and Pulmonary Capillary Wedge Pressure is above 15.0.
         /// \cite dhakam2008review
         m_data.GetEvents().SetEvent(eEvent::CardiogenicShock, true, m_data.GetSimulationTime());
       }
@@ -877,13 +1250,28 @@ namespace pulse
 
     // Compute blood volume
     double blood_mL = 0;
+    // Info("Evaluating blood volume -----------------------------------");
     for (SELiquidCompartment* cmpt : m_data.GetCompartments().GetVascularLeafCompartments())
     {
       if (cmpt->HasVolume() && cmpt != m_Pericardium) //Don't include pericardium
       {
+        // Info(cmpt->GetName() + " Has Volume");
+        for (auto n : cmpt->GetNodeMapping().GetNodes())
+         if(n->HasVolume()){
+          //  Info("  - "+n->GetName() + " : " +std::to_string(cmpt->GetVolume(VolumeUnit::mL)) + " [mL]. Total " + std::to_string(blood_mL + cmpt->GetVolume(VolumeUnit::mL)));
+            // m_ss << "Compartment - " << std::setw(30) << cmpt->GetName() <<
+            //   " - " << std::setw(30) << n->GetName() <<
+            //   " Volume(mL):"          << std::setw(10) << cmpt->GetVolume(VolumeUnit::mL) <<
+            //   " Total(mL):"           << std::setw(10) << blood_mL + cmpt->GetVolume(VolumeUnit::mL);
+            // Info(m_ss);
+            }
+
         blood_mL += cmpt->GetVolume(VolumeUnit::mL);
       }
+      //else
+      //  Info(cmpt->GetName() + " No Volume");
     }
+    // Info("-----------------------------------");
     GetBloodVolume().SetValue(blood_mL, VolumeUnit::mL);
   }
 
@@ -907,6 +1295,16 @@ namespace pulse
     GetSystolicRightHeartPressure().SetValue(m_CardiacCycleRightHeartPressureHigh_mmHg, PressureUnit::mmHg);
     GetDiastolicRightHeartPressure().SetValue(m_CardiacCycleRightHeartPressureLow_mmHg, PressureUnit::mmHg);
 
+    // As implemented now, during cardiac arrest and no flow through the system,
+    // all pressures, everywhere, reach the same value, including the aorta and heart.
+    // This results in a CPP of zero, until we fully understand why/how the heart is lower
+    // than the aorta/map, we are going to set this to 15 mmHg to indicate the patient is 
+    // able to be resusitated. We will update this if we get better information/funding to fully explore it
+    double cpp_mmHg = 0.;
+    cpp_mmHg = m_CardiacCycleAortaPressureLow_mmHg - m_CardiacCycleLeftHeartPressureLow_mmHg;
+    cpp_mmHg = MAX(10, cpp_mmHg);
+    GetCoronaryPerfusionPressure().SetValue(cpp_mmHg, PressureUnit::mmHg);
+
     m_data.GetCardiovascular().GetHeartStrokeVolume().SetValue(m_CardiacCycleStrokeVolume_mL, VolumeUnit::mL);
     double ejectionFraction = 0.;
     if (m_CardiacCycleDiastolicVolume_mL > ZERO_APPROX)
@@ -917,34 +1315,97 @@ namespace pulse
     GetCardiacOutput().SetValue(m_CardiacCycleStrokeVolume_mL * GetHeartRate().GetValue(FrequencyUnit::Per_min), VolumePerTimeUnit::mL_Per_min);
     GetCardiacIndex().SetValue(GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_min) / m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2), VolumePerTimeAreaUnit::mL_Per_min_m2);
 
+    double heartRate_Per_s = GetHeartRate(FrequencyUnit::Per_s);
+    double totalPulmonaryPerfusion_mL_Per_s = 0.0;
+    unsigned int leftPulmonaryCapillariesSize = 1;
+    unsigned int rightPulmonaryCapillariesSize = 1;
+
+    if (m_LeftPulmonaryCapillaries->HasChildren())
+    {
+      leftPulmonaryCapillariesSize = m_LeftPulmonaryCapillaries->GetLeaves().size();
+      if (m_LeftCardiacCyclePerfusionVolumes_mL.size() < leftPulmonaryCapillariesSize)
+      {
+        m_LeftCardiacCyclePerfusionVolumes_mL.resize(leftPulmonaryCapillariesSize, 0.0);
+      }
+      for (unsigned int iter = 0; iter < leftPulmonaryCapillariesSize; iter++)
+      {
+        double perfusion_mL_Per_s = m_LeftCardiacCyclePerfusionVolumes_mL.at(iter) * heartRate_Per_s;
+        totalPulmonaryPerfusion_mL_Per_s += perfusion_mL_Per_s;
+        m_LeftPulmonaryCapillaries->GetLeaves().at(iter)->GetPerfusion().SetValue(perfusion_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+        m_LeftCardiacCyclePerfusionVolumes_mL.at(iter) = 0.0;
+      }
+    }
+    else
+    {
+      if (m_LeftCardiacCyclePerfusionVolumes_mL.size() < leftPulmonaryCapillariesSize)
+      {
+        m_LeftCardiacCyclePerfusionVolumes_mL.resize(leftPulmonaryCapillariesSize, 0.0);
+      }
+      double perfusion_mL_Per_s = m_LeftCardiacCyclePerfusionVolumes_mL.at(0) * heartRate_Per_s;
+      totalPulmonaryPerfusion_mL_Per_s += perfusion_mL_Per_s;
+      m_LeftPulmonaryCapillaries->GetPerfusion().SetValue(perfusion_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      m_LeftCardiacCyclePerfusionVolumes_mL.at(0) = 0.0;
+    }
+
+    if (m_RightPulmonaryCapillaries->HasChildren())
+    {
+      rightPulmonaryCapillariesSize = m_RightPulmonaryCapillaries->GetLeaves().size();
+      if (m_RightCardiacCyclePerfusionVolumes_mL.size() < rightPulmonaryCapillariesSize)
+      {
+        m_RightCardiacCyclePerfusionVolumes_mL.resize(rightPulmonaryCapillariesSize, 0.0);
+      }
+      for (unsigned int iter = 0; iter < rightPulmonaryCapillariesSize; iter++)
+      {
+        double perfusion_mL_Per_s = m_RightCardiacCyclePerfusionVolumes_mL.at(iter) * heartRate_Per_s;
+        totalPulmonaryPerfusion_mL_Per_s += perfusion_mL_Per_s;
+        m_RightPulmonaryCapillaries->GetLeaves().at(iter)->GetPerfusion().SetValue(perfusion_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+        m_RightCardiacCyclePerfusionVolumes_mL.at(iter) = 0.0;
+      }
+    }
+    else
+    {
+      if (m_RightCardiacCyclePerfusionVolumes_mL.size() < rightPulmonaryCapillariesSize)
+      {
+        m_RightCardiacCyclePerfusionVolumes_mL.resize(rightPulmonaryCapillariesSize, 0.0);
+      }
+      double perfusion_mL_Per_s = m_RightCardiacCyclePerfusionVolumes_mL.at(0) * heartRate_Per_s;
+      totalPulmonaryPerfusion_mL_Per_s += perfusion_mL_Per_s;
+      m_RightPulmonaryCapillaries->GetPerfusion().SetValue(perfusion_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      m_RightCardiacCyclePerfusionVolumes_mL.at(0) = 0.0;
+    }
+
+    GetTotalPulmonaryPerfusion().SetValue(totalPulmonaryPerfusion_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+    m_LeftCardiacCyclePerfusionVolumes_mL.resize(leftPulmonaryCapillariesSize, 0.0);
+    m_RightCardiacCyclePerfusionVolumes_mL.resize(rightPulmonaryCapillariesSize, 0.0);
+
     // Running means
     // Mean Arterial Pressure
     GetMeanArterialPressure().SetValue(m_CardiacCycleArterialPressure_mmHg->Value(), PressureUnit::mmHg);
-    m_CardiacCycleArterialPressure_mmHg->Clear();
+    m_CardiacCycleArterialPressure_mmHg->Invalidate();
     // Mean Aterial CO2 Partial Pressure
     GetMeanArterialCarbonDioxidePartialPressure().SetValue(m_CardiacCycleArterialCO2PartialPressure_mmHg->Value(), PressureUnit::mmHg);
     // Mean Aterial CO2 Partial Pressure Delta
     GetMeanArterialCarbonDioxidePartialPressureDelta().SetValue(m_CardiacCycleArterialCO2PartialPressure_mmHg->Value() - m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg, PressureUnit::mmHg);
     m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = m_CardiacCycleArterialCO2PartialPressure_mmHg->Value();
-    m_CardiacCycleArterialCO2PartialPressure_mmHg->Clear();
+    m_CardiacCycleArterialCO2PartialPressure_mmHg->Invalidate();
     // Pulmonary Capillary Wedge Pressure
     GetPulmonaryCapillariesWedgePressure().SetValue(m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Value(), PressureUnit::mmHg);
-    m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Clear();
+    m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Invalidate();
     // Pulmonary Capillary Mean Flow
     GetPulmonaryMeanCapillaryFlow().SetValue(m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
-    m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Clear();
+    m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Invalidate();
     // Pulmonary Shunt Mean Flow
     GetPulmonaryMeanShuntFlow().SetValue(m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
-    m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Clear();
+    m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Invalidate();
     // Mean Pulmonary Artery Pressure
     GetPulmonaryMeanArterialPressure().SetValue(m_CardiacCyclePulmonaryArteryPressure_mmHg->Value(), PressureUnit::mmHg);
-    m_CardiacCyclePulmonaryArteryPressure_mmHg->Clear();
+    m_CardiacCyclePulmonaryArteryPressure_mmHg->Invalidate();
     // Mean Central Venous Pressure
     GetMeanCentralVenousPressure().SetValue(m_CardiacCycleCentralVenousPressure_mmHg->Value(), PressureUnit::mmHg);
-    m_CardiacCycleCentralVenousPressure_mmHg->Clear();
+    m_CardiacCycleCentralVenousPressure_mmHg->Invalidate();
     // Mean Skin Flow
     GetMeanSkinFlow().SetValue(m_CardiacCycleSkinFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
-    m_CardiacCycleSkinFlow_mL_Per_s->Clear();
+    m_CardiacCycleSkinFlow_mL_Per_s->Invalidate();
 
     // Computed systemic Vascular Resistance
     double cardiacOutput_mL_Per_s = GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s);
@@ -1027,8 +1488,8 @@ namespace pulse
     double usMult = GeneralMath::LinearInterpolator(0, 1, 1, 4.775, severity);
     double dsMult = GeneralMath::LinearInterpolator(0, 1, 1, 30.409, severity);
 
-    m_pBrainResistanceDownstream->GetNextResistance().SetValue(dsMult * m_pBrainResistanceDownstream->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL), PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    m_pBrainResistanceUpstream->GetNextResistance().SetValue(usMult * m_pBrainResistanceUpstream->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL), PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_BrainResistanceDownstreamPath->GetNextResistance().SetValue(dsMult * m_BrainResistanceDownstreamPath->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL), PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_BrainResistanceUpstreamPath->GetNextResistance().SetValue(usMult * m_BrainResistanceUpstreamPath->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL), PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1044,7 +1505,6 @@ namespace pulse
   void CardiovascularModel::Hemorrhage()
   {
     bool completeStateChange = false;
-    double TotalLossRate_mL_Per_s = 0.0;
     std::vector<SEHemorrhage*> invalid_hemorrhages;
     const std::vector<SEHemorrhage*>& hems = m_data.GetActions().GetPatientActions().GetHemorrhages();
     //Loop over all hemorrhages to check for validity
@@ -1053,6 +1513,7 @@ namespace pulse
       if (!h->IsActive())
         continue;
 
+      // Allocate the track
       CardiovascularModel::HemorrhageTrack* trk;
       auto t = m_HemorrhageTrack.find(h);
       if (t != m_HemorrhageTrack.end())
@@ -1065,57 +1526,11 @@ namespace pulse
         m_HemorrhageTrack[h] = trk;
       }
 
-      //Check all existing hemorrhage paths, if has a flow source or a resistance (covers both types of hemorrhage), then set to zero
-      // - We do not want to assume prior knowledge, so we can ensure we capture the current flow rate or severity
-      // - If zero at the end, we will remove these hemorrhages
-      // NOTE we can do this in the hems loop becuase we assume that only 1 path/hemorrhage is associated with a compartment
-      // If we ever change that assumption, we will need to move this out, as well as increment flow sources
-      for (auto p2l : trk->Paths2Links)
-      {
-        SEFluidCircuitPath* path = p2l.first;
-        if (path->HasNextFlowSource())
-          path->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
-        if (path->HasNextResistance())
-          path->GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      }
-
-      if (trk->Compartment == nullptr)
-      {
-        // Allow shorthand naming
-        trk->Compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment());
-        //Add Vasculature to the compartment name to grab the cardiovascular compartment
-        if (trk->Compartment == nullptr)
-        {
-          trk->Compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment() + "Vasculature");
-        }
-        //Unsupported compartment
-        if (trk->Compartment == nullptr)
-        {
-          /// \error Error: Removing invalid Hemorrhage due to unsupported compartment
-          Error("Removing invalid Hemorrhage due to unsupported compartment : " + h->GetCompartment());
-          invalid_hemorrhages.push_back(h);
-          continue;
-        }
-        if (h->GetType() == eHemorrhage_Type::Internal)
-        {
-          SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
-          if (!abdomenCompartment->HasChild(*trk->Compartment))
-          {
-            /// \error Error: Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.
-            Error("Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.");
-            invalid_hemorrhages.push_back(h);
-            continue;
-          }
-        }
-      }
-
-
-      double rate_mL_Per_s = 0;
+      // Make sure our given values are valid
       if (h->HasSeverity())
       {
         if (h->GetSeverity().GetValue() < 0.0 || h->GetSeverity().GetValue() > 1.0)
         {
-          /// \error Error: Severity cannot be less than zero or greater than 1.0
           Error("A severity less than 0 or greater than 1.0 cannot be specified.");
           invalid_hemorrhages.push_back(h);
           continue;
@@ -1123,11 +1538,9 @@ namespace pulse
       }
       else if (h->HasFlowRate())
       {
-        rate_mL_Per_s = h->GetFlowRate().GetValue(VolumePerTimeUnit::mL_Per_s);
-        TotalLossRate_mL_Per_s += rate_mL_Per_s;
+        double rate_mL_Per_s = h->GetFlowRate().GetValue(VolumePerTimeUnit::mL_Per_s);
         if (rate_mL_Per_s < 0)
         {
-          /// \error Error: Bleeding rate cannot be less than zero
           Error("Cannot specify bleeding less than 0");
           invalid_hemorrhages.push_back(h);
           continue;
@@ -1135,252 +1548,222 @@ namespace pulse
       }
       else
       {
-        /// \error Error: A severity or a rate must be specified for hemorrhage
         Error("A severity or a rate must be specified.");
       }
 
-      //Get all circuit nodes in this compartment
-      if (trk->Nodes.empty())
+      // Get the compartment associated with this hemorrhage
+      if (trk->Compartment == nullptr)
+      {
+        // Allow shorthand naming
+        trk->Compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartmentName() + "Vasculature");
+        //Add Vasculature to the compartment name to grab the cardiovascular compartment
+        if (trk->Compartment == nullptr)
+        {
+          trk->Compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartmentName());
+        }
+        //Unsupported compartment
+        if (trk->Compartment == nullptr)
+        {
+          Error("Removing invalid Hemorrhage due to unsupported compartment : " + h->GetCompartmentName());
+          invalid_hemorrhages.push_back(h);
+          continue;
+        }
+        if (h->GetType() == eHemorrhage_Type::Internal)
+        {
+          if (!m_Abdomen->HasChild(*trk->Compartment))
+          {
+            Error("Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.");
+            invalid_hemorrhages.push_back(h);
+            continue;
+          }
+        }
+      }
+
+      if (!trk->Compartment->HasVolume())
+      {
+        Error("A hemorrhaging compartment must have volume : " + h->GetCompartmentName());
+        invalid_hemorrhages.push_back(h);
+        continue;
+      }
+
+      // Create our hemorrhage path/links
+      if (trk->CmptHemorrhageLinks.empty())
       {
         if (trk->Compartment->HasChildren())
         {
           for (SELiquidCompartment* leaf : trk->Compartment->GetLeaves())
-          {
-            for (SEFluidCircuitNode* node : leaf->GetNodeMapping().GetNodes())
-            {
-              if (m_CirculatoryCircuit->HasNode(node->GetName()))
-              {
-                trk->Nodes.push_back(node);
-                if (node->HasNextVolume())
-                  trk->NumNodesWithVolume++;
-              }
-            }
-          }
+            trk->CmptHemorrhageLinks[leaf].clear();
         }
         else
+          trk->CmptHemorrhageLinks[trk->Compartment].clear();
+
+        std::string hemorrhagePathPrefix = "";
+        SEFluidCircuitNode* hemorrhagePathTgt = m_GroundNode;
+        SELiquidCompartment* hemorrhageLinkTgt = m_Ground;
+        if (h->GetType() == eHemorrhage_Type::Internal)
         {
-          for (SEFluidCircuitNode* node : trk->Compartment->GetNodeMapping().GetNodes())
+          hemorrhagePathPrefix = "Internal";
+          hemorrhagePathTgt = m_AbdominalCavityNode;
+          hemorrhageLinkTgt = m_AbdominalCavity;
+        }
+        for (auto& itr : trk->CmptHemorrhageLinks)
+        {
+          auto  cmpt = itr.first;
+          auto& links = itr.second;
+          for (SEFluidCircuitNode* node : cmpt->GetNodeMapping().GetNodes())
           {
-            if (m_CirculatoryCircuit->HasNode(node->GetName()))
+            if (m_CirculatoryCircuit->HasNode(node->GetName()) && node->HasVolume())
             {
-              trk->Nodes.push_back(node);
-              if (node->HasNextVolume())
-                trk->NumNodesWithVolume++;
+              SEFluidCircuitPath& hemorrhagePath = m_CirculatoryCircuit->CreatePath(*node, *hemorrhagePathTgt, node->GetName() + hemorrhagePathPrefix + "Hemorrhage");
+              SELiquidCompartmentLink& hemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*cmpt, *hemorrhageLinkTgt, cmpt->GetName() + hemorrhagePathPrefix + "Hemorrhage");
+              hemorrhageLink.MapPath(hemorrhagePath);
+              m_CirculatoryGraph->AddLink(hemorrhageLink);
+              links.push_back(&hemorrhageLink);
+              completeStateChange = true;
             }
           }
-        }
-
-        if (trk->Nodes.empty())
-        {
-          /// \error Error: Hemorrhage compartments must have nodes in the circulatory circuit
-          Error("Hemorrhage compartments must have nodes in the circulatory circuit");
-          invalid_hemorrhages.push_back(h);
-          continue;
         }
       }
 
-      // What is the current volume of the compartment?
-      double totalVolume_mL = trk->Compartment->GetVolume(VolumeUnit::mL);
-
-      //Update the circuit to remove blood from the specified compartment
-      for (auto node : trk->Nodes)
+      //Set all existing hemorrhage paths
+      double totalFlow_mL_Per_s = 0;
+      for (auto& itr : trk->CmptHemorrhageLinks)
       {
-        //Weight the flow sink value by node volume
-        double thisNodeRate_mL_Per_s = 0.0;
-        if (trk->NumNodesWithVolume == 0)
-        {
-          //No nodes have volume, so evenly distribute
-          thisNodeRate_mL_Per_s = rate_mL_Per_s / double(trk->Nodes.size());
-        }
-        else if (!node->HasNextVolume())
-        {
-          //Some nodes have volume, but not this one, so move on
-          continue;
-        }
-        else
-        {
-          //This node has volume
-          thisNodeRate_mL_Per_s = rate_mL_Per_s * node->GetNextVolume(VolumeUnit::mL) / totalVolume_mL;
-        }
+        if (itr.first->HasAverageInFlow())
+          totalFlow_mL_Per_s += itr.first->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s);
+      }
+      if (totalFlow_mL_Per_s == 0)
+        continue;// Wait until we have average flow
 
-        bool calculateResistance = false;
-        bool calculateResistanceBaseline = false;
-        //Find the path associated with the node and check if we've already been hemorrhaging here
-        SEFluidCircuitPath* hemorrhagePath = nullptr;
-        for (auto itr : trk->Paths2Links)
-        {
-          SEFluidCircuitPath* p = itr.first;
-          if (&(p->GetSourceNode()) == node)
-          {
-            hemorrhagePath = p;
-            break;
-          }
-        }
+      for (auto& itr : trk->CmptHemorrhageLinks)
+      {
+        auto  cmpt = itr.first;
 
-        if (hemorrhagePath != nullptr)
+        for (auto link : itr.second)
         {
-          if (h->HasSeverity()) // Severity
-          {
-            if (hemorrhagePath->HasFlowSource())
-            {
-              hemorrhagePath->GetFlowSource().Invalidate();
-              hemorrhagePath->GetNextFlowSource().Invalidate();
-              calculateResistanceBaseline = true;
-              calculateResistance = true;
-              completeStateChange = true;
-            }
-            else
-            {
-              if (h->GetSeverity().GetValue() == 0.0)
-                hemorrhagePath->GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_min_Per_L);
-              else
-                calculateResistance = true;
-            }
-          }
-          //Update the existing bleed path
-          else // Static Flow Rate
-          {
-            if (hemorrhagePath->HasResistanceBaseline())
-            {
-              hemorrhagePath->GetResistance().Invalidate();
-              hemorrhagePath->GetNextResistance().Invalidate();
-              hemorrhagePath->GetResistanceBaseline().Invalidate();
-              completeStateChange = true;
-            }
-            hemorrhagePath->GetNextFlowSource().SetValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-          }
-        }
-        else //new hemorrhage path
-        {
-          //Add bleed path for fluid mechanics
-          //Check to see if internal or external hemorrhage
-          if (h->GetType() == eHemorrhage_Type::Internal)
-          {
-            hemorrhagePath = &m_CirculatoryCircuit->CreatePath(*node, *m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::AbdominalCavity1), node->GetName() + "InternalHemorrhage");
-          }
-          else
-          {
-            hemorrhagePath = &m_CirculatoryCircuit->CreatePath(*node, *m_Ground, node->GetName() + "Hemorrhage");
-          }
+          SEFluidCircuitPath* path = link->GetPath();
+          if (path->HasNextFlowSource())
+            path->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
+          if (path->HasNextResistance())
+            path->GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
           if (h->HasSeverity())
           {
-            if (h->GetSeverity().GetValue() == 0.0)
-              hemorrhagePath->GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+            if (path->HasFlowSource())
+            {
+              path->GetFlowSource().Invalidate();
+              path->GetNextFlowSource().Invalidate();
+              completeStateChange = true;
+            }
+
+            if (!path->HasResistanceBaseline())
+            {
+              // Compute the baseline resistance
+              double flowRate_L_per_min = cmpt->GetAverageInFlow(VolumePerTimeUnit::L_Per_min);
+              //The minimum resistance is associated with the maximum flow rate across the hemorrhage path
+              //Check to see if there is a resistance baseline
+              double deltaPressure_mmHg = (path->GetSourceNode().GetNextPressure(PressureUnit::mmHg) - path->GetTargetNode().GetNextPressure(PressureUnit::mmHg));
+              double resistanceBaseline_mmHg_min_Per_L = deltaPressure_mmHg / (1.25 * flowRate_L_per_min);
+              path->GetResistanceBaseline().SetValue(resistanceBaseline_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+            }
+
+            if (h->GetSeverity().GetValue() > 0)
+            {
+              double resistanceBaseline_mmHg_min_Per_L = path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_min_Per_L);
+              //use the severity to calculate the resistance
+              double resistance_mmHg_min_Per_L = GeneralMath::LinearInterpolator(0.0, 1.0, (2 * resistanceBaseline_mmHg_min_Per_L) / h->GetSeverity().GetValue(), resistanceBaseline_mmHg_min_Per_L, h->GetSeverity().GetValue());
+              path->GetNextResistance().SetValue(resistance_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+            }
             else
             {
-              if (!hemorrhagePath->HasResistanceBaseline())
-              {// If it has a baseline resistance, and our HemorrhageTrack did not have this path
-                // then I assume that is because this hemorrhage action was loaded from a state
-                // and this is the first advance time step after theh load
-                // and in that case, we want to leave the existing resistance baseline alone
-                calculateResistanceBaseline = true;
-              }
-              calculateResistance = true;
+              // Severity is 0.0
+              path->GetNextResistance().SetValue(0, PressureTimePerVolumeUnit::mmHg_min_Per_L);
             }
           }
-          else
+          else if (h->HasFlowRate())
           {
-            hemorrhagePath->GetNextFlowSource().SetValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-          }
-
-          completeStateChange = true;
-
-          //Add bleed link for transport
-          //Find the source compartment (may be a leaf) to make the graph work (i.e., to transport)
-          SELiquidCompartment* sourceCompartment = nullptr;
-          if (trk->Compartment->HasChildren())
-          {
-            for (SELiquidCompartment* leaf : trk->Compartment->GetLeaves())
+            if (path->HasResistanceBaseline())
             {
-              if (leaf->GetNodeMapping().HasMapping(*node))
-                sourceCompartment = leaf;
+              path->GetResistance().Invalidate();
+              path->GetNextResistance().Invalidate();
+              path->GetResistanceBaseline().Invalidate();
+              completeStateChange = true;
+              Warning("Switching hemorrhage from severity to flow, severity resistance baseline will be removed");
+              Warning("If you go back to severity, a new resistance will be calculated based on the state of the vasculature");
             }
+            double mL_Per_s = h->GetFlowRate(VolumePerTimeUnit::mL_Per_s) * (cmpt->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s) / totalFlow_mL_Per_s);
+            path->GetNextFlowSource().SetValue(mL_Per_s, VolumePerTimeUnit::mL_Per_s);
           }
-          else
-          {
-            sourceCompartment = trk->Compartment;
-          }
-
-          if (sourceCompartment == nullptr)
-            Fatal("Unable to find the correct source compartment.");
-
-          SELiquidCompartmentLink& hemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*sourceCompartment, *m_Groundcmpt, trk->Compartment->GetName() + "Hemorrhage");
-          hemorrhageLink.MapPath(*hemorrhagePath);
-          m_CirculatoryGraph->AddLink(hemorrhageLink);
-
-          //Add to local lists
-          trk->Paths2Links[hemorrhagePath] = &hemorrhageLink;
         }
+      }
+    }
 
-        if (calculateResistance)
+    //Update abdominal cavity compliance
+    double abdominalBloodVolume = m_AbdominalCavity->GetVolume().GetValue(VolumeUnit::mL);
+    double complianceCurveExponent = 0.55;
+    //Variable compliance calculation
+    double compliance_mL_Per_mmHg = pow(abdominalBloodVolume, complianceCurveExponent);
+    m_AbdominalCavityToGnd->GetComplianceBaseline().SetValue(compliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    //Effect the Aorta with internal hemorrhages
+    // The internal pressure application function calculates the pressure applied to the aorta due to blood pooling in the abdominal cavity.
+    double abdominalCavityPressure_mmHg = m_AbdominalCavity->GetPressure(PressureUnit::mmHg);
+    double pressureResponseFraction = 5.0; //Tuning the pressure applied to the aorta
+    // The pressure applied to the aorta is dictated by the pressure in the abdominal cavity.
+    // The response is tuned to 45% of this value to achieve the correct physiologic response.
+    //Set the pressure on the aorta based on the abdominal cavity pressure
+    m_InternalHemorrhageToAorta->GetNextPressureSource().SetValue(pressureResponseFraction* abdominalCavityPressure_mmHg, PressureUnit::mmHg);
+
+    // Clean up any hemorrhage tracks that are no longer being used
+    double totalLossRate_mL_Per_s = 0.0;
+    for (auto htItr : m_HemorrhageTrack)
+    {
+      SEHemorrhage* h = htItr.first;
+      HemorrhageTrack* trk = htItr.second;
+
+      bool removeHemorrhage = false;
+      double hemorrhageFlow_mL_Per_s = 0;
+      for (auto itr : trk->CmptHemorrhageLinks)
+      {
+        for (auto link : itr.second)
         {
-          if (calculateResistanceBaseline)
+          SEFluidCircuitPath* p = link->GetPath();
+          if ((p->HasNextFlowSource() && p->GetNextFlowSource().IsZero()) ||
+              (p->HasNextResistance() && p->GetNextResistance().IsZero()))
           {
-            // calculate the max flow rate
-            double flowRate_L_per_min = 0;
-            for (SEFluidCircuitPath* path : m_CirculatoryCircuit->GetPaths())
-            {
-              if (&path->GetTargetNode() == node)
-              {
-                flowRate_L_per_min += path->GetNextFlow().GetValue(VolumePerTimeUnit::L_Per_min);
-              }
-            }
-            //The minimum resistance is associated with the maximum flow rate across the hemorrhage path
-            //Check to see if there is a resistance baseline
-            double deltaPressure_mmHg = (node->GetNextPressure().GetValue(PressureUnit::mmHg) - hemorrhagePath->GetTargetNode().GetNextPressure().GetValue(PressureUnit::mmHg));
-            double resistanceBaseline_mmHg_min_Per_L = deltaPressure_mmHg / (2.75 * flowRate_L_per_min);
-            hemorrhagePath->GetResistanceBaseline().SetValue(resistanceBaseline_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+            p->GetFlowSource().Invalidate();
+            p->GetNextFlowSource().Invalidate();
+            p->GetResistance().Invalidate();
+            p->GetNextResistance().Invalidate();
+
+            m_CirculatoryCircuit->RemovePath(*p);
+            m_CirculatoryGraph->RemoveLink(*link);
+
+            removeHemorrhage = true;
+            completeStateChange = true;
           }
-          double resistanceBaseline_mmHg_min_Per_L = hemorrhagePath->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_min_Per_L);
-          //use the severity to calculate the resistance
-          double resistance_mmHg_min_Per_L = GeneralMath::LinearInterpolator(0.0, 1.0, (2 * resistanceBaseline_mmHg_min_Per_L) / h->GetSeverity().GetValue(), resistanceBaseline_mmHg_min_Per_L, h->GetSeverity().GetValue());
-          hemorrhagePath->GetNextResistance().SetValue(resistance_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
-          if (hemorrhagePath->HasNextFlow())
+          else
           {
-            TotalLossRate_mL_Per_s += hemorrhagePath->GetNextFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
+            hemorrhageFlow_mL_Per_s += p->HasNextFlow() ? p->GetNextFlow(VolumePerTimeUnit::mL_Per_s) : 0;
           }
         }
+      }
+      if (removeHemorrhage)
+        invalid_hemorrhages.push_back(h);
+      else
+      {
         //Info(h->GetCompartment() + " Flow " + std::to_string(hemorrhagePath->GetNextFlow(VolumePerTimeUnit::mL_Per_s)));
         //Info(h->GetCompartment() + " Flow Source " + std::to_string(hemorrhagePath->GetNextFlowSource(VolumePerTimeUnit::mL_Per_s)));
         // Keep track of bleeding on the action
-        double hemorrhagePathFlow_mL_Per_s;
+       
         if (h->HasSeverity())
-        {
-          hemorrhagePathFlow_mL_Per_s = hemorrhagePath->HasNextFlow() ? hemorrhagePath->GetNextFlow(VolumePerTimeUnit::mL_Per_s) : 0;
-          h->GetFlowRate().SetValue(hemorrhagePathFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-        }
-        hemorrhagePathFlow_mL_Per_s = h->HasFlowRate() ? h->GetFlowRate(VolumePerTimeUnit::mL_Per_s) : 0;
-        h->GetTotalBloodLost().IncrementValue(hemorrhagePathFlow_mL_Per_s * m_data.GetTimeStep_s(), VolumeUnit::mL);
+          h->GetFlowRate().SetValue(hemorrhageFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+
+        totalLossRate_mL_Per_s += hemorrhageFlow_mL_Per_s;
+        h->GetTotalBloodLost().IncrementValue(hemorrhageFlow_mL_Per_s* m_data.GetTimeStep_s(), VolumeUnit::mL);
       }
     }
-
-    // Clean up any hemorrhage tracks that are no longer being used
-    for (auto tItr : m_HemorrhageTrack)
-    {
-      bool removeItr = false;
-      for (auto pItr : tItr.second->Paths2Links)
-      {
-        SEFluidCircuitPath* p = pItr.first;
-        if ((p->HasNextFlowSource() && p->GetNextFlowSource().IsZero()) ||
-          (p->HasNextResistance() && p->GetNextResistance().IsZero()))
-        {
-          p->GetFlowSource().Invalidate();
-          p->GetNextFlowSource().Invalidate();
-          p->GetResistance().Invalidate();
-          p->GetNextResistance().Invalidate();
-          p->GetResistanceBaseline().Invalidate();
-
-          m_CirculatoryCircuit->RemovePath(*p);
-          m_CirculatoryGraph->RemoveLink(*pItr.second);
-
-          removeItr = true;
-          completeStateChange = true;
-        }
-      }
-      if (removeItr)
-        invalid_hemorrhages.push_back(tItr.first);
-    }
+    GetTotalHemorrhageRate().SetValue(totalLossRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+    GetTotalHemorrhagedVolume().IncrementValue((totalLossRate_mL_Per_s* m_data.GetTimeStep_s()), VolumeUnit::mL);
 
     for (SEHemorrhage* ih : invalid_hemorrhages)
     {
@@ -1395,20 +1778,6 @@ namespace pulse
       m_CirculatoryCircuit->StateChange();
       m_CirculatoryGraph->StateChange();
     }
-
-    //Update abdominal cavity compliance
-    double abdominalBloodVolume = m_AbdominalCavity->GetVolume().GetValue(VolumeUnit::mL);
-    double compliance_mL_Per_mmHg = 0;
-    double complianceCurveExponent = 0.55;
-    //Variable compliance calculation
-    compliance_mL_Per_mmHg = pow(abdominalBloodVolume, complianceCurveExponent);
-    m_pAbdominalCavityToGnd->GetComplianceBaseline().SetValue(compliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
-
-    //Effect the Aorta with internal hemorrhages
-    InternalHemorrhagePressureApplication();
-
-    GetTotalHemorrhageRate().SetValue(TotalLossRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-    GetTotalHemorrhagedVolume().IncrementValue((TotalLossRate_mL_Per_s * m_data.GetTimeStep_s()), VolumeUnit::mL);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1454,7 +1823,6 @@ namespace pulse
     else if (effusionRate_mL_Per_s > 1.0)
     {
       Error("Effusion rate is out of physiologic bounds. Effusion rate is reset to 1.0 milliliters per second.");
-      /// \error Effusion rate is out of physiologic bounds. Effusion rate is reset to 1.0 milliliters per second.
       effusionRate_mL_Per_s = 1.0;
       complianceSlopeParameter = 50;
       complianceCurveParameter = 0.1;
@@ -1462,27 +1830,26 @@ namespace pulse
     else if (effusionRate_mL_Per_s < 0.0)
     {
       Error("Cannot specify effusion rate less than zero. Effusion rate is now set to 0.0.");
-      /// \error Cannot specify effusion rate less than zero. Effusion rate is now set to 0.0.
       effusionRate_mL_Per_s = 0.0;
       complianceSlopeParameter = 0.4;
       complianceCurveParameter = 0.55;
     }
 
-    m_pGndToPericardium->GetNextFlowSource().SetValue(effusionRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-    flowToPericardium_mL_per_s = m_pGndToPericardium->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+    m_GndToPericardium->GetNextFlowSource().SetValue(effusionRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+    flowToPericardium_mL_per_s = m_GndToPericardium->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
     flowCubed_mL3_Per_s3 = flowToPericardium_mL_per_s * flowToPericardium_mL_per_s * flowToPericardium_mL_per_s;
 
     //Variable compliance calculation
     if (flowCubed_mL3_Per_s3 < 0.0001)
     {
-      compliance_mL_Per_mmHg = m_pPericardiumToGnd->GetNextCompliance().GetValue(VolumePerPressureUnit::mL_Per_mmHg);
+      compliance_mL_Per_mmHg = m_PericardiumToGnd->GetNextCompliance().GetValue(VolumePerPressureUnit::mL_Per_mmHg);
     }
     else
     {
       compliance_mL_Per_mmHg = complianceSlopeParameter / flowCubed_mL3_Per_s3 - complianceCurveParameter * intrapericardialVolume_mL;
     }
 
-    m_pPericardiumToGnd->GetNextCompliance().SetValue(compliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    m_PericardiumToGnd->GetNextCompliance().SetValue(compliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
 
     PericardialEffusionPressureApplication();
   }
@@ -1494,7 +1861,7 @@ namespace pulse
   /// \details
   /// The user may apply a chest compression to continue blood circulation if the heart no longer has an effective rhythm.
   /// The compression can either be defined by an explicit force or by a fraction of the maximum allowable force. 
-  /// If the compression input is a force scale then the method controls the shape of the force pulse and converts the force
+  /// If the compression input is a depth then the method controls the shape of the force pulse and converts the force
   /// pressure for application to the heart. 
   /// If the compression input is force, then the raw force is converted to pressure and applied to
   /// the heart. The pressure is applied at the pressure source on the LeftHeart3ToGround and 
@@ -1502,133 +1869,181 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CPR()
   {
-    // If a compression has started, finish it.
-    if (m_CompressionRatio > 0.0)
+    auto& actions = m_data.GetActions().GetPatientActions();
+    if (!actions.HasActiveCPRAction())
+      return;// Nothing to do
+
+    double compressionForce_N = 0;
+#define compressionForceMax_N 550.0 // The maximum allowed compression force (corresponds to 6 cm when depth is used)
+
+    if (actions.HasChestCompressionInstantaneous())
     {
-      if (m_data.GetActions().GetPatientActions().HasChestCompressionForceScale())
+      m_CompressionFrequencyCurrentTime_s = 0;
+      m_CompressionFrequencyDuration_s = 0;
+      m_CompressionPeriod_s = 0;
+      m_CompressionPeriodCurrentTime_s = 0;
+
+      compressionForce_N = 0;
+      if (actions.GetChestCompressionInstantaneous().HasForce())
+        compressionForce_N = actions.GetChestCompressionInstantaneous().GetForce(ForceUnit::N);
+      else if (actions.GetChestCompressionInstantaneous().HasDepth())
+        compressionForce_N = CalculateDepthForce(actions.GetChestCompressionInstantaneous().GetDepth(LengthUnit::cm));
+      if (compressionForce_N == 0)
       {
-        Warning("Attempt to start a new compression during a previous compression. Allow more time between compressions or shorten the compression period.");
-        m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
+        actions.RemoveChestCompressionInstantaneous();
         return;
       }
 
-      if (m_data.GetActions().GetPatientActions().HasChestCompressionForce())
+      ApplyCPRForce(compressionForce_N);
+      return;
+    }
+
+    if (actions.HasChestCompression())
+    {
+      m_CompressionFrequencyCurrentTime_s = 0;
+      m_CompressionFrequencyDuration_s = 0;
+
+      m_CompressionPeriod_s = actions.GetChestCompression().GetCompressionPeriod(TimeUnit::s);
+
+      if (m_CompressionPeriodCurrentTime_s >= m_CompressionPeriod_s)
       {
-        Warning("Attempt to switch to explicit force from force scale during CPR compression. CPR actions will be ignored until current compression ends.");
-        m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
+        m_CompressionPeriodCurrentTime_s = 0;
+        m_CompressionPeriod_s = 0;
+        actions.RemoveChestCompression();
         return;
       }
 
-      CalculateAndSetCPRcompressionForce();
-      return;
-    }
-    // If there is no chest compression action and we are not currently compressing, return to ProcessActions
-    if (!m_data.GetActions().GetPatientActions().HasChestCompression())
-      return;
-
-    // Call for chest compression with an effective heart rhythm
-    // In the future we may allow compressions on a beating heart, but that will require extensive testing
-    // to evaluate the hemodynamic stability.
-    if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
-    {
-      Warning("CPR attempted on beating heart. Action ignored.");
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
-      return;
-    }
-
-    // Have a new call for a chest compression
-    if (m_data.GetActions().GetPatientActions().HasChestCompressionForceScale())
-    {
-      m_CompressionRatio = m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().GetForceScale().GetValue();
-      /// \error Warning: CPR compression ratio must be a positive value between 0 and 1 inclusive.
-      if (m_CompressionRatio < 0.0)
-        Warning("CPR compression ratio must be a positive value between 0 and 1 inclusive.");
-      if (m_CompressionRatio > 1.0)
-        Warning("CPR compression ratio must be a positive value between 0 and 1 inclusive.");
-
-      BLIM(m_CompressionRatio, 0., 1.);
-      // If no period was assigned by the user, then use the default - 0.4s
-      if (m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().HasForcePeriod())
+      compressionForce_N = 0;
+      if (actions.GetChestCompression().HasForce())
+        compressionForce_N = actions.GetChestCompression().GetForce(ForceUnit::N);
+      else if (actions.GetChestCompression().HasDepth())
+        compressionForce_N = CalculateDepthForce(actions.GetChestCompression().GetDepth(LengthUnit::cm));
+      if (compressionForce_N == 0)
       {
-        m_CompressionPeriod_s = m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().GetForcePeriod().GetValue(TimeUnit::s);
+        m_CompressionPeriodCurrentTime_s = 0;
+        m_CompressionPeriod_s = 0;
+        actions.RemoveChestCompression();
+        return;
+      }
+
+      compressionForce_N = ShapeCPRForce(compressionForce_N);
+
+      ApplyCPRForce(compressionForce_N);
+
+      m_CompressionPeriodCurrentTime_s += m_data.GetTimeStep_s();
+
+      return;
+    }
+
+    if (actions.HasChestCompressionAutomated())
+    {
+      double compressionFrequency_Per_s = 0;
+      if(actions.GetChestCompressionAutomated().HasCompressionFrequency())
+        compressionFrequency_Per_s = actions.GetChestCompressionAutomated().GetCompressionFrequency(FrequencyUnit::Per_s);
+      if (compressionFrequency_Per_s == 0)
+      {
+        m_CompressionFrequencyCurrentTime_s = 0;
+        m_CompressionFrequencyDuration_s = 0;
+        m_CompressionPeriodCurrentTime_s = 0;
+        m_CompressionPeriod_s = 0;
+        actions.RemoveChestCompressionAutomated();
+        return;
+      }
+      m_CompressionFrequencyDuration_s = 1 / compressionFrequency_Per_s;
+
+      m_CompressionPeriod_s = m_CompressionFrequencyDuration_s;
+      if (actions.GetChestCompressionAutomated().HasAppliedForceFraction())
+        m_CompressionPeriod_s *= actions.GetChestCompressionAutomated().GetAppliedForceFraction().GetValue();
+      else
+        m_CompressionPeriod_s *= 0.5; // Half the period should apply the pressure by default
+
+      compressionForce_N = 0.0;
+      if (actions.GetChestCompressionAutomated().HasForce())
+        compressionForce_N = actions.GetChestCompressionAutomated().GetForce(ForceUnit::N);
+      else if (actions.GetChestCompressionAutomated().HasDepth())
+        compressionForce_N = CalculateDepthForce(actions.GetChestCompressionAutomated().GetDepth(LengthUnit::cm));
+      else
+      {
+        m_CompressionFrequencyCurrentTime_s = 0;
+        m_CompressionFrequencyDuration_s = 0;
+        m_CompressionPeriodCurrentTime_s = 0;
+        m_CompressionPeriod_s = 0;
+        actions.RemoveChestCompressionAutomated();
+        return;
+      }
+
+      if (compressionForce_N == 0)
+      {
+        m_CompressionPeriodCurrentTime_s = m_CompressionPeriod_s;
       }
       else
       {
-        m_CompressionPeriod_s = 0.4;
+        compressionForce_N = ShapeCPRForce(compressionForce_N);
+
+        ApplyCPRForce(compressionForce_N);
+
+        m_CompressionPeriodCurrentTime_s += m_data.GetTimeStep_s();
       }
 
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
-    }
-
-    CalculateAndSetCPRcompressionForce();
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Calculates and sets the pressure on the heart pressure sources when a CPR compression is applied.
-  ///
-  /// \details
-  /// Calculates and sets the pressure on the heart pressure sources when a CPR compression is applied.
-  //--------------------------------------------------------------------------------------------------
-  void CardiovascularModel::CalculateAndSetCPRcompressionForce()
-  {
-    double compressionForce_N = 0.0;
-    double compressionForceMax_N = 500.0;   // The maximum allowed compression force (corresponds to 1.0 when force scale is used)
-    double compressionForceMin_N = 0.0;     // The minimum allowed compression force
-
-    if (m_CompressionRatio > 0.0) //Force scale
-    {
-      // Bell curve shaping parameters
-      double c = -10; // Defines the start and stop of the force bell curve given the period
-      double a = 4 * c / (m_CompressionPeriod_s * m_CompressionPeriod_s);
-      double b = -a * m_CompressionPeriod_s;
-
-      compressionForce_N = pow(2, a * m_CompressionTime_s * m_CompressionTime_s + b * m_CompressionTime_s + c) * m_CompressionRatio * compressionForceMax_N;
-
-      // 2 second max compression time is arbitrary. I just put it in to make sure it doesn't get stuck if
-      // we accidentally make a really wide bell curve. Note that the bell curve parameters are currently hardcoded above.
-      // If compression force has decayed to less than some amount or the time is above some amount, end the compression 
-      if (m_CompressionTime_s > m_CompressionPeriod_s)
+      m_CompressionFrequencyCurrentTime_s += m_data.GetTimeStep_s();
+      if (m_CompressionFrequencyCurrentTime_s >= m_CompressionFrequencyDuration_s)
       {
-        compressionForce_N = 0.0;
-        m_CompressionTime_s = 0.0;
-        m_CompressionRatio = 0.0;
-        m_CompressionPeriod_s = 0.0;
+        // Start a new cycle
+        m_CompressionPeriodCurrentTime_s = 0;
+        m_CompressionFrequencyCurrentTime_s = 0;
+        Info("Starting new automated CPR compression");
       }
     }
-    else //Explicit force
-    {
-      compressionForce_N = m_data.GetActions().GetPatientActions().GetChestCompressionForce().GetForce().GetValue(ForceUnit::N);
-    }
 
-    m_CompressionTime_s += m_data.GetTimeStep_s();
+  }
+  
+  double CardiovascularModel::CalculateDepthForce(double compressionDepth_cm)
+  {
+#define compressionDepthTransition_cm 5.0
+#define compressionForceTransition_N 450
+#define compressionDepthMax_cm 6.0
+    if (compressionDepth_cm >= 5)
+      return GeneralMath::LinearInterpolator(compressionDepthTransition_cm, compressionDepthMax_cm, compressionForceTransition_N, compressionForceMax_N, compressionDepth_cm);
+    else
+      return GeneralMath::LinearInterpolator(0, compressionDepthTransition_cm, 0, compressionForceTransition_N, compressionDepth_cm);
+  }
+  
+  double CardiovascularModel::ShapeCPRForce(double compressionForce_N)
+  {
+    // Bell curve shaping parameters
+    double c = -10; // Defines the start and stop of the force bell curve given the period
+    double a = 4 * c / (m_CompressionPeriod_s * m_CompressionPeriod_s);
+    double b = -a * m_CompressionPeriod_s;
 
+    double shapedCompressionForce_N = pow(2, a * m_CompressionPeriodCurrentTime_s * m_CompressionPeriodCurrentTime_s + b * m_CompressionPeriodCurrentTime_s + c);
+
+    return shapedCompressionForce_N * compressionForce_N;
+  }
+  void CardiovascularModel::ApplyCPRForce(double compressionForce_N)
+  {
     if (compressionForce_N > compressionForceMax_N)
     {
       compressionForce_N = compressionForceMax_N;
-      Warning("The compression force exceeded the maximum compression force. Compression force limited to 500N.");
+      Warning("The compression force exceeded the maximum compression force. Compression force limited to "+std::to_string(compressionForceMax_N)+"N.");
     }
 
-    if (compressionForce_N < compressionForceMin_N)
+    if (compressionForce_N < 0)
     {
-      compressionForce_N = compressionForceMin_N;
+      compressionForce_N = 0;
       Warning("The compression force was less than the required minimum. Compression force limited to 0N.");
     }
 
-    double leftHeartForceToPressureFactor = 0.1; // Tuning parameter to translate compression force in N to left heart pressure in mmHg
-    double rightHeartForceToPressureFactor = 0.1; // Tuning parameter to translate compression force in N to right heart pressure in mmHg
+    if (compressionForce_N == 0)
+      return;
+
+    double leftHeartForceToPressureFactor = 0.11; // Tuning parameter to translate compression force in N to left heart pressure in mmHg
+    double rightHeartForceToPressureFactor = 0.05; // Tuning parameter to translate compression force in N to right heart pressure in mmHg
     double nextLeftPressure_mmHg = leftHeartForceToPressureFactor * compressionForce_N;
     double nextRightPressure_mmHg = rightHeartForceToPressureFactor * compressionForce_N;
 
-    m_pRightHeartToGnd->GetNextPressureSource().SetValue(nextRightPressure_mmHg, PressureUnit::mmHg);
-    m_pLeftHeartToGnd->GetNextPressureSource().SetValue(nextLeftPressure_mmHg, PressureUnit::mmHg);
-
-    // The action is removed when the force is set to 0.
-    if (compressionForce_N == 0)
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
+    m_RightHeartToGnd->GetNextPressureSource().SetValue(nextRightPressure_mmHg, PressureUnit::mmHg);
+    m_LeftHeartToGnd->GetNextPressureSource().SetValue(nextLeftPressure_mmHg, PressureUnit::mmHg);
   }
-
 
   void CardiovascularModel::SetHeartRhythm(eHeartRhythm r)
   {
@@ -1653,106 +2068,185 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::Arrhythmia()
   {
-    if (m_data.GetActions().GetPatientActions().HasArrhythmia())
+    // Only process/transition arrhythmia actions when the heart is fully compressed
+    if(m_data.GetActions().GetPatientActions().HasArrhythmia())
     {
-      auto r = m_data.GetActions().GetPatientActions().GetArrhythmia().GetRhythm();
+      if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+        if(!m_FullyCompressedHeart)
+          return;
+
+      auto newRhythm = m_data.GetActions().GetPatientActions().GetArrhythmia().GetRhythm();
       m_data.GetActions().GetPatientActions().RemoveArrhythmia();// Done with the action
 
-      SetHeartRhythm(r, true);
-      switch (r)
-      {
-      case eHeartRhythm::Asystole:
-      case eHeartRhythm::CoarseVentricularFibrillation:
-      case eHeartRhythm::FineVentricularFibrillation:
-      case eHeartRhythm::SinusPulselessElectricalActivity:
-      case eHeartRhythm::PulselessVentricularTachycardia:
-      {
-        // Flip the cardiac arrest switch
-        // This tells the CV system that a cardiac arrest has been initiated.
-        // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
-        m_StartCardiacArrest = true;
-        m_ArrhythmiaHeartElastanceModifier = 1.0;
-        m_ArrhythmiaVascularToneModifier = 1.0;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
-        break;
-      }
-      case eHeartRhythm::NormalSinus:
-      {
-        m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 1.0;
-        m_ArrhythmiaVascularToneModifier = 1.0;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-        m_CardiacArrestVitalsUpdateTimer_s = 0;
-        break;
-      }
-      case eHeartRhythm::SinusTachycardia:
-      {
-        m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 1.0;
-        m_ArrhythmiaVascularToneModifier = 1.0;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 1.5, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-        m_CardiacArrestVitalsUpdateTimer_s = 0;
-        break;
-      }
-      case eHeartRhythm::SinusBradycardia:
-      {
-        m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 1.0;
-        m_ArrhythmiaVascularToneModifier = 1.0;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 0.7, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-        m_CardiacArrestVitalsUpdateTimer_s = 0;
-        break;
-      }
-      case eHeartRhythm::StableVentricularTachycardia:
-      {
-        m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 1.1;
-        m_ArrhythmiaVascularToneModifier = 1.0;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.2, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-        m_CardiacArrestVitalsUpdateTimer_s = 0;
-        break;
-      }
-      case eHeartRhythm::UnstableVentricularTachycardia:
-      {
-        m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 0.3;
-        m_ArrhythmiaVascularToneModifier = 0.5;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 3.3, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg * 0.7, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-        m_CardiacArrestVitalsUpdateTimer_s = 0;
-        break;
-      }
-      default:// Any other rhythms take us out of cardiac arrest
-        Error("Unsupported heart arrhythmia.");
-      }
-      Info("Arrhythmia is setting Heart Rate Baseline to :" + m_data.GetCurrentPatient().GetHeartRateBaseline().ToString());
-      Info("Arrhythmia is setting MAP Baseline to :" + m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().ToString());
+      Info("Switching heart rhythm to " + eHeartRhythm_Name(newRhythm));
 
-      //Force a new cardiac cycle to start when cardiac arrest is removed
-      m_StartSystole = true;
-      m_CurrentDriverCycleTime_s = m_DriverCyclePeriod_s;
+      // Using a 90% tgt heart rate below when coming out of cardiac arrest
+      // This is due to setting the baseline map to whatever the map is at the end of transition
+      // We always come out at a map a bit higher, so nervous tends to increase the hr to lower the map
+      // So using the 90% target tends to settle out both the map and hr to where we want it
+
+      // The transition times are tuned to get a smooth curve by the end of the hr change
+      // Get the compliance / resistance changes in place and let the system stablilize out as we converge the HR
+
+      if (GetHeartRhythm() != newRhythm)
+      {
+        SetHeartRhythm(newRhythm, true);
+        switch (newRhythm)
+        {
+        case eHeartRhythm::Asystole:
+        case eHeartRhythm::CoarseVentricularFibrillation:
+        case eHeartRhythm::FineVentricularFibrillation:
+        case eHeartRhythm::SinusPulselessElectricalActivity:
+        case eHeartRhythm::PulselessVentricularTachycardia:
+        {
+          // Flip the cardiac arrest switch
+          // This tells the CV system that a cardiac arrest has been initiated.
+          m_StartCardiacArrest   = true;
+          m_CardiacArrestVitalsUpdateTimer_s = 0;
+
+          // No transition times
+          m_TransitionArrhythmia = false;
+          m_HeartRateBaseline_Per_min->SetTransition(GetHeartRate(FrequencyUnit::Per_min), 15, 0);
+          m_HeartComplianceModifier->SetTarget(0.75, 0);
+          m_AortaComplianceModifier->SetTarget(1.25, 0);
+          m_VenaCavaComplianceModifier->SetTarget(0.25, 0);
+          m_PulmonaryComplianceModifier->SetTarget(0.75, 0);
+          m_SystemicVascularResistanceModifier->SetTarget(1.5, 0);
+          m_SystemicVascularComplianceModifier->SetTarget(1.0, 0);
+
+          m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(18, PressureUnit::mmHg);
+          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_HeartRateBaseline_Per_min->GetCurrent(), FrequencyUnit::Per_min);
+
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::Off;
+          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
+          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
+          break;
+        }
+        case eHeartRhythm::NormalSinus:
+        {
+          m_TransitionArrhythmia = true;
+          double tgtHeartRate_Per_min = m_StabilizedHeartRateBaseline_Per_min;
+          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+            tgtHeartRate_Per_min *= 0.9;// See above
+          m_HeartRateBaseline_Per_min->SetTarget(tgtHeartRate_Per_min, 60);
+          m_HeartComplianceModifier->SetTarget(1.0, 30);
+          m_AortaComplianceModifier->SetTarget(1.0, 15);
+          m_VenaCavaComplianceModifier->SetTarget(1.0, 20);
+          m_PulmonaryComplianceModifier->SetTarget(1.0, 30);
+          m_SystemicVascularResistanceModifier->SetTarget(1.0, 15);
+          m_SystemicVascularComplianceModifier->SetTarget(1.0, 30);
+
+          // Force a new cardiac cycle
+          m_StartSystole = true;
+          m_HeartFlowDetected = true;
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
+          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
+          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+          break;
+        }
+        case eHeartRhythm::SinusBradycardia:
+        {
+          m_TransitionArrhythmia = true;
+          double tgtHeartRate_Per_min = 50;
+          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+            tgtHeartRate_Per_min *= 0.9;// See above
+          m_HeartRateBaseline_Per_min->SetTarget(tgtHeartRate_Per_min, 60);
+          m_HeartComplianceModifier->SetTarget(1.0, 30);
+          m_AortaComplianceModifier->SetTarget(1.0, 15);
+          m_VenaCavaComplianceModifier->SetTarget(1.0, 15);
+          m_PulmonaryComplianceModifier->SetTarget(1.0, 30);
+          m_SystemicVascularResistanceModifier->SetTarget(1.0, 15);
+          m_SystemicVascularComplianceModifier->SetTarget(1.0, 30);
+
+          // Force a new cardiac cycle
+          m_StartSystole = true;
+          m_HeartFlowDetected = true;
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
+          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
+          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+          break;
+        }
+        case eHeartRhythm::SinusTachycardia:
+        case eHeartRhythm::StableVentricularTachycardia:
+        {
+          m_TransitionArrhythmia = true;
+          double tgtHeartRate_Per_min = 130;
+          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+            tgtHeartRate_Per_min *= 0.9;// See above
+          m_HeartRateBaseline_Per_min->SetTarget(tgtHeartRate_Per_min, 60);
+          m_HeartComplianceModifier->SetTarget(1.05, 30);
+          m_AortaComplianceModifier->SetTarget(1.0, 15);
+          m_VenaCavaComplianceModifier->SetTarget(1.05, 15);
+          m_PulmonaryComplianceModifier->SetTarget(1.0, 30);
+          m_SystemicVascularResistanceModifier->SetTarget(0.85, 15);
+          m_SystemicVascularComplianceModifier->SetTarget(1.0, 30);
+
+          // Force a new cardiac cycle
+          m_StartSystole = true;
+          m_HeartFlowDetected = true;
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
+          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
+          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+          break;
+        }
+        case eHeartRhythm::UnstableVentricularTachycardia:
+        {
+          m_TransitionArrhythmia = true;
+          double tgtHeartRate_Per_min = 160;
+          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+            tgtHeartRate_Per_min *= 0.9;// See above
+          m_HeartRateBaseline_Per_min->SetTarget(tgtHeartRate_Per_min, 60);
+          m_HeartComplianceModifier->SetTarget(1.25, 30);
+          m_AortaComplianceModifier->SetTarget(1.0, 15);
+          m_VenaCavaComplianceModifier->SetTarget(1.25, 15);
+          m_PulmonaryComplianceModifier->SetTarget(1.0, 30);
+          m_SystemicVascularResistanceModifier->SetTarget(0.5, 15);
+          m_SystemicVascularComplianceModifier->SetTarget(1.5, 30);
+
+          // Force a new cardiac cycle
+          m_StartSystole = true;
+          m_HeartFlowDetected = true;
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
+          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
+          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+          break;
+        }
+        default:// Any other rhythms take us out of cardiac arrest
+          Error("Unsupported heart arrhythmia.");
+        }
+      }
+      else
+        Warning("Requesting an arrhytmia that is the current arrhytmia, ignoring this action");
+    }
+    else
+    {
+      if (m_TransitionArrhythmia)
+      {
+        // Check to see if everything is complete
+        double dt_s = m_data.GetTimeStep_s();
+        m_TransitionArrhythmia  = m_HeartRateBaseline_Per_min->Transition(dt_s);
+        m_TransitionArrhythmia &= m_HeartComplianceModifier->Transition(dt_s);
+        m_TransitionArrhythmia &= m_AortaComplianceModifier->Transition(dt_s);
+        m_TransitionArrhythmia &= m_VenaCavaComplianceModifier->Transition(dt_s);
+        m_TransitionArrhythmia &= m_PulmonaryComplianceModifier->Transition(dt_s);
+        m_TransitionArrhythmia &= m_SystemicVascularResistanceModifier->Transition(dt_s);
+        m_TransitionArrhythmia &= m_SystemicVascularComplianceModifier->Transition(dt_s);
+        m_TransitionArrhythmia = !m_TransitionArrhythmia;
+
+        if (!m_TransitionArrhythmia)
+        {
+          Info("Completed Arrhythmia Transition");
+          m_data.GetNervous().SetBaroreceptorFeedback(m_EnableFeedbackAfterArrhythmiaTrasition);
+          m_data.GetNervous().SetChemoreceptorFeedback(m_EnableFeedbackAfterArrhythmiaTrasition);
+        }
+
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
+        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_HeartRateBaseline_Per_min->GetCurrent(), FrequencyUnit::Per_min);
+      }
     }
   }
 
@@ -1771,27 +2265,8 @@ namespace pulse
     double pressureResponseFraction = 0.4; //Tuning the pressure applied to the heart
 
     //Set the pressure on the right and left heart from the pericardium pressure
-    m_pRightHeartToGnd->GetPressureSourceBaseline().SetValue(pressureResponseFraction * intrapericardialPressure_mmHg, PressureUnit::mmHg);
-    m_pLeftHeartToGnd->GetPressureSourceBaseline().SetValue(pressureResponseFraction * intrapericardialPressure_mmHg, PressureUnit::mmHg);
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// The internal pressure application function calculates the pressure applied to the aorta due to blood pooling in the abdominal cavity.
-  ///
-  /// \details
-  /// The pressure applied to the aorta is dictated by the pressure in the abdominal cavity. The response is tuned to 45% of this value
-  /// to achieve the correct physiologic response.
-  //--------------------------------------------------------------------------------------------------
-  void CardiovascularModel::InternalHemorrhagePressureApplication()
-  {
-    double abdominalCavityPressure_mmHg = m_AbdominalCavity->GetPressure(PressureUnit::mmHg);
-
-    double pressureResponseFraction = 5.0; //Tuning the pressure applied to the aorta
-
-    //Set the pressure on the aorta based on the abdominal cavity pressure
-    m_InternalHemorrhageToAorta->GetNextPressureSource().SetValue(pressureResponseFraction * abdominalCavityPressure_mmHg, PressureUnit::mmHg);
-
+    m_RightHeartToGnd->GetPressureSourceBaseline().SetValue(pressureResponseFraction * intrapericardialPressure_mmHg, PressureUnit::mmHg);
+    m_LeftHeartToGnd->GetPressureSourceBaseline().SetValue(pressureResponseFraction * intrapericardialPressure_mmHg, PressureUnit::mmHg);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1812,43 +2287,68 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::HeartDriver()
   {
+    m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
+
+    if (m_StartCardiacArrest)
+    {
+      Info("Starting Cardiac Arrest");
+      m_StartSystole = false;
+      m_StartCardiacArrest = false;
+
+      m_DriverCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years)
+
+      m_CardiacCycleArterialPressure_mmHg->Invalidate();
+      m_CardiacCycleArterialCO2PartialPressure_mmHg->Invalidate();
+      m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Invalidate();
+      m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Invalidate();
+      m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Invalidate();
+      m_CardiacCyclePulmonaryArteryPressure_mmHg->Invalidate();
+      m_CardiacCycleCentralVenousPressure_mmHg->Invalidate();
+      m_CardiacCycleSkinFlow_mL_Per_s->Invalidate();
+
+      GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min);
+      m_data.GetEvents().SetEvent(eEvent::CardiacArrest, true, m_data.GetSimulationTime());
+
+      m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
+      m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
+      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, true, m_data.GetSimulationTime());
+    }
+
+    double LeftHeartCompliance_mL_Per_mmHg;
+    double RightHeartCompliance_mL_Per_mmHg;
     if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      if (m_CurrentDriverCycleTime_s >= m_DriverCyclePeriod_s)
-      {
-  #ifdef LOG_TIMING
-          Info("Completing Driver Cycle");
-          Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-          Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-  #endif
-        m_StartSystole = true; // A new cardiac cycle will begin next time step
-      }
-      AdjustVascularTone();
-      CalculateHeartElastance();
-    }
+      if (m_CurrentDriverCycleTime_s > m_DriverCyclePeriod_s && !m_StartCardiacArrest)
+        m_StartSystole = true;
 
-    if (m_StartSystole)
-    {
-#ifdef LOG_TIMING
-      Info("Starting Driver Cycle");
-      Info("  -Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-      Info("  -Old CardiacCyclePeriod / HR " + std::to_string(m_CardiacCyclePeriod_s) + " / " + std::to_string(60 / m_CardiacCyclePeriod_s));
-#endif
-      BeginDriverCycle();
-      m_StartSystole = false;
-      m_CurrentDriverCycleTime_s = 0.0;
-#ifdef LOG_TIMING
-      Info("  -New CardiacCyclePeriod / HR " + std::to_string(m_CardiacCyclePeriod_s) + " / " + std::to_string(60 / m_CardiacCyclePeriod_s));
-      Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-      Info("  -Reseting Driver Cycle Time to 0");
-#endif
-      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle,true, m_data.GetSimulationTime());
+      if (m_StartSystole)
+      {
+        BeginDriverCycle();
+        m_StartSystole = false;
+        m_CurrentDriverCycleTime_s = 0.0;
+        m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, true, m_data.GetSimulationTime());
+      }
+
+      CalculateHeartElastance();
+      LeftHeartCompliance_mL_Per_mmHg = (1.0 / m_LeftHeartElastance_mmHg_Per_mL) * m_HeartComplianceModifier->GetCurrent();
+      RightHeartCompliance_mL_Per_mmHg = (1.0 / m_RightHeartElastance_mmHg_Per_mL) * m_HeartComplianceModifier->GetCurrent();
     }
     else
-      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
+    {
+      LeftHeartCompliance_mL_Per_mmHg = m_LeftHeartCompliancePath->GetComplianceBaseline(VolumePerPressureUnit::mL_Per_mmHg)
+                                      * m_HeartComplianceModifier->GetCurrent();
+      RightHeartCompliance_mL_Per_mmHg = m_RightHeartCompliancePath->GetComplianceBaseline(VolumePerPressureUnit::mL_Per_mmHg)
+                                       * m_HeartComplianceModifier->GetCurrent();
+    }
 
-    m_pRightHeart->GetNextCompliance().SetValue(1.0 / m_RightHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-    m_pLeftHeart->GetNextCompliance().SetValue(1.0 / m_LeftHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+    AdjustVascularTone();
+    m_LeftHeartCompliancePath->GetNextCompliance().SetValue(LeftHeartCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    m_RightHeartCompliancePath->GetNextCompliance().SetValue(RightHeartCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+
+    //m_data.GetDataTrack().Probe("LeftHeartCompliance_mL_Per_mmHg", LeftHeartCompliance_mL_Per_mmHg);
+    //m_data.GetDataTrack().Probe("RightHeartCompliance_mL_Per_mmHg", RightHeartCompliance_mL_Per_mmHg);
+    //m_data.GetDataTrack().Probe("RightHeartPressureSource_mmHg", m_RightHeartToGnd->GetNextPressureSource().GetValue(PressureUnit::mmHg));
+    //m_data.GetDataTrack().Probe("LeftHeartPressureSource_mmHg", m_LeftHeartToGnd->GetNextPressureSource().GetValue(PressureUnit::mmHg));
 
     m_CurrentDriverCycleTime_s += m_data.GetTimeStep_s();
   }
@@ -1872,6 +2372,7 @@ namespace pulse
     m_LeftHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
     m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
 
+#ifndef TUNING
     // Apply baroreceptor reflex effects
     /// \todo need to reset the heart elastance min and max at the end of each stabiliation period in AtSteadyState()
     if (m_data.GetNervous().GetBaroreceptorFeedback() == eSwitch::On)
@@ -1894,20 +2395,14 @@ namespace pulse
 
     //Apply heart failure effects
     m_LeftHeartElastanceMax_mmHg_Per_mL *= m_LeftHeartElastanceModifier;
+#endif
 
-    // Now set the cardiac cycle period and the cardiac arrest event if applicable
-    if (m_StartCardiacArrest)
-    {
-      m_StartCardiacArrest = false;
-      m_DriverCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years) 
-      RecordAndResetCardiacCycle();
-      GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min);
-      m_data.GetEvents().SetEvent(eEvent::CardiacArrest, true, m_data.GetSimulationTime());
-    }
-    else
-    {
-      m_DriverCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
-    }
+    m_DriverCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
+    // Snap the cycle period to the nearest time step
+    m_DriverCyclePeriod_s = std::floor((m_DriverCyclePeriod_s / m_data.GetTimeStep_s()) + 0.5) * m_data.GetTimeStep_s();
+
+    GetHeartRate().SetValue(HeartDriverFrequency_Per_Min, FrequencyUnit::Per_min);
+    RecordAndResetCardiacCycle();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1938,8 +2433,8 @@ namespace pulse
     double normalizedCardiacTime = m_CurrentDriverCycleTime_s / m_DriverCyclePeriod_s;
     double elastanceShapeFunction = (pow(normalizedCardiacTime / alpha1, n1) / (1.0 + pow(normalizedCardiacTime / alpha1, n1))) * (1.0 / (1.0 + pow(normalizedCardiacTime / alpha2, n2))) / maxShape;
 
-    m_LeftHeartElastance_mmHg_Per_mL = m_ArrhythmiaHeartElastanceModifier * oxygenDeficitEffect * ((m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL);
-    m_RightHeartElastance_mmHg_Per_mL = m_ArrhythmiaHeartElastanceModifier * oxygenDeficitEffect * ((m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL);
+    m_LeftHeartElastance_mmHg_Per_mL = oxygenDeficitEffect * ((m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL);
+    m_RightHeartElastance_mmHg_Per_mL = oxygenDeficitEffect * ((m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1987,15 +2482,15 @@ namespace pulse
     //Reducing resistances scaling with metabolic rate increase and changes in core temperature
     double resistanceNew__mmHg_s_Per_mL = 0.0;
 
-    for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
+    for (SEFluidCircuitPath* Path : m_SystemicResistancePaths)
     {
       if (Path->HasResistanceBaseline())
       {
-        if (Path == m_pAortaToMuscle || Path == m_pMuscleToVenaCava)
+        if (std::find(m_MuscleResistancePaths.begin(), m_MuscleResistancePaths.end(), Path) != m_MuscleResistancePaths.end())
         { // Biggest change in muscle
           resistanceNew__mmHg_s_Per_mL = (1.0 / metabolicModifier) * (1.0 / metabolicModifier) * Path->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
         }
-        else if (Path == m_pAortaToBrain || Path == m_pAortaToMyocardium || Path == m_pBrainToVenaCava || Path == m_pMyocardiumToVenaCava)
+        else if (Path == m_AortaToBrain || Path == m_AortaToMyocardium || Path == m_BrainToVenaCava || Path == m_MyocardiumToVenaCava)
         { // No Change in the brain or myocardium
           resistanceNew__mmHg_s_Per_mL = Path->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
         }
@@ -2007,15 +2502,15 @@ namespace pulse
         // Overall reduction in flow resistance in all paths to allow for increased cardiac output with a metabolic rate increase
         /// \todo Skip over Brain and Myocardium and add arms and legs
         resistanceNew__mmHg_s_Per_mL *= (1.0 / metabolicMultiplier);
-        if (resistanceNew__mmHg_s_Per_mL < m_minIndividialSystemicResistance_mmHg_s_Per_mL)
+        if (resistanceNew__mmHg_s_Per_mL < m_MinIndividialSystemicResistance_mmHg_s_Per_mL)
         {
-          resistanceNew__mmHg_s_Per_mL = m_minIndividialSystemicResistance_mmHg_s_Per_mL;
+          resistanceNew__mmHg_s_Per_mL = m_MinIndividialSystemicResistance_mmHg_s_Per_mL;
         }
         Path->GetNextResistance().SetValue(resistanceNew__mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       }
     }
+   }
 
-  }
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Adjusts vascular tone due to baroreceptor reflex, drug, and other effects
@@ -2031,24 +2526,52 @@ namespace pulse
     double UpdatedResistance_mmHg_s_Per_mL = 0.0;
     double UpdatedCompliance_mL_Per_mmHg = 0.0;
 
+    double BaroreceptorResistanceScale = 1.0;
+    double BaroreceptorComplianceScale = 1.0;
     if (m_data.GetNervous().GetBaroreceptorFeedback() == eSwitch::On)
     {
-      for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
-      {
-        /// \todo We are treating all systemic resistance paths equally, including the brain.
-        UpdatedResistance_mmHg_s_Per_mL = m_ArrhythmiaVascularToneModifier * m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue() * Path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-        if (UpdatedResistance_mmHg_s_Per_mL < m_minIndividialSystemicResistance_mmHg_s_Per_mL)
-        {
-          UpdatedResistance_mmHg_s_Per_mL = m_minIndividialSystemicResistance_mmHg_s_Per_mL;
-        }
-        Path->GetNextResistance().SetValue(UpdatedResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      }
+      BaroreceptorResistanceScale = m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue();
+      BaroreceptorComplianceScale = m_data.GetNervous().GetBaroreceptorComplianceScale().GetValue();
+    }
 
-      for (SEFluidCircuitPath* Path : m_systemicCompliancePaths)
-      {
-        UpdatedCompliance_mL_Per_mmHg = m_data.GetNervous().GetBaroreceptorComplianceScale().GetValue() * Path->GetComplianceBaseline(VolumePerPressureUnit::mL_Per_mmHg);
-        Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
-      }
+    for (SEFluidCircuitPath* Path : m_SystemicResistancePaths)
+    {
+      /// \todo We are treating all systemic resistance paths equally, including the brain.
+      UpdatedResistance_mmHg_s_Per_mL = Path->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      UpdatedResistance_mmHg_s_Per_mL *= BaroreceptorResistanceScale;
+      UpdatedResistance_mmHg_s_Per_mL *= m_SystemicVascularResistanceModifier->GetCurrent();
+      if (UpdatedResistance_mmHg_s_Per_mL < m_MinIndividialSystemicResistance_mmHg_s_Per_mL)
+        UpdatedResistance_mmHg_s_Per_mL = m_MinIndividialSystemicResistance_mmHg_s_Per_mL;
+      Path->GetNextResistance().SetValue(UpdatedResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    }
+
+    for (SEFluidCircuitPath* Path : m_SystemicCompliancePaths)
+    {
+      UpdatedCompliance_mL_Per_mmHg = Path->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+      UpdatedCompliance_mL_Per_mmHg *= BaroreceptorComplianceScale;
+      UpdatedCompliance_mL_Per_mmHg *= m_SystemicVascularComplianceModifier->GetCurrent();
+      Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    }
+
+    for (SEFluidCircuitPath* Path : m_AortaCompliancePaths)
+    {
+      UpdatedCompliance_mL_Per_mmHg = Path->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+      UpdatedCompliance_mL_Per_mmHg *= m_AortaComplianceModifier->GetCurrent();
+      Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    }
+
+    for (SEFluidCircuitPath* Path : m_VenaCavaCompliancePaths)
+    {
+      UpdatedCompliance_mL_Per_mmHg = Path->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+      UpdatedCompliance_mL_Per_mmHg *= m_VenaCavaComplianceModifier->GetCurrent();
+      Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    }
+
+    for (SEFluidCircuitPath* Path : m_PulmonaryCompliancePaths)
+    {
+      UpdatedCompliance_mL_Per_mmHg = Path->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+      UpdatedCompliance_mL_Per_mmHg *= m_PulmonaryComplianceModifier->GetCurrent();
+      Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
     }
 
     //The drug response adjusts the systemic resistances according to the mean arterial pressure change calculated in Drugs.cpp
@@ -2068,20 +2591,304 @@ namespace pulse
     //These effects are applied in HeartDriver() since its functionality is called every time step.
     if (std::abs(ResistanceChange) > ZERO_APPROX)
     {
-      for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
+      for (SEFluidCircuitPath* Path : m_SystemicResistancePaths)
       {
         if (!Path->HasNextResistance())
           continue;
         UpdatedResistance_mmHg_s_Per_mL = Path->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
         UpdatedResistance_mmHg_s_Per_mL += ResistanceChange * UpdatedResistance_mmHg_s_Per_mL / GetSystemicVascularResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-        if (UpdatedResistance_mmHg_s_Per_mL < m_minIndividialSystemicResistance_mmHg_s_Per_mL)
+        if (UpdatedResistance_mmHg_s_Per_mL < m_MinIndividialSystemicResistance_mmHg_s_Per_mL)
         {
-          UpdatedResistance_mmHg_s_Per_mL = m_minIndividialSystemicResistance_mmHg_s_Per_mL;
+          UpdatedResistance_mmHg_s_Per_mL = m_MinIndividialSystemicResistance_mmHg_s_Per_mL;
         }
         Path->GetNextResistance().SetValue(UpdatedResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       }
     }
     MetabolicToneResponse();
+  }
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Update Pulmonary Shunt Resistance 
+  ///
+  /// \details
+  /// This decreases the pulmonary shunt resistance in the cardiovascular system.  The resistance is 
+  /// inversely proportional to the severity.  The shunt allows deoxgenated blood to pass without
+  /// participating in gas exchange.  This often occurs as blood pressure falls.
+  //--------------------------------------------------------------------------------------------------
+  void CardiovascularModel::UpdatePulmonaryCapillaries()
+  {
+    double baseModifier = 1;
+    double shuntModifier = 1;
+    double coverageModifier = 1;
+
+    double meanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
+    double standardPulmonaryCapillaryCoverage = m_data.GetConfiguration().GetStandardPulmonaryCapillaryCoverage();
+
+    // Set a range between 10% below MAP baseline and Cardiovascular Collapse MAP
+    double shuntEffect_mmHg = m_StabilizedMeanArterialPressureBaseline_mmHg * 0.9;
+    if (meanArterialPressure_mmHg < m_MAPCollapse_mmHg)
+      meanArterialPressure_mmHg = m_MAPCollapse_mmHg;
+    if (meanArterialPressure_mmHg > shuntEffect_mmHg)
+    {
+      GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage);
+    }
+    else
+    {
+      baseModifier = (meanArterialPressure_mmHg - m_MAPCollapse_mmHg) /
+        (shuntEffect_mmHg - m_MAPCollapse_mmHg);
+      //modifier = MAX(0.02, modifier);
+      //modifier = MIN(modifier, 1.0);
+      coverageModifier = GeneralMath::ExponentialGrowthFunction(10, 0.75, 1.0, baseModifier);
+
+      // Update the capillary coverage for tissue diffusion
+      GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage * coverageModifier);
+
+      shuntModifier = GeneralMath::ExponentialGrowthFunction(10, 0.5, 1.0, baseModifier);
+
+      for (auto leftShuntPath : m_LeftPulmonaryArteriesToVeins)
+      {
+        // Update the pulmonary shunt
+        double leftPulmonaryShuntResistance = leftShuntPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        leftPulmonaryShuntResistance *= shuntModifier;
+        leftShuntPath->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      }
+      for (auto rightShuntPath : m_RightPulmonaryArteriesToVeins)
+      {
+        // Update the pulmonary shunt
+        double rightPulmonaryShuntResistance = rightShuntPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        rightPulmonaryShuntResistance *= shuntModifier;
+        rightShuntPath->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      }
+
+      for (auto leftPulmonaryCapillaryPath : m_LeftPulmonaryArteriesToCapillaries)
+      {
+        double leftPulmonaryCapillariesResistance = leftPulmonaryCapillaryPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        leftPulmonaryCapillariesResistance *= 1 / shuntModifier;
+        leftPulmonaryCapillaryPath->GetNextResistance().SetValue(leftPulmonaryCapillariesResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      }
+      for (auto rightPulmonaryCapillaryPath : m_RightPulmonaryArteriesToCapillaries)
+      {
+        double rightPulmonaryCapillariesResistance = rightPulmonaryCapillaryPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        rightPulmonaryCapillariesResistance *= 1 / shuntModifier;
+        rightPulmonaryCapillaryPath->GetNextResistance().SetValue(rightPulmonaryCapillariesResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      }
+    }
+
+    //m_data.GetDataTrack().Probe("baseModifier", baseModifier);
+    //m_data.GetDataTrack().Probe("coverageModifier", coverageModifier);
+    //m_data.GetDataTrack().Probe("shuntModifier", shuntModifier);
+    //m_data.GetDataTrack().Probe("shuntModifierI", 1/shuntModifier);
+    //m_data.GetDataTrack().Probe("LeftPulmonaryArteriesToVeinsResistance", leftPulmonaryShuntResistance);
+    //m_data.GetDataTrack().Probe("RightPulmonaryArteriesToVeinsResistance", rightPulmonaryShuntResistance);
+    //m_data.GetDataTrack().Probe("LeftPulmonaryArteriesToCapillariesResistance", leftPulmonaryCapillariesResistance);
+    //m_data.GetDataTrack().Probe("RightPulmonaryArteriesToCapillariesResistance", rightPulmonaryCapillariesResistance);
+    //m_data.GetDataTrack().Probe("VenaCavaToRightHeartResistance", m_RightHeartResistance->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL));
+    //m_data.GetDataTrack().Probe("VenaCavaCompliance", m_VenaCavaCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
+    //m_data.GetDataTrack().Probe("AortaCompliance", m_AortaCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
+    //m_data.GetDataTrack().Probe("LeftPulmonaryArteriesCompliance", m_LeftPulmonaryArteriesCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
+    //m_data.GetDataTrack().Probe("RightPulmonaryArteriesCompliance", m_RightPulmonaryArteriesCompliance->GetNextCapacitance().GetValue(VolumePerPressureUnit::mL_Per_mmHg));
+  }
+
+  //--------------------------------------------------------------------------------------------------
+/// \brief
+/// Hemothorax
+///
+/// \details
+/// Model both traumatic and nontraumatic hemothorax effects of the cardiovascular system. Optionally set
+/// a severity or specify a blood flow out of the pulmonary capillaries. The blood out of the cardiovascular
+/// system is added to the pleural space volume in the respiratory system. Hermorrhage effects are handled 
+/// elsewhere in the cardiovascular model.
+//--------------------------------------------------------------------------------------------------
+  void CardiovascularModel::CalculateHemothorax()
+  {
+    bool stateChange = false;
+
+    // Left ----------------------------------------------------------------------------------------
+
+    double leftBloodFlow_mL_Per_s = 0.0;
+    if (m_data.GetActions().GetPatientActions().HasLeftHemothorax())
+    {
+      SEHemothorax& leftHemothorax = m_data.GetActions().GetPatientActions().GetLeftHemothorax();
+
+      //Blood going out
+      if (leftHemothorax.HasSeverity())
+      {
+        if (leftHemothorax.GetSeverity().IsZero())
+          m_data.GetActions().GetPatientActions().RemoveLeftHemothorax();
+        else
+        {
+          double severity = leftHemothorax.GetSeverity().GetValue();
+          //Piecewise linear
+          //Massive hemothorax, often defined as greater than .2 liters/hr \cite kim2020chest
+          double leftBloodFlow_L_Per_hr = 0.0;
+          if (severity > 0.9)
+          {
+            //Massive
+            leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.9, 1.0, 0.2, 1.0, severity);
+          }
+          else if (severity > 0.6)
+          {
+            //Medium
+            leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.6, 0.9, 0.1, 0.2, severity);
+          }
+          else if (severity > 0.3)
+          {
+            //Minimal
+            leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.3, 0.6, 0.05, 0.1, severity);
+          }
+          else
+          {
+            leftBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.0, 0.3, 0.0, 0.05, severity);
+          }
+          leftBloodFlow_mL_Per_s = Convert(leftBloodFlow_L_Per_hr, VolumePerTimeUnit::L_Per_hr, VolumePerTimeUnit::mL_Per_s);
+          //leftHemothorax.GetFlowRate().SetValue(leftBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+        }
+      }
+      else if (leftHemothorax.HasFlowRate())
+      {
+        if (leftHemothorax.GetFlowRate().IsZero())
+          m_data.GetActions().GetPatientActions().RemoveLeftHemothorax();
+        else
+        {
+          leftBloodFlow_mL_Per_s = leftHemothorax.GetFlowRate(VolumePerTimeUnit::mL_Per_s);
+          if (leftBloodFlow_mL_Per_s > 1)
+          {
+            Error("Hemothorax flow rate is above maximum allowable value. Overriding to 1 mL/s.");
+            leftBloodFlow_mL_Per_s = 1;
+            leftHemothorax.GetFlowRate().SetValue(leftBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+          }
+        }
+      }
+      else
+      {
+        Fatal("Invalid hemothorax. The flow rate or severity must be set.");
+      }
+    }
+
+    if (leftBloodFlow_mL_Per_s != 0.0)
+    {
+      if (m_LeftPulmonaryVeinsLeak == nullptr)
+      {
+        //Create the left chest leak in the circuit
+        m_LeftPulmonaryVeinsLeak = &m_CirculatoryCircuit->CreatePath(*m_LeftPulmonaryVeinsNode, *m_GroundNode, pulse::CardiovascularPath::LeftPulmonaryVeinsLeak1ToGround);
+        m_LeftPulmonaryVeinsLeak->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        //Create the left chest leak in the graph
+        SELiquidCompartmentLink& vLeftPulmonaryVeinsLeak = m_data.GetCompartments().CreateLiquidLink(*m_LeftPulmonaryVeins, *m_Ground, pulse::VascularLink::LeftPulmonaryVeinsLeak);
+        vLeftPulmonaryVeinsLeak.MapPath(*m_LeftPulmonaryVeinsLeak);
+        m_CirculatoryGraph->AddLink(vLeftPulmonaryVeinsLeak);
+        stateChange = true;
+      }
+
+      m_LeftPulmonaryVeinsLeak->GetNextFlowSource().SetValue(leftBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      if (m_data.GetActions().GetPatientActions().GetLeftHemothorax().HasSeverity())// Track the flow for end user
+        m_data.GetActions().GetPatientActions().GetLeftHemothorax().GetFlowRate().SetValue(leftBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+    }
+    else if (m_LeftPulmonaryVeinsLeak != nullptr)
+    {
+      //Remove the left chest leak in the circuit and graph
+      m_CirculatoryCircuit->RemovePath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak1ToGround);
+      m_CirculatoryGraph->RemoveLink(pulse::VascularLink::LeftPulmonaryVeinsLeak);
+      m_LeftPulmonaryVeinsLeak = nullptr;
+      stateChange = true;
+    }
+
+    // Right ---------------------------------------------------------------------------------------
+
+    double rightBloodFlow_mL_Per_s = 0.0;
+    if (m_data.GetActions().GetPatientActions().HasRightHemothorax())
+    {
+      SEHemothorax& rightHemothorax = m_data.GetActions().GetPatientActions().GetRightHemothorax();
+      //Blood going out
+      if (rightHemothorax.HasSeverity())
+      {
+        if (rightHemothorax.GetSeverity().IsZero())
+          m_data.GetActions().GetPatientActions().RemoveRightHemothorax();
+        else
+        {
+          double severity = rightHemothorax.GetSeverity().GetValue();
+          //Piecewise linear
+          //Massive hemothorax, often defined as greater than .2 liters/hr \cite kim2020chest
+          double rightBloodFlow_L_Per_hr = 0.0;
+          if (severity > 0.9)
+          {
+            //Massive
+            rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.9, 1.0, 0.2, 1.0, severity);
+          }
+          else if (severity > 0.6)
+          {
+            //Medium
+            rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.6, 0.9, 0.1, 0.2, severity);
+          }
+          else if (severity > 0.3)
+          {
+            //Minimal
+            rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.3, 0.6, 0.05, 0.1, severity);
+          }
+          else
+          {
+            rightBloodFlow_L_Per_hr = GeneralMath::LinearInterpolator(0.0, 0.3, 0.0, 0.05, severity);
+          }
+          rightBloodFlow_mL_Per_s = Convert(rightBloodFlow_L_Per_hr, VolumePerTimeUnit::L_Per_hr, VolumePerTimeUnit::mL_Per_s);
+          //rightHemothorax.GetFlowRate().SetValue(rightBloodFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+        }
+      }
+      else if (rightHemothorax.HasFlowRate())
+      {
+        if (rightHemothorax.GetFlowRate().IsZero())
+          m_data.GetActions().GetPatientActions().RemoveRightHemothorax();
+        else
+        {
+          rightBloodFlow_mL_Per_s = rightHemothorax.GetFlowRate(VolumePerTimeUnit::mL_Per_s);
+          if (rightBloodFlow_mL_Per_s > 1)
+          {
+            Error("Hemothorax flow rate is above maximum allowable value. Overriding to 1 mL/s.");
+            rightBloodFlow_mL_Per_s = 1;
+            rightHemothorax.GetFlowRate().SetValue(rightBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+          }
+        }
+      }
+      else
+      {
+        Fatal("Invalid hemothorax. The flow rate or severity must be set.");
+      }
+    }
+
+    if (rightBloodFlow_mL_Per_s != 0.0)
+    {
+      if (m_RightPulmonaryVeinsLeak == nullptr)
+      {
+        //Create the right chest leak in the circuit
+        m_RightPulmonaryVeinsLeak = &m_CirculatoryCircuit->CreatePath(*m_RightPulmonaryVeinsNode, *m_GroundNode, pulse::CardiovascularPath::RightPulmonaryVeinsLeak1ToGround);
+        m_RightPulmonaryVeinsLeak->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        //Create the right chest leak in the graph
+        SELiquidCompartmentLink& vRightPulmonaryVeinsLeak = m_data.GetCompartments().CreateLiquidLink(*m_RightPulmonaryVeins, *m_Ground, pulse::VascularLink::RightPulmonaryVeinsLeak);
+        vRightPulmonaryVeinsLeak.MapPath(*m_RightPulmonaryVeinsLeak);
+        m_CirculatoryGraph->AddLink(vRightPulmonaryVeinsLeak);
+        stateChange = true;
+      }
+
+      m_RightPulmonaryVeinsLeak->GetNextFlowSource().SetValue(rightBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      if (m_data.GetActions().GetPatientActions().GetRightHemothorax().HasSeverity())// Track the flow for end user
+        m_data.GetActions().GetPatientActions().GetRightHemothorax().GetFlowRate().SetValue(rightBloodFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+    }
+    else if (m_RightPulmonaryVeinsLeak != nullptr)
+    {
+      //Remove the right chest leak in the circuit and graph
+      m_CirculatoryCircuit->RemovePath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak1ToGround);
+      m_CirculatoryGraph->RemoveLink(pulse::VascularLink::RightPulmonaryVeinsLeak);
+      m_RightPulmonaryVeinsLeak = nullptr;
+      stateChange = true;
+    }
+
+    // Update circuit and graph --------------------------------------------------------------------
+
+    if (stateChange)
+    {
+      m_data.GetCompartments().StateChange();
+      m_CirculatoryCircuit->StateChange();
+      m_CirculatoryGraph->StateChange();
+    }
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -2099,7 +2906,7 @@ namespace pulse
     if (!m_data.HasRespiratory())
       return;
 
-    double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistancePath->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
     //-----------------------------------------------------------------------------------------------------
 
@@ -2107,7 +2914,6 @@ namespace pulse
 
     ////Lung volume/pressure has a direct effect on cardiac output ///\cite verhoeff2017cardiopulmonary
     ////Decreased venous return occurs in disease states and with mechanical ventilation through an increased PEEP ///\cite luecke2005clinical
-
     ////Get the current pleural cavity pressure (reletive to ambient)
     //double baselineIntrapleuralPressure_cmH2O = -5.0; /// \cite Levitzky2013pulmonary
     //double pleuralCavityPressureBaselineDiff_cmH2O = m_PleuralCavity->GetPressure(PressureUnit::cmH2O) - m_Ambient->GetPressure(PressureUnit::cmH2O) - baselineIntrapleuralPressure_cmH2O;
@@ -2121,11 +2927,9 @@ namespace pulse
     //  pleuralCavityPressureBaselineDiff_cmH2O = MIN(pleuralCavityPressureBaselineDiff_cmH2O, maxPressure_cmH2O);
 
     //  //Interpolate into a parabola to effect things much more at larger differences
-    //  double min = 1.0;
-    //  double max = maxResistanceMultiplier;
-    //  double a = max - min;
+    //  //Interpolate into a parabola to effect things much more at larger differences
     //  double factor = pleuralCavityPressureBaselineDiff_cmH2O / maxPressure_cmH2O;
-    //  double resistanceMultiplier = a * factor * factor + min;
+    //  double resistanceMultiplier = GeneralMath::ParbolicInterpolator(1.0, maxResistanceMultiplier, factor);
 
     //  rightHeartResistance_mmHg_s_Per_mL *= resistanceMultiplier;
     //}
@@ -2133,19 +2937,17 @@ namespace pulse
     //-----------------------------------------------------------------------------------------------------
 
     //Pressure difference causes a mediastinum shift, which also effects the venous return
-    //The left and right pleural pressures are likely to have large differences only due to a pneumothorax
-    double pleuralCavityPressureDiff_cmH2O = std::abs(m_leftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_rightPleuralCavity->GetPressure(PressureUnit::cmH2O));
+    //The left and right pleural pressures are likely to have large differences only due to a pneumothorax/hemothorax
+    double pleuralCavityPressureDiff_cmH2O = std::abs(m_LeftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_RightPleuralCavity->GetPressure(PressureUnit::cmH2O));
 
-    double maxPressureDiff_cmH2O = 20.0;
-    double maxResistanceMultiplier = 10.0;
+    double maxPressureDiff_cmH2O = 10.0;
+    double maxResistanceMultiplier = 6.0;
     pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 
     //Interpolate into a parabola to effect things much more at larger differences
-    double min = 1.0;
-    double max = maxResistanceMultiplier;
-    double a = max - min;
     double factor = pleuralCavityPressureDiff_cmH2O / maxPressureDiff_cmH2O;
-    double resistanceMultiplier = a * factor * factor + min;
+    //double resistanceMultiplier = GeneralMath::ParbolicInterpolator(1.0, maxResistanceMultiplier, factor);
+    double resistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, maxResistanceMultiplier, factor);
 
     rightHeartResistance_mmHg_s_Per_mL *= resistanceMultiplier;
 
@@ -2154,16 +2956,12 @@ namespace pulse
     //Dampen the change to prevent potential craziness
     //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
     double dampenFraction_perSec = 0.001 * 50.0;
+    double previousRightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistancePath->GetResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    rightHeartResistance_mmHg_s_Per_mL = GeneralMath::Damper(rightHeartResistance_mmHg_s_Per_mL, previousRightHeartResistance_mmHg_s_Per_mL, dampenFraction_perSec, m_data.GetTimeStep_s());
 
-    double previousRightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double resistanceChange_L_Per_mmHg_s_Per_mL = (rightHeartResistance_mmHg_s_Per_mL - previousRightHeartResistance_mmHg_s_Per_mL) * dampenFraction_perSec * m_data.GetTimeStep_s();
-
-    rightHeartResistance_mmHg_s_Per_mL = previousRightHeartResistance_mmHg_s_Per_mL + resistanceChange_L_Per_mmHg_s_Per_mL;
-
-    m_RightHeartResistance->GetNextResistance().SetValue(rightHeartResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_RightHeartResistancePath->GetNextResistance().SetValue(rightHeartResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
     //For tuning
-    //m_data.GetDataTrack().Probe("pleuralCavityPressureBaselineDiff_cmH2O", pleuralCavityPressureBaselineDiff_cmH2O);
     //m_data.GetDataTrack().Probe("pleuralCavityPressureDiff_cmH2O", pleuralCavityPressureDiff_cmH2O);
     //m_data.GetDataTrack().Probe("resistanceMultiplier", resistanceMultiplier);
     //m_data.GetDataTrack().Probe("rightHeartResistance_mmHg_s_Per_mL", rightHeartResistance_mmHg_s_Per_mL);
@@ -2226,13 +3024,9 @@ namespace pulse
       {
         m_data.AdvanceCallback(-1);
         HeartDriver();
-        m_circuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
+        m_CircuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
         CalculateVitalSigns();
-        m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
-#ifdef LOG_TIMING
-        SEScalarTime& st = (SEScalarTime&)m_data.GetSimulationTime();
-        st.IncrementValue(m_data.GetTimeStep_s(), TimeUnit::s);
-#endif
+        m_CircuitCalculator->PostProcess(*m_CirculatoryCircuit);
         //return; //Skip stabelization for debugging
 
         map_mmHg = GetMeanArterialPressure(PressureUnit::mmHg);
@@ -2244,33 +3038,33 @@ namespace pulse
 
         stableTime_s += m_data.GetTimeStep_s();
         currentStableTime_s += m_data.GetTimeStep_s();
-        bool stableMAP = true;
+        // Check MAP stability
         if (GeneralMath::PercentDifference(tgt_map_mmHg, map_mmHg) > stabPercentTolerance)
         {
-          stableTime_s = 0; tgt_map_mmHg = map_mmHg; stableMAP = false;
+          stableTime_s = 0; tgt_map_mmHg = map_mmHg;
         }
-        bool stableSystolic = true;
+        // Check Systolic stability
         if (GeneralMath::PercentDifference(tgt_systolic_mmHg, systolic_mmHg) > stabPercentTolerance)
         {
-          stableTime_s = 0; tgt_systolic_mmHg = systolic_mmHg; stableSystolic = false;
+          stableTime_s = 0; tgt_systolic_mmHg = systolic_mmHg;
         }
-        bool stableDiastolic = true;
+        // Check Diastolic stability
         if (GeneralMath::PercentDifference(tgt_diastolic_mmHg, diastolic_mmHg) > stabPercentTolerance)
         {
-          stableTime_s = 0; tgt_diastolic_mmHg = diastolic_mmHg; stableDiastolic = false;
+          stableTime_s = 0; tgt_diastolic_mmHg = diastolic_mmHg;
         }
-        bool stableCO = true;
+        // Check CO stability
         if (GeneralMath::PercentDifference(tgt_cardiacOutput_mL_Per_min, cardiacOutput_mL_Per_min) > stabPercentTolerance)
         {
-          stableTime_s = 0; tgt_cardiacOutput_mL_Per_min = cardiacOutput_mL_Per_min; stableCO = false;
+          stableTime_s = 0; tgt_cardiacOutput_mL_Per_min = cardiacOutput_mL_Per_min;
         }
         //bool stableMeanCVP = true;
         //if (GeneralMath::PercentDifference(tgt_meanCVP_mmHg, meanCVP_mmHg) > 0.25)
         //  { stableTime_s = 0; tgt_meanCVP_mmHg = meanCVP_mmHg; stableMeanCVP = false; }
-        bool stableBloodVol = true;
+        // Check Blood Vol stability
         if (GeneralMath::PercentDifference(tgt_blood_mL, blood_mL) > stabPercentTolerance)
         {
-          stableTime_s = 0; tgt_blood_mL = blood_mL; stableBloodVol = false;
+          stableTime_s = 0; tgt_blood_mL = blood_mL;
         }
 
         if (stableTime_s > stabCheckTime_s)
@@ -2359,6 +3153,10 @@ namespace pulse
         " BloodVolume(mL): " << blood_mL;
       Info(m_ss);
       TunePaths(systemicResistanceScale, systemicComplianceScale, aortaResistanceScale, aortaComplianceScale, rightHeartResistanceScale, venaCavaComplianceScale);
+      m_data.GetCurrentPatient().GetHeartRateBaseline().Set(GetHeartRate());
+      m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+      m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+      m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
     }
     // Set the Tissue Pressure to the CV Pressures
     // Loop to decrement the Tissue Resistance, check that the flow is under 5mL/min
@@ -2384,6 +3182,11 @@ namespace pulse
         " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) <<
         " BloodVolume(mL): " << GetBloodVolume(VolumeUnit::mL);
       Info(m_ss);
+      m_data.GetCurrentPatient().GetHeartRateBaseline().Set(GetHeartRate());
+      m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetDiastolicArterialPressure());
+      m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetSystolicArterialPressure());
+      m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
+
       // Now tune the tissue nodes
       if (m_data.GetConfiguration().IsTissueEnabled())
       {
@@ -2396,6 +3199,10 @@ namespace pulse
           " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) <<
           " BloodVolume(mL): " << GetBloodVolume(VolumeUnit::mL);
         Info(m_ss);
+        m_data.GetCurrentPatient().GetHeartRateBaseline().Set(GetHeartRate());
+        m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetDiastolicArterialPressure());
+        m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetSystolicArterialPressure());
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
       }
       // Reset our substance masses to the new volumes
       for (SELiquidCompartment* c : m_data.GetCompartments().GetVascularLeafCompartments())
@@ -2429,7 +3236,7 @@ namespace pulse
     double sp1_mmHg_s_Per_mL;
     if (systemicComplianceScale != 1.0)
     {
-      for (SEFluidCircuitPath* p : m_systemicCompliancePaths)
+      for (SEFluidCircuitPath* p : m_SystemicCompliancePaths)
       {
         sp1_mmHg_s_Per_mL = p->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg) * systemicComplianceScale;
         p->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
@@ -2439,7 +3246,7 @@ namespace pulse
     }
     if (systemicResistanceScale != 1.0)
     {
-      for (SEFluidCircuitPath* p : m_systemicResistancePaths)
+      for (SEFluidCircuitPath* p : m_SystemicResistancePaths)
       {
         sp1_mmHg_s_Per_mL = p->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL) * systemicResistanceScale;
 
@@ -2450,31 +3257,31 @@ namespace pulse
     }
     if (aortaComplianceScale != 1)
     {
-      sp1_mmHg_s_Per_mL = m_AortaCompliance->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg) * aortaComplianceScale;
-      m_AortaCompliance->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-      m_AortaCompliance->GetCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-      m_AortaCompliance->GetNextCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+      sp1_mmHg_s_Per_mL = m_AortaCompliancePath->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg) * aortaComplianceScale;
+      m_AortaCompliancePath->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+      m_AortaCompliancePath->GetCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+      m_AortaCompliancePath->GetNextCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
     }
     if (aortaResistanceScale != 1)
     {
-      sp1_mmHg_s_Per_mL = m_AortaResistance->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL) * aortaResistanceScale;
-      m_AortaResistance->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      m_AortaResistance->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      m_AortaResistance->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      sp1_mmHg_s_Per_mL = m_AortaResistancePath->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL) * aortaResistanceScale;
+      m_AortaResistancePath->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      m_AortaResistancePath->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      m_AortaResistancePath->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     }
     if (venaCavaComplianceScale != 1)
     {
-      sp1_mmHg_s_Per_mL = m_VenaCavaCompliance->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg) * venaCavaComplianceScale;
-      m_VenaCavaCompliance->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-      m_VenaCavaCompliance->GetCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
-      m_VenaCavaCompliance->GetNextCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+      sp1_mmHg_s_Per_mL = m_VenaCavaCompliancePath->GetCapacitanceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg) * venaCavaComplianceScale;
+      m_VenaCavaCompliancePath->GetCapacitanceBaseline().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+      m_VenaCavaCompliancePath->GetCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+      m_VenaCavaCompliancePath->GetNextCapacitance().SetValue(sp1_mmHg_s_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
     }
     if (rightHeartResistanceScale != 1)
     {
-      sp1_mmHg_s_Per_mL = m_RightHeartResistance->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL) * rightHeartResistanceScale;
-      m_RightHeartResistance->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      m_RightHeartResistance->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      m_RightHeartResistance->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      sp1_mmHg_s_Per_mL = m_RightHeartResistancePath->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL) * rightHeartResistanceScale;
+      m_RightHeartResistancePath->GetResistanceBaseline().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      m_RightHeartResistancePath->GetResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      m_RightHeartResistancePath->GetNextResistance().SetValue(sp1_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     }
   }
 
@@ -2491,48 +3298,120 @@ namespace pulse
     bool success = false;
 
     // Copy all the CV pressures to the associated tissue nodes
-
-    std::vector<SEFluidCircuitNode*> tissuePressureCVSources;
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Bone1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Brain1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Fat1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::SmallIntestine1));
-    // Have to pick one of the 3 nodes GI is mapped to for pressure
-    //tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LargeIntestine1));
-    //tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Splanchnic1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Liver1));
-    if (m_data.GetConfiguration().IsRenalEnabled())
-      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::LeftGlomerularCapillaries));
-    else
-      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftKidney1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Muscle1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Myocardium1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightPulmonaryCapillaries));
-    if (m_data.GetConfiguration().IsRenalEnabled())
-      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::RightGlomerularCapillaries));
-    else
-      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightKidney1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Skin1));
-    tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Spleen1));
-
-    // Get the tissue resistance paths to decrement until we get a flow of at least (TBD)
     std::vector<double> flowMax;
     std::vector<double> flowMin;
     std::vector<SEFluidCircuitPath*> tissueResistancePaths;
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BoneT2ToBoneT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BrainT2ToBrainT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::FatT2ToFatT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::GutT2ToGutT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LiverT2ToLiverT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftKidneyT2ToLeftKidneyT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftLungT2ToLeftLungT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MuscleT2ToMuscleT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MyocardiumT2ToMyocardiumT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightLungT2ToRightLungT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SkinT2ToSkinT1));
-    tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SpleenT2ToSpleenT1));
+    std::vector<SEFluidCircuitNode*> tissuePressureCVSources;
+
+    if (m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::On)
+    {
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::TorsoBone1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::BoneT2ToBoneT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::Intracranial2));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::BrainT2ToBrainT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::TorsoFat1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::FatT2ToFatT1));
+
+      // Have to pick one of the 3 nodes GI is mapped to for pressure (Could use Large Intestine | Splanchnic)
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::SmallIntestine1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::GutT2ToGutT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::Liver1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::LiverT2ToLiverT1));
+
+      if (m_data.GetConfiguration().IsRenalEnabled())
+      {
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::LeftGlomerularCapillaries));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::LeftKidneyT2ToLeftKidneyT1));
+
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::RightGlomerularCapillaries));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::RightKidneyT2ToRightKidneyT1));
+      }
+      else
+      {
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::LeftKidney2));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::LeftKidneyT2ToLeftKidneyT1));
+
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::RightKidney2));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::RightKidneyT2ToRightKidneyT1));
+      }
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::LeftPulmonaryCapillaries1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::LeftLungT2ToLeftLungT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::TorsoMuscle1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::MuscleT2ToMuscleT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::Myocardium2));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::MyocardiumT2ToMyocardiumT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::RightPulmonaryCapillaries1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::RightLungT2ToRightLungT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::TorsoSkin1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::SkinT2ToSkinT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::ExpandedCardiovascularNode::Spleen1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::ExpandedCardiovascularTissuePath::SpleenT2ToSpleenT1));
+    }
+    else
+    {
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Bone1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BoneT2ToBoneT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Brain1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::BrainT2ToBrainT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Fat1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::FatT2ToFatT1));
+
+      // Have to pick one of the 3 nodes GI is mapped to for pressure (Could use Large Intestine | Splanchnic)
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::SmallIntestine1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::GutT2ToGutT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Liver1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LiverT2ToLiverT1));
+
+      if (m_data.GetConfiguration().IsRenalEnabled())
+      {
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::LeftGlomerularCapillaries));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftKidneyT2ToLeftKidneyT1));
+
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::RenalNode::RightGlomerularCapillaries));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
+      }
+      else
+      {
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftKidney1));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftKidneyT2ToLeftKidneyT1));
+
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightKidney1));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
+      }
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftLungT2ToLeftLungT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Muscle1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MuscleT2ToMuscleT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Myocardium1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MyocardiumT2ToMyocardiumT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightPulmonaryCapillaries1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightLungT2ToRightLungT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Skin1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SkinT2ToSkinT1));
+
+      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Spleen1));
+      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SpleenT2ToSpleenT1));
+    }
+
+    // Get the tissue resistance paths to decrement until we get a flow of at least (TBD)
+   
     Info("Tuning Tissue resistances at " + cdm::to_string(time_s) + "s");
     for (SEFluidCircuitPath* path : tissueResistancePaths)
     {
@@ -2545,10 +3424,10 @@ namespace pulse
       Info("  Initial " + path->GetName() + " Resistance : " + path->GetResistance().ToString());
     }
 
-    // Tuning variables
-    const double pressuretolerance = 0.01;
-    const double stabPercentTolerance = 0.25;
-    const double stabCheckTime_s = 15.0;
+    // Tuning variables unused
+    //const double pressuretolerance = 0.01;
+    //const double stabPercentTolerance = 0.25;
+    //const double stabCheckTime_s = 15.0;
 
     double currentStableTime_s;
     double maxStableTime_s = 20;
@@ -2568,9 +3447,9 @@ namespace pulse
       {
         m_data.AdvanceCallback(-1);
         HeartDriver();
-        m_circuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
+        m_CircuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
         CalculateVitalSigns();
-        m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
+        m_CircuitCalculator->PostProcess(*m_CirculatoryCircuit);
         //return; //Skip stabelization for debugging
 
         time_s += m_data.GetTimeStep_s();
@@ -2650,9 +3529,9 @@ namespace pulse
       {
         m_data.AdvanceCallback(-1);
         HeartDriver();
-        m_circuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
+        m_CircuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
         CalculateVitalSigns();
-        m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
+        m_CircuitCalculator->PostProcess(*m_CirculatoryCircuit);
         time_s += m_data.GetTimeStep_s();
         if (!m_data.GetConfiguration().CardiovascularTuningFile().empty())
         {

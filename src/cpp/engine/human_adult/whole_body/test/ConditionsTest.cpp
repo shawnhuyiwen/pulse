@@ -30,12 +30,12 @@ namespace pulse { namespace human_adult_whole_body
     SEPatientConfiguration sceConfig(&log);
     pc.SetPatientFile("StandardMale.json");
 
-    std::vector<int> conditionSwitches;
+    std::vector<size_t> conditionSwitches;
     for (unsigned int i = 0; i < conditions.size(); i++)
       conditionSwitches.push_back(1);
     // Conditions will either be on or off when we run
     // Now calculate all the permutations with our conditions
-    std::vector<std::vector<int>> permutations;
+    std::vector<std::vector<size_t>> permutations;
     GeneralMath::Combinations(conditionSwitches, permutations);
     std::stringstream ss;
 
@@ -46,7 +46,7 @@ namespace pulse { namespace human_adult_whole_body
     //for (int i = 0; i < 3; i++)
     {
       // Step severity from 0.1 to 0.5 to 1.0
-      for (std::vector<int> combo : permutations)
+      for (std::vector<size_t> combo : permutations)
       {
         ss.clear();
         sceConfig.GetConditions().Clear();

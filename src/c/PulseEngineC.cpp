@@ -10,7 +10,7 @@
 
 #if defined (__clang__)
 #define C_EXPORT
-#define C_CALL __attribute__((stdcall))
+#define C_CALL
 #elif defined(__gnu_linux__)
 #define C_EXPORT __attribute__ ((visibility ("default")))
 #define C_CALL __attribute__((stdcall))
@@ -35,7 +35,7 @@ char* c_strdup(const char* s, size_t slen)
 extern "C"
 C_EXPORT void C_CALL PulseInitialize()
 {
-  Logger::Initialize();
+  
 }
 
 extern "C"
@@ -56,7 +56,6 @@ extern "C"
 C_EXPORT void C_CALL PulseDeinitialize()
 {
   CUnitConversionEngine::DestroyEngine();
-  Logger::Deinitialize();// Free up logger before the DllMain quits so we can stop threads on windows
 }
 
 extern "C"
@@ -72,9 +71,15 @@ C_EXPORT void C_CALL Deallocate(PhysiologyEngineThunk* thunk)
 }
 
 extern "C"
-C_EXPORT bool C_CALL ExecuteScenario(PhysiologyEngineThunk* thunk, const char* sceOpts, int format)
+C_EXPORT bool C_CALL ExecuteScenario(const char* sceOpts, int format)
 {
-  return thunk->ExecuteScenario(sceOpts, (eSerializationFormat)format);
+  return PulseEngineThunk::ExecuteScenario(sceOpts, (eSerializationFormat)format);
+}
+
+extern "C"
+C_EXPORT void C_CALL Clear(PhysiologyEngineThunk * thunk)
+{
+  thunk->Clear();
 }
 
 extern "C"
@@ -219,4 +224,15 @@ extern "C"
 C_EXPORT double* C_CALL PullData(PhysiologyEngineThunk* thunk)
 {
   return thunk->PullDataPtr();
+}
+
+extern "C"
+C_EXPORT bool C_CALL AreCompatibleUnits(const char* fromUnit, const char* toUnit)
+{
+  return CompatibleUnits(CCompoundUnit(fromUnit), CCompoundUnit(toUnit));
+}
+extern "C"
+C_EXPORT double C_CALL ConvertValue(double value, const char* fromUnit, const char* toUnit)
+{
+  return Convert(value, CCompoundUnit(fromUnit), CCompoundUnit(toUnit));
 }

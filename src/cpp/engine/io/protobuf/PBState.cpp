@@ -47,6 +47,7 @@ namespace pulse
   }
   bool PBState::Serialize(const PULSE_BIND::StateData& src, Controller& dst, const SEEngineConfiguration* config)
   {
+    dst.Info("Loading state generated from Pulse-"+src.version());
     std::stringstream ss;
     dst.m_State = EngineState::NotReady;
     // First Get the substances reset and ready
@@ -90,6 +91,12 @@ namespace pulse
     if (!dst.m_SaturationCalculator->Setup())
       return false;
 
+    // Configuration //
+    if (!src.has_configuration())
+      ss << "PulseState must have a configuration" << std::endl;
+    else
+      PBConfiguration::Load(src.configuration(), *dst.m_Config, *dst.m_Substances);
+
     // We could preserve the tracker, but I think I want to force the user to set it up
     // again, they should have the data tracks (or easily get them), and they should
     // Set it back up, and set or reset the results file they are using
@@ -110,6 +117,7 @@ namespace pulse
       dst.m_CurrentTime.SetValue(0, TimeUnit::s);
       dst.m_SimulationTime.SetValue(0, TimeUnit::s);
     }
+    dst.Info("[SimTime(s)] " + dst.m_SimulationTime.ToString());
 
     dst.m_AirwayMode = (eAirwayMode)src.airwaymode();
     if (src.intubation() == (CDM_BIND::eSwitch)eSwitch::NullSwitch)
@@ -176,11 +184,6 @@ namespace pulse
       ss << "PulseState must have a compartment manager" << std::endl;
     else
       PBCompartment::Load(src.compartmentmanager(), *dst.m_Compartments, dst.m_Circuits);
-    // Configuration //
-    if (!src.has_configuration())
-      ss << "PulseState must have a configuration" << std::endl;
-    else
-      PBConfiguration::Load(src.configuration(), *dst.m_Config, *dst.m_Substances);
     if (config != nullptr)
     {// Merge in any provided configuration parameters, I hope you know what you are doing....
       const PulseConfiguration* peConfig = dynamic_cast<const PulseConfiguration*>(config);
@@ -265,6 +268,11 @@ namespace pulse
       ss << "Missing BagValveMask State" << std::endl;
     else
       PBEquipment::Load(src.bagvalvemask(), *dst.m_BagValveMaskModel);
+
+    if (!src.has_ecmo())
+      ss << "Missing ECMO State" << std::endl;
+    else
+      PBEquipment::Load(src.ecmo(), *dst.m_ECMOModel);
 
     if (!src.has_electrocardiogram())
       ss << "Missing ECG State" << std::endl;
@@ -363,6 +371,7 @@ namespace pulse
     dst.set_allocated_environment(PBEnvironment::Unload(*src.m_EnvironmentModel));
     dst.set_allocated_anesthesiamachine(PBEquipment::Unload(*src.m_AnesthesiaMachineModel));
     dst.set_allocated_bagvalvemask(PBEquipment::Unload(*src.m_BagValveMaskModel));
+    dst.set_allocated_ecmo(PBEquipment::Unload(*src.m_ECMOModel));
     dst.set_allocated_electrocardiogram(PBEquipment::Unload(*src.m_ElectroCardioGramModel));
     dst.set_allocated_inhaler(PBEquipment::Unload(*src.m_InhalerModel));
     dst.set_allocated_mechanicalventilator(PBEquipment::Unload(*src.m_MechanicalVentilatorModel));

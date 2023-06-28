@@ -170,7 +170,7 @@ namespace pulse { namespace human_adult_whole_body
     circuitFile.close();
     std::stringstream ss;
     ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
-    pc.GetLogger()->Info(ss.str(), "RenalCircuitAndTransportTest");
+    pc.GetLogger()->Info(ss.str());
   }
 
   // runs renal system at constant MAP to test TGF feedback function
@@ -268,10 +268,6 @@ namespace pulse { namespace human_adult_whole_body
     double venaCavaPressure_mmHg = 4.0;
     double maxSteadyCycles = 1.0 / deltaT_s * 30.0; // must be steady for 30 second
     double convergencePercentage = 0.01; // within 1%
-    //fit parameters for upr curve: 
-    const double a = 2.9e-4;
-    const double b = -0.017;
-    const double c = 0.219;
     SEScalarTime eventTime;
     eventTime.SetValue(0, TimeUnit::s);
 
@@ -473,7 +469,7 @@ namespace pulse { namespace human_adult_whole_body
     trk.WriteTrackToFile(std::string(sTestDirectory + "/" + sTestName + ".csv").c_str());
     std::stringstream ss;
     ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run " << sTestName << "CircuitAndTransportTest";
-    pc.GetLogger()->Info(ss.str(), "RenalFeedbackTest");
+    pc.GetLogger()->Info(ss.str());
   }
 
   void EngineTest::RenalTGFFeedbackTest(const std::string& sTestDirectory)
@@ -709,7 +705,7 @@ namespace pulse { namespace human_adult_whole_body
     trk.WriteTrackToFile(std::string(sTestDirectory + "/" + sTestName + ".csv").c_str());
     std::stringstream ss;
     ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run " << sTestName << "SecretionandUrinatingTest";
-    pc.GetLogger()->Info(ss.str(), "RenalSystemTest");
+    pc.GetLogger()->Info(ss.str());
   }
 
   void EngineTest::RenalSecretionTest(const std::string& sTestDirectory)

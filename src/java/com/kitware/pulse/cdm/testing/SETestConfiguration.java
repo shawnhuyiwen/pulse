@@ -10,11 +10,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
+import com.kitware.pulse.cdm.scenario.SEScenario;
 import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.engine.bind.Enums.eModelType;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
+import com.kitware.pulse.utilities.PythonUtils;
 import com.kitware.pulse.utilities.RunConfiguration;
 import com.kitware.pulse.utilities.csv.plots.CSVComparePlotter.PlotType;
 
@@ -22,7 +25,6 @@ public class SETestConfiguration
 {
   public static final String ext=".csv";
   public static String sce_ext=".json";
-  public static String state_ext=".json";
   protected String testName;
   protected String reportName;
   protected int    numThreads=0;
@@ -33,6 +35,8 @@ public class SETestConfiguration
   protected String patientFiles;
   protected boolean executeJobs=true;
   protected boolean plotResults=true;
+  protected boolean pythonComparison=true;
+  protected PythonUtils python = null;
 
   protected Map<String,String> macros = new HashMap<>();
   protected Map<String,Class<? extends SETestDriver.Executor>> executors = new HashMap<>();
@@ -115,12 +119,11 @@ public class SETestConfiguration
         {
           // Parse the value
           String[] values = value.split(",");
-          this.sceExec.setSerializationDirectory(values[0]);
-          this.sceExec.setAutoSerializePeriod_s(Double.parseDouble(values[1]));
-          this.sceExec.setTimeStampSerializedStates(eSwitch.valueOf(values[2]));
-          this.sceExec.setAutoSerializeAfterActions(eSwitch.valueOf(values[3]));
-          this.sceExec.setReloadSerializedState(eSwitch.valueOf(values[4]));
-          this.state_ext=values[5];
+          this.sceExec.setLogToConsole(eSwitch.On);
+          this.sceExec.setOutputRootDirectory("");
+          this.sceExec.setAutoSerializePeriod_s(Double.parseDouble(values[0]));
+          this.sceExec.setTimeStampSerializedStates(eSwitch.valueOf(values[1]));
+          this.sceExec.setAutoSerializeAfterActions(eSwitch.valueOf(values[2]));
           continue; 
         }
         if(key.equalsIgnoreCase("ExecuteTests"))
@@ -134,7 +137,15 @@ public class SETestConfiguration
           if(value.equalsIgnoreCase("false"))
             plotResults=false; 
           continue; 
-        }       
+        }
+        if(key.equalsIgnoreCase("CompareWith"))
+        {
+          if(value.startsWith("Java"))
+            pythonComparison=false;
+          else
+            python = new PythonUtils();
+          continue; 
+        }
         if(key.equalsIgnoreCase("Executor"))
         {
           Class<? extends SETestDriver.Executor> clazz = null;
@@ -145,7 +156,7 @@ public class SETestConfiguration
           } 
           catch(Exception e){Log.error("Could not find Executor "+value);}
           continue;
-        }        
+        }
 
         if(key.startsWith("Macro"))
         {
@@ -164,11 +175,6 @@ public class SETestConfiguration
         job.useState = this.useStates;
         // Copy shared exec options
         job.execOpts.copy(this.sceExec);
-        String sceDir = key.trim().substring(0, key.trim().length()-sce_ext.length());
-        String stateDir = this.sceExec.getSerializationDirectory()+sceDir+"/";
-        String stateFilename = sceDir.substring(sceDir.lastIndexOf("/")+1);
-        job.execOpts.setSerializationDirectory(stateDir);
-        job.execOpts.setAutoSerializeFilename(stateFilename+"."+state_ext);
         // More exec options
         if(!executeJobs)
           job.skipExecution = true;
@@ -190,6 +196,8 @@ public class SETestConfiguration
         this.jobs.add(job);
         job.name = key.trim();
         job.percentDifference = this.percentDifference;
+        if(this.python != null && this.python.isActive())
+          job.python = this.python;
 
         String[] directives = value.trim().split(" ");
         for(String directive : directives)
@@ -209,22 +217,22 @@ public class SETestConfiguration
             if(directive.equalsIgnoreCase("Assessment")) 
             { job.isAssessment = true; job.state = SETestJob.State.Complete; continue; }
             if(directive.equalsIgnoreCase("NoCompare")) 
-            { job.PlottableResults = false; continue; }
+            { job.plottableResults = false; continue; }
             if(directive.equalsIgnoreCase("FastPlot")) 
-            { job.PlottableResults = true; job.plotType=PlotType.FastPlot; continue; }
+            { job.plottableResults = true; job.plotType=PlotType.FastPlot; continue; }
             if(directive.equalsIgnoreCase("FullPlot"))
-            { job.PlottableResults = true; job.plotType=PlotType.FullPlot; continue; }
+            { job.plottableResults = true; job.plotType=PlotType.FullPlot; continue; }
             if(directive.equalsIgnoreCase("FullPlotErrors"))
-            { job.PlottableResults = true; job.plotType=PlotType.FullPlotErrors; continue; }
+            { job.plottableResults = true; job.plotType=PlotType.FullPlotErrors; continue; }
             if(directive.equalsIgnoreCase("FastPlotErrors"))
-            { job.PlottableResults = true; job.plotType=PlotType.FastPlotErrors; continue; }
+            { job.plottableResults = true; job.plotType=PlotType.FastPlotErrors; continue; }
             if(directive.equalsIgnoreCase("MemoryFastPlot"))
-            { job.PlottableResults = true; job.plotType=PlotType.MemoryFastPlot; continue; }
+            { job.plottableResults = true; job.plotType=PlotType.MemoryFastPlot; continue; }
             try {
-              job.modelType = eModelType.valueOf(directive);
+              job.execOpts.setModelType(eModelType.valueOf(directive));
               continue;
             }catch(IllegalArgumentException e)
-            { job.modelType = eModelType.UNRECOGNIZED; }
+            { job.execOpts.setModelType(eModelType.UNRECOGNIZED); }
             
             Log.warn("Unknown directive : " + directive);
           }
@@ -302,26 +310,41 @@ public class SETestConfiguration
           String[] split = pFileName.split("[/\\\\]");
           pFileName = split[split.length-1];
 
+          // Look for scenario jobs and make copies for each of the different patient files to use
           for(SETestJob job : oldJobs)
           {
-            if(job.executor.getClass().getName().indexOf("Scenario")==-1)
-            {
-              jobs.add(job);
+            if(!job.isAssessment && (job.executor==null || job.executor.getClass().getName().indexOf("Scenario")==-1))
               continue;
-            }
+
             copy = job.clone();
             copy.patientFile = pFileName;
-            deriveScenarioResultNames(copy, copy.name.replaceAll(sce_ext, "-"+pFileName));
+            
+            String baseName = copy.name;
+            if(job.isAssessment)
+            {
+              baseName = baseName.replaceAll("Validation", "Validation-"+pFileName);
+              deriveScenarioResultNames(copy, baseName.replaceAll(sce_ext, ""));
+            }
+            else
+              deriveScenarioResultNames(copy, baseName.replaceAll(sce_ext, "-"+pFileName));
+            
             jobs.add(copy);
           }
+        }
+        // Now look for the non scenario jobs, so just add those back as is
+        for(SETestJob job : oldJobs)
+        {
+          if(!job.isAssessment && (job.executor==null || job.executor.getClass().getName().indexOf("Scenario")==-1))
+            jobs.add(job);
         }
 
       }
       br.close();
     }
-    catch (IOException e)
+    catch (IOException ex)
     {
-      Log.error("Ouch",e);
+      Log.error("Ouch");
+      Log.error(ex.getMessage());
     }
   }
   
@@ -342,20 +365,68 @@ public class SETestConfiguration
 
   protected void deriveScenarioResultNames(SETestJob job, String baseName)
   {
+
     job.baselineFiles.clear();
     job.computedFiles.clear();
 
-    String[] dirs = baseName.substring(0, baseName.indexOf(sce_ext)).split("[/\\\\]");
-    String baseline = job.baselineDirectory;
-    for(int i=0; i<dirs.length-1; i++)
-      baseline+="/"+dirs[i];
-    baseline+="/"+dirs[dirs.length-1]+"Results"+ext;
+    String baseline;
+    String patientBaseline;
+    String output;
+    String patientOutput;
+    
+    if(job.isAssessment)
+    {
+      baseline=job.baselineDirectory+"/"+baseName+".json";
+      output=job.computedDirectory+"/"+baseName+".json";
+    }
+    else
+    {
+      String[] dirs = baseName.substring(0, baseName.indexOf(sce_ext)).split("[/\\\\]");
+      
+      baseline = job.baselineDirectory;
+      for(int i=0; i<dirs.length-1; i++)
+        baseline+="/"+dirs[i];
+
+      output = job.computedDirectory;
+      for(int i=0; i<dirs.length; i++)
+        output+="/"+dirs[i];
+      
+      baseline+="/"+dirs[dirs.length-1];
+      patientBaseline = baseline;
+      baseline+="Results"+ext;
+      patientOutput = output;
+      output+="Results"+ext;
+      //example : ./Scenarios/Validation/Patient-ValidationResults.csv
+      if(new File(baseline).exists() == false && patientFiles == null)
+      {
+        try
+        {
+          // The baseline does not exist
+          // but the baseline file could be for a specific patient
+          // so let's see if a baseline with patient name exists
+          String patientFile;
+          SEScenario sce = new SEScenario();
+          sce.readFile(job.scenarioDirectory+job.name);
+          if(sce.hasPatientConfiguration() && sce.getPatientConfiguration().hasPatientFile())
+          {
+            patientFile = sce.getPatientConfiguration().getPatientFile();
+            patientFile = patientFile.trim();
+            int start = patientFile.lastIndexOf("/");
+            patientFile = patientFile.substring(start==-1?0:start+1,patientFile.indexOf(sce_ext));
+            patientBaseline+="-"+patientFile+"Results"+ext;
+            if(new File(patientBaseline).exists())
+            {
+              baseline = patientBaseline;
+              output = patientOutput+"-"+patientFile+"Results"+ext;
+              job.patientFile = patientFile+sce_ext;
+            }
+          }
+        }
+        catch (InvalidProtocolBufferException e){} // Carry on, we'll just plot the computed
+      }
+    }
+    
     job.baselineFiles.add(baseline);
-    String output = job.computedDirectory;
-    for(int i=0; i<dirs.length; i++)
-      output+="/"+dirs[i];
-    output+="Results"+ext;
-    //example : ./Scenarios/Validation/Patient-ValidationResults.csv
     job.computedFiles.add(output);
   }
 

@@ -20,6 +20,6 @@ namespace pulse { namespace human_adult_ventilation_mechanics
     Engine(Logger* logger=nullptr);
     virtual ~Engine() = default;
   protected:
-    virtual void AllocateController() const override;
+    void AllocateController() const override;
   };
 END_NAMESPACE_EX

@@ -15,6 +15,4 @@ public:
   static bool SerializeToString(const google::protobuf::Message& src, std::string& output, eSerializationFormat m, Logger* logger);
 
   static void ProtobufLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message);
-
-
 };

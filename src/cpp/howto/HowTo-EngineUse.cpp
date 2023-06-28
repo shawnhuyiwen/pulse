@@ -10,7 +10,6 @@
 #include "cdm/compartment/fluid/SEGasCompartment.h"
 #include "cdm/compartment/fluid/SELiquidCompartment.h"
 #include "cdm/patient/SEPatient.h"
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/system/physiology/SEEnergySystem.h"
@@ -52,11 +51,11 @@
 class MyLogger : public LoggerForward
 {
 public:
-  virtual void ForwardDebug  (const std::string& msg, const std::string& origin) { std::cout << "[DEBUG] " << origin << msg << std::endl; }
-  virtual void ForwardInfo   (const std::string& msg, const std::string& origin) { std::cout << "[INFO] " << origin << msg << std::endl; }
-  virtual void ForwardWarning(const std::string& msg, const std::string& origin) { std::cout << "[WARN] " << origin << msg << std::endl; }
-  virtual void ForwardError  (const std::string& msg, const std::string& origin) { std::cout << "[ERROR] " << origin << msg << std::endl; }
-  virtual void ForwardFatal  (const std::string& msg, const std::string& origin) { std::cout << "[FATAL] " << origin << msg << std::endl; }
+  void ForwardDebug  (const std::string& msg) override { std::cout << "[DEBUG] " << msg << std::endl; }
+  void ForwardInfo   (const std::string& msg) override { std::cout << "[INFO] " << msg << std::endl; }
+  void ForwardWarning(const std::string& msg) override { std::cout << "[WARN] " << msg << std::endl; }
+  void ForwardError  (const std::string& msg) override { std::cout << "[ERROR] " << msg << std::endl; }
+  void ForwardFatal  (const std::string& msg) override { std::cout << "[FATAL] " << msg << std::endl; }
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -74,7 +73,7 @@ class MyEventHandler : public SEEventHandler
 {
 public:
   MyEventHandler() : SEEventHandler() {}
-  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) {}
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override {}
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -99,7 +98,7 @@ void HowToEngineUse()
   pe->GetLogger()->LogToConsole(false);
   // If you want this engine to write a log file,provided a log filename
   // By default, no log file will be created (no default name)
-  pe->GetLogger()->SetLogFile("HowTo_EngineUse.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_EngineUse.log");
   // You can change this at any time, 
   // Use nullptr or empty string to disable writing to a log file
 
@@ -131,7 +130,7 @@ void HowToEngineUse()
   // The first order of business is to initialize the engine by loading a patient state.
   // Patient states provided in the SDK are the state of the engine at the time they stabilize
   // More details on creating a patient and stabilizing the engine can be found in HowTo-CreateAPatient.cpp
-  if (!pe->SerializeFromFile("./states/Soldier@0s.json"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -173,7 +172,7 @@ void HowToEngineUse()
   pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Lungs, "Volume");
   pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
 
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToEngineUse.csv");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowToEngineUse.csv");
 
   // We are ready to execute the engine
   // simply tell the engine how long you would like it to execute
@@ -270,7 +269,7 @@ void HowToEngineUse()
 
 
   // Save the state of the engine
-  pe->SerializeToFile("./states/FinalEngineUseState.json");
+  pe->SerializeToFile("./test_results/howto/HowToEngineUse-FinalState.json");
 
   pe->GetLogger()->Info("Finished");
 }

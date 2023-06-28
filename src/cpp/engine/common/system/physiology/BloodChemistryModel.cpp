@@ -51,21 +51,23 @@ namespace pulse
   void BloodChemistryModel::Clear()
   {
     BloodChemistrySystem::Clear();
-    m_aorta = nullptr;
-    m_aortaO2 = nullptr;
-    m_aortaCO2 = nullptr;
-    m_aortaCO = nullptr;
-    m_brainO2 = nullptr;
-    m_myocardiumO2 = nullptr;
-    m_pulmonaryArteriesO2 = nullptr;
-    m_pulmonaryArteriesCO2 = nullptr;
-    m_pulmonaryVeinsO2 = nullptr;
-    m_pulmonaryVeinsCO2 = nullptr;
-    m_venaCava = nullptr;
-    m_venaCavaO2 = nullptr;
-    m_venaCavaCO2 = nullptr;
-    m_ArterialOxygen_mmHg->Clear();
-    m_ArterialCarbonDioxide_mmHg->Clear();
+    m_Aorta = nullptr;
+    m_AortaO2 = nullptr;
+    m_AortaCO2 = nullptr;
+    m_BrainO2 = nullptr;
+    m_MyocardiumO2 = nullptr;
+    m_PulmonaryArteriesO2 = nullptr;
+    m_PulmonaryArteriesCO2 = nullptr;
+    m_PulmonaryVeinsO2 = nullptr;
+    m_PulmonaryVeinsCO2 = nullptr;
+    m_RightArm = nullptr;
+    m_RightArmCO = nullptr;
+    m_RightArmO2 = nullptr;
+    m_VenaCava = nullptr;
+    m_VenaCavaO2 = nullptr;
+    m_VenaCavaCO2 = nullptr;
+    m_ArterialOxygen_mmHg->Invalidate();
+    m_ArterialCarbonDioxide_mmHg->Invalidate();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -87,8 +89,8 @@ namespace pulse
     GetPhosphate().SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
     GetStrongIonDifference().SetValue(40.5, AmountPerVolumeUnit::mmol_Per_L);
 
-    m_ArterialOxygen_mmHg->Sample(m_aortaO2->GetPartialPressure(PressureUnit::mmHg));
-    m_ArterialCarbonDioxide_mmHg->Sample(m_aortaCO2->GetPartialPressure(PressureUnit::mmHg));
+    m_ArterialOxygen_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
+    m_ArterialCarbonDioxide_mmHg->Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
 
     GetCarbonMonoxideSaturation().SetValue(0);
     Process();// Calculate the initial system values
@@ -106,27 +108,31 @@ namespace pulse
   void BloodChemistryModel::SetUp()
   {
     const PulseConfiguration& ConfigData = m_data.GetConfiguration();
-    m_redBloodCellVolume_mL = ConfigData.GetMeanCorpuscularVolume(VolumeUnit::mL);
+    m_RedBloodCellVolume_mL = ConfigData.GetMeanCorpuscularVolume(VolumeUnit::mL);
     m_HbPerRedBloodCell_ug_Per_ct = ConfigData.GetMeanCorpuscularHemoglobin(MassPerAmountUnit::ug_Per_ct);
 
-    m_aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
-    m_aortaO2 = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-    m_aortaCO2 = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
+    m_Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
+    m_AortaO2 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    m_AortaCO2 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
+    if(m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::Off)
+      m_BrainO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    else
+      m_BrainO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedVascularCompartment::Intracranial)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
 
-    m_brainO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-    m_myocardiumO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-
-    m_venaCava = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
-    m_venaCavaO2 = m_venaCava->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-    m_venaCavaCO2 = m_venaCava->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
+    m_MyocardiumO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    m_RightArm = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightArm);
+    m_RightArmO2 = m_RightArm->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    m_VenaCava = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
+    m_VenaCavaO2 = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    m_VenaCavaCO2 = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
 
     SELiquidCompartment* pulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryArteries);
-    m_pulmonaryArteriesO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-    m_pulmonaryArteriesCO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
+    m_PulmonaryArteriesO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    m_PulmonaryArteriesCO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
 
     SELiquidCompartment* pulmonaryVeins = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins);
-    m_pulmonaryVeinsO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-    m_pulmonaryVeinsCO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
+    m_PulmonaryVeinsO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    m_PulmonaryVeinsCO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   }
 
   void BloodChemistryModel::AtSteadyState()
@@ -157,18 +163,21 @@ namespace pulse
   void BloodChemistryModel::Process(bool /*solve_and_transport*/)
   {
     //Push the compartment values of O2 and CO2 partial pressures on the corresponding system data.
-    GetOxygenSaturation().Set(m_aortaO2->GetSaturation());
-    GetCarbonDioxideSaturation().Set(m_aortaCO2->GetSaturation());
-    if (m_aortaCO == nullptr && m_data.GetSubstances().IsActive(m_data.GetSubstances().GetCO()))
-      m_aortaCO = m_aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO());
-    if (m_aortaCO != nullptr)
+    GetOxygenSaturation().Set(m_AortaO2->GetSaturation());
+    GetCarbonDioxideSaturation().Set(m_AortaCO2->GetSaturation());
+    
+    if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      GetCarbonMonoxideSaturation().Set(m_aortaCO->GetSaturation());
-      GetPulseOximetry().SetValue(GetOxygenSaturation().GetValue() + GetCarbonMonoxideSaturation().GetValue());
+      GetPulseOximetry().SetValue(0);
     }
     else
     {
-      GetPulseOximetry().Set(GetOxygenSaturation());
+      if (m_RightArmCO == nullptr && m_data.GetSubstances().IsActive(m_data.GetSubstances().GetCO()))
+        m_RightArmCO = m_RightArm->GetSubstanceQuantity(m_data.GetSubstances().GetCO());
+      if (m_RightArmCO != nullptr)
+        GetPulseOximetry().SetValue(m_RightArmO2->GetSaturation().GetValue() + m_RightArmCO->GetSaturation().GetValue());
+      else
+        GetPulseOximetry().Set(m_RightArmO2->GetSaturation());
     }
 
     // This Hemoglobin Content is the mass of the hemoglobin only, not the hemoglobin and bound gas.
@@ -182,7 +191,7 @@ namespace pulse
     double totalHbCO2_g = (m_data.GetSubstances().GetSubstanceMass(m_data.GetSubstances().GetHbCO2(), m_data.GetCompartments().GetVascularLeafCompartments(), MassUnit::g) / m_data.GetSubstances().GetHbCO2().GetMolarMass(MassPerAmountUnit::g_Per_mol)) * m_data.GetSubstances().GetHb().GetMolarMass(MassPerAmountUnit::g_Per_mol);
     double totalHBO2CO2_g = (m_data.GetSubstances().GetSubstanceMass(m_data.GetSubstances().GetHbO2CO2(), m_data.GetCompartments().GetVascularLeafCompartments(), MassUnit::g) / m_data.GetSubstances().GetHbO2CO2().GetMolarMass(MassPerAmountUnit::g_Per_mol)) * m_data.GetSubstances().GetHb().GetMolarMass(MassPerAmountUnit::g_Per_mol);
     double totalHBCO_g = 0.0;
-    if (m_aortaCO != nullptr)
+    if (m_RightArmCO != nullptr)
       totalHBCO_g = (m_data.GetSubstances().GetSubstanceMass(m_data.GetSubstances().GetHbCO(), m_data.GetCompartments().GetVascularLeafCompartments(), MassUnit::g) / m_data.GetSubstances().GetHbCO().GetMolarMass(MassPerAmountUnit::g_Per_mol)) * m_data.GetSubstances().GetHb().GetMolarMass(MassPerAmountUnit::g_Per_mol);
 
     double totalHemoglobinO2Hemoglobin_g = totalHb_g + totalHbO2_g + totalHbCO2_g + totalHBO2CO2_g + totalHBCO_g;
@@ -190,7 +199,7 @@ namespace pulse
 
     // Calculate Blood Cell Counts
     double RedBloodCellCount_ct = GetHemoglobinContent(MassUnit::ug) / m_HbPerRedBloodCell_ug_Per_ct;
-    double RedBloodCellVolume_mL = RedBloodCellCount_ct * m_redBloodCellVolume_mL;
+    double RedBloodCellVolume_mL = RedBloodCellCount_ct * m_RedBloodCellVolume_mL;
     double TotalBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
     GetHematocrit().SetValue((RedBloodCellVolume_mL / TotalBloodVolume_mL));
     // Yes, we are giving GetRedBloodCellCount a concentration, because that is what it is, but clinically, it is known as RedBloodCellCount
@@ -199,21 +208,21 @@ namespace pulse
 
     // Calculate pH 
     /// \todo Change system data so that we have ArterialBloodPH (from aorta) and VenousBloodPH (from vena cava)
-    GetBloodPH().Set(m_aorta->GetPH());
+    GetBloodPH().Set(m_Aorta->GetPH());
 
     // Pressures
     // arterial gas partial pressures
-    GetArterialOxygenPressure().Set(m_aortaO2->GetPartialPressure());
-    GetArterialCarbonDioxidePressure().Set(m_aortaCO2->GetPartialPressure());
+    GetArterialOxygenPressure().Set(m_AortaO2->GetPartialPressure());
+    GetArterialCarbonDioxidePressure().Set(m_AortaCO2->GetPartialPressure());
     // pulmonary arteries
-    GetPulmonaryArterialOxygenPressure().Set(m_pulmonaryArteriesO2->GetPartialPressure());
-    GetPulmonaryArterialCarbonDioxidePressure().Set(m_pulmonaryArteriesCO2->GetPartialPressure());
+    GetPulmonaryArterialOxygenPressure().Set(m_PulmonaryArteriesO2->GetPartialPressure());
+    GetPulmonaryArterialCarbonDioxidePressure().Set(m_PulmonaryArteriesCO2->GetPartialPressure());
     // pulmonary vein gas partial pressures -  the average of right and left pulmonary vein gas pressures
-    GetPulmonaryVenousOxygenPressure().Set(m_pulmonaryVeinsO2->GetPartialPressure());
-    GetPulmonaryVenousCarbonDioxidePressure().Set(m_pulmonaryVeinsCO2->GetPartialPressure());
+    GetPulmonaryVenousOxygenPressure().Set(m_PulmonaryVeinsO2->GetPartialPressure());
+    GetPulmonaryVenousCarbonDioxidePressure().Set(m_PulmonaryVeinsCO2->GetPartialPressure());
     // venous gas partial pressures
-    GetVenousOxygenPressure().Set(m_venaCavaO2->GetPartialPressure());
-    GetVenousCarbonDioxidePressure().Set(m_venaCavaCO2->GetPartialPressure());
+    GetVenousOxygenPressure().Set(m_VenaCavaO2->GetPartialPressure());
+    GetVenousCarbonDioxidePressure().Set(m_VenaCavaCO2->GetPartialPressure());
 
     double totalFlow_mL_Per_min = m_data.GetCardiovascular().GetCardiacOutput(VolumePerTimeUnit::mL_Per_min);
     double shuntFlow_mL_Per_min = m_data.GetCardiovascular().GetPulmonaryMeanShuntFlow(VolumePerTimeUnit::mL_Per_min);
@@ -277,8 +286,8 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void BloodChemistryModel::CheckBloodGasLevels()
   {
-    m_ArterialOxygen_mmHg->Sample(m_aortaO2->GetPartialPressure(PressureUnit::mmHg));
-    m_ArterialCarbonDioxide_mmHg->Sample(m_aortaCO2->GetPartialPressure(PressureUnit::mmHg));
+    m_ArterialOxygen_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
+    m_ArterialCarbonDioxide_mmHg->Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
     //Only check these at the end of a cardiac cycle and reset at start of cardiac cycle 
     if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
@@ -290,13 +299,11 @@ namespace pulse
         double hypercapniaFlag = 60.0; // \cite Guyton11thEd p.531 
         if (arterialCarbonDioxide_mmHg >= hypercapniaFlag)
         {
-          /// \event Patient: Hypercapnia. The carbon dioxide partial pressure has risen above 60 mmHg. The patient is now hypercapnic.
           m_data.GetEvents().SetEvent(eEvent::Hypercapnia, true, m_data.GetSimulationTime());
 
         }
         else if (m_data.GetEvents().IsEventActive(eEvent::Hypercapnia) && arterialCarbonDioxide_mmHg < (hypercapniaFlag - 3))
         {
-          /// \event Patient: End Hypercapnia. The carbon dioxide partial pressure has fallen below 57 mmHg. The patient is no longer considered to be hypercapnic.
           /// This event is triggered if the patient was hypercapnic and is now considered to be recovered.
           m_data.GetEvents().SetEvent(eEvent::Hypercapnia, false, m_data.GetSimulationTime());
         }
@@ -305,12 +312,10 @@ namespace pulse
         double hypoxiaFlag = 65.0; //Arterial O2 Partial Pressure in mmHg \cite Pierson2000Pathophysiology
         if (arterialOxygen_mmHg <= hypoxiaFlag)
         {
-          /// \event Patient: Hypoxia Event. The oxygen partial pressure has fallen below 65 mmHg, indicating that the patient is hypoxic.
           m_data.GetEvents().SetEvent(eEvent::Hypoxia, true, m_data.GetSimulationTime());
         }
         else if (arterialOxygen_mmHg > (hypoxiaFlag + 3))
         {
-          /// \event Patient: End Hypoxia Event. The oxygen partial pressure has rise above 68 mmHg. If this occurs when the patient is hypoxic, it will reverse the hypoxic event.
           /// The patient is no longer considered to be hypoxic.
           m_data.GetEvents().SetEvent(eEvent::Hypoxia, false, m_data.GetSimulationTime());
         }
@@ -320,13 +325,11 @@ namespace pulse
         double hyperoxemiaSevereFlag = 200.0; //Arterial O2 Partial Pressure in mmHg
         if (arterialOxygen_mmHg > hyperoxemiaSevereFlag)
         {
-          /// \event Patient: Severe Hyperoxemia: Arterial O2 Partial Pressure is above 200 mmHg causing oxygen toxicity
           m_data.GetEvents().SetEvent(eEvent::SevereHyperoxemia, true, m_data.GetSimulationTime());
           m_data.GetEvents().SetEvent(eEvent::ModerateHyperoxemia, false, m_data.GetSimulationTime());
         }
         else if (arterialOxygen_mmHg > hyperoxemiaModerateFlag)
         {
-          /// \event Patient: Moderate Hyperoxemia: Arterial O2 Partial Pressure is above 120 mmHg
           m_data.GetEvents().SetEvent(eEvent::SevereHyperoxemia, false, m_data.GetSimulationTime());
           m_data.GetEvents().SetEvent(eEvent::ModerateHyperoxemia, true, m_data.GetSimulationTime());
         }
@@ -341,13 +344,11 @@ namespace pulse
         double hypocapniaSevereFlag = 15.0; //Arterial CO2 Partial Pressure in mmHg
         if (arterialOxygen_mmHg < hypocapniaSevereFlag)
         {
-          /// \event Patient: Severe Hypocapnia: Arterial CO2 Partial Pressure is below 15 mmHg
           m_data.GetEvents().SetEvent(eEvent::SevereHypocapnia, true, m_data.GetSimulationTime());
           m_data.GetEvents().SetEvent(eEvent::ModerateHypocapnia, false, m_data.GetSimulationTime());
         }
         else if (arterialOxygen_mmHg < hypocapniaModerateFlag)
         {
-          /// \event Patient: Moderate Hypocapnia: Arterial CO2 Partial Pressure is below 30 mmHg
           m_data.GetEvents().SetEvent(eEvent::SevereHypocapnia, false, m_data.GetSimulationTime());
           m_data.GetEvents().SetEvent(eEvent::ModerateHypocapnia, true, m_data.GetSimulationTime());
         }
@@ -358,8 +359,8 @@ namespace pulse
         }
       }
 
-      m_ArterialOxygen_mmHg->Clear();
-      m_ArterialCarbonDioxide_mmHg->Clear();
+      m_ArterialOxygen_mmHg->Invalidate();
+      m_ArterialCarbonDioxide_mmHg->Invalidate();
     }
 
 
@@ -369,27 +370,23 @@ namespace pulse
       // When the brain oxygen partial pressure is too low, events are triggered and event duration is tracked.
       // The threshold values are chosen based on empirical data reviewed in summary in @cite dhawan2011neurointensive 
       // and from data presented in @cite purins2012brain and @cite doppenberg1998determination.
-      if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 19.0) // We are using the mean from dhawan
+      if (m_BrainO2->GetPartialPressure(PressureUnit::mmHg) < 19.0) // We are using the mean from dhawan
       {
-        /// \event Patient: Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a dangerously low level.
         m_data.GetEvents().SetEvent(eEvent::BrainOxygenDeficit, true, m_data.GetSimulationTime());
 
         // If the O2 tension is below a critical threshold, the damage occurs more quickly
-        if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 10.0)
+        if (m_BrainO2->GetPartialPressure(PressureUnit::mmHg) < 10.0)
         {
-          /// \event Patient: Critical Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a critically low level.
           m_data.GetEvents().SetEvent(eEvent::CriticalBrainOxygenDeficit, true, m_data.GetSimulationTime());
         }
-        else if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) > 12.0)
+        else if (m_BrainO2->GetPartialPressure(PressureUnit::mmHg) > 12.0)
         {
-          /// \event Patient: End Brain Oxygen Deficit Event. The oxygen partial pressure has risen above 12 mmHg in the brain. If this occurs when the patient has a critical brain oxygen deficit event, it will reverse the event.
           /// The brain is not in a critical oxygen deficit.
           m_data.GetEvents().SetEvent(eEvent::CriticalBrainOxygenDeficit, false, m_data.GetSimulationTime());
         }
       }
-      else if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) > 25.0)
+      else if (m_BrainO2->GetPartialPressure(PressureUnit::mmHg) > 25.0)
       {
-        /// \event Patient: End Brain Oxygen Deficit Event. The oxygen partial pressure has risen above 25 mmHg in the brain. If this occurs when the patient has a brain oxygen deficit event, it will reverse the event.
         /// The brain is getting oxygen.
         m_data.GetEvents().SetEvent(eEvent::BrainOxygenDeficit, false, m_data.GetSimulationTime());
         // The critical deficit event is also set to false just in case there is an unrealistically rapid transition in oxygen partial pressure.
@@ -397,14 +394,12 @@ namespace pulse
       }
 
       //Myocardium Oxygen Check
-      if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) < 5)
+      if (m_MyocardiumO2->GetPartialPressure(PressureUnit::mmHg) < 5)
       {
-        /// \event Patient: The heart is not receiving enough oxygen. Coronary arteries should dilate to increase blood flow to the heart.
-        m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());       
+        m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());
       }
-      else if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) > 8)
+      else if (m_MyocardiumO2->GetPartialPressure(PressureUnit::mmHg) > 8)
       {
-        /// \event Patient: End Myocardium Oxygen Event. The heart is now receiving enough oxygen. If this occurs when the patient has a heart oxygen deficit event, it will reverse the event.
         /// The brain is getting oxygen.
         m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, false, m_data.GetSimulationTime());
       }
@@ -462,9 +457,9 @@ namespace pulse
     double K_mmol_Per_L = m_data.GetSubstances().GetPotassium().GetBloodConcentration(MassPerVolumeUnit::g_Per_L) /
       m_data.GetSubstances().GetPotassium().GetMolarMass(MassPerAmountUnit::g_Per_mmol);
     cmp.GetPotassium().SetValue(K_mmol_Per_L, AmountPerVolumeUnit::mmol_Per_L);
-    double Sodium_mmol_Per_L = m_data.GetSubstances().GetSodium().GetBloodConcentration(MassPerVolumeUnit::g_Per_L) /
+    double Sodium_Mmol_Per_L = m_data.GetSubstances().GetSodium().GetBloodConcentration(MassPerVolumeUnit::g_Per_L) /
       m_data.GetSubstances().GetSodium().GetMolarMass(MassPerAmountUnit::g_Per_mmol);
-    cmp.GetSodium().SetValue(Sodium_mmol_Per_L, AmountPerVolumeUnit::mmol_Per_L);
+    cmp.GetSodium().SetValue(Sodium_Mmol_Per_L, AmountPerVolumeUnit::mmol_Per_L);
     //cmp.GetTotalBelirubin().SetValue();
     cmp.GetTotalProtein().SetValue(GetTotalProteinConcentration(MassPerVolumeUnit::ug_Per_mL), MassPerVolumeUnit::ug_Per_mL);
     return true;

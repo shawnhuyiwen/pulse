@@ -19,28 +19,23 @@ namespace pulse { namespace human_adult_ventilation_mechanics
   public:
     virtual ~Controller() = default;
 
-    virtual bool SerializeFromFile(const std::string& file) override;
-    virtual bool SerializeToFile(const std::string& file) const override;
+    bool SerializeFromFile(const std::string& file) override;
+    bool SerializeToFile(const std::string& file) const override;
 
-    virtual bool SerializeFromString(const std::string& state, eSerializationFormat m) override;
-    virtual bool SerializeToString(std::string& state, eSerializationFormat m) const override;
+    bool SerializeFromString(const std::string& state, eSerializationFormat m) override;
+    bool SerializeToString(std::string& state, eSerializationFormat m) const override;
 
-    virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const override;
+    bool GetPatientAssessment(SEPatientAssessment& assessment) const override;
 
-    virtual bool IsAirwayModeSupported(pulse::eAirwayMode mode) override;
+    bool IsAirwayModeSupported(pulse::eAirwayMode mode) override;
 
-    virtual bool CreateCircuitsAndCompartments() override;
+    bool CreateCircuitsAndCompartments() override;
 
   protected:
-    virtual std::string GetTypeName() const override { return "Human Adult Ventilation Mechanics"; }
-    virtual void Allocate() override;
-    virtual bool Stabilize(const SEPatientConfiguration& patient_configuration) override;
+    std::string GetTypeName() const override { return "Human Adult Ventilation Mechanics"; }
+    void Allocate() override;
+    bool Stabilize(const SEPatientConfiguration& patient_configuration) override;
 
-    virtual void InitializeModels() override;
-    // Notify systems that steady state has been achieved
-    virtual void AtSteadyState(pulse::EngineState state) override;
-    virtual void PreProcess() override;
-    virtual void Process() override;
-    virtual void PostProcess() override;
+    void InitializeModels() override { pulse::Controller::InitializeModels(); }
   };
 END_NAMESPACE_EX

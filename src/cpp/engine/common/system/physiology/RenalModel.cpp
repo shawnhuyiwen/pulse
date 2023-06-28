@@ -32,6 +32,7 @@
 #include "cdm/circuit/fluid/SEFluidCircuitNode.h"
 #include "cdm/circuit/fluid/SEFluidCircuitPath.h"
 #include "cdm/compartment/fluid/SELiquidCompartmentGraph.h"
+#include "cdm/compartment/tissue/SETissueCompartment.h"
 #include "cdm/properties/SEScalar.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarArea.h"
@@ -175,14 +176,14 @@ namespace pulse
     m_leftKidneyIntracellularLactate = nullptr;
     m_rightKidneyIntracellularLactate = nullptr;
 
-    m_urineProductionRate_mL_Per_min_runningAvg->Clear();
-    m_urineOsmolarity_mOsm_Per_L_runningAvg->Clear();
-    m_sodiumExcretionRate_mg_Per_min_runningAvg->Clear();
-    m_rightSodiumFlow_mg_Per_s_runningAvg->Clear();
-    m_leftSodiumFlow_mg_Per_s_runningAvg->Clear();
-    m_leftRenalArterialPressure_mmHg_runningAvg->Clear();
-    m_rightRenalArterialPressure_mmHg_runningAvg->Clear();
-    m_sodiumConcentration_mg_Per_mL_runningAvg->Clear();
+    m_urineProductionRate_mL_Per_min_runningAvg->Invalidate();
+    m_urineOsmolarity_mOsm_Per_L_runningAvg->Invalidate();
+    m_sodiumExcretionRate_mg_Per_min_runningAvg->Invalidate();
+    m_rightSodiumFlow_mg_Per_s_runningAvg->Invalidate();
+    m_leftSodiumFlow_mg_Per_s_runningAvg->Invalidate();
+    m_leftRenalArterialPressure_mmHg_runningAvg->Invalidate();
+    m_rightRenalArterialPressure_mmHg_runningAvg->Invalidate();
+    m_sodiumConcentration_mg_Per_mL_runningAvg->Invalidate();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -410,8 +411,8 @@ namespace pulse
     m_leftTubulesSodium = m_leftTubules->GetSubstanceQuantity(*m_sodium);
     m_rightTubulesSodium = m_rightTubules->GetSubstanceQuantity(*m_sodium);
 
-    m_leftKidneyIntracellularLactate = m_data.GetCompartments().GetIntracellularFluid(*m_leftKidneyTissue).GetSubstanceQuantity(*m_lactate);
-    m_rightKidneyIntracellularLactate = m_data.GetCompartments().GetIntracellularFluid(*m_rightKidneyTissue).GetSubstanceQuantity(*m_lactate);
+    m_leftKidneyIntracellularLactate = m_leftKidneyTissue->GetIntracellular().GetSubstanceQuantity(*m_lactate);
+    m_rightKidneyIntracellularLactate = m_rightKidneyTissue->GetIntracellular().GetSubstanceQuantity(*m_lactate);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -517,12 +518,10 @@ namespace pulse
   void RenalModel::CalculateUltrafiltrationFeedback()
   {
     //Tuning parameters unused
-    const double glomerularOsmoticSensitivity = 1.0;
-    const double bowmansOsmoticSensitivity = 1.0;
+    //const double glomerularOsmoticSensitivity = 1.0;
+    //const double bowmansOsmoticSensitivity = 1.0;
 
     //Get substances
-    SEFluidCircuitPath* glomerularOsmoticSourcePath = nullptr;
-    SEFluidCircuitPath* bowmansOsmoticSourcePath = nullptr;
     SEFluidCircuitPath* filterResistancePath = nullptr;
     double permeability_mL_Per_s_Per_mmHg_Per_m2 = 0.0;
     double surfaceArea_m2 = 0.0;
@@ -537,8 +536,6 @@ namespace pulse
         permeability_mL_Per_s_Per_mmHg_Per_m2 = GetLeftGlomerularFluidPermeability().GetValue(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
         surfaceArea_m2 = GetLeftGlomerularFiltrationSurfaceArea().GetValue(AreaUnit::m2);
 
-        glomerularOsmoticSourcePath = m_leftGlomerularOsmoticSourcePath;
-        bowmansOsmoticSourcePath = m_leftBowmansOsmoticSourcePath;
       }
       else
       {
@@ -547,8 +544,6 @@ namespace pulse
         permeability_mL_Per_s_Per_mmHg_Per_m2 = GetRightGlomerularFluidPermeability().GetValue(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
         surfaceArea_m2 = GetRightGlomerularFiltrationSurfaceArea().GetValue(AreaUnit::m2);
 
-        glomerularOsmoticSourcePath = m_rightGlomerularOsmoticSourcePath;
-        bowmansOsmoticSourcePath = m_rightBowmansOsmoticSourcePath;
       }
 
       //Set the filter resistance based on its physical properties
@@ -585,8 +580,8 @@ namespace pulse
   void RenalModel::CalculateReabsorptionFeedback()
   {
     //Tuning parameters, unused
-    const double peritubularOsmoticSensitivity = 1.0;
-    const double tubulesOsmoticSensitivity = 1.0;
+    //const double peritubularOsmoticSensitivity = 1.0;
+    //const double tubulesOsmoticSensitivity = 1.0;
 
     //Determine the permeability
     //Only allow water to be reabsorbed more easily
@@ -597,7 +592,6 @@ namespace pulse
     CalculateOsmoreceptorFeedback();
 
     //Get substances
-    SEFluidCircuitPath* peritubularOsmoticSourcePath = nullptr;
     SEFluidCircuitPath* tubulesOsmoticSourcePath = nullptr;
     SEFluidCircuitPath* filterResistancePath = nullptr;
     double filterResistance_mmHg_s_Per_mL = 0.0;
@@ -614,7 +608,6 @@ namespace pulse
         permeability_mL_Per_s_Per_mmHg_Per_m2 = GetLeftTubularReabsorptionFluidPermeability().GetValue(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
         surfaceArea_m2 = GetLeftTubularReabsorptionFiltrationSurfaceArea().GetValue(AreaUnit::m2);
 
-        peritubularOsmoticSourcePath = m_leftPeritubularOsmoticSourcePath;
         tubulesOsmoticSourcePath = m_leftTubulesOsmoticSourcePath;
       }
       else
@@ -624,7 +617,6 @@ namespace pulse
         permeability_mL_Per_s_Per_mmHg_Per_m2 = GetRightTubularReabsorptionFluidPermeability().GetValue(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
         surfaceArea_m2 = GetRightTubularReabsorptionFiltrationSurfaceArea().GetValue(AreaUnit::m2);
 
-        peritubularOsmoticSourcePath = m_rightPeritubularOsmoticSourcePath;
         tubulesOsmoticSourcePath = m_rightTubulesOsmoticSourcePath;
       }
 
@@ -665,7 +657,6 @@ namespace pulse
     SELiquidSubstanceQuantity* peritubularGlucose = nullptr;
     SELiquidSubstanceQuantity* ureterLactate = nullptr;
 
-    double totalReabsorptionRate_mg_Per_s = 0.0;
     double totalLactateExcretionRate_mg_Per_s = 0.0;
     double lactateExcreted_mg = 0;
 
@@ -721,7 +712,6 @@ namespace pulse
       peritubularGlucose->Balance(BalanceLiquidBy::Mass);
 
       //Set the substance output values
-      totalReabsorptionRate_mg_Per_s += reabsorptionRate_mg_Per_s;
       totalLactateExcretionRate_mg_Per_s += lactateExcreted_mg / m_data.GetTimeStep_s();
     }
 
@@ -795,7 +785,6 @@ namespace pulse
       }
       else
       {
-        /// \error Fatal: Unrecognized renal clearance type
         Fatal("Unrecognized renal clearance type.");
       }
     }
@@ -1204,8 +1193,8 @@ namespace pulse
     //Gluconeogenesis calculates it for Lactate later
     if (&sub != m_lactate)
     {
-      SELiquidSubstanceQuantity* leftKidneySubQ = m_data.GetCompartments().GetIntracellularFluid(*m_leftKidneyTissue).GetSubstanceQuantity(sub);
-      SELiquidSubstanceQuantity* rightKidneySubQ = m_data.GetCompartments().GetIntracellularFluid(*m_rightKidneyTissue).GetSubstanceQuantity(sub);
+      SELiquidSubstanceQuantity* leftKidneySubQ = m_leftKidneyTissue->GetIntracellular().GetSubstanceQuantity(sub);
+      SELiquidSubstanceQuantity* rightKidneySubQ = m_rightKidneyTissue->GetIntracellular().GetSubstanceQuantity(sub);
 
       double singleExcreted_mg = totalExcretionRate_mg_Per_s * m_data.GetTimeStep_s() * 0.5;// We are assuming the kindneys are doing the same amount of work
       leftKidneySubQ->GetMassExcreted().IncrementValue(singleExcreted_mg, MassUnit::mg);
@@ -1486,12 +1475,12 @@ namespace pulse
       /// 2.5 mL/min 
         if (m_urineProductionRate_mL_Per_min_runningAvg->Value() > 2.5)
         {
-          /// \event Patient: Diuresis. Occurs when the urine production rate double to around 2.5 ml/min. \cite lahav1992intermittent
+          //Diuresis occurs when the urine production rate double to around 2.5 ml/min. \cite lahav1992intermittent
           m_data.GetEvents().SetEvent(eEvent::Diuresis, true, m_data.GetSimulationTime());
         }
         else if (m_urineProductionRate_mL_Per_min_runningAvg->Value() < 1.0)
         {
-          /// \event Patient: Ends when the urine production rate falls below 1.0 mL/min (near normal urine production). \cite lahav1992intermittent
+          //Ends when the urine production rate falls below 1.0 mL/min (near normal urine production). \cite lahav1992intermittent
           m_data.GetEvents().SetEvent(eEvent::Diuresis, false, m_data.GetSimulationTime());
         }
 
@@ -1500,12 +1489,12 @@ namespace pulse
         /// urine osmolarity must be hyperosmotic relative to plasma and urine production rate must be less than 0.5 mL/min
         if (m_urineProductionRate_mL_Per_min_runningAvg->Value() < 0.5 && m_urineOsmolarity_mOsm_Per_L_runningAvg->Value() > 280)
         {
-          /// \event Patient: Antidiuresis occurs when urine production rate is less than 0.5 mL/min and the urine osmolarity is hyperosmotic to the plasma \cite valtin1995renal
+          //Antidiuresis occurs when urine production rate is less than 0.5 mL/min and the urine osmolarity is hyperosmotic to the plasma \cite valtin1995renal
           m_data.GetEvents().SetEvent(eEvent::Antidiuresis, true, m_data.GetSimulationTime());
         }
         else if ((m_urineProductionRate_mL_Per_min_runningAvg->Value() > 0.55 || m_urineOsmolarity_mOsm_Per_L_runningAvg->Value() < 275))
         {
-          /// \event Patient: Antidiuresis. Ends when urine production rate rises back above 0.55 mL/min or the urine osmolarity falls below that of the plasma \cite valtin1995renal
+          //Antidiuresis. Ends when urine production rate rises back above 0.55 mL/min or the urine osmolarity falls below that of the plasma \cite valtin1995renal
           m_data.GetEvents().SetEvent(eEvent::Antidiuresis, false, m_data.GetSimulationTime());
         }
 
@@ -1513,12 +1502,10 @@ namespace pulse
         /// Computing percent decrease as (1-1.6/11.2)*100 = 85 percent decrease or 15% total flow (using 20ml/s as "normal" value, below 3ml/s):
         if (renalBloodFlow_mL_Per_s < 3.0)
         {
-          /// \event Patient: hypoperfusion occurs when renal blood flow decreases below 3 ml/s 
           m_data.GetEvents().SetEvent(eEvent::RenalHypoperfusion, true, m_data.GetSimulationTime());
         }
         else if (renalBloodFlow_mL_Per_s > 4.0)
         {
-          /// \event Patient: hypoperfusion ends when blood flow recovers above 4 ml/s
           m_data.GetEvents().SetEvent(eEvent::RenalHypoperfusion, false, m_data.GetSimulationTime());
         }
 
@@ -1528,20 +1515,20 @@ namespace pulse
 
         if (m_sodiumExcretionRate_mg_Per_min_runningAvg->Value() > 14.4)
         {
-          /// \event Patient: Natriuresis. Occurs when the sodium excretion rate rises above 14.4 mg/min \cite moss2013hormonal
+          //Natriuresis occurs when the sodium excretion rate rises above 14.4 mg/min \cite moss2013hormonal
           m_data.GetEvents().SetEvent(eEvent::Natriuresis, true, m_data.GetSimulationTime());
         }
         else if (m_sodiumExcretionRate_mg_Per_min_runningAvg->Value() < 14.0)
         {
-          /// \event Patient: Ends when the sodium excretion rate falls below 14.0 mg/min \cite moss2013hormonal
+          //Ends when the sodium excretion rate falls below 14.0 mg/min \cite moss2013hormonal
           m_data.GetEvents().SetEvent(eEvent::Natriuresis, false, m_data.GetSimulationTime());
         }
       }
 
       //reset at start of cardiac cycle 
-      m_urineProductionRate_mL_Per_min_runningAvg->Clear();
-      m_urineOsmolarity_mOsm_Per_L_runningAvg->Clear();
-      m_sodiumExcretionRate_mg_Per_min_runningAvg->Clear();
+      m_urineProductionRate_mL_Per_min_runningAvg->Invalidate();
+      m_urineOsmolarity_mOsm_Per_L_runningAvg->Invalidate();
+      m_sodiumExcretionRate_mg_Per_min_runningAvg->Invalidate();
     }
 
 
@@ -1565,7 +1552,6 @@ namespace pulse
     //Check and see if the bladder is overfull or if there is an action called
     if (m_bladderNode->GetNextVolume().GetValue(VolumeUnit::mL) > bladderMaxVolume_mL)
     {
-      /// \event Patient: FunctionalIncontinence: The patient's bladder has reached a maximum
       m_data.GetEvents().SetEvent(eEvent::FunctionalIncontinence, true, m_data.GetSimulationTime());
       m_Urinating = true;
     }
@@ -1813,7 +1799,7 @@ namespace pulse
     }
     if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
-      m_sodiumConcentration_mg_Per_mL_runningAvg->Clear();
+      m_sodiumConcentration_mg_Per_mL_runningAvg->Invalidate();
     }
   }
 
@@ -1941,6 +1927,9 @@ namespace pulse
           dampingFactor = 0.005;
         }
 
+        //Time-step independent
+        dampingFactor *= m_data.GetTimeStep_s() / 0.02;
+
         nextAfferentResistance_mmHg_s_Per_mL *= currentAfferentResistance_mmHg_s_Per_mL / nextAfferentResistance_mmHg_s_Per_mL + dampingFactor * sodiumChangeNormal;
         BLIM(nextAfferentResistance_mmHg_s_Per_mL, minAfferentResistance_mmHg_s_Per_mL, maxAfferentResistance_mmHg_s_Per_mL);
         if (kidney == 0)
@@ -1970,8 +1959,8 @@ namespace pulse
     //reset sodium flow at start of cardiac cycle 
     if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
-      m_leftSodiumFlow_mg_Per_s_runningAvg->Clear();
-      m_rightSodiumFlow_mg_Per_s_runningAvg->Clear();
+      m_leftSodiumFlow_mg_Per_s_runningAvg->Invalidate();
+      m_rightSodiumFlow_mg_Per_s_runningAvg->Invalidate();
     }
   }
 
@@ -2072,8 +2061,8 @@ namespace pulse
     //reset average at start of cardiac cycle
     if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
-      m_leftRenalArterialPressure_mmHg_runningAvg->Clear();
-      m_rightRenalArterialPressure_mmHg_runningAvg->Clear();
+      m_leftRenalArterialPressure_mmHg_runningAvg->Invalidate();
+      m_rightRenalArterialPressure_mmHg_runningAvg->Invalidate();
     }
   }
 END_NAMESPACE

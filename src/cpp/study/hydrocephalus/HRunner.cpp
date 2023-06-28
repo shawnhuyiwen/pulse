@@ -86,7 +86,7 @@ namespace pulse::study::hydrocephalus
         m_SimulationsToRun.erase(m_SimulationResultsList->simulation()[i].id());
     }
 
-    int numSimsToRun = m_SimulationList->simulation_size() - m_SimulationResultsList->simulation_size();
+    size_t numSimsToRun = m_SimulationList->simulation_size() - m_SimulationResultsList->simulation_size();
     if (numSimsToRun == 0)
     {
       Info("All simulations are run in the results file");
@@ -136,7 +136,7 @@ namespace pulse::study::hydrocephalus
         GetLogger()->Fatal(cdm_ex.what());
         std::cerr << cdm_ex.what() << std::endl;
       }
-      catch (std::exception ex)
+      catch (std::exception& ex)
       {
         GetLogger()->Fatal("Exception caught runnning simulation " + sim->name());
         GetLogger()->Fatal(ex.what());
@@ -222,7 +222,7 @@ namespace pulse::study::hydrocephalus
         {
           element.second.Sample();
           element.second.instantaneousAverage = element.second.runningAverage.Value();
-          element.second.runningAverage.Clear();
+          element.second.runningAverage.Invalidate();
           element.second.Sample();// Start the running average off with the same last average sample
         }
       }

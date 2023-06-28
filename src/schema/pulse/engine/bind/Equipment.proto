@@ -6,6 +6,7 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/AnesthesiaMachine.proto";
 import "pulse/cdm/bind/BagValveMask.proto";
+import "pulse/cdm/bind/ECMO.proto";
 import "pulse/cdm/bind/ElectroCardioGram.proto";
 import "pulse/cdm/bind/Inhaler.proto";
 import "pulse/cdm/bind/MechanicalVentilator.proto";
@@ -29,6 +30,11 @@ message BagValveMaskData
   double                                           SqueezePressure_cmH2O          = 4;
 }
 
+message ECMOData
+{
+  pulse.cdm.bind.ECMOData                          Common                                 = 1;
+}
+
 message ElectroCardioGramData
 {
   pulse.cdm.bind.ElectroCardioGramData             Common                         = 1;
@@ -49,13 +55,18 @@ message MechanicalVentilatorData
   double                                           CurrentVentilatorVolume_L              = 5;
   double                                           DriverPressure_cmH2O                   = 6;
   double                                           DriverFlow_L_Per_s                     = 7;
-  double                                           InspirationTime_s                      = 8;
-  double                                           InspiratoryFlow_L_Per_s                = 9;
-  bool                                             LimitReached                           = 10;
-  pulse.cdm.bind.RunningAverageData                MeanAirwayPressure_cmH2O               = 11;
-  double                                           PreviousDriverFlow_L_Per_s             = 12;
-  double                                           PreviousConnectionPressure_cmH2O       = 13;
-  double                                           PreviousDriverPressure_cmH2O           = 14;
-  double                                           PreviousYPieceToConnectionFlow_L_Per_s = 15;
-  
+  double                                           EndTidalCarbonDioxideFraction          = 8;
+  double                                           EndTidalCarbonDioxidePressure_cmH2O    = 9;
+  double                                           EndTidalOxygenFraction                 = 10;
+  double                                           EndTidalOxygenPressure_cmH2O           = 11;
+  bool                                             Initializing                           = 12;
+  double                                           InspirationTime_s                      = 13;
+  double                                           InspiratoryFlow_L_Per_s                = 14;
+  bool                                             LimitReached                           = 15;
+  pulse.cdm.bind.RunningAverageData                MeanAirwayPressure_cmH2O               = 16;
+  double                                           PreviousDriverFlow_L_Per_s             = 17;
+  double                                           PreviousConnectionPressure_cmH2O       = 18;
+  double                                           PreviousDriverPressure_cmH2O           = 19;
+  double                                           PreviousYPieceToConnectionFlow_L_Per_s = 20;
+  double                                           PositiveEndExpiratoryPressure_cmH2O    = 21;
 }

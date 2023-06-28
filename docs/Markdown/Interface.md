@@ -320,8 +320,9 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem AsthmaAttackTable "Asthma Attack"
   @refitem BrainInjuryTable "Brain Injury"
   @refitem BronchoconstrictionTable "Bronchoconstriction"
-  @refitem ChestCompressionForceTable "Chest Compression Force"
-  @refitem ChestCompressionForceScaleTable "Chest Compression Force Scale"
+  @refitem ChestCompressionTable "Chest Compression"
+  @refitem ChestCompressionAutomatedTable "Chest Compression Automated"
+  @refitem ChestCompressionInstantaneousTable "Chest Compression Instantaneous Scale"
   @refitem ChestOcclusiveDressingTable "Chest Occlusive Dressing"
   @refitem ConsciousRespirationTable "Conscious Respiration"
   @refitem ConsumeNutrientsTable "Consume Nutrients"
@@ -471,7 +472,6 @@ The following assessments are available  :
   @refitem CompleteBloodCountTable "Complete Blood Count"
   @refitem ComprehensiveMetabolicPanelTable "Comprehensive Metabolic Panel"
   @refitem UrinalysisTable "Urinalysis"
-  @refitem PulmonaryFunctionTestTable "Pulmonary Function Test"
 @endsecreflist 
 
 You must create and provide an assessment object to the physiology engine via this method:<br>

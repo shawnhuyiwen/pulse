@@ -10,8 +10,9 @@ CDM_BIND_DECL2(Arrhythmia)
 CDM_BIND_DECL2(AsthmaAttack)
 CDM_BIND_DECL2(BrainInjury)
 CDM_BIND_DECL2(Bronchoconstriction)
-CDM_BIND_DECL2(ChestCompressionForce)
-CDM_BIND_DECL2(ChestCompressionForceScale)
+CDM_BIND_DECL2(ChestCompression)
+CDM_BIND_DECL2(ChestCompressionAutomated)
+CDM_BIND_DECL2(ChestCompressionInstantaneous)
 CDM_BIND_DECL2(ChestOcclusiveDressing)
 CDM_BIND_DECL2(ChronicObstructivePulmonaryDiseaseExacerbation)
 CDM_BIND_DECL2(ConsciousRespiration)
@@ -22,6 +23,7 @@ CDM_BIND_DECL2(ForcedExhale)
 CDM_BIND_DECL2(ForcedInhale)
 CDM_BIND_DECL2(ForcedPause)
 CDM_BIND_DECL2(Hemorrhage)
+CDM_BIND_DECL2(Hemothorax)
 CDM_BIND_DECL2(ImpairedAlveolarExchangeExacerbation)
 CDM_BIND_DECL2(Intubation)
 CDM_BIND_DECL2(LobarPneumoniaExacerbation)
@@ -38,6 +40,7 @@ CDM_BIND_DECL2(SubstanceCompoundInfusion)
 CDM_BIND_DECL2(SubstanceInfusion)
 CDM_BIND_DECL2(SupplementalOxygen)
 CDM_BIND_DECL2(TensionPneumothorax)
+CDM_BIND_DECL2(TubeThoracostomy)
 CDM_BIND_DECL2(Urinate)
 CDM_BIND_DECL2(UseInhaler)
 CDM_BIND_DECL(AnyPatientActionData)
@@ -95,17 +98,23 @@ public:
   static void Serialize(const SEBronchoconstriction& src, CDM_BIND::BronchoconstrictionData& dst);
   static void Copy(const SEBronchoconstriction& src, SEBronchoconstriction& dst);
 
-  static void Load(const CDM_BIND::ChestCompressionForceData& src, SEChestCompressionForce& dst);
-  static CDM_BIND::ChestCompressionForceData* Unload(const SEChestCompressionForce& src);
-  static void Serialize(const CDM_BIND::ChestCompressionForceData& src, SEChestCompressionForce& dst);
-  static void Serialize(const SEChestCompressionForce& src, CDM_BIND::ChestCompressionForceData& dst);
-  static void Copy(const SEChestCompressionForce& src, SEChestCompressionForce& dst);
+  static void Load(const CDM_BIND::ChestCompressionData& src, SEChestCompression& dst);
+  static CDM_BIND::ChestCompressionData* Unload(const SEChestCompression& src);
+  static void Serialize(const CDM_BIND::ChestCompressionData& src, SEChestCompression& dst);
+  static void Serialize(const SEChestCompression& src, CDM_BIND::ChestCompressionData& dst);
+  static void Copy(const SEChestCompression& src, SEChestCompression& dst);
 
-  static void Load(const CDM_BIND::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst);
-  static CDM_BIND::ChestCompressionForceScaleData* Unload(const SEChestCompressionForceScale& src);
-  static void Serialize(const CDM_BIND::ChestCompressionForceScaleData& src, SEChestCompressionForceScale& dst);
-  static void Serialize(const SEChestCompressionForceScale& src, CDM_BIND::ChestCompressionForceScaleData& dst);
-  static void Copy(const SEChestCompressionForceScale& src, SEChestCompressionForceScale& dst);
+  static void Load(const CDM_BIND::ChestCompressionAutomatedData& src, SEChestCompressionAutomated& dst);
+  static CDM_BIND::ChestCompressionAutomatedData* Unload(const SEChestCompressionAutomated& src);
+  static void Serialize(const CDM_BIND::ChestCompressionAutomatedData& src, SEChestCompressionAutomated& dst);
+  static void Serialize(const SEChestCompressionAutomated& src, CDM_BIND::ChestCompressionAutomatedData& dst);
+  static void Copy(const SEChestCompressionAutomated& src, SEChestCompressionAutomated& dst);
+
+  static void Load(const CDM_BIND::ChestCompressionInstantaneousData& src, SEChestCompressionInstantaneous& dst);
+  static CDM_BIND::ChestCompressionInstantaneousData* Unload(const SEChestCompressionInstantaneous& src);
+  static void Serialize(const CDM_BIND::ChestCompressionInstantaneousData& src, SEChestCompressionInstantaneous& dst);
+  static void Serialize(const SEChestCompressionInstantaneous& src, CDM_BIND::ChestCompressionInstantaneousData& dst);
+  static void Copy(const SEChestCompressionInstantaneous& src, SEChestCompressionInstantaneous& dst);
 
   static void Load(const CDM_BIND::ChestOcclusiveDressingData& src, SEChestOcclusiveDressing& dst);
   static CDM_BIND::ChestOcclusiveDressingData* Unload(const SEChestOcclusiveDressing& src);
@@ -166,6 +175,12 @@ public:
   static void Serialize(const CDM_BIND::HemorrhageData& src, SEHemorrhage& dst);
   static void Serialize(const SEHemorrhage& src, CDM_BIND::HemorrhageData& dst);
   static void Copy(const SEHemorrhage& src, SEHemorrhage& dst);
+
+  static void Load(const CDM_BIND::HemothoraxData& src, SEHemothorax& dst);
+  static CDM_BIND::HemothoraxData* Unload(const SEHemothorax& src);
+  static void Serialize(const CDM_BIND::HemothoraxData& src, SEHemothorax& dst);
+  static void Serialize(const SEHemothorax& src, CDM_BIND::HemothoraxData& dst);
+  static void Copy(const SEHemothorax& src, SEHemothorax& dst);
 
   static void Load(const CDM_BIND::ImpairedAlveolarExchangeExacerbationData& src, SEImpairedAlveolarExchangeExacerbation& dst);
   static CDM_BIND::ImpairedAlveolarExchangeExacerbationData* Unload(const SEImpairedAlveolarExchangeExacerbation& src);
@@ -256,6 +271,12 @@ public:
   static void Serialize(const CDM_BIND::TensionPneumothoraxData& src, SETensionPneumothorax& dst);
   static void Serialize(const SETensionPneumothorax& src, CDM_BIND::TensionPneumothoraxData& dst);
   static void Copy(const SETensionPneumothorax& src, SETensionPneumothorax& dst);
+
+  static void Load(const CDM_BIND::TubeThoracostomyData& src, SETubeThoracostomy& dst);
+  static CDM_BIND::TubeThoracostomyData* Unload(const SETubeThoracostomy& src);
+  static void Serialize(const CDM_BIND::TubeThoracostomyData& src, SETubeThoracostomy& dst);
+  static void Serialize(const SETubeThoracostomy& src, CDM_BIND::TubeThoracostomyData& dst);
+  static void Copy(const SETubeThoracostomy& src, SETubeThoracostomy& dst);
 
   static void Load(const CDM_BIND::UrinateData& src, SEUrinate& dst);
   static CDM_BIND::UrinateData* Unload(const SEUrinate& src);

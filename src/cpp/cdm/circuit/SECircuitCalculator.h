@@ -35,7 +35,7 @@ public:
 
 protected:
   /**/virtual void ParseIn();
-  /**/virtual void Solve();
+  /**/virtual bool Solve();
   /**/virtual void ParseOut();
   /**/virtual void CalculateFluxes();
   /**/virtual void CalculateQuantities();
@@ -45,7 +45,7 @@ protected:
   virtual void Verbose(std::string location);
 
   // Valve Support
-  virtual bool CheckAndModifyValves();
+  virtual bool CheckAndModifyValves(bool solverPassed);
   virtual bool IsCurrentValveStateUnique();
   // Eigen Support
   virtual void PopulateAMatrix(NodeType& nKCL, PathType& p, double dMultiplier, bool hasPotentialSource = false);  

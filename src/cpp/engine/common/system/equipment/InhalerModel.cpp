@@ -163,7 +163,6 @@ namespace pulse
     //  inhaler is currently off and about to be activated.
     if (m_State == eSwitch::On)
     {
-      /// \error: Already processing a Substance Inhalation, ignoring this command.
       Error("Already processing a Substance Inhalation, ignoring this command");
       return;
     }
@@ -197,18 +196,6 @@ namespace pulse
       double dSpacerVolume_L = m_SpacerVolume->GetValue(VolumeUnit::L);
       dVolume_L += dSpacerVolume_L;
       m_Mouthpiece->GetVolume().SetValue(dVolume_L, VolumeUnit::L);
-    }
-
-    // Get dose properties we need
-    double dDoseDensity_ug_Per_L = 0.0;
-    if (m_Substance->HasDensity())
-    {
-      dDoseDensity_ug_Per_L = m_Substance->GetDensity(MassPerVolumeUnit::ug_Per_L);  // Density of dose in micrograms per liter
-    }
-    else
-    {
-      /// \error Fatal: Inhaled substance does not have a density value.
-      Fatal("Inhaled substance does not have a density value.");
     }
 
     // Dosage amount in micrograms

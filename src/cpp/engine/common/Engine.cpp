@@ -12,7 +12,7 @@ namespace pulse
 {
   Engine::Engine(Logger* logger) : PhysiologyEngine(logger)
   {
-
+    m_Logger->LogToConsole(true);
   }
 
   Engine::~Engine()
@@ -26,6 +26,12 @@ namespace pulse
     if (m_Controller == nullptr)
       AllocateController();
     return *m_Controller;
+  }
+
+  Logger* Engine::GetLogger() const
+  {
+    GetController();
+    return Loggable::GetLogger();
   }
 
   std::string Engine::GetTypeName() const
@@ -59,6 +65,11 @@ namespace pulse
   bool Engine::InitializeEngine(const SEPatientConfiguration& patient_configuration)
   {
     return GetController().InitializeEngine(patient_configuration);
+  }
+
+  void Engine::Clear()
+  {
+    GetController().Clear();
   }
 
   bool Engine::SetConfigurationOverride(const SEEngineConfiguration* config)
@@ -214,6 +225,11 @@ namespace pulse
   const SEBagValveMask* Engine::GetBagValveMask() const
   {
     return &GetController().GetData().GetBagValveMask();
+  }
+
+  const SEECMO* Engine::GetECMO() const
+  {
+    return &GetController().GetData().GetECMO();
   }
 
   const SEElectroCardioGram* Engine::GetElectroCardioGram() const

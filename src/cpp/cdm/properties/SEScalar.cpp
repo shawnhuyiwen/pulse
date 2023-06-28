@@ -7,21 +7,9 @@
 
 // Declare template classes all Scalar types at the bottom
 
-unsigned long long int SEScalar::NaN = 
-  ((unsigned long long int)255 << (8*7)) + 
-  ((unsigned long long int)(255-8) << (8*6)) + 
-  ((unsigned long long int)255 << (8*5)) + 
-  ((unsigned long long int)255 << (8*4)) +
-  ((unsigned long long int)255 << (8*3)) + 
-  (255 << (8*2)) + 
-  (255 << (8*1)) + 
-   255;
-
 double SEScalar::dNaN()
 {
-  double d;
-  *(reinterpret_cast<unsigned long long int *>(&d)) = NaN;
-  return d;
+  return std::nan("");
 }
 
 // Opposite of isnan which can be slow
@@ -53,25 +41,25 @@ SEScalar::~SEScalar()
 bool SEScalar::Set(const SEScalar& s)
 {
   if (dynamic_cast<const SEUnitScalar*>(&s) != nullptr)
-    throw CommonDataModelException("Scalar is not of the proper type");
+    throw CommonDataModelException("SEScalar::Set: Scalar is not of the proper type");
   if(!s.IsValid())
     return false;
   if (m_readOnly)
-    throw CommonDataModelException("Scalar is marked read-only");
+    throw CommonDataModelException("SEScalar::Set: Scalar is marked read-only");
   m_value = s.m_value;
   m_isnan = false;
   m_isinf = false;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
   return true;
 }
 bool SEScalar::Force(const SEScalar& s)
 {
   if (dynamic_cast<const SEUnitScalar*>(&s) != nullptr)
-    throw CommonDataModelException("Scalar is not of the proper type");
+    throw CommonDataModelException("SEScalar::Force: Scalar is not of the proper type");
   if (!s.IsValid())
     return false;
   m_value = s.m_value;
@@ -79,8 +67,8 @@ bool SEScalar::Force(const SEScalar& s)
   m_isinf = false;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
   return true;
 }
@@ -88,7 +76,7 @@ bool SEScalar::Force(const SEScalar& s)
 void SEScalar::Copy(const SEScalar& s)
 {
   if (m_readOnly)
-    throw CommonDataModelException("Scalar is marked read-only");
+    throw CommonDataModelException("SEScalar::Copy: Scalar is marked read-only");
   m_value = s.m_value;
   m_isnan = s.m_isnan;
   m_isinf = s.m_isinf;
@@ -97,17 +85,17 @@ void SEScalar::Copy(const SEScalar& s)
 void SEScalar::Invalidate()
 {
   if (m_readOnly)
-    throw CommonDataModelException("Scalar is marked read-only");
+    throw CommonDataModelException("SEScalar::Invalidate: Scalar is marked read-only");
   m_isnan = true;
   m_isinf = false;
-  *(reinterpret_cast<unsigned long long int *>(&m_value)) = NaN;
+  m_value = SEScalar::dNaN();
 }
 
 void SEScalar::ForceInvalidate()
 {
   m_isnan = true;
   m_isinf = false;
-  *(reinterpret_cast<unsigned long long int*>(&m_value)) = NaN;
+  m_value = SEScalar::dNaN();
 }
 
 bool SEScalar::IsValid() const 
@@ -151,20 +139,20 @@ double SEScalar::GetValue() const
 {
   if (!m_isnan)
     return m_value;
-  throw CommonDataModelException("Value is NaN");
+  throw CommonDataModelException("SEScalar::GetValue is NaN");
 }
 
 void SEScalar::SetValue(double d)
 {
   if (m_readOnly)
-    throw CommonDataModelException("Scalar is marked read-only");
+    throw CommonDataModelException("SEScalar::SetValue: Scalar is marked read-only");
   m_value = d;
   m_isnan = false;
   m_isinf = false;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
 }
 void SEScalar::ForceValue(double d)
@@ -174,8 +162,8 @@ void SEScalar::ForceValue(double d)
   m_isinf = false;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
 }
 
@@ -199,6 +187,16 @@ double SEScalar::IncrementValue(double d)
   return m_value;
 }
 
+double SEScalar::ForceIncrementValue(double d)
+{
+  if (!IsValid())
+  {
+    ForceValue(d);
+    return d;
+  }
+  ForceValue(m_value + d);
+  return m_value;
+}
 
 double SEScalar::Multiply(const SEScalar& s)
 {
@@ -302,14 +300,14 @@ bool SEScalarQuantity<Unit>::Set(const SEScalar& s)
 {
   const SEScalarQuantity<Unit>* q = dynamic_cast<const SEScalarQuantity<Unit>*>(&s);
   if (q == nullptr)
-    throw CommonDataModelException("Set method called with differnt scalar quantity type");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::Set: Set method called with differnt scalar quantity type");
   return this->Set(*q);
 }
 template<typename Unit>
 bool SEScalarQuantity<Unit>::Set(const SEScalarQuantity<Unit>& s)
 {
   if (m_readOnly)
-    throw CommonDataModelException("Scalar is marked read-only");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::Set: Scalar is marked read-only");
   if (!s.IsValid())
     return false;
   m_value = s.m_value;
@@ -318,8 +316,8 @@ bool SEScalarQuantity<Unit>::Set(const SEScalarQuantity<Unit>& s)
   m_unit = s.m_unit;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
   return true;
 }
@@ -329,7 +327,7 @@ void SEScalarQuantity<Unit>::Copy(const SEScalar& s)
 {
   const SEScalarQuantity<Unit>* q = dynamic_cast<const SEScalarQuantity<Unit>*>(&s);
   if (q == nullptr)
-    throw CommonDataModelException("Set method called with differnt scalar quantity type");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::Copy: Set method called with differnt scalar quantity type");
   this->Copy(*q);
 }
 template<typename Unit>
@@ -344,7 +342,7 @@ bool SEScalarQuantity<Unit>::Force(const SEScalar& s)
 {
   const SEScalarQuantity<Unit>* q = dynamic_cast<const SEScalarQuantity<Unit>*>(&s);
   if (q == nullptr)
-    throw CommonDataModelException("Set method called with differnt scalar quantity type");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::Force: Set method called with differnt scalar quantity type");
   return this->Force(*q);
 }
 template<typename Unit>
@@ -358,8 +356,8 @@ bool SEScalarQuantity<Unit>::Force(const SEScalarQuantity<Unit>& s)
   m_unit = s.m_unit;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
   return true;
 }
@@ -368,7 +366,7 @@ template<typename Unit>
 double SEScalarQuantity<Unit>::GetValue(const Unit& unit) const
 {
   if (m_isnan)
-    throw CommonDataModelException("Value is NaN");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::GetValue of "+unit.GetString()+" is NaN");
   if (m_isinf)
     return m_value;
   if (m_value == 0)
@@ -383,7 +381,7 @@ double SEScalarQuantity<Unit>::GetValue(const CCompoundUnit& unit) const
 {
   const Unit* u = dynamic_cast<const Unit*>(&unit);
   if (u == nullptr)
-    throw CommonDataModelException("Provided unit is not of proper quantity type");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::GetValue: Provided unit is not of proper quantity type");
   return this->GetValue(*u);
 }
 
@@ -402,15 +400,15 @@ template<typename Unit>
 void SEScalarQuantity<Unit>::SetValue(double d, const Unit& unit)
 {
   if (m_readOnly)
-    throw CommonDataModelException("Scalar is marked read-only");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::SetValue: Scalar is marked read-only");
   m_value = d;
   m_isnan = false;
   m_isinf = false;
   m_unit = &unit;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
 }
 template<typename Unit>
@@ -422,8 +420,8 @@ void SEScalarQuantity<Unit>::ForceValue(double d, const Unit& unit)
   m_unit = &unit;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
   m_unit = &unit;
 }
@@ -433,7 +431,7 @@ void SEScalarQuantity<Unit>::SetValue(double d, const CCompoundUnit& unit)
 {
   const Unit* u = dynamic_cast<const Unit*>(&unit);
   if (u == nullptr)
-    throw CommonDataModelException("Provided unit is not of proper quantity type");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::SetValue: Provided unit is not of proper quantity type");
   this->SetValue(d, *u);
 }
 template<typename Unit>
@@ -441,7 +439,7 @@ void SEScalarQuantity<Unit>::ForceValue(double d, const CCompoundUnit& unit)
 {
   const Unit* u = dynamic_cast<const Unit*>(&unit);
   if (u == nullptr)
-    throw CommonDataModelException("Provided unit is not of proper quantity type");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::ForceValue: Provided unit is not of proper quantity type");
   this->ForceValue(d, *u);
 }
 
@@ -472,8 +470,29 @@ double SEScalarQuantity<Unit>::IncrementValue(double d, const CCompoundUnit& uni
 {
   const Unit* u = dynamic_cast<const Unit*>(&unit);
   if (u == nullptr)
-    throw CommonDataModelException("Provided unit is not of proper quantity type");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::IncrementValue: Provided unit is not of proper quantity type");
   return this->IncrementValue(d, *u);
+}
+
+template<typename Unit>
+double SEScalarQuantity<Unit>::ForceIncrementValue(double d, const Unit& unit)
+{
+  if (!IsValid())
+  {
+    this->ForceValue(d, unit);
+    return d;
+  }
+  this->ForceValue(m_value + Convert(d, unit, *m_unit), *m_unit);
+  return Convert(m_value, *m_unit, unit);
+}
+
+template<typename Unit>
+double SEScalarQuantity<Unit>::ForceIncrementValue(double d, const CCompoundUnit& unit)
+{
+  const Unit* u = dynamic_cast<const Unit*>(&unit);
+  if (u == nullptr)
+    throw CommonDataModelException("Provided unit is not of proper quantity type");
+  return this->ForceIncrementValue(d, *u);
 }
 
 template<typename Unit>
@@ -503,7 +522,7 @@ double SEScalarQuantity<Unit>::MultiplyValue(double d, const CCompoundUnit& unit
 {
   const Unit* u = dynamic_cast<const Unit*>(&unit);
   if (u == nullptr)
-    throw CommonDataModelException("Provided unit is not of proper quantity type");
+    throw CommonDataModelException("SEScalarQuantity<Unit>::MultiplyValue: Provided unit is not of proper quantity type");
   return this->MultiplyValue(d, *u);
 }
 

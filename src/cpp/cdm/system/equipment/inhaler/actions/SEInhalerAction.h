@@ -12,9 +12,10 @@ public:
   SEInhalerAction(Logger* logger);
   virtual ~SEInhalerAction();
 
+  static constexpr char const* ActionType = "Inhaler";
+  virtual std::string GetActionType() const { return ActionType; }
+
   virtual void Clear();// Deletes all members
   
   virtual bool IsValid() const;
-
-  virtual void ToString(std::ostream &str) const = 0;
-};  
+};

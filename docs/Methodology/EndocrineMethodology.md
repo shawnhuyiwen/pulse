@@ -74,7 +74,7 @@ Two stimuli, exercise and acute stress, can modify the norepinephrine release ra
 #### Exercise
 The increase in epinephrine release as a function of above-basal exercise was developed using data in @cite stratton1985hemodynamic and @cite tidgren1991renal. We assume that the epinephrine clearance rate is constant; therefore, the fractional increase in epinephrine concentration described in @cite stratton1985hemodynamic and @cite tidgren1991renal can be assumed to be due to a similar fractional increase in release rate. Using that assumption, we fit a logistic function to the basal-normalized epinephrine steady-state concentrations during exercise presented in @cite tidgren1991renal. The release modifier varies from 1 to 19.75, as shown in Figure 1, meaning that the epinephrine release rate will be 19.75 times the basal release rate with maximal exercise. The model is implemented by first computing the above-basal metabolic rate and then using the generic logistic function with the appropriate parameter values to compute the release rate multiplier.
 
-<img src="./plots/Endocrine/EpiExercise.jpg" width="600">
+<a href="./plots/Endocrine/EpiExercise.jpg"><a href="./plots/Endocrine/EpiExercise.jpg"><img src="./plots/Endocrine/EpiExercise.jpg" width="600"></a></a>
 <center>
 *Figure 1. The increase in epinephrine release during exercise is computed as a fraction of the basal rate.*
 </center><br>
@@ -114,7 +114,7 @@ Results and Conclusions
 Validation - Resting Physiologic State
 --------------------------------------
 
-In the engine, the hormone epinephrine is the same substance as the synthetic epinephrine available for injection. This generic epinephrine substance was validated as part of the drugs validation detailed in the @ref drugs-validation-pharmacodynamic "Drugs Validation's Table&nbsp;1". At resting physiological levels, epinephrine has no pharmacodynamic effects.
+In the engine, the hormone epinephrine is the same substance as the synthetic epinephrine available for injection. This generic epinephrine substance was validated as part of the drugs validation detailed in the @ref drugs-validation-pharmacodynamic "Drugs Validation's Table 1". At resting physiological levels, epinephrine has no pharmacodynamic effects.
 
 Validation - Actions
 --------------------------------------
@@ -125,15 +125,15 @@ The effects of epinephrine release on the physiology can be clearly seen by trig
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Endocrine/AcuteStressBloodEpi.jpg" width="550"></td>
-    <td><img src="./plots/Endocrine/AcuteStressHR.jpg" width="550"></td>
+    <td><a href="./plots/Endocrine/AcuteStressBloodEpi.jpg"><img src="./plots/Endocrine/AcuteStressBloodEpi.jpg" width="550"></a></td>
+    <td><a href="./plots/Endocrine/AcuteStressHR.jpg"><img src="./plots/Endocrine/AcuteStressHR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Endocrine/AcuteStressSystolic.jpg" width="550"></td>
-    <td><img src="./plots/Endocrine/AcuteStressDiastolic.jpg" width="550"></td>
+    <td><a href="./plots/Endocrine/AcuteStressSystolic.jpg"><img src="./plots/Endocrine/AcuteStressSystolic.jpg" width="550"></a></td>
+    <td><a href="./plots/Endocrine/AcuteStressDiastolic.jpg"><img src="./plots/Endocrine/AcuteStressDiastolic.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Endocrine/AcuteStressLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/Endocrine/AcuteStressLegend.jpg"><img src="./plots/Endocrine/AcuteStressLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>

@@ -530,6 +530,54 @@ background: url(../jobs_icon.png) no-repeat;
   display:none;
 }
 
+.navbar > .container .navbar-nav > li.support-link {
+  height: auto !important;
+  position: absolute;
+  right: -110px;
+  top: -29px;
+  background: #00a950;
+  color: white;
+  padding:20px 0 0;
+  width:78px;
+  z-index:999;
+}
+
+.navbar-nav>li.support-link a {
+  color: white !important;
+  display: block !important;
+  text-transform: uppercase;
+  text-align: center;
+  padding:10px !important;
+  font-size: 11px !important;
+  display: block;
+  width: 100%;
+  line-height: 1.2em;
+}
+
+.navbar-nav>li.support-link a:hover {
+  background: #00a950;
+}
+
+.navbar-nav>li.support-link a:before {
+background: url(../support_icon.png) no-repeat;
+  content: "";
+  display: block;
+  width: 32px;
+  height: 32px;
+  background-size:100%;
+  margin:0 auto;
+}
+
+#mobile_menu>li.support-link {
+  background:#00529b;
+}
+#mobile_menu>li.support-link a {
+  color:white;
+}
+#mobile_menu>li.support-link a:before {
+  display:none;
+}
+
 .dropdown-menu li a {
   width: 100%;
 }

@@ -362,7 +362,7 @@ void PBCircuit::Serialize(const CDM_BIND::ElectricalCircuitPathData& src, SEElec
   if (src.has_voltagesourcebaseline())
     PBProperty::Load(src.voltagesourcebaseline(), dst.GetVoltageSourceBaseline());
   if (src.has_valvebreakdownvoltage())
-    PBProperty::Load(src.valvebreakdownvoltage(), dst.GetValveBreakdownVoltage());
+    PBProperty::Load(src.valvebreakdownvoltage(), dst.GetDiodeBreakdownVoltage());
 
   if (!dst.HasValidElements())
     dst.Warning("Path does not have valid elements");
@@ -411,7 +411,7 @@ void PBCircuit::Serialize(const SEElectricalCircuitPath& src, CDM_BIND::Electric
     dst.set_allocated_nextvoltagesource(PBProperty::Unload(*src.m_NextPotentialSource));
   if (src.HasVoltageSourceBaseline())
     dst.set_allocated_voltagesourcebaseline(PBProperty::Unload(*src.m_PotentialSourceBaseline));
-  if (src.HasValveBreakdownVoltage())
+  if (src.HasDiodeBreakdownVoltage())
     dst.set_allocated_valvebreakdownvoltage(PBProperty::Unload(*src.m_ValveBreakdownPotential));
 }
 

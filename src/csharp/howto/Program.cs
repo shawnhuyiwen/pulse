@@ -10,6 +10,9 @@ namespace HowToDriver
       HowTo_UseEngine.Example.Run();
       //HowTo_PatientStates.Example.Run();
       //HowTo_Environment.Example.Run();
+      //HowTo_Hemorrhage.Example.Run();
+      //HowTo_ECMO.Example.Run();
+      HowTo_Hemothorax.Example.Run();
       //HowTo_MechanicalVentilator.Example.Run();
       //HowTo_RespiratoryMechanics.Example.Run();
       //HowTo_DeathState.Example.Run();

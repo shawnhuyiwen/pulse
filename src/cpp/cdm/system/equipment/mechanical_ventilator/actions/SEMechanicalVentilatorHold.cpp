@@ -78,13 +78,3 @@ eSwitch SEMechanicalVentilatorHold::GetState() const
 {
   return m_State;
 }
-
-void SEMechanicalVentilatorHold::ToString(std::ostream &str) const
-{
-  str << "Mechanical Ventilator Hold";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  str << "\n\tAppliedRespiratoryCycle: " << eAppliedRespiratoryCycle_Name(m_AppliedRespiratoryCycle);
-  str << "\n\tState: " << eSwitch_Name(m_State);
-  str << std::flush;
-}

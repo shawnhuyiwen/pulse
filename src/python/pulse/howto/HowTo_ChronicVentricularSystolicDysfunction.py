@@ -21,12 +21,12 @@ def HowTo_ChronicVentricularSystolicDysfunction():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_ChronicVentricularSystolicDysfunction()
 

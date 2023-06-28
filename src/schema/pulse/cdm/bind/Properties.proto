@@ -68,6 +68,16 @@ message RunningAverageData
   uint32 NumSamples  = 2;
 }
 
+message TemporalInterpolatorData
+{
+  bool   Complete           = 1;
+  bool   PositiveTransition = 2;
+  double Period_s           = 3;
+  double Current            = 4;
+  double Target             = 5;
+  double Initial            = 6;
+}
+
 ////////////////
 // Scalar Data //
 

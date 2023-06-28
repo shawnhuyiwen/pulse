@@ -17,6 +17,9 @@ public:
   SEConsciousRespiration(Logger* logger=nullptr);
   virtual ~SEConsciousRespiration();
 
+  static constexpr char const* Name = "Conscious Respiration";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEConsciousRespiration& src, bool /*preserveState*/=false);
 
@@ -37,8 +40,6 @@ public:
   virtual SEForcedInhale& AddForcedInhale();
   virtual SEForcedPause&  AddForcedPause();
   virtual SEUseInhaler&   AddUseInhaler();
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

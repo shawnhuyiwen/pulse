@@ -71,7 +71,8 @@ public class ValidationDataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XSSF : "+xlsFile,ex);
+      Log.error("Error reading XSSF : "+xlsFile);
+      Log.error(ex.getMessage());
       return;
     }
     Log.info("Data Generation Complete");
@@ -97,8 +98,8 @@ public class ValidationDataSetReader
         
         String unit      = row.getCell(1).getStringCellValue().trim();
         String type      = row.getCell(2).getStringCellValue().trim();
-        Cell   vCell     = row.getCell(3);
-        String optimizer = row.getCell(12).getStringCellValue().trim();
+        Cell   vCell     = row.getCell(5);
+        String optimizer = row.getCell(15).getStringCellValue().trim();
         if(optimizer==null||optimizer.isEmpty()||optimizer.equals("OptimizerTargets"))
           continue;
         
@@ -141,7 +142,8 @@ public class ValidationDataSetReader
     }
     catch(Exception ex)
     {
-      Log.error("Error reading XLS",ex);
+      Log.error("Error reading XLS");
+      Log.error(ex.getMessage());
       return false;
     }   
     return true;

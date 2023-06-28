@@ -66,6 +66,9 @@ void CommonDataModelTest::FillFunctionMap()
 {
   //Fill a map that ties unit test names to their actual functions
   cdmMap.insert(std::make_pair("BasicCircuitTest", &CommonDataModelTest::BasicCircuitTest));
+  cdmMap.insert(std::make_pair("MultiphysicsElectricalCircuitTest", &CommonDataModelTest::MultiphysicsElectricalCircuitTest));
+  cdmMap.insert(std::make_pair("MultiphysicsFluidCircuitTest", &CommonDataModelTest::MultiphysicsFluidCircuitTest));
+  cdmMap.insert(std::make_pair("MultiphysicsThermalCircuitTest", &CommonDataModelTest::MultiphysicsThermalCircuitTest));
 
   cdmMap.insert(std::make_pair("SeriesRCDCTest", &CommonDataModelTest::SeriesRCDCTest));
   cdmMap.insert(std::make_pair("SeriesRCSINTest", &CommonDataModelTest::SeriesRCSINTest));
@@ -243,8 +246,10 @@ void CommonDataModelTest::FillFunctionMap()
   cdmMap.insert(std::make_pair("BlackBoxComplianceTest", &CommonDataModelTest::BlackBoxComplianceTest));
   cdmMap.insert(std::make_pair("BlackBoxSourcesTest", &CommonDataModelTest::BlackBoxSourcesTest));
 
+  cdmMap.insert(std::make_pair("ActionTest", &CommonDataModelTest::ActionTest));
   cdmMap.insert(std::make_pair("ReadPatientDirectory", &CommonDataModelTest::ReadPatientDirectory));
   cdmMap.insert(std::make_pair("ReadSubstanceDirectory", &CommonDataModelTest::ReadSubstanceDirectory));
+  cdmMap.insert(std::make_pair("ConvertScenarioLogs", &CommonDataModelTest::ConvertScenarioLogs));
 
   cdmMap.insert(std::make_pair("ScalarTest", &CommonDataModelTest::ScalarTest));
   cdmMap.insert(std::make_pair("UnitsTest", &CommonDataModelTest::UnitsTest));
@@ -258,6 +263,6 @@ void CommonDataModelTest::TestCompartmentSerialization(SECompartmentManager& mgr
   if(!PBCompartment::LoadCompartmentManagerFile(mgr,filename, m_Circuits))
   {
     m_Circuits->Clear();
-    m_Circuits->Error("Unable to load file " + filename, "TestCompartmentSerialization");
+    m_Circuits->Error("Unable to load file " + filename);
   }
 }

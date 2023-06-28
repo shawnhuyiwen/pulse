@@ -4,6 +4,10 @@
 #include "PulseScenario.h"
 #include "engine/io/protobuf/PBScenario.h"
 
+PulseScenario::PulseScenario(std::string const& dataDir) : PulseScenario(nullptr, dataDir)
+{
+  m_Configuration = nullptr;
+}
 PulseScenario::PulseScenario(Logger* logger, std::string const& dataDir) : SEScenario(logger, dataDir)
 {
   m_Configuration = nullptr;

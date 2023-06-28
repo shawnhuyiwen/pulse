@@ -39,9 +39,13 @@ message FluidCompartmentData
 {
   CompartmentData                        Compartment                              = 1;
   ScalarVolumePerTimeData                InFlow                                   = 2;
-  ScalarVolumePerTimeData                OutFlow                                  = 3;
-  ScalarPressureData                     Pressure                                 = 4;
-  ScalarVolumeData                       Volume                                   = 5;
+  ScalarVolumePerTimeData                AverageInFlow                            = 3;
+  RunningAverageData                     InFlowRunningAverage                     = 4;
+  ScalarVolumePerTimeData                OutFlow                                  = 5;
+  ScalarVolumePerTimeData                AverageOutFlow                           = 6;
+  RunningAverageData                     OutFlowRunningAverage                    = 7;
+  ScalarPressureData                     Pressure                                 = 8;
+  ScalarVolumeData                       Volume                                   = 9;
 }
 message FluidCompartmentLinkData
 {
@@ -56,7 +60,10 @@ message FluidCompartmentGraphData
 message GasCompartmentData
 {
   FluidCompartmentData                   FluidCompartment                         = 1;
-  repeated GasSubstanceQuantityData      SubstanceQuantity                        = 2;
+  ScalarAreaData                         DiffusionSurfaceArea                     = 2;
+  ScalarVolumePerTimeData                Ventilation                              = 3;
+  ScalarData                             VentilationPerfusionRatio                = 4;
+  repeated GasSubstanceQuantityData      SubstanceQuantity                        = 5;
   
 }
 message GasCompartmentLinkData
@@ -71,9 +78,10 @@ message GasCompartmentGraphData
 message LiquidCompartmentData
 {
   FluidCompartmentData                   FluidCompartment                         = 1;
-  ScalarData                             pH                                       = 2;
-  Scalar0To1Data                         WaterVolumeFraction                      = 3;
-  repeated LiquidSubstanceQuantityData   SubstanceQuantity                        = 4;
+  ScalarVolumePerTimeData                Perfusion                                = 2;
+  ScalarData                             pH                                       = 3;
+  Scalar0To1Data                         WaterVolumeFraction                      = 4;
+  repeated LiquidSubstanceQuantityData   SubstanceQuantity                        = 5;
   
 }
 message LiquidCompartmentLinkData

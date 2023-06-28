@@ -10,9 +10,9 @@ import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Scenario.ScenarioData;
 import com.kitware.pulse.cdm.testing.SETestDriver;
 import com.kitware.pulse.cdm.testing.SETestJob;
-import com.kitware.pulse.engine.PulseScenarioExec;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
+import com.kitware.pulse.utilities.TimingProfile;
 import com.kitware.pulse.utilities.JNIBridge;
 
 public class ScenarioTestDriver implements SETestDriver.Executor
@@ -20,10 +20,6 @@ public class ScenarioTestDriver implements SETestDriver.Executor
   @Override
   public boolean ExecuteTest(SETestJob job)
   {
-    
-    String logFilename;
-    String resultsFilename;
-    String outputFile = job.computedDirectory+"/"+job.name;
     String json = FileUtils.readFile(job.scenarioDirectory+"/"+job.name);
     if(json==null)
     {
@@ -39,29 +35,29 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     }
     catch(InvalidProtocolBufferException ex)
     {
-	    try
-	    {
-	    	builder = pBuilder.getScenarioBuilder();
-	    	JsonFormat.parser().merge(json, builder);
-	    }
-	    catch(InvalidProtocolBufferException ex2)
-	    {
-	    	Log.error("Unable to read scenario"+job.scenarioDirectory+"/"+job.name,ex2);
-	    	return false;
-	    }
+      try
+      {
+      	builder = pBuilder.getScenarioBuilder();
+      	JsonFormat.parser().merge(json, builder);
+      }
+      catch(InvalidProtocolBufferException ex2)
+      {
+        Log.error("Unable to read scenario"+job.scenarioDirectory+"/"+job.name);
+        Log.error(ex2.getMessage());
+        return false;
+      }
     }
-    
-    if(job.patientFile==null)
-    {
-      logFilename = outputFile.replaceAll("json", "log");
-      resultsFilename = outputFile.replaceAll(".json", "Results.csv");
-    }
-    else
+    // Since we are passing the scenario inline via the ScenarioContent string,
+    // The runner is going to the scenario name in naming output artifacts (logs, csv, etc)
+    String scenarioName = "./test_results/scenarios/"+job.name.substring(0,job.name.length()-5);
+
+    if(job.patientFile!=null)
     {
       String patientName = job.patientFile.substring(0,job.patientFile.length()-5);
-      logFilename = outputFile.replaceAll(".json", "-"+patientName+".log");
-      resultsFilename = outputFile.replaceAll(".json", "-"+patientName+"Results.csv");
-      
+      // Any config that is running scenarios with `Patients=all`,
+      // we need to add the patient name to the scenarioName
+      scenarioName = scenarioName+"-"+patientName;
+
       if(builder.hasPatientConfiguration())
       {
       	  builder.getPatientConfigurationBuilder().clearPatient();
@@ -71,7 +67,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       {
       		builder.clearEngineStateFile();
           builder.getPatientConfigurationBuilder().setPatientFile(job.patientFile);
-      }      
+      }
     }
     if(job.useState && builder.hasPatientConfiguration())
     {
@@ -81,33 +77,34 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       	builder.clearPatientConfiguration();
       	builder.setEngineStateFile(pFile);
     }
-    
+    builder.setName(scenarioName);
     pBuilder.getConfigurationBuilder();
-    try 
+    try
     {
       json = JsonFormat.printer().print(pBuilder);
-    } 
-    catch (InvalidProtocolBufferException ex) 
+    }
+    catch (InvalidProtocolBufferException ex)
     {
-      Log.error("Unable to refactor the scenario",ex);
+      Log.error("Unable to refactor the scenario");
+      Log.error(ex.getMessage());
       return false;
     }
-    
+
     job.execOpts.setLogToConsole(eSwitch.Off);
-    job.execOpts.setLogFilename(logFilename);
-    job.execOpts.setDataRequestCSVFilename(resultsFilename);
     job.execOpts.setScenarioContent(json);
+    job.execOpts.setLogPrepend(job.name);
+    job.execOpts.getDataRequestFilesSearch().add(job.scenarioDirectory+"/"+job.name);
     //System.out.println(json);
-    PulseScenarioExec pse = new PulseScenarioExec(job.modelType);
-    pse.runScenario(job.execOpts);
+    job.execOpts.execute();
     Log.info("Completed running "+job.name);
-    pse=null;
     return true;
   }
-  
+
   public static void main(String[] args)
   {
+    TimingProfile.start("main");
     JNIBridge.initialize();
     SETestDriver.main(args);
+    Log.info("It took "+TimingProfile.profile("main")+"s to execute ScenarioTestDriver");
   }
 }

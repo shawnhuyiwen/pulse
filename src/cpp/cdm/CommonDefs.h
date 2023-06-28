@@ -74,6 +74,12 @@
     DISABLE_WARNING(4267)
   #define POP_PROTO_WARNINGS DISABLE_WARNING_POP
 
+  #define PUSH_EIGEN_WARNINGS \
+      DISABLE_WARNING_PUSH \
+      DISABLE_WARNING(4127) \
+      DISABLE_WARNING(4267)
+  #define POP_EIGEN_WARNINGS DISABLE_WARNING_POP
+
 #elif defined(__GNUC__) || defined(__clang__)
   #define DO_PRAGMA(X) _Pragma(#X)
   #define DISABLE_WARNING_PUSH           DO_PRAGMA(GCC diagnostic push)
@@ -84,11 +90,22 @@
     DISABLE_WARNING_PUSH
   #define POP_PROTO_WARNINGS DISABLE_WARNING_POP
 
+  #define PUSH_EIGEN_WARNINGS \
+      DISABLE_WARNING_PUSH
+  #define POP_EIGEN_WARNINGS DISABLE_WARNING_POP
+
 #else
   #define DISABLE_WARNING_PUSH
   #define DISABLE_WARNING_POP
   #define DISABLE_WARNING
+
+  #define PUSH_PROTO_WARNINGS
+  #define POP_PROTO_WARNINGS
+
+  #define PUSH_EIGEN_WARNINGS
+  #define POP_EIGEN_WARNINGS
 #endif
+
 
 #define _USE_MATH_DEFINES
 #include <memory>
@@ -115,7 +132,7 @@ using namespace stdext;
 #endif
 
 //Utilities
-enum class eSerializationFormat { JSON = 0, BINARY };
+enum class eSerializationFormat { JSON = 0, BINARY, VERBOSE_JSON,TEXT };
 
 struct CommonDataModelException : public std::runtime_error
 {
@@ -150,6 +167,16 @@ enum class eBreathState { NoBreath=0,
                           EquipmentInhale, EquipmentPause, EquipmentExhale,
                           ExpiratoryHold, InspiratoryHold };
 extern const std::string& eBreathState_Name(eBreathState m);
+
+enum class eDefaultType { Model = 0, Zero };
+extern const std::string& eDefaultType_Name(eDefaultType m);
+
+enum class eDriverWaveform { NullDriverWaveform = 0, Square,
+                                                  AscendingRamp, DescendingRamp,
+                                                  ExponentialGrowth, ExponentialDecay,
+                                                  SinusoidalRise, SinusoidalFall,
+                                                  SigmoidalRise, SigmoidalFall };
+extern const std::string& eDriverWaveform_Name(eDriverWaveform m);
 
 //
 // End General Enum
@@ -239,6 +266,7 @@ class SEScalarVolumePerTimeArea; class VolumePerTimeAreaUnit;
 class SEScalarVolumePerTimePressureArea; class VolumePerTimePressureAreaUnit;
 class SEScalarVolumePerTimeMass; class VolumePerTimeMassUnit;
 class SEScalarVolumePerTimePressure; class VolumePerTimePressureUnit;
+class SETemporalInterpolator;
 
 class SEArray;
 class SEArrayElectricPotential;

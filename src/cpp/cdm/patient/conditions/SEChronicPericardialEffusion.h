@@ -12,19 +12,18 @@ public:
   SEChronicPericardialEffusion(Logger* logger=nullptr);
   virtual ~SEChronicPericardialEffusion();
 
+  static constexpr char const* Name = "Chronic Pericardial Effusion";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEChronicPericardialEffusion& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual std::string GetName() const { return "ChronicPericardialEffusion"; }
-
   virtual bool HasAccumulatedVolume() const;
   virtual SEScalarVolume& GetAccumulatedVolume();
   virtual double GetAccumulatedVolume(const VolumeUnit& unit) const;
-
-  virtual void ToString(std::ostream &str) const;
 
 protected:
 

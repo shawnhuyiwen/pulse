@@ -22,8 +22,6 @@ public:
   virtual eSwitch GetConnection() const;
   virtual void SetConnection(eSwitch c);
 
-  virtual void ToString(std::ostream &str) const = 0;
-
 protected:
 
   eSwitch             m_Connection;

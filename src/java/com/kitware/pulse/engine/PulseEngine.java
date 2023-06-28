@@ -23,7 +23,6 @@ import com.kitware.pulse.cdm.bind.Patient.PatientData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.ArterialBloodGasTestData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.CompleteBloodCountData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanelData;
-import com.kitware.pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.UrinalysisData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
 import com.kitware.pulse.cdm.conditions.SECondition;
@@ -35,7 +34,6 @@ import com.kitware.pulse.cdm.patient.assessments.SEArterialBloodGasTest;
 import com.kitware.pulse.cdm.patient.assessments.SECompleteBloodCount;
 import com.kitware.pulse.cdm.patient.assessments.SEComprehensiveMetabolicPanel;
 import com.kitware.pulse.cdm.patient.assessments.SEPatientAssessment;
-import com.kitware.pulse.cdm.patient.assessments.SEPulmonaryFunctionTest;
 import com.kitware.pulse.cdm.patient.assessments.SEUrinalysis;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
@@ -95,6 +93,12 @@ public class PulseEngine
     nativeObj=nativeAllocate(dataDir, m.ordinal());
     timeStep_s = nativeGetTimeStep(nativeObj,"s");
   }
+  
+  // Release any files
+  public void clear()
+  {
+    nativeClear(nativeObj);
+  }
 
   public void finalize()
   {
@@ -127,7 +131,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to serialize state file", ex);
+      {
+        logListener.error("Unable to serialize state file");
+        logListener.error(ex.getMessage());
+      }
       alive = false;
     }
     return alive;
@@ -156,7 +163,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to serialize state file", ex);
+      {
+        logListener.error("Unable to serialize state file");
+        logListener.error(ex.getMessage());
+      }
       alive = false;
     }
     return alive;
@@ -186,7 +196,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to initialize engine", ex);
+      {
+        logListener.error("Unable to initialize engine");
+        logListener.error(ex.getMessage());
+      }
       alive = false;
     }
     return alive;
@@ -209,7 +222,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to get initial patient", ex);
+      {
+        logListener.error("Unable to get initial patient");
+        logListener.error(ex.getMessage());
+      }
       return false;
     }
     return true;
@@ -234,7 +250,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to get conditions", ex);
+      {
+        logListener.error("Unable to get conditions");
+        logListener.error(ex.getMessage());
+      }
       return false;
     }
     return true;
@@ -276,15 +295,6 @@ public class PulseEngine
         return true;
       }
       
-      if(assessment instanceof SEPulmonaryFunctionTest)
-      {
-        PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
-        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.PulmonaryFunctionTest.ordinal(), thunkType.value());
-        JsonFormat.parser().merge(str, b);
-        SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
-        return true;
-      }
-      
       if(assessment instanceof SEUrinalysis)
       {
         UrinalysisData.Builder b = UrinalysisData.newBuilder();
@@ -297,7 +307,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to get patient assessment", ex);
+      {
+        logListener.error("Unable to get patient assessment");
+        logListener.error(ex.getMessage());
+      }
     }
     return false;
   }
@@ -339,7 +352,8 @@ public class PulseEngine
         }
         catch(Exception ex)
         {
-          Log.error("Unable to process log messages", ex);
+          Log.error("Unable to process log messages");
+          Log.error(ex.getMessage());
         }
       }
     }
@@ -412,7 +426,8 @@ public class PulseEngine
       }
       catch(Exception ex)
       {
-        Log.error("Unable to convert action to json",ex);
+        Log.error("Unable to convert action to json");
+        Log.error(ex.getMessage());
         alive = false;
       }
     }
@@ -438,7 +453,10 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to get active actions", ex);
+      {
+        logListener.error("Unable to get active actions");
+        logListener.error(ex.getMessage());
+      }
       return false;
     }
     return true;
@@ -458,30 +476,30 @@ public class PulseEngine
     nativeSetLogFilename(nativeObj, logFilename);
   }
   
-  protected void handleDebug(String msg, String origin)
+  protected void handleDebug(String msg)
   {
     if(this.logListener!=null)
-      this.logListener.debug(msg, origin);
+      this.logListener.debug(msg);
   }
-  protected void handleInfo(String msg, String origin)
+  protected void handleInfo(String msg)
   {
     if(this.logListener!=null)
-      this.logListener.info(msg, origin);
+      this.logListener.info(msg);
   }
-  protected void handleWarning(String msg, String origin)
+  protected void handleWarning(String msg)
   {
     if(this.logListener!=null)
-      this.logListener.warn(msg, origin);
+      this.logListener.warn(msg);
   }
-  protected void handleError(String msg, String origin)
+  protected void handleError(String msg)
   {
     if(this.logListener!=null)
-      this.logListener.error(msg, origin);
+      this.logListener.error(msg);
   }
-  protected void handleFatal(String msg, String origin)
+  protected void handleFatal(String msg)
   {
     if(this.logListener!=null)
-      this.logListener.fatal(msg, origin);
+      this.logListener.fatal(msg);
   }
   
   public void setEventHandler(SEEventHandler eh)
@@ -510,7 +528,8 @@ public class PulseEngine
     }
     catch(Exception ex)
     {
-      Log.error("Unable to pull active events",ex);
+      Log.error("Unable to pull active events");
+      Log.error(ex.getMessage());
     }
   }
   
@@ -526,6 +545,7 @@ public class PulseEngine
   protected native double nativeGetTimeStep(long nativeObj, String unit);
   static protected native String nativeGetVersion();
   static protected native String nativeGetHash();
+  static protected native void nativeClear(long nativeObj);
   
   protected native boolean nativeSerializeFromFile(long nativeObj, String stateFile, String dataRequests, int dataRequestsFormat);
   protected native boolean nativeSerializeToFile(long nativeObj, String stateFile);
@@ -552,6 +572,4 @@ public class PulseEngine
   protected native String nativeGetInitialPatient(long nativeObj, int format);
   protected native String nativeGetConditions(long nativeObj, int format);
   protected native String nativeGetAssessment(long nativeObj, int type, int format);
-  
-  protected native boolean nativeExecuteScenario(long nativeObj, String sceOpts, int format);
 }

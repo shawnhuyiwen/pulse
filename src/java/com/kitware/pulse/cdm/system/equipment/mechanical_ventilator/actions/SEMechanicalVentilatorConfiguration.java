@@ -110,7 +110,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   {
     String str = "Mechanical Ventilator Configuration";
     if(this.hasSettingsFile())
-      str +="\n\tCSettings File: "+this.settingsFile;
+      str +="\n\tSettings File: "+this.settingsFile;
     else if(hasSettings())
     {
       str += settings.toString();

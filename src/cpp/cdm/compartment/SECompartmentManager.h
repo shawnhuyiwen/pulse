@@ -36,6 +36,7 @@ public:
   virtual void                                                UpdateLinks(SEGasCompartmentGraph& graph);
   virtual void                                                UpdateLinks(SELiquidCompartmentGraph& graph);
 
+
   virtual bool                                                HasCompartment(eCompartment_Type type, const std::string& name) const;
   virtual SECompartment*                                      GetCompartment(eCompartment_Type type, const std::string& name);
   virtual const SECompartment*                                GetCompartment(eCompartment_Type type, const std::string& name) const;
@@ -83,6 +84,10 @@ public:
   virtual const std::vector<SELiquidCompartmentGraph*>&       GetLiquidGraphs();
   virtual void                                                AddLiquidCompartmentSubstance(SESubstance& sub);
   virtual const std::vector<SESubstance*>&                    GetLiquidCompartmentSubstances() const;
+
+  // Support to track compartment value averages based on the cardiac cycle
+  virtual void                                                SampleByCardiacCyle(bool CycleStart);
+  virtual void                                                SampleByCardiacCyle(SELiquidCompartment&);// Include this cmpt when sampling
   
   virtual SEThermalCompartment&                               CreateThermalCompartment(const std::string& name);
   virtual void                                                DeleteThermalCompartment(const std::string& name);
@@ -124,6 +129,7 @@ protected:
   std::vector<SELiquidCompartmentGraph*>                      m_LiquidGraphs;
   std::map<std::string, SELiquidCompartmentGraph*>            m_LiquidName2Graphs;
   std::vector<SESubstance*>                                   m_LiquidSubstances;
+  std::vector<SELiquidCompartment*>                           m_CardiacCycleSampledCompartments;
   
   std::vector<SEThermalCompartment*>                          m_ThermalCompartments;
   std::vector<SEThermalCompartment*>                          m_ThermalLeafCompartments;

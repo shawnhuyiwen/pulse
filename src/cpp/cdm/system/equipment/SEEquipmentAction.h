@@ -14,6 +14,4 @@ public:
   virtual void Clear();
 
   virtual bool IsValid() const;
-
-  virtual void ToString(std::ostream &str) const = 0;
 };  

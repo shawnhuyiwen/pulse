@@ -18,6 +18,8 @@ namespace pulse
     Model(Data& data) : m_data(data) {}
     virtual ~Model() = default;
 
+    virtual void Clear() = 0;
+
     /** @brief - Default system values to their homeostatic values */
     virtual void Initialize() { SetUp(); }// NOT called when loading a state
     virtual void SetUp() = 0; // Called after Initialize if stablizing, or after serialization if loading in a state

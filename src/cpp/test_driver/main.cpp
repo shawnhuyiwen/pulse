@@ -41,6 +41,11 @@ int main(int argc, char* argv[])
 
       //hawbTest.ReadScenarios(hawbDir);
       //hawbTest.ReuseEngine(hawbDir);
+      //hawbTest.SerializationTest(hawbDir);
+      //hawbTest.ConditionCombinations(hawbDir);
+      //hawbTest.MultiEngineTest(hawbDir);
+      //hawbTest.SolverSpeedTest(hawbDir);
+      //hawbTest.SetupPatientTest(hawbDir);
 
       //hawbTest.CardiovascularCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndRenalCircuitAndTransportTest(hawbDir);
@@ -62,7 +67,7 @@ int main(int argc, char* argv[])
       //hawbTest.RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(hawbDir);
       //hawbTest.MechanicalVentilatorCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
-      //hawbTest.RespiratoryWithInhalerCircuitAndTransportTest(hawbDir); 
+      //hawbTest.RespiratoryWithInhalerCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
 
       //hawbTest.InternalTemperatureVariableBMRCircuitTest(hawbDir);
@@ -84,11 +89,6 @@ int main(int argc, char* argv[])
 
       //hawbTest.BrainInjuryTest(hawbDir);
 
-      //hawbTest.ConditionCombinations(hawbDir);
-      //hawbTest.MultiEngineTest(hawbDir);
-      //hawbTest.SerializationTest(hawbDir);
-      //hawbTest.SolverSpeedTest(hawbDir);
-
       //Acid Base Tests
       //hawbTest.AcidBaseMathTest(hawbDir);
       //hawbTest.AcidBaseFeedbackTest(hawbDir);
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 
       //Black Box Tests
       //hawbTest.EmptyBlackBoxTest(hawbDir);
-      hawbTest.ImposeFlowBlackBoxTest(hawbDir);
+      //hawbTest.ImposeFlowBlackBoxTest(hawbDir);
       //hawbTest.ImposePressureAndFlowBlackBoxTest(hawbDir);
 
       //hawbTest.FourCompartmentTestSimple(hawbDir);
@@ -138,13 +138,15 @@ int main(int argc, char* argv[])
       //cdmTest.BlackBoxSourcesTest(cdmDir);
 
       // I/O Tests
+      cdmTest.ActionTest(cdmDir);
       //cdmTest.ReadPatientDirectory(cdmDir);
       //cdmTest.ReadSubstanceDirectory(cdmDir);
+      //cdmTest.ConvertScenarioLogs(cdmDir);
 
       // Property Tests
       //cdmTest.ScalarTest(cdmDir);
       //cdmTest.UnitsTest(cdmDir);
-      cdmTest.WaveformInterpolatorTest(cdmDir);
+      //cdmTest.WaveformInterpolatorTest(cdmDir);
 
       // Advanced Circuit Tests
       //cdmTest.ElectricalCircuitTest(cdmDir);
@@ -166,6 +168,9 @@ int main(int argc, char* argv[])
 
       // Basic Circuit Tests
       //cdmTest.BasicCircuitTest(cdmDir);
+      //cdmTest.MultiphysicsElectricalCircuitTest(cdmDir);
+      //cdmTest.MultiphysicsFluidCircuitTest(cdmDir);
+      //cdmTest.MultiphysicsThermalCircuitTest(cdmDir);
 
       //cdmTest.SeriesRCDCTest(cdmDir);
       //cdmTest.SeriesRCSINTest(cdmDir);
@@ -340,4 +345,3 @@ int main(int argc, char* argv[])
   }
   return 1;
 }
-

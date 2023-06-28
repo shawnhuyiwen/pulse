@@ -17,39 +17,47 @@ message ScenarioData
 {
   string                           Name                          = 1;
   string                           Description                   = 2;
-  
+
   oneof StartType
   {
     string                         EngineStateFile               = 3;
     PatientConfigurationData       PatientConfiguration          = 4;
   }
   DataRequestManagerData           DataRequestManager            = 5;
-  repeated AnyActionData           AnyAction                     = 6;
+  repeated string                  DataRequestFile               = 6;
+  repeated AnyActionData           AnyAction                     = 7;
 }
 
 message ScenarioExecData
 {
   eSwitch                          LogToConsole                  = 1;
-  string                           LogFilename                   = 2;/**<< @brief Log file to create, leave blank to not create file*/
-  string                           DataRequestCSVFilename        = 3;/**<< @brief CSV file to create, leave blank to not create file*/
-  string                           DataRootDirectory             = 4;/**<< @brief Root location of all input files for stabilization, generally install/bin of the build*/
-  
-  string                           SerializationDirectory        = 5;/**<< Directory to prepend all non absolute SerializationAction paths, default is the working directory */
-  string                           AutoSerializeFilename         = 6;/**<< @brief Filename to use when serializing after actions and at a period */
-  eSwitch                          AutoSerializeAfterActions     = 7;/**<< @brief Save state after an action is added to the action manager, then again after it is processed. (These states are always time stamped.) */
-  double                           AutoSerializePeriod_s         = 8;/**<< @brief The frequency at which to write a file, 1s would write a file every second. 0 will not save out at all (if you wanted after actions only.) */    
-  eSwitch                          TimeStampSerializedStates     = 9;/**<< @brief Put a time stamp at the end of the period state filename, Off will overwrite the same individual file, On will create new files every period, named with the simulation time. */
-  eSwitch                          ReloadSerializedState         = 10;/**<< @brief Load the data back into the engine, this is primarily used for testing */
+  string                           DataRootDirectory             = 2;/**<< @brief Root directory of all input files for stabilization, generally install/bin of the build*/
+  string                           OutputRootDirectory           = 3;/**<< Root directory where all output files will be written */
+  eSwitch                          OrganizeOutputDirectory       = 4;/**<< Put outputs in new folder named by the scenario, if processing a ScenarioDirectory, the source folder hierarchy will also be reflected in the output directory */
+
+  /** Used for testing that states are consistent around actions */
+  eSwitch                          AutoSerializeAfterActions     = 5;/**<< @brief Save state after an action is added to the action manager, then again after it is processed. (These states are always time stamped.) */
+  double                           AutoSerializePeriod_s         = 6;/**<< @brief The frequency at which to write a file, 1s would write a file every second. 0 will not save out at all (if you wanted after actions only.) */
+  eSwitch                          TimeStampSerializedStates     = 7;/**<< @brief Put a time stamp at the end of the period state filename, Off will overwrite the same individual file, On will create new files every period, named with the simulation time. */
+
   oneof EngineConfiguration
   {
-    string                         EngineConfigurationContent    = 11;
-    string                         EngineConfigurationFilename   = 12;
+    string                         EngineConfigurationContent    = 8;
+    string                         EngineConfigurationFilename   = 9;
   }
+
   oneof Scenario
   {
-    string                         ScenarioContent               = 13;
-    string                         ScenarioFilename              = 14;
+    string                         ScenarioContent               = 10;/**<< @brief Scenario json/binary inline*/
+    string                         ScenarioFilename              = 11;/**<< @brief Single Scenario filename*/
+    string                         ScenarioDirectory             = 12;/**<< @brief A directory, where each file is assumed to be a scenario.*/
+    string                         ScenarioLogFilename           = 13;/**<< @brief A directory, where each file is assumed to be a scenario.*/
+    string                         ScenarioLogDirectory          = 14;/**<< @brief A directory, where each file is assumed to be a scenario.*/
   }
-  eSerializationFormat             ContentFormat                 = 15;
   
+  eSerializationFormat             ContentFormat                 = 15;/**<< @brief Set what Content is*/
+  int32                            ThreadCount                   = 16;/**<< @brief Number of threads to use when processing a Directory: >0 NumThreads to use; 0 NumThreads=NumCores; <0 NumThreads=NumCores-ThreadCount */
+  
+  repeated string                  DataRequestFilesSearch        = 17;/**<< @brief A list of directories to find any data request files referenced in the scenario. */
+
 }

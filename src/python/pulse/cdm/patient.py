@@ -1,7 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 from enum import Enum
-from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarFrequency, SEScalarLength, \
+from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarArea, SEScalarFrequency, SEScalarLength, \
                               SEScalarMass, SEScalarMassPerTime, SEScalarMassPerVolume, SEScalarPower, \
                               SEScalarPressure, SEScalarTime, SEScalarVolume
 from pulse.cdm.engine import SEConditionManager
@@ -60,14 +60,14 @@ class SEPatientConfiguration():
         self._condition_manager = None
 
 class SEPatient():
-    __slots__ = ["_name", "_sex", "_age", "_weight", "_height",
-                 "_body_density", "_body_fat_fraction", "_ideal_body_weight",
+    __slots__ = ["_name", "_sex", "_age", "_weight", "_height", "_body_density",
+                 "_body_fat_fraction", "_body_mass_index", "_ideal_body_weight",
                  "_lean_body_mass", "_alveoli_surface_area", "_right_lung_ratio",
                  "_skin_surface_area", "_basal_metabolic_rate", "_blood_volume_baseline",
                  "_diastolic_arterial_pressure_baseline", "_heart_rate_baseline",
-                 "_mean_arterial_pressure_baseline", "_respiration_rate_baseline",
-                 "_systolic_arterial_pressure_baseline", "_tidal_volume_baseline",
-                 "_heart_rate_maximum",  "_heart_rate_minimum",
+                 "_mean_arterial_pressure_baseline", "_pulse_pressure_baseline", 
+                 "_respiration_rate_baseline", "_systolic_arterial_pressure_baseline",
+                 "_tidal_volume_baseline", "_heart_rate_maximum",  "_heart_rate_minimum",
                  "_expiratory_reserve_volume",  "_functional_residual_capacity",
                  "_inspiratory_capacity",  "_inspiratory_reserve_volume",
                  "_residual_volume",  "_total_lung_capacity", "_vital_capacity"]
@@ -80,6 +80,7 @@ class SEPatient():
         self._height = None
         self._body_density = None
         self._body_fat_fraction = None
+        self._body_mass_index = None
         self._lean_body_mass = None
         self._ideal_body_weight = None
 
@@ -92,6 +93,7 @@ class SEPatient():
         self._diastolic_arterial_pressure_baseline = None
         self._heart_rate_baseline = None
         self._mean_arterial_pressure_baseline = None
+        self._pulse_pressure_baseline = None
         self._respiration_rate_baseline = None
         self._systolic_arterial_pressure_baseline = None
         self._tidal_volume_baseline = None
@@ -114,6 +116,7 @@ class SEPatient():
         if self._height is not None: self._height.invalidate()
         if self._body_density is not None: self._body_density.invalidate()
         if self._body_fat_fraction is not None: self._body_fat_fraction.invalidate()
+        if self._body_mass_index is not None: self._body_mass_index.invalidate()
         if self._lean_body_mass is not None: self._lean_body_mass.invalidate()
         if self._ideal_body_weight is not None: self._ideal_body_weight.invalidate()
 
@@ -126,6 +129,7 @@ class SEPatient():
         if self._diastolic_arterial_pressure_baseline is not None: self._diastolic_arterial_pressure_baseline.invalidate()
         if self._heart_rate_baseline is not None: self._heart_rate_baseline.invalidate()
         if self._mean_arterial_pressure_baseline is not None: self._mean_arterial_pressure_baseline.invalidate()
+        if self._pulse_pressure_baseline is not None: self._pulse_pressure_baseline.invalidate()
         if self._respiration_rate_baseline is not None: self._respiration_rate_baseline.invalidate()
         if self._systolic_arterial_pressure_baseline is not None: self._systolic_arterial_pressure_baseline.invalidate()
         if self._tidal_volume_baseline is not None: self._tidal_volume_baseline.invalidate()
@@ -151,6 +155,7 @@ class SEPatient():
         if src.has_height(): self.get_height().set(src._height)
         if src.has_body_density(): self.get_body_density().set(src._body_density)
         if src.has_body_fat_fraction(): self.get_body_fat_fraction().set(src._body_fat_fraction)
+        if src.has_body_mass_index(): self.get_body_mass_index().set(src._body_mass_index)
         if src.has_lean_body_mass(): self.get_lean_body_mass().set(src._lean_body_mass)
         if src.has_ideal_body_weight(): self.get_ideal_body_weight().set(src._ideal_body_weight)
 
@@ -163,6 +168,7 @@ class SEPatient():
         if src.has_diastolic_arterial_pressure_baseline(): self.get_diastolic_arterial_pressure_baseline().set(src._diastolic_arterial_pressure_baseline)
         if src.has_heart_rate_baseline(): self.get_heart_rate_baseline().set(src._heart_rate_baseline)
         if src.has_mean_arterial_pressure_baseline(): self.get_mean_arterial_pressure_baseline().set(src._mean_arterial_pressure_baseline)
+        if src.has_pulse_pressure_baseline(): self.get_pulse_baseline().set(src._pulse_pressure_baseline)
         if src.has_respiration_rate_baseline(): self.get_respiration_rate_baseline().set(src._respiration_rate_baseline)
         if src.has_systolic_arterial_pressure_baseline(): self.get_systolic_arterial_pressure_baseline().set(src._systolic_arterial_pressure_baseline)
         if src.has_tidal_volume_baseline(): self.get_tidal_volume_baseline().set(src._tidal_volume_baseline)
@@ -225,6 +231,13 @@ class SEPatient():
         if self._body_fat_fraction is None:
             self._body_fat_fraction = SEScalar0To1()
         return self._body_fat_fraction
+
+    def has_body_mass_index(self):
+        return False if self._body_mass_index is None else self._body_mass_index.is_valid()
+    def get_body_mass_index(self):
+        if self._body_mass_index is None:
+            self._body_mass_index = SEScalar()
+        return self._body_mass_index
 
     def has_ideal_body_weight(self):
         return False if self._ideal_body_weight is None else self._ideal_body_weight.is_valid()
@@ -295,6 +308,13 @@ class SEPatient():
         if self._mean_arterial_pressure_baseline is None:
             self._mean_arterial_pressure_baseline = SEScalarPressure()
         return self._mean_arterial_pressure_baseline
+
+    def has_pulse_pressure_baseline(self):
+        return False if self._pulse_pressure_baseline is None else self._pulse_pressure_baseline.is_valid()
+    def get_pulse_pressure_baseline(self):
+        if self._pulse_pressure_baseline is None:
+            self._pulse_pressure_baseline = SEScalarPressure()
+        return self._pulse_pressure_baseline
 
     def has_respiration_rate_baseline(self):
         return False if self._respiration_rate_baseline is None else self._respiration_rate_baseline.is_valid()

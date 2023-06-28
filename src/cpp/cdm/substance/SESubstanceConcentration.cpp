@@ -32,6 +32,10 @@ SEScalarMassPerVolume& SESubstanceConcentration::GetConcentration()
     m_Concentration=new SEScalarMassPerVolume();
   return *m_Concentration;
 }
+const SEScalarMassPerVolume* SESubstanceConcentration::GetConcentration() const
+{
+  return m_Concentration;
+}
 double SESubstanceConcentration::GetConcentration(const MassPerVolumeUnit& unit) const
 {
   if (m_Concentration == nullptr)
@@ -42,4 +46,9 @@ double SESubstanceConcentration::GetConcentration(const MassPerVolumeUnit& unit)
 const SESubstance& SESubstanceConcentration::GetSubstance() const
 {
   return m_Substance;
+}
+
+std::string SESubstanceConcentration::ToString() const
+{
+  return m_Substance.GetName() + " Concentration: " + (HasConcentration() ? m_Concentration->ToString() : "NaN");
 }

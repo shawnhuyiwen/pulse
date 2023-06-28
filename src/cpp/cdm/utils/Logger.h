@@ -7,18 +7,21 @@ class Logger;
 class SEScalarTime;
 class log_lib; // Encapsulates 3rd party logging library
 #include <sstream>
+#include <mutex>
+
+enum class ePrettyPrintType { Action = 0, Condition };
 
 namespace pulse { namespace cdm
 {
   // Not happy with how std does this for floats/doubles
   std::string to_string(float f);
   std::string to_string(double d);
+  std::string PrettyPrint(const std::string& str, ePrettyPrintType ppt);
 }}
 
 class CDM_DECL Loggable
 {
 public:
-  static const std::string empty;
 
   Loggable(Logger* logger = nullptr);
   Loggable(std::string const& logfile);
@@ -27,26 +30,26 @@ public:
   virtual Logger* GetLogger() const;
   virtual void    SetLogger(Logger& logger);
 
-  virtual void Debug(std::string const&  msg, std::string const&  origin = empty) const;
-  virtual void Debug(std::stringstream &msg, std::string const&  origin = empty) const;
-  virtual void Debug(std::ostream &msg, std::string const&  origin = empty) const;
+  virtual void Debug(std::string const&  msg) const;
+  virtual void Debug(std::stringstream &msg) const;
+  virtual void Debug(std::ostream &msg) const;
 
-  virtual void Info(std::string const&  msg, std::string const&  origin = empty) const;
-  virtual void Info(std::stringstream &msg, std::string const&  origin = empty) const;
-  virtual void Info(const std::stringstream &msg, std::string const&  origin = empty) const;
-  virtual void Info(std::ostream &msg, std::string const&  origin = empty) const;
+  virtual void Info(std::string const&  msg) const;
+  virtual void Info(std::stringstream &msg) const;
+  virtual void Info(const std::stringstream &msg) const;
+  virtual void Info(std::ostream &msg) const;
 
-  virtual void Warning(std::string const&  msg, std::string const&  origin = empty) const;
-  virtual void Warning(std::stringstream &msg, std::string const&  origin = empty) const;
-  virtual void Warning(std::ostream &msg, std::string const&  origin = empty) const;
+  virtual void Warning(std::string const&  msg) const;
+  virtual void Warning(std::stringstream &msg) const;
+  virtual void Warning(std::ostream &msg) const;
 
-  virtual void Error(std::string const&  msg, std::string const&  origin = empty) const;
-  virtual void Error(std::stringstream &msg, std::string const&  origin = empty) const;
-  virtual void Error(std::ostream &msg, std::string const&  origin = empty) const;
+  virtual void Error(std::string const&  msg) const;
+  virtual void Error(std::stringstream &msg) const;
+  virtual void Error(std::ostream &msg) const;
 
-  virtual void Fatal(std::string const&  msg, std::string const&  origin = empty) const;
-  virtual void Fatal(std::stringstream &msg, std::string const&  origin = empty) const;
-  virtual void Fatal(std::ostream &msg, std::string const&  origin = empty) const;
+  virtual void Fatal(std::string const&  msg) const;
+  virtual void Fatal(std::stringstream &msg) const;
+  virtual void Fatal(std::ostream &msg) const;
 
 protected:
   bool    myLogger;
@@ -56,27 +59,25 @@ protected:
 class CDM_DECL LoggerForward
 {
 public:
-  virtual void ForwardDebug(std::string const& /*msg*/, std::string const& /*origin*/) {};
-  virtual void ForwardInfo(std::string const& /*msg*/, std::string const& /*origin*/){};
-  virtual void ForwardWarning(std::string const& /*msg*/, std::string const& /*origin*/){};
-  virtual void ForwardError(std::string const& /*msg*/, std::string const& /*origin*/){};
-  virtual void ForwardFatal(std::string const& /*msg*/, std::string const& /*origin*/){};
+  virtual ~LoggerForward() = default;
+  virtual void ForwardDebug(std::string const& /*msg*/) {};
+  virtual void ForwardInfo(std::string const& /*msg*/){};
+  virtual void ForwardWarning(std::string const& /*msg*/){};
+  virtual void ForwardError(std::string const& /*msg*/){};
+  virtual void ForwardFatal(std::string const& /*msg*/){};
 };
 
 class CDM_DECL Logger
 {
   friend Loggable;
 public:
-  Logger(std::string const&  logFilename = Loggable::empty);
+  Logger(std::string const&  logFilename = "");
   virtual ~Logger();
-
-  static void Initialize();
-  static void Deinitialize();
 
   void LogToConsole(bool b);
   bool IsLoggingToConsole();
 
-  void SetLogFile(std::string const&  logFilename = Loggable::empty);
+  void SetLogFile(std::string const&  logFilename = "");
 
   enum class Level
   {
@@ -96,34 +97,33 @@ public:
   virtual void RemoveForward(LoggerForward* forward);
   virtual void RemoveForwards();
 
-  virtual void Debug(std::string const&  msg, std::string const&  origin = Loggable::empty);
-  virtual void Debug(std::stringstream &msg, std::string const&  origin = Loggable::empty);
-  virtual void Debug(std::ostream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Debug(std::string const&  msg);
+  virtual void Debug(std::stringstream &msg);
+  virtual void Debug(std::ostream &msg);
 
-  virtual void Info(std::string const&  msg, std::string const&  origin = Loggable::empty);
-  virtual void Info(std::stringstream &msg, std::string const&  origin = Loggable::empty);
-  virtual void Info(const std::stringstream &msg, std::string const&  origin = Loggable::empty);
-  virtual void Info(std::ostream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Info(std::string const&  msg);
+  virtual void Info(std::stringstream &msg);
+  virtual void Info(const std::stringstream &msg);
+  virtual void Info(std::ostream &msg);
 
-  virtual void Warning(std::string const&  msg, std::string const&  origin = Loggable::empty);
-  virtual void Warning(std::stringstream &msg, std::string const&  origin = Loggable::empty);
-  virtual void Warning(std::ostream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Warning(std::string const&  msg);
+  virtual void Warning(std::stringstream &msg);
+  virtual void Warning(std::ostream &msg);
 
-  virtual void Error(std::string const&  msg, std::string const&  origin = Loggable::empty);
-  virtual void Error(std::stringstream &msg, std::string const&  origin = Loggable::empty);
-  virtual void Error(std::ostream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Error(std::string const&  msg);
+  virtual void Error(std::stringstream &msg);
+  virtual void Error(std::ostream &msg);
 
-  virtual void Fatal(std::string const&  msg, std::string const&  origin = Loggable::empty);
-  virtual void Fatal(std::stringstream &msg, std::string const&  origin = Loggable::empty);
-  virtual void Fatal(std::ostream &msg, std::string const&  origin = Loggable::empty);
+  virtual void Fatal(std::string const&  msg);
+  virtual void Fatal(std::stringstream &msg);
+  virtual void Fatal(std::ostream &msg);
 
 protected:
 
-  virtual std::string FormatLogMessage(std::string const&  origin, std::string const&  msg);
+  virtual std::string FormatLogMessage(std::string const&  msg);
 
   std::vector<LoggerForward*>   m_Forwards;
   const SEScalarTime*           m_time;
-  std::stringstream             m_ss;
 
 private:
    log_lib*                     _log_lib;

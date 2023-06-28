@@ -45,27 +45,12 @@ public:
 //--------------------------------------------------------------------------------------------------
 void HowToRunScenario()
 {
-  // Create an engine object
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-
-  // Let's do something everytime the engine advances
-  pe->SetAdvanceHandler(new MyCustomExec());
-  
-  // This PulseEngine logger is based on log4cpp (which is based on log4j)
-  // PulseEngine logs to several distinct, ordered
-  // category levels: DEBUG, INFO, WARN, ERROR, FATAL
-  // These categories are orders, if your level is set to DEBUG you will recieve ALL messages.
-  // If set to INFO, you will not recieve DEBUG, but everything else
-  // If set to WARN, you will not recieve DEBUG and INFO, but everything else
-  // You can specify which level you would like the engine to log
-  pe->GetLogger()->SetLogLevel(Logger::Level::Info);
-
-  // You can forward logs as demonstrated in HowTo-EngineUse
+  Logger logger("./test_results/howto/HowTo-RunScenario.cpp/HowToRunScenario.log");
 
   // Let's make a scenario (you could just point the executor to a scenario json file on disk as well)
-  SEScenario sce(pe->GetLogger());
+  SEScenario sce(&logger);
   sce.SetName("HowToRunScenario");
-  sce.SetDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
+  sce.SetDescription("Simple Scenario to demonstrate building a scenario by the CDM API");
   sce.GetPatientConfiguration().SetPatientFile("StandardMale.json");
   // Note you can set an Engine state, or create your own SEPatient object (see HowTo-CreateAPatient)
   // When filling out a data request, units are optional
@@ -76,6 +61,7 @@ void HowToRunScenario()
   sce.GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate",FrequencyUnit::Per_min);
   sce.GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   sce.GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+
   // NOTE: the scenario will make it's own copy of this action
   // Once you set it, any changes will not be reflected in the scenario
   // You can reuse this object for future actions
@@ -83,12 +69,40 @@ void HowToRunScenario()
   adv.GetTime().SetValue(2, TimeUnit::min);
   sce.AddAction(adv);
 
-  std::string json;
-  SEScenarioExec execOpts;
-  sce.SerializeToString(json, eSerializationFormat::JSON);
-  std::cout << json << std::endl;
-  execOpts.SetLogFilename("./test_results/HowTo-RunScenarioResults.log");
-  execOpts.SetDataRequestCSVFilename("./test_results/HowTo-RunScenarioResults.csv");
-  execOpts.SetScenarioContent(json);
-  PulseScenarioExec::Execute(*pe, execOpts);
+  if (!sce.SerializeToFile("./test_results/howto/HowTo-RunScenario.cpp/OriginalScenario.json"))
+  {
+    logger.Fatal("Failed to serialize original scenario");
+    return;
+  }
+
+  // Save data requests to a file
+  std::string drFile = "./test_results/howto/HowTo-RunScenario.cpp/DataRequests.json";
+  if (!sce.GetDataRequestManager().SerializeDataRequestsToFile(drFile))
+  {
+    logger.Fatal("Failed to serialize data requests");
+    return;
+  }
+
+  // Create new scenario that uses data requests saved to file
+  SEScenario sce2(&logger);
+  sce2.SetName("HowToRunScenario2");
+  sce2.SetDescription("Simple Scenario to demonstrate using data requests in a file");
+  sce2.GetPatientConfiguration().SetPatientFile("StandardMale.json");
+  sce2.GetDataRequestFiles().push_back(drFile);
+  sce2.AddAction(adv);
+
+  std::string sceFilename = "./test_results/howto/HowTo-RunScenario.cpp/ScenarioWithFileReference.json";
+  if (!sce2.SerializeToFile(sceFilename))
+  {
+    logger.Fatal("Failed to serialize scenario with the file reference");
+    return;
+  }
+
+  PulseScenarioExec execOpts(&logger);
+  execOpts.SetScenarioFilename(sceFilename);
+  if (!execOpts.Execute())
+  {
+    logger.Fatal("Failed to execute scenario with the file reference");
+    return;
+  }
 }

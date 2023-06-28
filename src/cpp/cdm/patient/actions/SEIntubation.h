@@ -17,6 +17,9 @@ public:
   SEIntubation(Logger* logger=nullptr);
   virtual ~SEIntubation();
 
+  static constexpr char const* Name = "Intubation";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEIntubation& src, bool /*preserveState*/=false);
 
@@ -31,11 +34,14 @@ public:
   virtual SEScalarPressureTimePerVolume& GetAirwayResistance();
   virtual double GetAirwayResistance(const PressureTimePerVolumeUnit& unit) const;
 
-  virtual void ToString(std::ostream &str) const;
+  virtual bool HasSeverity() const;
+  virtual SEScalar0To1& GetSeverity();
+  virtual double GetSeverity() const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   eIntubation_Type               m_Type;
   SEScalarPressureTimePerVolume* m_AirwayResistance;
-};  
+  SEScalar0To1*                  m_Severity;
+};

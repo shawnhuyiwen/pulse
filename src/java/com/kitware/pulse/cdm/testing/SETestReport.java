@@ -85,7 +85,7 @@ public class SETestReport
     }
     catch(Exception ex)
     {
-      Log.error(ex);
+      Log.error(ex.getMessage());
       this.reportDir="./";
     }
   }

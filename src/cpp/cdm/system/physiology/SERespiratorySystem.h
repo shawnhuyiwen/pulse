@@ -73,9 +73,9 @@ public:
   virtual SEScalarVolume& GetExpiratoryTidalVolume();
   virtual double GetExpiratoryTidalVolume(const VolumeUnit& unit) const;
 
-  virtual bool HasFractionOfInsipredOxygen() const;
-  virtual SEScalar0To1& GetFractionOfInsipredOxygen();
-  virtual double GetFractionOfInsipredOxygen() const;
+  virtual bool HasFractionOfInspiredOxygen() const;
+  virtual SEScalar0To1& GetFractionOfInspiredOxygen();
+  virtual double GetFractionOfInspiredOxygen() const;
 
   virtual bool HasImposedPowerOfBreathing() const;
   virtual SEScalarPower& GetImposedPowerOfBreathing();
@@ -148,6 +148,10 @@ public:
   virtual bool HasPhysiologicDeadSpace() const;
   virtual SEScalarVolume& GetPhysiologicDeadSpace();
   virtual double GetPhysiologicDeadSpace(const VolumeUnit& unit) const;
+
+  virtual bool HasPhysiologicDeadSpaceTidalVolumeRatio() const;
+  virtual SEScalar& GetPhysiologicDeadSpaceTidalVolumeRatio();
+  virtual double GetPhysiologicDeadSpaceTidalVolumeRatio() const;
 
   virtual bool HasPositiveEndExpiratoryPressure() const;
   virtual SEScalarPressure& GetPositiveEndExpiratoryPressure();
@@ -249,6 +253,10 @@ public:
   virtual SEScalarPressure& GetTransthoracicPressure();
   virtual double GetTransthoracicPressure(const PressureUnit& unit) const;
 
+  virtual bool HasVentilationPerfusionRatio() const;
+  virtual SEScalar& GetVentilationPerfusionRatio();
+  virtual double GetVentilationPerfusionRatio() const;
+
   virtual bool HasActiveRespiratoryMechanics() const;
   virtual bool HasRespiratoryMechanics() const;
   virtual SERespiratoryMechanics& GetRespiratoryMechanics();
@@ -270,7 +278,7 @@ protected:
   SEScalarVolumePerTime*         m_ExpiratoryFlow;
   SEScalarPressureTimePerVolume* m_ExpiratoryPulmonaryResistance;
   SEScalarVolume*                m_ExpiratoryTidalVolume;
-  SEScalar0To1*                  m_FractionOfInsipredOxygen;
+  SEScalar0To1*                  m_FractionOfInspiredOxygen;
   SEScalarPower*                 m_ImposedPowerOfBreathing;
   SEScalarEnergy*                m_ImposedWorkOfBreathing;
   SEScalar*                      m_InspiratoryExpiratoryRatio;
@@ -289,6 +297,7 @@ protected:
   SEScalarEnergy*                m_PatientWorkOfBreathing;
   SEScalarPressure*              m_PeakInspiratoryPressure;
   SEScalarVolume*                m_PhysiologicDeadSpace;
+  SEScalar*                      m_PhysiologicDeadSpaceTidalVolumeRatio;
   SEScalarPressure*              m_PositiveEndExpiratoryPressure;
   SEScalarVolumePerPressure*     m_PulmonaryCompliance;
   SEScalarPressurePerVolume*     m_PulmonaryElastance;
@@ -314,6 +323,7 @@ protected:
   SEScalarPressure*              m_TranspulmonaryPressure;
   SEScalarPressure*              m_TransrespiratoryPressure;
   SEScalarPressure*              m_TransthoracicPressure;
+  SEScalar*                      m_VentilationPerfusionRatio;
 
   SERespiratoryMechanics*        m_RespiratoryMechanics;
 };

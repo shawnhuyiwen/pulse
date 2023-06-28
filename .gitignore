@@ -8,3 +8,6 @@
 # Eclipse Build Directory
 .eclipse/pulse/build
 .eclipse/bind/build
+.classpath
+.project
+

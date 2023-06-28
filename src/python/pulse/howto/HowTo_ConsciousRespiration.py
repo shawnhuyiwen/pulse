@@ -13,13 +13,13 @@ def HowTo_ConsciousRespiration():
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.pbb", None):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None):
         print("Unable to load initial state file")
         return
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     respiration = SEConsciousRespiration()
     respiration.set_comment("Patient inhales for 3 seconds, holds for 15, then exhales for 3 seconds")
@@ -34,7 +34,7 @@ def HowTo_ConsciousRespiration():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_ConsciousRespiration()
 

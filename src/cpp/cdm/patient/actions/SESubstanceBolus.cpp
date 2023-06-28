@@ -165,17 +165,3 @@ const SESubstance& SESubstanceBolus::GetSubstance() const
 {
   return m_Substance;
 }
-
-void SESubstanceBolus::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Substance Bolus"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tSubstance: " << m_Substance.GetName();
-  str << "\n\tAdministration Route: " << eSubstanceAdministration_Route_Name(GetAdminRoute());
-  str << "\n\tAdministration Duration: "; HasAdminDuration() ? str << *m_AdminDuration : str << "No Administration Duration Set";
-  str << "\n\tDose: "; HasDose()? str << *m_Dose : str << "No Dose Set";
-  str << "\n\tConcentration: "; HasConcentration()? str << *m_Concentration : str << "NaN";
-  str << "\n\tTotalInfusedDose: "; HasTotalInfusedDose() ? str << *m_TotalInfusedDose : str << "NaN";
-  str << std::flush;
-}

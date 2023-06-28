@@ -9,6 +9,7 @@ POP_PROTO_WARNINGS
 
 #include "cdm/io/protobuf/PBAnesthesiaMachine.h"
 #include "cdm/io/protobuf/PBBagValveMask.h"
+#include "cdm/io/protobuf/PBECMO.h"
 #include "cdm/io/protobuf/PBElectroCardioGram.h"
 #include "cdm/io/protobuf/PBInhaler.h"
 #include "cdm/io/protobuf/PBMechanicalVentilator.h"
@@ -79,6 +80,30 @@ namespace pulse
     dst.set_squeezepressure_cmh2o(src.m_SqueezePressure_cmH2O);
   }
 
+  void PBEquipment::Load(const PULSE_BIND::ECMOData& src, ECMOModel& dst)
+  {
+    dst.Clear();
+    dst.SetUp();
+    PBEquipment::Serialize(src, dst);
+    dst.StateChange();
+  }
+  void PBEquipment::Serialize(const PULSE_BIND::ECMOData& src, ECMOModel& dst)
+  {
+    PBECMO::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
+    dst.m_CurrentInflowLocation = dst.GetSettings().GetInflowLocation();
+    dst.m_CurrentOutflowLocation = dst.GetSettings().GetOutflowLocation();
+  }
+  PULSE_BIND::ECMOData* PBEquipment::Unload(const ECMOModel& src)
+  {
+    PULSE_BIND::ECMOData* dst = new PULSE_BIND::ECMOData();
+    PBEquipment::Serialize(src, *dst);
+    return dst;
+  }
+  void PBEquipment::Serialize(const ECMOModel& src, PULSE_BIND::ECMOData& dst)
+  {
+    PBECMO::Serialize(src, *dst.mutable_common());
+  }
+
   void PBEquipment::Load(const PULSE_BIND::ElectroCardioGramData& src, ElectroCardioGramModel& dst)
   {
     dst.Clear();
@@ -144,6 +169,12 @@ namespace pulse
     dst.m_LimitReached = src.limitreached();
     dst.m_PreviousYPieceToConnectionFlow_L_Per_s = src.previousypiecetoconnectionflow_l_per_s();
     dst.m_PreviousConnectionPressure_cmH2O = src.previousconnectionpressure_cmh2o();
+    dst.m_Initializing = src.initializing();
+    dst.m_PositiveEndExpiratoryPressure_cmH2O = src.positiveendexpiratorypressure_cmh2o();
+    dst.m_EndTidalCarbonDioxideFraction = src.endtidalcarbondioxidefraction();
+    dst.m_EndTidalCarbonDioxidePressure_cmH2O = src.endtidalcarbondioxidepressure_cmh2o();
+    dst.m_EndTidalOxygenFraction = src.endtidaloxygenfraction();
+    dst.m_EndTidalOxygenPressure_cmH2O = src.endtidaloxygenpressure_cmh2o();
     PBProperty::Load(src.meanairwaypressure_cmh2o(), *dst.m_MeanAirwayPressure_cmH2O);
   }
   PULSE_BIND::MechanicalVentilatorData* PBEquipment::Unload(const MechanicalVentilatorModel& src)
@@ -167,6 +198,12 @@ namespace pulse
     dst.set_limitreached(src.m_LimitReached);
     dst.set_previousypiecetoconnectionflow_l_per_s(src.m_PreviousYPieceToConnectionFlow_L_Per_s);
     dst.set_previousconnectionpressure_cmh2o(src.m_PreviousConnectionPressure_cmH2O);
+    dst.set_initializing(src.m_Initializing);
+    dst.set_positiveendexpiratorypressure_cmh2o(src.m_PositiveEndExpiratoryPressure_cmH2O);
+    dst.set_endtidalcarbondioxidefraction(src.m_EndTidalCarbonDioxideFraction);
+    dst.set_endtidalcarbondioxidepressure_cmh2o(src.m_EndTidalCarbonDioxidePressure_cmH2O);
+    dst.set_endtidaloxygenfraction(src.m_EndTidalOxygenFraction);
+    dst.set_endtidaloxygenpressure_cmh2o(src.m_EndTidalOxygenPressure_cmH2O);
     dst.set_allocated_meanairwaypressure_cmh2o(PBProperty::Unload(*src.m_MeanAirwayPressure_cmH2O));
   }
 }

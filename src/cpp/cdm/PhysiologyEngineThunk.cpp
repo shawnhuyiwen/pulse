@@ -8,7 +8,6 @@
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 #include "cdm/patient/assessments/SEUrinalysis.h"
 #include "cdm/engine/SEAction.h"
 #include "cdm/engine/SEDataRequest.h"
@@ -37,6 +36,11 @@ PhysiologyEngineThunk::~PhysiologyEngineThunk()
   delete[] m_requestedData;
 }
 
+void PhysiologyEngineThunk::Clear()
+{
+  m_engine->Clear();
+}
+
 bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, eSerializationFormat data_requests_format)
 {
   if (!m_engine->SerializeFromFile(filename))
@@ -57,9 +61,7 @@ bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::
     SetupDefaultDataRequests();
     m_engine->GetLogger()->Info("No data requested, will return default vitals");
   }
-  m_engine->GetEngineTracker()->SetupRequests();
-
-  return true;
+  return SetupRequests();
 }
 
 bool PhysiologyEngineThunk::SerializeToFile(std::string const& filename)
@@ -85,9 +87,7 @@ bool PhysiologyEngineThunk::SerializeFromString(std::string const& state, std::s
   }
   else
     SetupDefaultDataRequests();
-  m_engine->GetEngineTracker()->SetupRequests();
-
-  return true;
+  return SetupRequests();
 }
 
 
@@ -137,9 +137,30 @@ bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configur
   }
   else
     SetupDefaultDataRequests();
-  m_engine->GetEngineTracker()->SetupRequests();
+  if (!SetupRequests())
+    return false;
 
   m_engine->GetEventManager().ForwardEvents(this);
+  return true;
+}
+
+bool PhysiologyEngineThunk::SetupRequests()
+{
+  m_engine->GetEngineTracker()->SetupRequests();
+  if (m_engine->GetEngineTracker()->GetDataTrack().NumTracks() !=
+    m_engine->GetEngineTracker()->GetDataRequestManager().GetDataRequests().size())
+  {
+    m_engine->Error("Number of data requests does not match the number of tracked properties!");
+    m_engine->Error("--Check to see if you have duplicates in your data request list");
+    m_engine->Error("--Here is the order of the data items I am traking:");
+    for (size_t i = 0; i < m_engine->GetEngineTracker()->GetDataTrack().NumTracks(); i++)
+      m_engine->Error("--  " + m_engine->GetEngineTracker()->GetDataTrack().GetProbeName(i));
+    m_engine->Error("--Here is what you requested:");
+    for (SEDataRequest const* dr : m_engine->GetEngineTracker()->GetDataRequestManager().GetDataRequests())
+      m_engine->Error("--  " + dr->GetHeaderName());
+    m_engine->Error("I don't have the logic to figure out which tracked items are duplicated and where they go in the pulled data array");
+    return false;
+  }
   return true;
 }
 
@@ -229,14 +250,7 @@ std::string PhysiologyEngineThunk::GetPatientAssessment(int type, eSerialization
     cmp.SerializeToString(stream, format);
     break;
   }
-  case 3:// PFT
-  {
-    SEPulmonaryFunctionTest pft(m_engine->GetLogger());
-    m_engine->GetPatientAssessment(pft);
-    pft.SerializeToString(stream, format);
-    break;
-  }
-  case 4: // U
+  case 3:// U
   {
     SEUrinalysis u(m_engine->GetLogger());
     m_engine->GetPatientAssessment(u);
@@ -359,7 +373,7 @@ void PhysiologyEngineThunk::PullData(std::vector<double>& d)
     d.reserve(m_length);
     std::cout << "Ok" << std::endl;
   }
-  for (int i = 0; i < m_length; i++)
+  for (size_t i = 0; i < m_length; i++)
   {
 
     std::cout << "Beep " << d[i] << std::endl;
@@ -388,44 +402,44 @@ void PhysiologyEngineThunk::SetupDefaultDataRequests()
   m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
 }
 
-void PhysiologyEngineThunk::ForwardDebug(const std::string& msg, const std::string& origin)
+void PhysiologyEngineThunk::ForwardDebug(const std::string& msg)
 {
   if (m_ForwardLogs)
-    m_ForwardLogs->ForwardDebug(msg, origin);
+    m_ForwardLogs->ForwardDebug(msg);
   if (m_keepLogMsgs)
-    m_logMsgs.debug_msgs.push_back(msg + origin);
+    m_logMsgs.debug_msgs.push_back(msg);
 }
 
-void PhysiologyEngineThunk::ForwardInfo(const std::string& msg, const std::string& origin)
+void PhysiologyEngineThunk::ForwardInfo(const std::string& msg)
 {
   if (m_ForwardLogs)
-    m_ForwardLogs->ForwardInfo(msg, origin);
+    m_ForwardLogs->ForwardInfo(msg);
   if (m_keepLogMsgs)
-    m_logMsgs.info_msgs.push_back(msg + origin);
+    m_logMsgs.info_msgs.push_back(msg);
 }
 
-void PhysiologyEngineThunk::ForwardWarning(const std::string& msg, const std::string& origin)
+void PhysiologyEngineThunk::ForwardWarning(const std::string& msg)
 {
   if (m_ForwardLogs)
-    m_ForwardLogs->ForwardWarning(msg, origin);
+    m_ForwardLogs->ForwardWarning(msg);
   if (m_keepLogMsgs)
-    m_logMsgs.warning_msgs.push_back(msg + origin);
+    m_logMsgs.warning_msgs.push_back(msg);
 }
 
-void PhysiologyEngineThunk::ForwardError(const std::string& msg, const std::string& origin)
+void PhysiologyEngineThunk::ForwardError(const std::string& msg)
 {
   if (m_ForwardLogs)
-    m_ForwardLogs->ForwardError(msg, origin);
+    m_ForwardLogs->ForwardError(msg);
   if (m_keepLogMsgs)
-    m_logMsgs.error_msgs.push_back(msg + origin);
+    m_logMsgs.error_msgs.push_back(msg);
 }
 
-void PhysiologyEngineThunk::ForwardFatal(const std::string& msg, const std::string& origin)
+void PhysiologyEngineThunk::ForwardFatal(const std::string& msg)
 {
   if (m_ForwardLogs)
-    m_ForwardLogs->ForwardFatal(msg, origin);
+    m_ForwardLogs->ForwardFatal(msg);
   if (m_keepLogMsgs)
-    m_logMsgs.fatal_msgs.push_back(msg + origin);
+    m_logMsgs.fatal_msgs.push_back(msg);
 }
 
 void PhysiologyEngineThunk::HandleEvent(eEvent type, bool active, const SEScalarTime* time)

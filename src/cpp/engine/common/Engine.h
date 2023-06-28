@@ -21,6 +21,8 @@ namespace pulse
     Engine(Logger* logger=nullptr);
     virtual ~Engine();
 
+    virtual Logger* GetLogger() const override;
+
     virtual std::string GetTypeName() const override;
 
     virtual bool SerializeFromFile(const std::string& file) override;
@@ -31,6 +33,8 @@ namespace pulse
 
     virtual bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m) override;
     virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration) override;
+
+    virtual void Clear() override;
 
     virtual bool SetConfigurationOverride(const SEEngineConfiguration* config) override;
 
@@ -69,6 +73,7 @@ namespace pulse
     virtual const SETissueSystem* GetTissueSystem() const override;
     virtual const SEAnesthesiaMachine* GetAnesthesiaMachine() const override;
     virtual const SEBagValveMask* GetBagValveMask() const override;
+    virtual const SEECMO* GetECMO() const override;
     virtual const SEElectroCardioGram* GetElectroCardioGram() const override;
     virtual const SEInhaler* GetInhaler() const override;
     virtual const SEMechanicalVentilator* GetMechanicalVentilator() const override;

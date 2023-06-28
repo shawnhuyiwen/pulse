@@ -71,8 +71,8 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
-#include "cdm/patient/actions/SEChestCompressionForce.h"
-#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestCompressionAutomated.h"
+#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
 #include "cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "cdm/patient/actions/SEConsciousRespiration.h"
@@ -84,6 +84,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEDyspnea.h"
 #include "cdm/patient/actions/SEExercise.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SEHemothorax.h"
 #include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
@@ -97,6 +98,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SESubstanceInfusion.h"
 #include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
 #include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SETubeThoracostomy.h"
 #include "cdm/patient/actions/SEUrinate.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceManager.h"
@@ -303,11 +305,11 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BrainInjury));
   if (src.HasBronchoconstriction())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Bronchoconstriction));
-  
-  if (src.HasChestCompressionForce())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionForce));
-  else if (src.HasChestCompressionForceScale())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionForceScale));
+
+  if (src.HasChestCompressionInstantaneous())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionInstantaneous));
+  else if (src.HasChestCompressionAutomated())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionAutomated));
   if (src.HasLeftChestOcclusiveDressing())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftChestOcclusiveDressing));
   if (src.HasRightChestOcclusiveDressing())
@@ -330,6 +332,10 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
         dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*h));
     }
   }
+  if (src.HasLeftHemothorax())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftHemothorax));
+  if (src.HasRightHemothorax())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightHemothorax));
   if (src.HasImpairedAlveolarExchangeExacerbation())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ImpairedAlveolarExchangeExacerbation));
   if (src.HasIntubation())
@@ -358,6 +364,10 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightClosedTensionPneumothorax));
   if (src.GetRightOpenTensionPneumothorax())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightOpenTensionPneumothorax));
+  if (src.HasLeftTubeThoracostomy())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftTubeThoracostomy));
+  if (src.HasRightTubeThoracostomy())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightTubeThoracostomy));
   for (auto b : src.m_SubstanceBoluses)
   {
     if(b->IsActive())
@@ -389,7 +399,7 @@ void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatien
     dst.SetPatientFile(src.patientfile());
   else if (src.has_patient())
     PBPatient::Load(src.patient(), dst.GetPatient());
-  
+
   if (src.has_conditions())
     PBEngine::Load(src.conditions(), dst.GetConditions(), subMgr);
 
@@ -448,6 +458,12 @@ void PBEngine::Load(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
   dst.Clear();
   PBEngine::Serialize(src, dst);
 }
+CDM_BIND::DataRequestData* PBEngine::Unload(const SEDataRequest& src)
+{
+  CDM_BIND::DataRequestData* dst = new CDM_BIND::DataRequestData();
+  PBEngine::Serialize(src, *dst);
+  return dst;
+}
 void PBEngine::Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& dst)
 {
   if(src.has_decimalformat())
@@ -457,12 +473,6 @@ void PBEngine::Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& ds
   dst.m_SubstanceName = src.substancename();
   dst.m_PropertyName = src.propertyname();
   dst.m_RequestedUnit = src.unit();
-}
-CDM_BIND::DataRequestData* PBEngine::Unload(const SEDataRequest& src)
-{
-  CDM_BIND::DataRequestData* dst = new CDM_BIND::DataRequestData();
-  PBEngine::Serialize(src, *dst);
-  return dst;
 }
 void PBEngine::Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& dst)
 {
@@ -489,6 +499,58 @@ void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
   PBEngine::Serialize(data, dst);
 }
 
+void PBEngine::Load(const CDM_BIND::DataRequestListData& src, std::vector<SEDataRequest*>& dst)
+{
+  dst.clear();
+  PBEngine::Serialize(src, dst);
+}
+void PBEngine::Serialize(const std::vector<SEDataRequest*>& src, CDM_BIND::DataRequestListData& dst)
+{
+  for (SEDataRequest* s : src)
+    Serialize(*s, *dst.add_datarequest());
+}
+bool PBEngine::Serialize(const CDM_BIND::DataRequestListData& src, std::vector<SEDataRequest*>& dst)
+{
+  for (int i = 0; i < src.datarequest_size(); i++)
+  {
+    const CDM_BIND::DataRequestData& drData = src.datarequest(i);
+    SEDataRequest* dr = new SEDataRequest((eDataRequest_Category)drData.category());
+    PBEngine::Load(drData, *dr);
+    if (!dr->IsValid())
+      return false;
+    else
+      dst.push_back(dr);
+  }
+  return true;
+}
+bool PBEngine::SerializeToString(const std::vector<SEDataRequest*>& src, std::string& dst, eSerializationFormat m)
+{
+  CDM_BIND::DataRequestListData data;
+  PBEngine::Serialize(src, data);
+  return PBUtils::SerializeToString(data, dst, m, nullptr);
+}
+bool PBEngine::SerializeToFile(const std::vector<SEDataRequest*>& src, const std::string& filename)
+{
+  CDM_BIND::DataRequestListData data;
+  PBEngine::Serialize(src, data);
+  return PBUtils::SerializeToFile(data, filename, nullptr);
+}
+bool PBEngine::SerializeFromString(const std::string& src, std::vector<SEDataRequest*>& dst, eSerializationFormat m)
+{
+  CDM_BIND::DataRequestListData data;
+  if (!PBUtils::SerializeFromString(src, data, m, nullptr))
+    return false;
+  PBEngine::Load(data, dst);
+  return true;
+}
+bool PBEngine::SerializeFromFile(const std::string& filename, std::vector<SEDataRequest*>& dst)
+{
+  CDM_BIND::DataRequestListData data;
+  if (!PBUtils::SerializeFromFile(filename, data, nullptr))
+    return false;
+  PBEngine::Load(data, dst);
+  return true;
+}
 
 void PBEngine::Load(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst)
 {

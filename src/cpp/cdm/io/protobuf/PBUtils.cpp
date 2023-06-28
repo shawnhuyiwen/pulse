@@ -12,27 +12,31 @@ POP_PROTO_WARNINGS
 std::mutex log_mutex;
 Logger* g_logger = nullptr;
 
-void PBUtils::ProtobufLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
+void PBUtils::ProtobufLogHandler(google::protobuf::LogLevel level, const char* /*filename*/, int /*line*/, const std::string& message)
 {
-  std::stringstream ss;
-  ss << filename << "::" << line;
-  switch (level)
+  if (g_logger != nullptr)
   {
-  case google::protobuf::LOGLEVEL_INFO:
-    g_logger->Info(message, ss.str());
-    break;
-  // Going to treat everything else as a warning, as Pulse will try to handle Errors/Fatal messages
-  // Pulse will report an error/fatal when it feels it did everything it could but still is unable to serialize
-  case google::protobuf::LOGLEVEL_WARNING:
-    g_logger->Warning(message, ss.str());
-    break;
-  case google::protobuf::LOGLEVEL_ERROR:
-    g_logger->Warning(message, ss.str());
-    break;
-  case google::protobuf::LOGLEVEL_FATAL:
-    g_logger->Warning(message, ss.str());
-    break;
+    switch (level)
+    {
+    case google::protobuf::LOGLEVEL_INFO:
+      g_logger->Info(message);
+      break;
+      // Going to treat everything else as a warning, as Pulse will try to handle Errors/Fatal messages
+      // Pulse will report an error/fatal when it feels it did everything it could but still is unable to serialize
+    case google::protobuf::LOGLEVEL_WARNING:
+      g_logger->Warning(message);
+      break;
+    case google::protobuf::LOGLEVEL_ERROR:
+      g_logger->Warning(message);
+      break;
+    case google::protobuf::LOGLEVEL_FATAL:
+      g_logger->Warning(message);
+      break;
+    }
   }
+  else
+    std::cerr << message << std::endl;
+
   g_logger = nullptr;
 }
 
@@ -52,7 +56,7 @@ bool PBUtils::SerializeFromFile(const std::string& filename, google::protobuf::M
   std::ifstream input(filename, std::ios::binary);
   if (!input.is_open())
     return false;
-  std::lock_guard<std::mutex> guard(log_mutex);
+  std::scoped_lock<std::mutex> guard(log_mutex);
   g_logger = logger;
   google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
   bool b = dst.ParseFromIstream(&input);
@@ -72,7 +76,7 @@ bool PBUtils::SerializeToFile(const google::protobuf::Message& src, const std::s
   }
   if (!CreateFilePath(filename))
     return false;
-  std::lock_guard<std::mutex> guard(log_mutex);
+  std::scoped_lock<std::mutex> guard(log_mutex);
   g_logger = logger;
   google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
   std::ofstream output(filename, std::ios::binary);
@@ -85,12 +89,14 @@ bool PBUtils::SerializeToFile(const google::protobuf::Message& src, const std::s
 
 bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Message& dst, eSerializationFormat m, Logger* logger)
 {
-  std::lock_guard<std::mutex> guard(log_mutex);
+  std::scoped_lock<std::mutex> guard(log_mutex);
+
+  g_logger = logger;
+  google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
+
   bool ret = true;
-  if (m == eSerializationFormat::JSON)
+  if (m == eSerializationFormat::JSON || m == eSerializationFormat::VERBOSE_JSON)
   {
-    g_logger = logger;
-    google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
     google::protobuf::util::JsonParseOptions opts;
     google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(src, &dst, opts);
     if (!stat.ok())
@@ -107,6 +113,10 @@ bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Mess
       // ret = google::protobuf::TextFormat::ParseFromString(src, &dst);
     }
   }
+  else if (m == eSerializationFormat::TEXT)
+  {
+    google::protobuf::TextFormat::ParseFromString(src, &dst);
+  }
   else
   {
     ret = dst.ParseFromString(src);
@@ -117,17 +127,24 @@ bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Mess
 
 bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
-  std::lock_guard<std::mutex> guard(log_mutex);
+  std::scoped_lock<std::mutex> guard(log_mutex);
+
+  g_logger = logger;
+  google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
+
   bool ret = true;
-  if (m == eSerializationFormat::JSON)
+  if (m == eSerializationFormat::JSON || m == eSerializationFormat::VERBOSE_JSON)
   {
-    g_logger = logger;
-    google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
     google::protobuf::util::JsonPrintOptions opts;
     opts.add_whitespace = true;
     opts.preserve_proto_field_names = true;
-    //bool ret = google::protobuf::TextFormat::PrintToString(src, &output);
-    ret =  google::protobuf::util::MessageToJsonString(src, &output, opts).ok();
+    if (m == eSerializationFormat::VERBOSE_JSON)
+      opts.always_print_primitive_fields = true;
+    ret = google::protobuf::util::MessageToJsonString(src, &output, opts).ok();
+  }
+  else if (m == eSerializationFormat::TEXT)
+  {
+    ret = google::protobuf::TextFormat::PrintToString(src, &output);
   }
   else
   {

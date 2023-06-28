@@ -78,7 +78,7 @@ namespace pulse::study::multiplex_ventilation
         m_SimulationsToRun.erase(m_SimulationResultsList->simulations()[i].id());
     }
 
-    int numSimsToRun = m_SimulationList->simulations_size() - m_SimulationResultsList->simulations_size();
+    size_t numSimsToRun = m_SimulationList->simulations_size() - m_SimulationResultsList->simulations_size();
     if (numSimsToRun == 0)
     {
       Info("All simulations are run in the results file");
@@ -131,7 +131,7 @@ namespace pulse::study::multiplex_ventilation
         GetLogger()->Fatal(cdm_ex.what());
         std::cerr << cdm_ex.what() << std::endl;
       }
-      catch (std::exception ex)
+      catch (std::exception& ex)
       {
         GetLogger()->Fatal("Exception caught runnning simulation " + sim->outputbasefilename());
         GetLogger()->Fatal(ex.what());

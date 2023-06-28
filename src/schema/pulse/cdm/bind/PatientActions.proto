@@ -24,30 +24,33 @@ message AnyPatientActionData
     AsthmaAttackData                                   AsthmaAttack                                   = 6;
     BrainInjuryData                                    BrainInjury                                    = 7;
     BronchoconstrictionData                            Bronchoconstriction                            = 8;
-    ChestCompressionForceData                          ChestCompressionForce                          = 9;
-    ChestCompressionForceScaleData                     ChestCompressionForceScale                     = 10;
-    ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 11;
-    ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 12;
-    ConsciousRespirationData                           ConsciousRespiration                           = 13;
-    ConsumeNutrientsData                               ConsumeNutrients                               = 14;
-    DyspneaData                                        Dyspnea                                        = 15;
-    ExerciseData                                       Exercise                                       = 16;
-    HemorrhageData                                     Hemorrhage                                     = 17;
-    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 18;
-    IntubationData                                     Intubation                                     = 19;
-    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 20;
-    MechanicalVentilationData                          MechanicalVentilation                          = 21;
-    NeedleDecompressionData                            NeedleDecompression                            = 22;
-    PericardialEffusionData                            PericardialEffusion                            = 23;
-    PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 24;
-    RespiratoryFatigueData                             RespiratoryFatigue                             = 25;
-    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 26;
-    SubstanceBolusData                                 SubstanceBolus                                 = 27;
-    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 28;
-    SubstanceInfusionData                              SubstanceInfusion                              = 29;
-    SupplementalOxygenData                             SupplementalOxygen                             = 30;
-    TensionPneumothoraxData                            TensionPneumothorax                            = 31;
-    UrinateData                                        Urinate                                        = 32;
+    ChestCompressionData                               ChestCompression                               = 9;
+    ChestCompressionAutomatedData                      ChestCompressionAutomated                      = 10;
+    ChestCompressionInstantaneousData                  ChestCompressionInstantaneous                  = 11;
+    ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 12;
+    ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 13;
+    ConsciousRespirationData                           ConsciousRespiration                           = 14;
+    ConsumeNutrientsData                               ConsumeNutrients                               = 15;
+    DyspneaData                                        Dyspnea                                        = 16;
+    ExerciseData                                       Exercise                                       = 17;
+    HemorrhageData                                     Hemorrhage                                     = 18;
+    HemothoraxData                                     Hemothorax                                     = 19;
+    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 20;
+    IntubationData                                     Intubation                                     = 21;
+    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 22;
+    MechanicalVentilationData                          MechanicalVentilation                          = 23;
+    NeedleDecompressionData                            NeedleDecompression                            = 24;
+    PericardialEffusionData                            PericardialEffusion                            = 25;
+    PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 26;
+    RespiratoryFatigueData                             RespiratoryFatigue                             = 27;
+    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 28;
+    SubstanceBolusData                                 SubstanceBolus                                 = 29;
+    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 30;
+    SubstanceInfusionData                              SubstanceInfusion                              = 31;
+    SupplementalOxygenData                             SupplementalOxygen                             = 32;
+    TensionPneumothoraxData                            TensionPneumothorax                            = 33;
+    TubeThoracostomyData                               TubeThoracostomy                               = 34;
+    UrinateData                                        Urinate                                        = 35;
   }
 }
 
@@ -67,8 +70,8 @@ message AcuteRespiratoryDistressSyndromeExacerbationData
 {
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
-  Scalar0To1Data                            LeftLungAffected                = 3;/**<< @brief Fraction of the Left Lung Affected*/
-  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Right Lung Affected */
+  Scalar0To1Data                            LeftLungAffected                = 3;/**<<@brief Fraction of the Left Lung Affected*/
+  Scalar0To1Data                            RightLungAffected               = 4;/**<<@brief Fraction of the Right Lung Affected */
 }
 
 /** @brief Fight or flight.  The body prepares to defend itself. */
@@ -93,7 +96,7 @@ message ArrhythmiaData
   eHeartRhythm                              Rhythm                          = 2;/**<<@brief @ref eHeartRhythmTable */
 }
 
-/** @brief A common inflammatory disease of the airways where air flow into the lungs is partially obstructed. 
+/** @brief A common inflammatory disease of the airways where air flow into the lungs is partially obstructed.
            This attack is acute asthma, which is an exacerbation of asthma that does not respond to standard treatments. */
 message AsthmaAttackData
 {
@@ -124,20 +127,50 @@ message BronchoconstrictionData
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
 }
 
-/** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
-message ChestCompressionForceData
+/** @brief A single CPR compression to the chest cavity in order to pump blood through the heart. */
+message ChestCompressionData
 {
   PatientActionData                         PatientAction                   = 1;
-  ScalarForceData                           Force                           = 2;/**<<@brief Amount of force applied to the chest*/
+
+  // Chest Compression Modes
+  oneof ForceMode
+  {
+    ScalarForceData                         Force                           = 2;/**<<@brief Amount of force applied to the chest*/
+    ScalarLengthData                        Depth                           = 3;
+  }
+
+  ScalarTimeData                            CompressionPeriod               = 4;/**<<@brief The length of time the compression force is to be applied */
 }
 
-/** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
-message ChestCompressionForceScaleData
+/** @brief Reoccuring CPR chest compressions to pump blood through the heart. */
+message ChestCompressionAutomatedData
 {
   PatientActionData                         PatientAction                   = 1;
-  Scalar0To1Data                            ForceScale                      = 2;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
-  ScalarTimeData                            ForcePeriod                     = 3;/**<<@brief The specified length of time the force is applied */
+
+  // Chest Compression Modes
+  oneof ForceMode
+  {
+    ScalarForceData                         Force                           = 2;/**<<@brief Amount of force applied to the chest*/
+    ScalarLengthData                        Depth                           = 3;
+  }
+
+  ScalarFrequencyData                       CompressionFrequency            = 4;/**<<@brief Compression rate, translates to heart rate. */
+  Scalar0To1Data                            AppliedForceFraction            = 5;/**<<@brief OPTIONAL The fraction of the derived compression period to apply the given force for each compression. */
 }
+
+/** @brief CPR action to be used when connecting to hardware sensors or specifying your own waveform. Force will remain constant until explicitly changed */
+message ChestCompressionInstantaneousData
+{
+  PatientActionData                         PatientAction                   = 1;
+
+  // Chest Compression Modes
+  oneof ForceMode
+  {
+    ScalarForceData                         Force                           = 2;/**<<@brief Amount of force applied to the chest*/
+    ScalarLengthData                        Depth                           = 3;
+  }
+}
+
 /** @brief Applies an occlusive dressing to either the left or right side of the chest. An occlusive dressing is an air and water-tight trauma dressing that provides immediate control of pressure and bleeding that occurs with an open pneumothorax. */
 message ChestOcclusiveDressingData
 {
@@ -199,7 +232,7 @@ message AnyConsciousRespirationCommandData
 }
 /** @brief An ordered list of conscious breath commands for the patient to preform. */
 message ConsciousRespirationData
-{  
+{
   PatientActionData                           PatientAction                   = 1;
   bool                                        StartImmediately                = 2;
   repeated AnyConsciousRespirationCommandData Command                         = 3;
@@ -226,25 +259,65 @@ message ExerciseData
 /** @brief A hemorrhage is the loss of blood escaping from the circulatory system. Typically, a healthy person can endure a loss of 10 to 15 percent of the total blood volume without serious medical difficulties. */
 message HemorrhageData
 {
-  /** @brief Types of Hemorrhages.*/
+  /** @brief Compartments Supporting External Hemorrhages.*/
+  enum eCompartment
+  {
+    None                                                            = 0;
+    Aorta                                                           = 1;
+    Brain                                                           = 2;
+    Muscle                                                          = 3;
+    LargeIntestine                                                  = 4;
+    LeftArm                                                         = 5;
+    LeftKidney                                                      = 6;
+    LeftLeg                                                         = 7;
+    Liver                                                           = 8;
+    RightArm                                                        = 9;
+    RightKidney                                                     = 10;
+    RightLeg                                                        = 11;
+    Skin                                                            = 12;
+    SmallIntestine                                                  = 13;
+    Splanchnic                                                      = 14;
+    Spleen                                                          = 15;
+    VenaCava                                                        = 16;
+  }
+  
   enum eType
   {
-    External                                                                = 0; /**<< @brief A loss of blood from the vascular system out of the body */
-    Internal                                                                = 1; /**<< @brief A loss of blood from the vascular system into a body cavity or space. */
+    External                                                        = 0;
+    Internal                                                        = 1;
   }
+  
   /** The intended usage of this action is:
    *    - Severity has precidence over FlowRate (if both provided, use Severity)
    *    - Setting FlowRate will make the hemorrhage flow constant
    *    - Flow will be set by the engine, when using a Severity
    *    - Total Blood Lost is only set by the engine (user cannot set)
    */
-  
+
   PatientActionData                         PatientAction                   = 1;
-  eType                                     Type                            = 2;/**<<@brief @ref HemorrhageData_eTypeTable*/
-  string                                    Compartment                     = 3;/**<<@brief Compartment where the bleeding is occurring */
+  eCompartment                              Compartment                     = 2;
+  eType                                     Type                            = 3;
+  // NOTE: Flow rate is filled out with the current flow rate when severity is used (hence no option group)
   ScalarVolumePerTimeData                   FlowRate                        = 4;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
   Scalar0To1Data                            Severity                        = 5;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
   ScalarVolumeData                          TotalBloodLost                  = 6;/**<<@brief Total blood lost from this hemorrhage. */
+}
+
+/** @brief A hemothorax is an abnormal collection of blood in the pleural space that separates the lung from the chest wall. */
+message HemothoraxData
+{
+  /** The intended usage of this action is:
+   *    - Severity has precidence over FlowRate (if both provided, use Severity)
+   *    - Setting FlowRate will make the flow constant
+   *    - When using a Severity, Flow will be set by the engine
+   *    - Blood Volume is only set by the engine (user cannot set)
+   */
+
+  PatientActionData                         PatientAction                   = 1;
+  eSide                                     Side                            = 2;/**<<@brief @ref eSideTable */
+  Scalar0To1Data                            Severity                        = 3;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  ScalarVolumePerTimeData                   FlowRate                        = 4;/**<<@brief The flow rate of blood exiting the hemothorax. Set to zero to stop the bleeding rate. */
+  ScalarVolumeData                          TotalBloodVolume                = 6;/**<<@brief *Output Only* Total blood volume of this hemothorax. */
 }
 
 /** @brief Generic way to specify the effectivness of alveolar exchange. */
@@ -275,8 +348,8 @@ message IntubationData
   }
   PatientActionData                         PatientAction                   = 1;
   eType                                     Type                            = 2;/**<<@brief @ref IntubationData_eTypeTable*/
-  
   ScalarPressureTimePerVolumeData           AirwayResistance                = 3;/**<< @brief Resistance introduced to the airway by the equipment. */
+  Scalar0To1Data                            Severity                        = 4;/**<< @brief Scale of affect, 0 has no affect on airflow in the tube or compartments, 1 air only flows through the tube. */
 }
 
 /** @brief Worsen the effects of the Lobar Pneumonia condition. */
@@ -355,10 +428,10 @@ message SubstanceBolusData
     Intracerebral                                                           = 5; /**<< @brief Injection into the brain */
     Intracerebroventricular                                                 = 6; /**<< @brief Injection into the cerebral ventricles */
     Intradermal                                                             = 7; /**<< @brief Injection into the skin */
-    Intramuscular                                                           = 8; /**<< @brief Injection into the muscle */      
-    Subcutaneous                                                            = 9; /**<< @brief Injection under the skin */      
+    Intramuscular                                                           = 8; /**<< @brief Injection into the muscle */
+    Subcutaneous                                                            = 9; /**<< @brief Injection under the skin */
   }
- 
+
   PatientActionData                         PatientAction                   = 1;
   string                                    Substance                       = 2;/**<<@brief @ref SubstanceTable */
   eRoute                                    AdministrationRoute             = 3;/**<<@brief @ref SubstanceBolusData_eRouteTable */
@@ -410,6 +483,14 @@ message TensionPneumothoraxData
   eGate                                     Type                            = 2;/**<<@brief @ref eGateTable */
   eSide                                     Side                            = 3;/**<<@brief @ref eSideTable */
   Scalar0To1Data                            Severity                        = 4;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief Tube thoracostomy is the insertion of a tube (chest tube) into the pleural cavity to drain air, blood, bile, pus, or other fluids. */
+message TubeThoracostomyData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eSide                                     Side                            = 2;/**<<@brief @ref eSideTable*/
+  ScalarVolumePerTimeData                   FlowRate                        = 3;/**<<@brief OPTIONAL Suction flow rate. */
 }
 
 /** @brief Empty the bladder of its contents */

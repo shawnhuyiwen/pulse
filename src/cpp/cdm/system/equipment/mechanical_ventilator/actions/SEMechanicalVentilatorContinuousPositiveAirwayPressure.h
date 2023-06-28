@@ -13,21 +13,48 @@ public:
   SEMechanicalVentilatorContinuousPositiveAirwayPressure(Logger* logger = nullptr);
   virtual ~SEMechanicalVentilatorContinuousPositiveAirwayPressure();
 
-  virtual void Clear();
+  static constexpr char const* Name = "CPAP";
+  virtual std::string GetName() const { return Name; }
+
+  void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, bool /*preserveState*/ = false);
   virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr) override;
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasDeltaPressureSupport() const;
   virtual SEScalarPressure& GetDeltaPressureSupport();
   virtual double GetDeltaPressureSupport(const PressureUnit& unit) const;
 
+  virtual bool HasExpirationWaveform() const;
+  virtual eDriverWaveform GetExpirationWaveform() const;
+  virtual void SetExpirationWaveform(eDriverWaveform w);
+
+  virtual bool HasExpirationCycleFlow() const;
+  virtual SEScalarVolumePerTime& GetExpirationCycleFlow();
+  virtual double GetExpirationCycleFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasExpirationCyclePressure() const;
+  virtual SEScalarPressure& GetExpirationCyclePressure();
+  virtual double GetExpirationCyclePressure(const PressureUnit& unit) const;
+
   virtual bool HasFractionInspiredOxygen() const;
   virtual SEScalar0To1& GetFractionInspiredOxygen();
   virtual double GetFractionInspiredOxygen() const;
+
+  virtual bool HasInspirationWaveform() const;
+  virtual eDriverWaveform GetInspirationWaveform() const;
+  virtual void SetInspirationWaveform(eDriverWaveform w);
+
+  virtual bool HasInspirationPatientTriggerFlow() const;
+  virtual SEScalarVolumePerTime& GetInspirationPatientTriggerFlow();
+  virtual double GetInspirationPatientTriggerFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasInspirationPatientTriggerPressure() const;
+  virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
+  virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
 
   virtual bool HasPositiveEndExpiredPressure() const;
   virtual SEScalarPressure& GetPositiveEndExpiredPressure();
@@ -37,14 +64,18 @@ public:
   virtual SEScalarTime& GetSlope();
   virtual double GetSlope(const TimeUnit& unit) const;
 
-  virtual void ToString(std::ostream& str) const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
 
-  SEScalarPressure* m_DeltaPressureSupport;
-  SEScalar0To1*     m_FractionInspiredOxygen;
-  SEScalarPressure* m_PositiveEndExpiredPressure;
-  SEScalarTime*     m_Slope;
+  SEScalarPressure*                    m_DeltaPressureSupport;
+  eDriverWaveform                      m_ExpirationWaveform;
+  SEScalarVolumePerTime*               m_ExpirationCycleFlow;
+  SEScalarPressure*                    m_ExpirationCyclePressure;
+  SEScalar0To1*                        m_FractionInspiredOxygen;
+  eDriverWaveform                      m_InspirationWaveform;
+  SEScalarVolumePerTime*               m_InspirationPatientTriggerFlow;
+  SEScalarPressure*                    m_InspirationPatientTriggerPressure;
+  SEScalarPressure*                    m_PositiveEndExpiredPressure;
+  SEScalarTime*                        m_Slope;
 };

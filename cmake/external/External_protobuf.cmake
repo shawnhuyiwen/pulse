@@ -14,12 +14,12 @@ endif()
 # Support getting various versions, as end users could be using a different versions
 # And their application runtime environment needs to have all consistent dlls, or they fight!
 
-set(Protobuf_VERSION "3.18.0" CACHE STRING "Select the  version of ProtoBuf to build.")
-set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "3.18.0" "3.15.8" "3.10.0")
+set(Protobuf_VERSION "3.21.4" CACHE STRING "Select the  version of ProtoBuf to build.")
+set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "3.21.4" "3.15.8" "3.10.0")
 
-if (Protobuf_VERSION VERSION_EQUAL 3.18.0)# Latest, Can change
-  set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-all-3.18.0.zip" )
-  set(Protobuf_md5 "4fb72c818808b56244c85e9433c80416" )
+if (Protobuf_VERSION VERSION_EQUAL 3.21.4)# Latest, Can change
+  set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v21.4/protobuf-all-21.4.zip" )
+  set(Protobuf_md5 "f542df673c2a50ef7a0e4b1cc02c5a42" )
 elseif(Protobuf_VERSION VERSION_EQUAL 3.15.8) # Requested by DarkSlope
   set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v3.15.8/protobuf-all-3.15.8.zip")
   set(Protobuf_md5 "5249754276f08be7fef1421f418c1e70")
@@ -36,6 +36,11 @@ else()
   #set(Protobuf_md5 "5cda6b2a21148df72ca1832005e89b13" ) - 3.17.1
 endif()
 
+set(BUILD_PROTOC_BINARIES ON)
+if(${PROJECT_NAME}_LIBS_ONLY)
+  set(BUILD_PROTOC_BINARIES OFF)
+endif()
+
 include(AddExternalProject)
 define_external_dirs_ex(protobuf)
 add_external_project_ex( protobuf
@@ -50,6 +55,7 @@ add_external_project_ex( protobuf
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
     -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF#Don't change MSVC runtime settings (/MD or /MT)
     -Dprotobuf_WITH_ZLIB:BOOL=OFF
+    -Dprotobuf_BUILD_PROTOC_BINARIES:BOOL=${BUILD_PROTOC_BINARIES}
   ${PROTOBUF_MULTI_BUILD}
   ${PROTOBUF_MULTI_INSTALL}
   RELATIVE_INCLUDE_PATH "include"

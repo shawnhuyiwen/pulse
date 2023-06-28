@@ -1,0 +1,172 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "com.kitware.pulse.cdm.bind";
+option csharp_namespace = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+message AnyPlotterData
+{
+  oneof Plotter
+  {
+    MultiHeaderSeriesPlotterData      MultiHeaderSeriesPlotter  = 1;
+    ComparePlotterData                ComparePlotter            = 2;
+  }
+}
+
+message PlotterListData
+{
+  string                              Comment                   = 1;
+
+  optional PlotConfigData             PlotConfig                = 2;
+  repeated AnyPlotterData             Plotter                   = 3;
+}
+
+/** @brief Data used to configure plots. */
+message PlotConfigData
+{
+  /** @brief Enumeration for legend modes. */
+  enum eLegendMode
+  {
+    AllLegends                                                  = 0; /**<< @brief Show the data legend and action/event legend if actions/events plotted. */
+    NoLegends                                                   = 1; /**<< @brief Show no legends. */
+    HideActionEventLegend                                       = 2; /**<< @brief Will hide the legend for actions and events, leaving the legend for data and the action and event lines on the plot. */
+    OnlyActionEventLegend                                       = 3; /**<< @brief Show only the action event legend, no plot area. */
+  }
+
+  /** @brief Enumeration for percentage of baseline modes. */
+  enum ePercentageOfBaselineMode
+  {
+    Off                                                         = 0;  /**<< @brief No modification of values will occur. */
+    All                                                         = 1;  /**<< @brief All values will be set to Value@TimeX / Values@Time0 */
+    OnlyX                                                       = 2;  /**<< @brief Only X values will be set to Value@TimeX / Values@Time0 */
+    OnlyY                                                       = 3;  /**<< @brief Only Y values will be set to Value@TimeX / Values@Time0 */
+  }
+
+  /** @brief Enumeration for tick style. */
+  enum eTickStyle
+  {
+    Scientific                                                  = 0; /**<< @brief Scientific notation will be used on the y-axis. */
+    Plain                                                       = 1; /**<< @brief "Plain" values will be used on the y-axis. */
+  }
+
+  /** @brief If scientific tick style is used, only apply scientific notation outside of the range 10^M to 10^N.*/
+  message SciLimitsData
+  {
+    int32                             M                         = 1;
+    int32                             N                         = 2;
+  }
+
+  optional bool                       Disabled                  = 1;  /**<< @brief Disable this plot. */
+  optional bool                       FillArea                  = 2;  /**<< @brief Fill the area under the curve. */
+  optional double                     FontSize                  = 3;  /**<< @brief Set the font size of axis labels and chart title. */
+  optional bool                       Gridlines                 = 4;  /**<< @brief Turn gridlines on or off. */
+  optional ImagePropertyData          ImageProperties           = 5;  /**<< @brief Specify the image properties. */
+  optional double                     LegendFontSize            = 6;  /**<< @brief Set the font size of the legend. */
+  optional eLegendMode                LegendMode                = 7;
+  optional bool                       LogAxis                   = 8;  /**<< @brief Make all Y axes logarithmic. */
+  repeated string                     OmitActionsWith           = 9;  /**<< @brief Will attempt to omit from the plot actions that contain any of the specified case-sensitive words, i.e. OmitActionsWith=Hemorrhage,Infusion */
+  repeated string                     OmitEventsWith            = 10; /**<< @brief Will attempt to omit from the plot events that contain any of the specified case-sensitive words, i.e. OmitEventsWith=Tachycardia */
+  optional string                     OutputPathOverride        = 11; /**<< @brief Specify the path (relative to bin) to output the plot. */
+  optional ePercentageOfBaselineMode  PercentOfBaselineMode     = 12;
+  optional bool                       PlotActions               = 13; /**<< @brief Plot actions parsed from log file. */
+  optional bool                       PlotEvents                = 14; /**<< @brief Plot events parsed from log file. */
+  optional SciLimitsData              SciLimits                 = 15;
+  optional eTickStyle                 TickStyle                 = 16;
+  optional bool                       ZeroAxis                  = 17; /**<< @brief Will ensure that zero is included on the Y axis rather than zooming away from it based on the plot's min/max Y values. */
+}
+
+/** @brief Data used to configure a plot source. */
+message PlotSourceData
+{
+  string                              CSVData                   = 1;  /**<< @brief The path and filename of the data file. */
+
+  optional string                     Label                     = 2;  /**<< @brief If provided, label to be used in legend. */
+  optional string                     LineFormat                = 3;  /**<< @brief Plot this source with this format. */
+  optional double                     LineWidth                 = 4;   /**<< @brief Plot this source with this linewidth. */
+  optional int32                      StartRow                  = 5;  /**<< @brief Specify the starting row number of the CSV data to include in plot. */
+  optional int32                      EndRow                    = 6;  /**<< @brief Specify the ending row number of the CSV data to include in plot. */
+  optional int32                      RowSkip                   = 7;  /**<< @brief If specified, only every "RowSkip-th" (nth) row of the CSV data will be read. */
+  optional string                     LogFile                   = 8;  /**<< @brief Specify log file if it does not following usual naming conventions/location. */
+}
+
+/** @brief Data used to configure x vs y plots. */
+message ComparePlotterData
+{
+  /** @brief Enumeration for plot types. */
+  enum ePlotType
+  {
+    NoPlot                                                      = 0;  /**<< @brief Don't generate plots, only report. */
+    FullPlot                                                    = 1;  /**<< @brief Plot all data points. */
+    FullPlotErrors                                              = 2;  /**<< @brief Plot all data points, only for failing data. */
+    FastPlot                                                    = 3;  /**<< @brief Plot every nth data point. */
+    FastPlotErrors                                              = 4;  /**<< @brief Plot every nth data point, only for failing data. */
+    MemoryFastPlot                                              = 5;  /**<< @brief FastPlot with better memory management (slower). */
+  }
+
+  string                              Comment                   = 1;
+
+  optional PlotConfigData             PlotConfig                = 2;  /**<< @brief Provided settings take precedence over PlotConfig settings defined in plotter list. */
+  PlotSourceData                      ComputedSource            = 3;
+  PlotSourceData                      ExpectedSource            = 4;
+  repeated string                     Failures                  = 5;  /**<< @brief Headers that were deemed as failure during comparison. */
+  map<string, double>                 RMSValues                 = 6;  /**<< @brief Root Mean Square (RMS) values computed during comparison. */
+  ePlotType                           PlotType                  = 7;
+
+}
+
+/** @brief Data used to configure x vs y plots. */
+message MultiHeaderSeriesPlotterData
+{
+  string                              Comment                   = 1;
+
+  optional PlotConfigData             PlotConfig                = 2;  /**<< @brief Provided settings take precedence over PlotConfig settings defined in plotter list. */
+  repeated PlotSourceData             PlotSource                = 3;
+  optional PlotSourceData             ValidationSource          = 4;  /**<< @brief If validation source provided, will plot additional data using X2 and Y2 headers. */
+
+  repeated SeriesData                 Series                    = 5;  /**<< @brief Specify the series that you want to plot (separate plots). */
+
+  message SeriesData
+  {
+    string                            Comment                   = 1;
+
+    optional PlotConfigData           PlotConfig                = 2;  /**<< @brief Provided settings take precedence over PlotConfig settings defined in main plotter.*/
+    optional string                   OutputFilename            = 3;  /**<< @brief Set the desired filename for the generated plot. */
+    optional string                   Title                     = 4;  /**<< @brief Specify the title for this plot. */
+    optional string                   XHeader                   = 5;  /**<< @brief Specify the header for the x-axis. Assumed to be time if not provided. */
+    optional string                   XLabel                    = 6;  /**<< @brief Specify the x-axis label for this plot. */
+    optional BoundsData               XBounds                   = 7;  /**<< @brief Specify the desired x-axis bounds. */
+    optional string                   X2Header                  = 8;  /**<< @brief Specify the header for x-data corresponding to the secondary y-axis. Assumed to be the same as XHeader if not provided. */
+    repeated string                   YHeader                   = 9;  /**<< @brief Specify the header(s) for the y-axis. */
+    optional string                   YLabel                    = 10; /**<< @brief Specify the y-axis label for this plot. */
+    optional BoundsData               YBounds                   = 11; /**<< @brief Specify the desired y-axis bounds.  */
+    repeated string                   Y2Header                  = 12; /**<< @bried Specify the header(s) for the secondary y-axis. Data pulled from PlotSources unless ValidationSource provided. */
+    optional string                   Y2Label                   = 13; /**<< @brief Specify the secondary y-axis label for this plot. */
+    optional BoundsData               Y2Bounds                  = 14; /**<< @brief Specify the desired secondary y-axis bounds. */
+  }
+}
+
+/** @brief Data used to specify bounds. */
+message BoundsData
+{
+  optional double                     LowerBound                = 1;  /**<< @brief  Specify the desired lower bound. */
+  optional double                     UpperBound                = 2;  /**<< @brief  Specify the desired upper bound. */
+}
+
+/** @brief Data used to specify image property data. */
+message ImagePropertyData
+{
+  /** @brief Dimension modes. */
+  enum eDimensionMode
+  {
+    Default                                                     = 0;  /**<< @brief Use pre-defined dimension defaults, MxN. */
+    Square                                                      = 1;  /**<< @brief MxM dimensions. */
+    Legend                                                      = 2;  /**<< @brief 2MxP dimensions. */
+    Unbound                                                     = 3;  /**<< @brief Unspecified dimensions. */
+  }
+
+  optional eDimensionMode             DimensionMode             = 1;  /**<< @brief  Specify the desired image dimension mode. Any provided height/width values will take prority. */
+  optional string                     FileFormat                = 2;  /**<< @brief  Specify the desired image file format. */
+  optional double                     Height_inch               = 3;  /**<< @brief  Specify the desired image height in inches. */
+  optional double                     Width_inch                = 4;  /**<< @brief  Specify the desired image width in inches. */
+  optional double                     DPI                       = 5;  /**<< @brief  Specify the desired image DPI. */
+}

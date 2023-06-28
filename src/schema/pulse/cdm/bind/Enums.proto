@@ -50,3 +50,25 @@ enum eBreathState
   ExpiratoryHold           = 7;
   InspiratoryHold          = 8;
 }
+
+/** @brief Enumeration for how to set optional data. */
+enum eDefaultType
+{
+  Model = 0;/**<< @brief Allow the model to set values of any optional properties not provided. */
+  Zero  = 1;/**<< @brief Tell the model to use Zero values of any optional properties not provided. */
+}
+
+/** @brief Enumeration for driver shapes. */
+enum eDriverWaveform
+{
+  NullDriverWaveform = 0;/**<< Signals not provided, or no change */
+  Square             = 1;/**<<  */
+  AscendingRamp      = 2;/**<<  */
+  DescendingRamp     = 3;/**<<  */
+  ExponentialGrowth  = 4;/**<<  */
+  ExponentialDecay   = 5;/**<<  */
+  SinusoidalRise     = 6;/**<<  */
+  SinusoidalFall     = 7;/**<<  */
+  SigmoidalRise      = 8;/**<<  */
+  SigmoidalFall      = 9;/**<<  */
+}

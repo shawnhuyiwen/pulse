@@ -21,23 +21,19 @@ namespace pulse { namespace human_adult_whole_body
   public:
     virtual ~Controller() = default;
 
-    virtual bool SerializeFromFile(const std::string& file) override;
-    virtual bool SerializeToFile(const std::string& file) const override;
+    bool SerializeFromFile(const std::string& file) override;
+    bool SerializeToFile(const std::string& file) const override;
 
-    virtual bool SerializeFromString(const std::string& state, eSerializationFormat m) override;
-    virtual bool SerializeToString(std::string& state, eSerializationFormat m) const override;
+    bool SerializeFromString(const std::string& state, eSerializationFormat m) override;
+    bool SerializeToString(std::string& state, eSerializationFormat m) const override;
 
-    virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const override;
+    bool GetPatientAssessment(SEPatientAssessment& assessment) const override;
 
   protected:
-    virtual std::string GetTypeName() const override { return "Human Adult Whole Body"; }
-    virtual void Allocate() override;
-    virtual bool SetupPatient(const SEPatient& patient) override;
+    std::string GetTypeName() const override { return "Human Adult Whole Body"; }
+    void Allocate() override;
+    bool SetupPatient(const SEPatient& patient) override;
 
-    virtual void InitializeModels() override;
-    virtual void AtSteadyState(pulse::EngineState state) override;
-    virtual void PreProcess() override;
-    virtual void Process() override;
-    virtual void PostProcess() override;
+    void InitializeModels() override;
   };
 END_NAMESPACE_EX

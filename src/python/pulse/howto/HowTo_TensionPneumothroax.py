@@ -14,13 +14,13 @@ def HowTo_TensionPneumothorax():
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.pbb", None):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None):
         print("Unable to load initial state file")
         return
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Perform an action
     tension = SETensionPneumothorax()
@@ -33,7 +33,7 @@ def HowTo_TensionPneumothorax():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # There are two ways you can help a pneumothorax
     # Apply a chest occlusive dressing to an open pneumothorax
@@ -46,7 +46,7 @@ def HowTo_TensionPneumothorax():
 
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Both can use the needle
     needle_decomp = SENeedleDecompression()
@@ -58,7 +58,7 @@ def HowTo_TensionPneumothorax():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_TensionPneumothorax()
 

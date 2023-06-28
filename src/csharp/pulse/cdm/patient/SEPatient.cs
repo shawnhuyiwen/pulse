@@ -17,6 +17,7 @@ namespace Pulse.CDM
     protected SEScalarLength height;
     protected SEScalarMassPerVolume body_density;
     protected SEScalar0To1 body_fat_fraction;
+    protected SEScalar body_mass_index;
     protected SEScalarMass ideal_body_weight;
     protected SEScalarMass lean_body_mass;
 
@@ -29,6 +30,7 @@ namespace Pulse.CDM
     protected SEScalarPressure diastolic_arterial_pressure_baseline;
     protected SEScalarFrequency heart_rate_baseline;
     protected SEScalarPressure mean_arterial_pressure_baseline;
+    protected SEScalarPressure pulse_pressure_baseline;
     protected SEScalarFrequency respiration_rate_baseline;
     protected SEScalarPressure systolic_arterial_pressure_baseline;
     protected SEScalarVolume tidal_volume_baseline;
@@ -52,6 +54,7 @@ namespace Pulse.CDM
       height = null;
       body_density = null;
       body_fat_fraction = null;
+      body_mass_index = null;
       lean_body_mass = null;
       ideal_body_weight = null;
 
@@ -64,6 +67,7 @@ namespace Pulse.CDM
       diastolic_arterial_pressure_baseline = null;
       heart_rate_baseline = null;
       mean_arterial_pressure_baseline = null;
+      pulse_pressure_baseline = null;
       respiration_rate_baseline = null;
       systolic_arterial_pressure_baseline = null;
       tidal_volume_baseline = null;
@@ -88,6 +92,7 @@ namespace Pulse.CDM
       if (height != null) { height.Invalidate(); }
       if (body_density != null) { body_density.Invalidate(); }
       if (body_fat_fraction != null) { body_fat_fraction.Invalidate(); }
+      if (body_mass_index != null) { body_mass_index.Invalidate(); }
       if (lean_body_mass != null) { lean_body_mass.Invalidate(); }
       if (ideal_body_weight != null) { ideal_body_weight.Invalidate(); }
 
@@ -100,6 +105,7 @@ namespace Pulse.CDM
       if (diastolic_arterial_pressure_baseline != null) { diastolic_arterial_pressure_baseline.Invalidate(); }
       if (heart_rate_baseline != null) { heart_rate_baseline.Invalidate(); }
       if (mean_arterial_pressure_baseline != null) { mean_arterial_pressure_baseline.Invalidate(); }
+      if (pulse_pressure_baseline != null) { pulse_pressure_baseline.Invalidate(); }
       if (respiration_rate_baseline != null) { respiration_rate_baseline.Invalidate(); }
       if (systolic_arterial_pressure_baseline != null) { systolic_arterial_pressure_baseline.Invalidate(); }
       if (tidal_volume_baseline != null) { tidal_volume_baseline.Invalidate(); }
@@ -125,6 +131,7 @@ namespace Pulse.CDM
       if (src.HasHeight()) { GetHeight().Set(src.height); }
       if (src.HasBodyDensity()) { GetBodyDensity().Set(src.body_density); }
       if (src.HasBodyFatFraction()) { GetBodyFatFraction().Set(src.body_fat_fraction); }
+      if (src.HasBodyMassIndex()) { GetBodyMassIndex().Set(src.body_mass_index); }
       if (src.HasLeanBodyMass()) { GetLeanBodyMass().Set(src.lean_body_mass); }
       if (src.HasIdealBodyWeight()) { GetIdealBodyWeight().Set(src.ideal_body_weight); }
 
@@ -137,6 +144,7 @@ namespace Pulse.CDM
       if (src.HasDiastolicArterialPressureBaseline()) { GetDiastolicArterialPressureBaseline().Set(src.diastolic_arterial_pressure_baseline); }
       if (src.HasHeartRateBaseline()) { GetHeartRateBaseline().Set(src.heart_rate_baseline); }
       if (src.HasMeanArterialPressureBaseline()) { GetMeanArterialPressureBaseline().Set(src.mean_arterial_pressure_baseline); }
+      if (src.HasPulsePressureBaseline()) { GetPulsePressureBaseline().Set(src.pulse_pressure_baseline); }
       if (src.HasRespirationRateBaseline()) { GetRespirationRateBaseline().Set(src.respiration_rate_baseline); }
       if (src.HasSystolicArterialPressureBaseline()) { GetSystolicArterialPressureBaseline().Set(src.systolic_arterial_pressure_baseline); }
       if (src.HasTidalVolumeBaseline()) { GetTidalVolumeBaseline().Set(src.tidal_volume_baseline); }
@@ -287,6 +295,17 @@ namespace Pulse.CDM
       return body_fat_fraction;
     }
 
+    public bool HasBodyMassIndex()
+    {
+      return body_mass_index == null ? false : body_mass_index.IsValid();
+    }
+    public SEScalar GetBodyMassIndex()
+    {
+      if (body_mass_index == null)
+        body_mass_index = new SEScalar();
+      return body_mass_index;
+    }
+
     public bool HasDiastolicArterialPressureBaseline()
     {
       return diastolic_arterial_pressure_baseline == null ? false : diastolic_arterial_pressure_baseline.IsValid();
@@ -406,6 +425,17 @@ namespace Pulse.CDM
       if (mean_arterial_pressure_baseline == null)
         mean_arterial_pressure_baseline = new SEScalarPressure();
       return mean_arterial_pressure_baseline;
+    }
+
+    public bool HasPulsePressureBaseline()
+    {
+      return pulse_pressure_baseline == null ? false : pulse_pressure_baseline.IsValid();
+    }
+    public SEScalarPressure GetPulsePressureBaseline()
+    {
+      if (pulse_pressure_baseline == null)
+        pulse_pressure_baseline = new SEScalarPressure();
+      return pulse_pressure_baseline;
     }
 
     public bool HasResidualVolume()

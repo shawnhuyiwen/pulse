@@ -31,6 +31,9 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioData& src, SEScenario& dst)
   if (src.has_datarequestmanager())
     PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager());
 
+  for (int i = 0; i < src.datarequestfile_size(); i++)
+    dst.m_DataRequestFiles.push_back(src.datarequestfile()[i]);
+
   for (int i = 0; i < src.anyaction_size(); i++)
   {
     SEAction* a = PBAction::Load(src.anyaction()[i], *dst.m_SubMgr);
@@ -56,6 +59,8 @@ void PBScenario::Serialize(const SEScenario& src, CDM_BIND::ScenarioData& dst)
     dst.set_allocated_patientconfiguration(PBEngine::Unload(*src.m_PatientConfiguration));
 
   dst.set_allocated_datarequestmanager(PBEngine::Unload(*src.m_DataRequestMgr));
+
+  dst.mutable_datarequestfile()->Add(src.m_DataRequestFiles.begin(), src.m_DataRequestFiles.end());
 
   for (const SEAction* a : src.m_Actions)
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*a));
@@ -97,7 +102,13 @@ bool PBScenario::SerializeFromFile(const std::string& filename, SEScenario& dst)
   return true;
 }
 
-
+void PBScenario::Copy(const SEScenarioExec& src, SEScenarioExec& dst)
+{
+  dst.Clear();
+  CDM_BIND::ScenarioExecData data;
+  PBScenario::Serialize(src, data);
+  PBScenario::Serialize(data, dst);
+}
 void PBScenario::Load(const CDM_BIND::ScenarioExecData& src, SEScenarioExec& dst)
 {
   dst.Clear();
@@ -105,17 +116,14 @@ void PBScenario::Load(const CDM_BIND::ScenarioExecData& src, SEScenarioExec& dst
 }
 void PBScenario::Serialize(const CDM_BIND::ScenarioExecData& src, SEScenarioExec& dst)
 {
-  dst.SetLogToConsole((eSwitch)src.logtoconsole());
-  dst.SetLogFilename(src.logfilename());
-  dst.SetDataRequestCSVFilename(src.datarequestcsvfilename());
+  dst.LogToConsole((eSwitch)src.logtoconsole());
   dst.SetDataRootDirectory(src.datarootdirectory());
+  dst.SetOutputRootDirectory(src.outputrootdirectory());
+  dst.OrganizeOutputDirectory((eSwitch)src.organizeoutputdirectory());
 
-  dst.SetSerializationDirectory(src.serializationdirectory());
-  dst.SetAutoSerializeFilename(src.autoserializefilename());
-  dst.SetAutoSerializeAfterActions((eSwitch)src.autoserializeafteractions());
+  dst.AutoSerializeAfterActions((eSwitch)src.autoserializeafteractions());
   dst.SetAutoSerializePeriod_s(src.autoserializeperiod_s());
-  dst.SetTimeStampSerializedStates((eSwitch)src.timestampserializedstates());
-  dst.SetReloadSerializedState((eSwitch)src.reloadserializedstate());
+  dst.TimeStampSerializedStates((eSwitch)src.timestampserializedstates());
 
   switch (src.EngineConfiguration_case())
   {
@@ -127,6 +135,10 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioExecData& src, SEScenarioExec
   case CDM_BIND::ScenarioExecData::EngineConfigurationCase::kEngineConfigurationFilename:
   {
     dst.SetEngineConfigurationFilename(src.engineconfigurationfilename());
+    break;
+  }
+  case CDM_BIND::ScenarioExecData::EngineConfigurationCase::ENGINECONFIGURATION_NOT_SET:
+  {
     break;
   }
   }
@@ -143,9 +155,32 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioExecData& src, SEScenarioExec
     dst.SetScenarioFilename(src.scenariofilename());
     break;
   }
+  case CDM_BIND::ScenarioExecData::ScenarioCase::kScenarioDirectory:
+  {
+    dst.SetScenarioDirectory(src.scenariodirectory());
+    break;
+  }
+  case CDM_BIND::ScenarioExecData::ScenarioCase::kScenarioLogFilename:
+  {
+    dst.SetScenarioLogFilename(src.scenariologfilename());
+    break;
+  }
+  case CDM_BIND::ScenarioExecData::ScenarioCase::kScenarioLogDirectory:
+  {
+    dst.SetScenarioLogDirectory(src.scenariologdirectory());
+    break;
+  }
+  case CDM_BIND::ScenarioExecData::ScenarioCase::SCENARIO_NOT_SET:
+  {
+    break;
+  }
   }
 
   dst.SetContentFormat((eSerializationFormat)src.contentformat());
+  dst.SetThreadCount(src.threadcount());
+
+  for (int i = 0; i < src.datarequestfilessearch_size(); i++)
+    dst.GetDataRequestFilesSearch().insert(src.datarequestfilessearch(i));
 }
 
 CDM_BIND::ScenarioExecData* PBScenario::Unload(const SEScenarioExec& src)
@@ -156,29 +191,36 @@ CDM_BIND::ScenarioExecData* PBScenario::Unload(const SEScenarioExec& src)
 }
 void PBScenario::Serialize(const SEScenarioExec& src, CDM_BIND::ScenarioExecData& dst)
 {
-  dst.set_logtoconsole((CDM_BIND::eSwitch)src.GetLogToConsole());
-  dst.set_logfilename(src.GetLogFilename());
-  dst.set_datarequestcsvfilename(src.GetDataRequestCSVFilename());
+  dst.set_logtoconsole((CDM_BIND::eSwitch)src.LogToConsole());
   dst.set_datarootdirectory(src.GetDataRootDirectory());
+  dst.set_outputrootdirectory(src.GetOutputRootDirectory());
+  dst.set_organizeoutputdirectory((CDM_BIND::eSwitch)src.OrganizeOutputDirectory());
 
-  dst.set_serializationdirectory(src.GetSerializationDirectory());
-  dst.set_autoserializefilename(src.GetAutoSerializeFilename());
-  dst.set_autoserializeafteractions((CDM_BIND::eSwitch)src.GetAutoSerializeAfterActions());
+  dst.set_autoserializeafteractions((CDM_BIND::eSwitch)src.AutoSerializeAfterActions());
   dst.set_autoserializeperiod_s(src.GetAutoSerializePeriod_s());
-  dst.set_timestampserializedstates((CDM_BIND::eSwitch)src.GetTimeStampSerializedStates());
-  dst.set_reloadserializedstate((CDM_BIND::eSwitch)src.GetReloadSerializedState());
+  dst.set_timestampserializedstates((CDM_BIND::eSwitch)src.TimeStampSerializedStates());
 
   if (!src.GetEngineConfigurationContent().empty())
     dst.set_engineconfigurationcontent(src.GetEngineConfigurationContent());
   else if (!src.GetEngineConfigurationFilename().empty())
     dst.set_engineconfigurationfilename(src.GetEngineConfigurationFilename());
 
-  if (!src.GetEngineConfigurationContent().empty())
-    dst.set_engineconfigurationcontent(src.GetEngineConfigurationContent());
-  else if (!src.GetEngineConfigurationFilename().empty())
-    dst.set_engineconfigurationfilename(src.GetEngineConfigurationFilename());
+  if (!src.GetScenarioContent().empty())
+    dst.set_scenariocontent(src.GetScenarioContent());
+  else if (!src.GetScenarioFilename().empty())
+    dst.set_scenariofilename(src.GetScenarioFilename());
+  else if (!src.GetScenarioDirectory().empty())
+    dst.set_scenariodirectory(src.GetScenarioDirectory());
+  else if (!src.GetScenarioLogFilename().empty())
+    dst.set_scenariologfilename(src.GetScenarioLogFilename());
+  else if (!src.GetScenarioLogDirectory().empty())
+    dst.set_scenariologdirectory(src.GetScenarioLogDirectory());
 
   dst.set_contentformat((CDM_BIND::eSerializationFormat)src.GetContentFormat());
+  dst.set_threadcount(src.GetThreadCount());
+
+  for (std::string f : src.GetDataRequestFilesSearch())
+    dst.mutable_datarequestfilessearch()->AddAllocated(&f);
 }
 
 bool PBScenario::SerializeToString(const SEScenarioExec& src, std::string& output, eSerializationFormat m, Logger* logger)

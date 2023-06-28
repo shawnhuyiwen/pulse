@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <string>
 
@@ -26,6 +27,8 @@ public:
   double NextValueAsDouble(unsigned skip = 0);
 
   std::string Record() const;
+
+  static void SplitCSV(const std::string& originalCSV, const std::map<std::string, std::vector<std::string>>& fileMapping);
 
 private:
   CSV(CSV const&) = delete;

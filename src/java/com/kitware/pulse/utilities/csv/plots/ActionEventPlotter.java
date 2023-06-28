@@ -96,7 +96,7 @@ public class ActionEventPlotter implements Plotter
       } 
       catch(InvalidProtocolBufferException ex)
       {
-        Log.error("Could not analyze scenario file " + job.scenarioPath + job.scenarioFile);
+        Log.error("Could not analyze scenario file " + job.scenarioPath+"/"+job.scenarioFile);
       }
     }
     
@@ -180,7 +180,8 @@ public class ActionEventPlotter implements Plotter
     }
     catch (Exception e)
     {
-      Log.error("Something went wrong parsing the log",e);
+      Log.error("Something went wrong parsing the log");
+      Log.error(e.getMessage());
       return null;
     }
     

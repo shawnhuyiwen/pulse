@@ -41,5 +41,10 @@ namespace Pulse.CDM
     }
 
     public abstract bool IsValid();
+
+    public static string PrettyPrint(string msg)
+    {
+      return Logger.PrettyPrint(msg, Logger.ePrettyPrintType.Condition);
+    }
   }
 }

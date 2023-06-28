@@ -33,6 +33,8 @@ public class SEMechanicalVentilator implements SEEquipment
   protected SEScalarVolume                    tidalVolume;
   protected SEScalarVolume                    totalLungVolume;
   protected SEScalarVolumePerTime             totalPulmonaryVentilation;
+  
+  protected SEMechanicalVentilatorSettings    settings;
 
   public SEMechanicalVentilator()
   {
@@ -60,6 +62,8 @@ public class SEMechanicalVentilator implements SEEquipment
     tidalVolume = null;
     totalLungVolume = null;
     totalPulmonaryVentilation = null;
+    
+    settings = null;
   }
 
   @Override
@@ -112,6 +116,9 @@ public class SEMechanicalVentilator implements SEEquipment
       totalLungVolume.invalidate();
     if (totalPulmonaryVentilation != null)
       totalPulmonaryVentilation.invalidate();
+
+    if (settings != null)
+      settings.clear();
   }
   
   public boolean hasAirwayPressure()
@@ -378,5 +385,17 @@ public class SEMechanicalVentilator implements SEEquipment
     if (totalPulmonaryVentilation == null)
       totalPulmonaryVentilation = new SEScalarVolumePerTime();
     return totalPulmonaryVentilation;
+  }
+  
+
+  public boolean hasSettings()
+  {
+    return settings != null;
+  }
+  public SEMechanicalVentilatorSettings getSettings()
+  {
+    if (settings == null)
+      settings = new SEMechanicalVentilatorSettings();
+    return settings;
   }
 }

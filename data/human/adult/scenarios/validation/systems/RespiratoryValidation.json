@@ -1,7 +1,7 @@
 { "Scenario":
   {
     "Name": "RespiratoryValidation",
-    "Description": "Validation of Respiratory Ssytem data.",
+    "Description": "Validation of Respiratory Sytem data.",
     "PatientConfiguration": { "PatientFile": "StandardMale.json" },
     "DataRequestManager":
     {
@@ -23,7 +23,7 @@
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryFlow",                             "Unit": "L/s" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",              "Unit": "cmH2O s/L" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryTidalVolume",                      "Unit": "mL" },
-        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "FractionOfInsipredOxygen",                   "Unit": "unitless" },
+        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "FractionOfInspiredOxygen",                   "Unit": "unitless" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HorowitzIndex",                               "Unit": "mmHg" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ImposedPowerOfBreathing",                    "Unit": "W" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ImposedWorkOfBreathing",                     "Unit": "J" },
@@ -43,6 +43,7 @@
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PatientWorkOfBreathing",                     "Unit": "J" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PeakInspiratoryPressure",                    "Unit": "cmH2O" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PhysiologicDeadSpace",                       "Unit": "mL" },
+        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PhysiologicDeadSpaceTidalVolumeRatio",       "Unit": "unitless" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PositiveEndExpiratoryPressure",              "Unit": "cmH2O" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",                        "Unit": "L/cmH2O" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryElastance",                         "Unit": "cmH2O/L" },  
@@ -68,6 +69,7 @@
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TranspulmonaryPressure",                     "Unit": "cmH2O" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransrespiratoryPressure",                   "Unit": "cmH2O" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransthoracicPressure",                      "Unit": "cmH2O" },
+        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "VentilationPerfusionRatio",                  "Unit": "unitless" },
         
         { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "Carina",                     "PropertyName": "Pressure", "Unit": "cmH2O" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "LeftPleuralCavity",          "PropertyName": "Pressure", "Unit": "cmH2O"},
@@ -96,8 +98,7 @@
     },
     "AnyAction":
     [
-      { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}},
-      { "PatientAction": { "Assessment": { "Type": "PulmonaryFunctionTest" }}}
+      { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}}
     ]
   },
   "Configuration": { "GastrointestinalConfiguration": { "InitialStomachContents": { }}}

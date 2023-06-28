@@ -93,8 +93,7 @@ void HowToPulseEnginePool()
   // Add a hemorrhage to one engine on this thread
   SEHemorrhage h;
   h.GetSeverity().SetValue(0.4);
-  h.SetType(eHemorrhage_Type::External);
-  h.SetCompartment(pulse::VascularCompartment::VenaCava);
+  h.SetCompartment(eHemorrhage_Compartment::VenaCava);
   pool.GetEngine(0)->Engine->ProcessAction(h);
   // Advance some time on an engine, in the thread pool
   SEAdvanceTime adv;

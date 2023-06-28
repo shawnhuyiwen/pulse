@@ -19,6 +19,7 @@ public:
 
   static const VolumePerTimeUnit L_Per_s;
   static const VolumePerTimeUnit L_Per_day;
+  static const VolumePerTimeUnit L_Per_hr;
   static const VolumePerTimeUnit mL_Per_s;
   static const VolumePerTimeUnit mL_Per_day;
   static const VolumePerTimeUnit L_Per_min;

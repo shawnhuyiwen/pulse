@@ -11,13 +11,13 @@ def HowTo_ConsumeNutrients():
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.pbb", None):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None):
         print("Unable to load initial state file")
         return
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     consume = SEConsumeNutrients()
     consume.set_comment("Patient eats lunch")
@@ -36,7 +36,7 @@ def HowTo_ConsumeNutrients():
     # Advance some time and print out the vitals
     pulse.advance_time_s(60)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_ConsumeNutrients()
 

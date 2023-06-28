@@ -23,6 +23,7 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_CentralVenousPressure = nullptr;
   m_CerebralBloodFlow = nullptr;
   m_CerebralPerfusionPressure = nullptr;
+  m_CoronaryPerfusionPressure = nullptr;
   m_DiastolicArterialPressure = nullptr;
   m_DiastolicLeftHeartPressure = nullptr;
   m_DiastolicRightHeartPressure = nullptr;
@@ -37,6 +38,7 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_MeanCentralVenousPressure = nullptr;
   m_MeanSkinFlow = nullptr;
   m_PulmonaryArterialPressure = nullptr;
+  m_PulmonaryCapillariesCoverageFraction = nullptr;
   m_PulmonaryCapillariesWedgePressure = nullptr;
   m_PulmonaryDiastolicArterialPressure = nullptr;
   m_PulmonaryMeanArterialPressure = nullptr;
@@ -52,6 +54,7 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_SystolicRightHeartPressure = nullptr;
   m_TotalHemorrhageRate = nullptr;
   m_TotalHemorrhagedVolume = nullptr;
+  m_TotalPulmonaryPerfusion = nullptr;
 }
 
 SECardiovascularSystem::~SECardiovascularSystem()
@@ -65,6 +68,7 @@ SECardiovascularSystem::~SECardiovascularSystem()
   SAFE_DELETE(m_CentralVenousPressure);
   SAFE_DELETE(m_CerebralBloodFlow);
   SAFE_DELETE(m_CerebralPerfusionPressure);
+  SAFE_DELETE(m_CoronaryPerfusionPressure);
   SAFE_DELETE(m_DiastolicArterialPressure);
   SAFE_DELETE(m_DiastolicLeftHeartPressure);
   SAFE_DELETE(m_DiastolicRightHeartPressure);
@@ -79,6 +83,7 @@ SECardiovascularSystem::~SECardiovascularSystem()
   SAFE_DELETE(m_MeanCentralVenousPressure);
   SAFE_DELETE(m_MeanSkinFlow);
   SAFE_DELETE(m_PulmonaryArterialPressure);
+  SAFE_DELETE(m_PulmonaryCapillariesCoverageFraction);
   SAFE_DELETE(m_PulmonaryCapillariesWedgePressure);
   SAFE_DELETE(m_PulmonaryDiastolicArterialPressure);
   SAFE_DELETE(m_PulmonaryMeanArterialPressure);
@@ -94,6 +99,7 @@ SECardiovascularSystem::~SECardiovascularSystem()
   SAFE_DELETE(m_SystolicRightHeartPressure);
   SAFE_DELETE(m_TotalHemorrhageRate);
   SAFE_DELETE(m_TotalHemorrhagedVolume);
+  SAFE_DELETE(m_TotalPulmonaryPerfusion);
 }
 
 void SECardiovascularSystem::Clear()
@@ -105,6 +111,7 @@ void SECardiovascularSystem::Clear()
   INVALIDATE_PROPERTY(m_CentralVenousPressure);
   INVALIDATE_PROPERTY(m_CerebralBloodFlow);
   INVALIDATE_PROPERTY(m_CerebralPerfusionPressure);
+  INVALIDATE_PROPERTY(m_CoronaryPerfusionPressure);
   INVALIDATE_PROPERTY(m_DiastolicArterialPressure);
   INVALIDATE_PROPERTY(m_DiastolicLeftHeartPressure);
   INVALIDATE_PROPERTY(m_DiastolicRightHeartPressure);
@@ -119,6 +126,7 @@ void SECardiovascularSystem::Clear()
   INVALIDATE_PROPERTY(m_MeanCentralVenousPressure);
   INVALIDATE_PROPERTY(m_MeanSkinFlow);
   INVALIDATE_PROPERTY(m_PulmonaryArterialPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryCapillariesCoverageFraction);
   INVALIDATE_PROPERTY(m_PulmonaryCapillariesWedgePressure);
   INVALIDATE_PROPERTY(m_PulmonaryDiastolicArterialPressure);
   INVALIDATE_PROPERTY(m_PulmonaryMeanArterialPressure);
@@ -134,6 +142,7 @@ void SECardiovascularSystem::Clear()
   INVALIDATE_PROPERTY(m_SystolicRightHeartPressure);
   INVALIDATE_PROPERTY(m_TotalHemorrhageRate);
   INVALIDATE_PROPERTY(m_TotalHemorrhagedVolume);
+  INVALIDATE_PROPERTY(m_TotalPulmonaryPerfusion);
 }
 
 const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
@@ -152,6 +161,8 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetCerebralBloodFlow();
   if (name.compare("CerebralPerfusionPressure") == 0)
     return &GetCerebralPerfusionPressure();
+  if (name.compare("CoronaryPerfusionPressure") == 0)
+    return &GetCoronaryPerfusionPressure();
   if (name.compare("DiastolicArterialPressure") == 0)
     return &GetDiastolicArterialPressure();
   if (name.compare("DiastolicLeftHeartPressure") == 0)
@@ -178,6 +189,8 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetMeanSkinFlow();
   if (name.compare("PulmonaryArterialPressure") == 0)
     return &GetPulmonaryArterialPressure();
+  if (name.compare("PulmonaryCapillariesCoverageFraction") == 0)
+    return &GetPulmonaryCapillariesCoverageFraction();
   if (name.compare("PulmonaryCapillariesWedgePressure") == 0)
     return &GetPulmonaryCapillariesWedgePressure();
   if (name.compare("PulmonaryDiastolicArterialPressure") == 0)
@@ -208,6 +221,8 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetTotalHemorrhageRate();
   if (name.compare("TotalHemorrhagedVolume") == 0)
     return &GetTotalHemorrhagedVolume();
+  if (name.compare("TotalPulmonaryPerfusion") == 0)
+    return &GetTotalPulmonaryPerfusion();
   return nullptr;
 }
 
@@ -328,6 +343,23 @@ double SECardiovascularSystem::GetCerebralPerfusionPressure(const PressureUnit& 
   if (m_CerebralPerfusionPressure == nullptr)
     return SEScalar::dNaN();
   return m_CerebralPerfusionPressure->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasCoronaryPerfusionPressure() const
+{
+  return m_CoronaryPerfusionPressure == nullptr ? false : m_CoronaryPerfusionPressure->IsValid();
+}
+SEScalarPressure& SECardiovascularSystem::GetCoronaryPerfusionPressure()
+{
+  if (m_CoronaryPerfusionPressure == nullptr)
+    m_CoronaryPerfusionPressure = new SEScalarPressure();
+  return *m_CoronaryPerfusionPressure;
+}
+double SECardiovascularSystem::GetCoronaryPerfusionPressure(const PressureUnit& unit) const
+{
+  if (m_CoronaryPerfusionPressure == nullptr)
+    return SEScalar::dNaN();
+  return m_CoronaryPerfusionPressure->GetValue(unit);
 }
 
 bool SECardiovascularSystem::HasDiastolicArterialPressure() const
@@ -558,6 +590,23 @@ double SECardiovascularSystem::GetPulmonaryArterialPressure(const PressureUnit& 
   if (m_PulmonaryArterialPressure == nullptr)
     return SEScalar::dNaN();
   return m_PulmonaryArterialPressure->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasPulmonaryCapillariesCoverageFraction() const
+{
+  return m_PulmonaryCapillariesCoverageFraction == nullptr ? false : m_PulmonaryCapillariesCoverageFraction->IsValid();
+}
+SEScalar0To1& SECardiovascularSystem::GetPulmonaryCapillariesCoverageFraction()
+{
+  if (m_PulmonaryCapillariesCoverageFraction == nullptr)
+    m_PulmonaryCapillariesCoverageFraction = new SEScalar0To1();
+  return *m_PulmonaryCapillariesCoverageFraction;
+}
+double SECardiovascularSystem::GetPulmonaryCapillariesCoverageFraction() const
+{
+  if (m_PulmonaryCapillariesCoverageFraction == nullptr)
+    return SEScalar::dNaN();
+  return m_PulmonaryCapillariesCoverageFraction->GetValue();
 }
 
 bool SECardiovascularSystem::HasPulmonaryCapillariesWedgePressure() const
@@ -813,4 +862,21 @@ double SECardiovascularSystem::GetTotalHemorrhagedVolume(const VolumeUnit& unit)
   if (m_TotalHemorrhagedVolume == nullptr)
     return SEScalar::dNaN();
   return m_TotalHemorrhagedVolume->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasTotalPulmonaryPerfusion() const
+{
+  return m_TotalPulmonaryPerfusion == nullptr ? false : m_TotalPulmonaryPerfusion->IsValid();
+}
+SEScalarVolumePerTime& SECardiovascularSystem::GetTotalPulmonaryPerfusion()
+{
+  if (m_TotalPulmonaryPerfusion == nullptr)
+    m_TotalPulmonaryPerfusion = new SEScalarVolumePerTime();
+  return *m_TotalPulmonaryPerfusion;
+}
+double SECardiovascularSystem::GetTotalPulmonaryPerfusion(const VolumePerTimeUnit& unit) const
+{
+  if (m_TotalPulmonaryPerfusion == nullptr)
+    return SEScalar::dNaN();
+  return m_TotalPulmonaryPerfusion->GetValue(unit);
 }

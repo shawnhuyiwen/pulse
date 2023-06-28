@@ -18,7 +18,6 @@ class SEFluidCircuitNode;
 class SEFluidCircuitPath;
 class SEFluidCircuitCalculator;
 class SEConsciousRespirationCommand;
-class SEPulmonaryFunctionTest;
 
 namespace pulse
 {
@@ -43,18 +42,17 @@ namespace pulse
     RespiratoryModel(Data& data);
     virtual ~RespiratoryModel();
 
-    virtual void Clear();
+    virtual void Clear() override;
 
     // Set members to a stable homeostatic state
-    virtual void Initialize();
+    virtual void Initialize() override;
     // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
-    virtual void SetUp();
+    virtual void SetUp() override;
 
-    virtual void AtSteadyState();
-    virtual void PreProcess();
-    virtual void Process(bool solve_and_transport=true);
-    virtual void PostProcess(bool solve_and_transport=true);
-    bool CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft) const;
+    virtual void AtSteadyState() override;
+    virtual void PreProcess() override;
+    virtual void Process(bool solve_and_transport=true) override;
+    virtual void PostProcess(bool solve_and_transport=true) override;
 
   protected:
     void ComputeExposedModelParameters() override;
@@ -81,17 +79,17 @@ namespace pulse
 
     //Actions
     void Pneumothorax();
-    void DoLeftNeedleDecompression(double dFlowResistance);
-    void DoRightNeedleDecompression(double dFlowResistance);
+    void Hemothorax();
     void MechanicalVentilation();
     void SupplementalOxygen();
     // Driver
     void CalculateDriver();
-    void ApplyDriver();  
+    void ApplyDriver();
     /**/void SetBreathCycleFractions();
     /**/void ConsciousRespiration();
     /**/double VolumeToDriverPressure(double TargetVolume);
-    /**/void ModifyDriverPressure();
+    /**/void UpdateDriverPressure();
+    /**/double UpdateDriverPeriod(double totalBreathingCycleTime_s);
     // Aerosol Deposition and various Effects
     void ProcessAerosolSubstances();
 
@@ -101,29 +99,27 @@ namespace pulse
 
     // Serializable member variables (Set in Initialize and in schema)
 
-    //   CalculateVitalSigns()
+    // CalculateVitalSigns()
     bool   m_BreathingCycle;
     bool   m_NotBreathing;
     double m_TopBreathTotalVolume_L;
-    double m_TopBreathAlveoliVolume_L;
-    double m_TopBreathPleuralVolume_L;
-    double m_TopBreathAlveoliPressure_cmH2O;
-    double m_TopBreathDriverPressure_cmH2O;
-    double m_TopBreathPleuralPressure_cmH2O;
     double m_LastCardiacCycleBloodPH;
     double m_TopCarinaO2;
     double m_TopBreathElapsedTime_min;
     double m_BottomBreathElapsedTime_min;
     double m_BottomBreathTotalVolume_L;
-    double m_BottomBreathAlveoliVolume_L;
-    double m_BottomBreathPleuralVolume_L;
     double m_BottomBreathAlveoliPressure_cmH2O;
-    double m_BottomBreathDriverPressure_cmH2O;
-    double m_BottomBreathPleuralPressure_cmH2O;
     double m_PeakAlveolarPressure_cmH2O;
     double m_MaximalAlveolarPressure_cmH2O;
     SERunningAverage* m_BloodPHRunningAverage;
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
+
+    //Needed for expanded pulmonary methodology
+    std::vector<double> m_LeftTopBreathAcinarZoneVolumes_L;
+    std::vector<double> m_RightTopBreathAcinarZoneVolumes_L;
+    std::vector<double> m_LeftBottomBreathAcinarZoneVolumes_L;
+    std::vector<double> m_RightBottomBreathAcinarZoneVolumes_L;
+    double m_PreviousPleuralVolume_L;
 
     // Respiratory Driver
     double m_ArterialO2PartialPressure_mmHg;
@@ -149,13 +145,14 @@ namespace pulse
     double m_InspiratoryRiseFraction;
     double m_InspiratoryToExpiratoryPauseFraction;
     double m_ResidueFraction;
+    double m_PreviousDyspneaSeverity;
 
     // Conscious Respiration
     bool m_ActiveConsciousRespirationCommand;
 
     // Disease States
-    double m_leftAlveoliDecrease_L;
-    double m_rightAlveoliDecrease_L;
+    double m_LeftAlveoliDecrease_L;
+    double m_RightAlveoliDecrease_L;
 
     // Overrides
     double m_RespiratoryResistanceOverride_cmH2O_s_Per_L;
@@ -180,8 +177,27 @@ namespace pulse
 
     // Patient
     SEPatientActionCollection* m_PatientActions;
-    //Compartments
+
+    // Compartments
     SEGasCompartment* m_Environment;
+    SEGasCompartment* m_Lungs;
+    SEGasCompartment* m_PleuralCavity;
+    SEGasCompartment* m_LeftPleuralCavity;
+    SEGasCompartment* m_RightPleuralCavity;
+    SEGasCompartment* m_Carina;
+    SEGasCompartment* m_LeftLung;
+    SEGasCompartment* m_RightLung;
+    SEGasCompartment* m_LeftAlveoli;
+    SEGasCompartment* m_RightAlveoli;
+    SEGasCompartment* m_AnatomicDeadSpace;
+    SEGasCompartment* m_Alveoli;
+    SEGasSubstanceQuantity* m_CarinaO2;
+    SEGasSubstanceQuantity* m_LeftAlveoliO2;
+    SEGasSubstanceQuantity* m_RightAlveoliO2;
+    // Mechanical Ventilation
+    SEGasCompartment* m_MechanicalVentilationConnection;
+    SELiquidCompartment* m_MechanicalVentilationAerosolConnection;
+    // Aerosol
     SELiquidCompartment* m_AerosolAirway;
     SELiquidCompartment* m_AerosolCarina;
     SELiquidCompartment* m_AerosolLeftAnatomicDeadSpace;
@@ -190,37 +206,31 @@ namespace pulse
     SELiquidCompartment* m_AerosolRightAnatomicDeadSpace;
     SELiquidCompartment* m_AerosolRightAlveolarDeadSpace;
     SELiquidCompartment* m_AerosolRightAlveoli;
+    std::vector<SELiquidCompartment*> m_AerosolEffects;
     SELiquidCompartment* m_LeftLungExtravascular;
     SELiquidCompartment* m_RightLungExtravascular;
-    SEGasCompartment* m_Lungs;
-    SEGasCompartment* m_LeftLung;
-    SEGasCompartment* m_RightLung;
-    SEGasCompartment* m_Carina;
-    SEGasSubstanceQuantity* m_CarinaO2;
+    // Cardiovascular
+    SELiquidCompartment* m_LeftPulmonaryCapillaries;
+    SELiquidCompartment* m_RightPulmonaryCapillaries;
     SELiquidSubstanceQuantity* m_AortaO2;
     SELiquidSubstanceQuantity* m_AortaCO2;
-    SEGasSubstanceQuantity* m_LeftAlveoliO2;
-    SEGasSubstanceQuantity* m_RightAlveoliO2;
-    std::vector<SELiquidCompartment*> m_AerosolEffects;
-    SEGasCompartment* m_MechanicalVentilationConnection;
-    SELiquidCompartment* m_MechanicalVentilationAerosolConnection;
-    SEGasCompartment* m_PleuralCavity;
-    //Circuits
+
+    // Circuits
     SEFluidCircuit* m_RespiratoryCircuit;
-    //Nodes
-    SEFluidCircuitNode* m_Airway;
-    SEFluidCircuitNode* m_LeftAlveoli;
-    SEFluidCircuitNode* m_LeftAnatomicDeadSpace;
-    SEFluidCircuitNode* m_LeftAlveolarDeadSpace;
-    SEFluidCircuitNode* m_LeftPleural;
-    SEFluidCircuitNode* m_RespiratoryMuscle;
-    SEFluidCircuitNode* m_RightAlveoli;
-    SEFluidCircuitNode* m_RightAnatomicDeadSpace;
-    SEFluidCircuitNode* m_RightAlveolarDeadSpace;
-    SEFluidCircuitNode* m_RightPleural;
-    SEFluidCircuitNode* m_Ambient;
-    SEFluidCircuitNode* m_Stomach;
-    //Paths
+    // Nodes
+    SEFluidCircuitNode* m_AirwayNode;
+    SEFluidCircuitNode* m_LeftAlveoliNode;
+    SEFluidCircuitNode* m_LeftAnatomicDeadSpaceNode;
+    SEFluidCircuitNode* m_LeftAlveolarDeadSpaceNode;
+    SEFluidCircuitNode* m_LeftPleuralNode;
+    SEFluidCircuitNode* m_RespiratoryMuscleNode;
+    SEFluidCircuitNode* m_RightAlveoliNode;
+    SEFluidCircuitNode* m_RightAnatomicDeadSpaceNode;
+    SEFluidCircuitNode* m_RightAlveolarDeadSpaceNode;
+    SEFluidCircuitNode* m_RightPleuralNode;
+    SEFluidCircuitNode* m_AmbientNode;
+    SEFluidCircuitNode* m_StomachNode;
+    // Paths
     SEFluidCircuitPath* m_CarinaToLeftAnatomicDeadSpace;
     SEFluidCircuitPath* m_CarinaToRightAnatomicDeadSpace;
     SEFluidCircuitPath* m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace;
@@ -230,14 +240,16 @@ namespace pulse
     SEFluidCircuitPath* m_LeftPleuralToRespiratoryMuscle;
     SEFluidCircuitPath* m_RightPleuralToRespiratoryMuscle;
     SEFluidCircuitPath* m_DriverPressurePath;
-    SEFluidCircuitPath* m_AirwayToCarina;
+    SEFluidCircuitPath* m_AirwayToPharynx;
+    SEFluidCircuitPath* m_PharynxToEnvironment;
+    SEFluidCircuitPath* m_PharynxToCarina;
     SEFluidCircuitPath* m_AirwayToStomach;
     SEFluidCircuitPath* m_EnvironmentToLeftChestLeak;
     SEFluidCircuitPath* m_EnvironmentToRightChestLeak;
     SEFluidCircuitPath* m_LeftAlveoliLeakToLeftPleural;
     SEFluidCircuitPath* m_RightAlveoliLeakToRightPleural;
-    SEFluidCircuitPath* m_LeftPleuralToEnvironment;
-    SEFluidCircuitPath* m_RightPleuralToEnvironment;
+    SEFluidCircuitPath* m_LeftNeedleToLeftPleural;
+    SEFluidCircuitPath* m_RightNeedleToRightPleural;
     SEFluidCircuitPath* m_LeftAlveoliToLeftPleuralConnection;
     SEFluidCircuitPath* m_RightAlveoliToRightPleuralConnection;
     SEFluidCircuitPath* m_LeftPulmonaryCapillary;
@@ -247,11 +259,16 @@ namespace pulse
     SEFluidCircuitPath* m_ConnectionToAirway;
     SEFluidCircuitPath* m_GroundToConnection;
 
+    SEFluidCircuitPath* m_LeftCardiovascularLeak;
+    SEFluidCircuitPath* m_RightCardiovascularLeak;
+    SEFluidCircuitPath* m_LeftRespirtoryLeak;
+    SEFluidCircuitPath* m_RightRespirtoryLeak;
+
     SEFluidCircuitCalculator* m_Calculator;
     SEGasTransporter* m_GasTransporter;
     SELiquidTransporter* m_AerosolTransporter;
 
-    //Substance
+    // Substance
     SESubstance* m_Oversedation;
   };
 END_NAMESPACE

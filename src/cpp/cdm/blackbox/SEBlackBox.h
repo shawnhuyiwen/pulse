@@ -88,26 +88,28 @@ public:
   virtual void ImposeQuantity(const QuantityScalar& s) { m_MiddleNode->ImposeQuantity(s); }
   virtual double GetQuantity(const QuantityUnit& unit) const { return m_MiddleNode->GetNextQuantity().GetValue(unit); }
 
-protected:
-  // Circuit Elements
+  // Circuit Elements (If available)
   virtual bool HasMiddleNode() const { return m_MiddleNode != nullptr; }
   virtual NodeType* GetMiddleNode() const { return m_MiddleNode; }
-  virtual void SetMiddleNode(NodeType* n) { m_MiddleNode = n; }
 
   virtual bool HasSourceNode() const { return m_SourceNode != nullptr; }
   virtual NodeType* GetSourceNode() const { return m_SourceNode; }
-  virtual void SetSourceNode(NodeType* n) { m_SourceNode = n; }
 
   virtual bool HasTargetNode() const { return m_TargetNode != nullptr; }
   virtual NodeType* GetTargetNode() const { return m_TargetNode; }
-  virtual void SetTargetNode(NodeType* n) { m_TargetNode = n; }
 
   virtual bool HasSourcePath() const { return m_SourcePath != nullptr; }
   virtual PathType* GetSourcePath() const { return m_SourcePath; }
-  virtual void SetSourcePath(PathType* p) { m_SourcePath = p; }
 
   virtual bool HasTargetPath() const { return m_TargetPath != nullptr; }
   virtual PathType* GetTargetPath() const { return m_TargetPath; }
+
+protected:
+  // Set Circuit Elements
+  virtual void SetMiddleNode(NodeType* n) { m_MiddleNode = n; }
+  virtual void SetSourceNode(NodeType* n) { m_SourceNode = n; }
+  virtual void SetTargetNode(NodeType* n) { m_TargetNode = n; }
+  virtual void SetSourcePath(PathType* p) { m_SourcePath = p; }
   virtual void SetTargetPath(PathType* p) { m_TargetPath = p; }
 
   std::string      m_Name;

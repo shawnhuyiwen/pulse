@@ -19,6 +19,7 @@ add_library_ex(PulseEngine
     common/system/environment/EnvironmentModel.h
     common/system/equipment/AnesthesiaMachineModel.h
     common/system/equipment/BagValveMaskModel.h
+    common/system/equipment/ECMOModel.h
     common/system/equipment/ElectroCardioGramModel.h
     common/system/equipment/InhalerModel.h
     common/system/equipment/MechanicalVentilatorModel.h
@@ -45,6 +46,7 @@ add_library_ex(PulseEngine
     human_adult/whole_body/system/environment/EnvironmentModel.h
     human_adult/whole_body/system/equipment/AnesthesiaMachineModel.h
     human_adult/whole_body/system/equipment/BagValveMaskModel.h
+    human_adult/whole_body/system/equipment/ECMOModel.h
     human_adult/whole_body/system/equipment/ElectroCardioGramModel.h
     human_adult/whole_body/system/equipment/InhalerModel.h
     human_adult/whole_body/system/equipment/MechanicalVentilatorModel.h
@@ -88,10 +90,13 @@ add_library_ex(PulseEngine
     common/controller/CompartmentManager.cpp
     common/controller/Controller.cpp
     common/controller/SetupCircuitsAndCompartments.cpp
+    common/controller/SetupExpandedCardiovascular.cpp
+    common/controller/SetupExpandedRespiratory.cpp
     common/controller/SubstanceManager.cpp
     common/system/environment/EnvironmentModel.cpp
     common/system/equipment/AnesthesiaMachineModel.cpp
     common/system/equipment/BagValveMaskModel.cpp
+    common/system/equipment/ECMOModel.cpp
     common/system/equipment/ElectroCardioGramModel.cpp
     common/system/equipment/InhalerModel.cpp
     common/system/equipment/MechanicalVentilatorModel.cpp
@@ -160,13 +165,13 @@ add_library_ex(PulseEngineTests
     human_adult/whole_body/test/EngineTest.cpp
     human_adult/whole_body/test/FourCompartmentTest.cpp
     human_adult/whole_body/test/MechanicalVentilatorCircuit.cpp
-    human_adult/whole_body/test/MultiEngineTest.cpp
     human_adult/whole_body/test/NervousTests.cpp
     human_adult/whole_body/test/ReadScenarios.cpp
     human_adult/whole_body/test/RenalCircuit.cpp
     human_adult/whole_body/test/RespiratoryCircuit.cpp
     human_adult/whole_body/test/ReuseEngine.cpp
     human_adult/whole_body/test/SerializationTest.cpp
+    human_adult/whole_body/test/SetupPatientTest.cpp
     human_adult/whole_body/test/SolverTests.cpp
     human_adult/whole_body/test/TemperatureCircuit.cpp
     human_adult/whole_body/test/TissueTests.cpp

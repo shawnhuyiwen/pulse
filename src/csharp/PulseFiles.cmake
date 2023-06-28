@@ -11,6 +11,8 @@ set(PULSE_CSHARP_BIND_FILES
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Circuit.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Compartment.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Conditions.cs
+  ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/ECMO.cs
+  ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/ECMOActions.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/ElectroCardioGram.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Engine.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Enums.cs
@@ -50,6 +52,9 @@ set(PULSE_CSHARP_HOWTO_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_DeathState.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_EngineUse.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Environment.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_ECMO.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Hemorrhage.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Hemothorax.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_MechanicalVentilator.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_PatientStates.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_RespiratoryMechanics.cs
@@ -64,6 +69,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/CommonDataModel.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEAction.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEActionManager.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEAdvanceTime.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SECondition.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEConditionManager.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEDataRequest.cs
@@ -74,11 +80,13 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SELogger.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEPatientActionCollection.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEPatientConfiguration.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SESerializeState.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBActions.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBAnesthesiaMachine.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBBagValveMask.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBConditions.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBDataRequest.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBECMO.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnums.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnvironment.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnvironmentActions.cs
@@ -106,8 +114,9 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEAsthmaAttack.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEBrainInjury.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEBronchoconstriction.cs
-  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompressionForce.cs
-  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompressionForceScale.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompression.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompressionAutomated.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompressionInstantaneous.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestOcclusiveDressing.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEConsciousRespiration.cs
@@ -115,6 +124,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEDyspnea.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEExercise.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEHemorrhage.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEHemothorax.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEIntubation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SELobarPneumoniaExacerbation.cs
@@ -130,12 +140,12 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SESubstanceInfusion.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SESupplementalOxygen.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SETensionPneumothorax.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SETubeThoracostomy.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEUrinate.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEArterialBloodGasTest.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SECompleteBloodCount.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEComprehensiveMetabolicPanel.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEPatientAssessment.cs
-  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEPulmonaryFunctionTest.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEUrinalysis.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEUrinalysisMicroscopic.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.cs
@@ -189,6 +199,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SESegmentLinear.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SESegmentParabolic.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SESegmentSigmoidal.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/scenario/SEScenario.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/scenario/SEScenarioExec.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/substance/SESubstanceConcentration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/substance/SESubstanceFraction.cs
@@ -226,6 +237,9 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/ecmo/SEECMOSettings.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/ecmo/actions/SEECMOAction.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/ecmo/actions/SEECMOConfiguration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/inhaler/SEInhaler.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/inhaler/actions/SEInhalerAction.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.cs
@@ -243,4 +257,6 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/utils/RunConfiguration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/utils/UnitConverter.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/engine/PulseEngine.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/engine/PulseScenarioExec.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/engine/io/PBScenario.cs
   )

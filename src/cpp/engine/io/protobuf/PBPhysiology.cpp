@@ -26,9 +26,9 @@ namespace pulse
   void PBPhysiology::Serialize(const PULSE_BIND::BloodChemistryData& src, BloodChemistryModel& dst)
   {
     ::PBPhysiology::Serialize(src.common(), dst);
-    if (!src.has_arterialoxygenaverage_mmhg()) { dst.Fatal("Missing ArterialOxygen_mmHg", "BloodChemistry::Serialize"); }
+    if (!src.has_arterialoxygenaverage_mmhg()) { dst.Fatal("Missing ArterialOxygen_mmHg"); }
     PBProperty::Load(src.arterialoxygenaverage_mmhg(), *dst.m_ArterialOxygen_mmHg);
-    if (!src.has_arterialcarbondioxideaverage_mmhg()) { dst.Fatal("Missing ArterialCarbonDioxide_mmHg", "BloodChemistry::Serialize"); }
+    if (!src.has_arterialcarbondioxideaverage_mmhg()) { dst.Fatal("Missing ArterialCarbonDioxide_mmHg"); }
     PBProperty::Load(src.arterialcarbondioxideaverage_mmhg(), *dst.m_ArterialCarbonDioxide_mmHg);
   }
   PULSE_BIND::BloodChemistryData* PBPhysiology::Unload(const BloodChemistryModel& src)
@@ -53,11 +53,12 @@ namespace pulse
   void PBPhysiology::Serialize(const PULSE_BIND::CardiovascularData& src, CardiovascularModel& dst)
   {
     ::PBPhysiology::Serialize(src.common(), dst);
-    dst.m_StartCardiacArrest = src.startcardiacarrest();
-    dst.m_CardiacArrestVitalsUpdateTimer_s = src.cardiacarrestvitalsupdatetimer_s();
     dst.m_StartSystole = src.startsystole();
     dst.m_HeartFlowDetected = src.heartflowdetected();
-    dst.m_CurrentCardiacCycleTime_s = src.currentcardiaccycletime_s();
+    dst.m_FullyCompressedHeart = src.fullycompressedheart();
+    dst.m_StabilizedHeartRateBaseline_Per_min = src.stabilizedheartratebaseline_per_min();
+    dst.m_StabilizedMeanArterialPressureBaseline_mmHg = src.stabilizedmeanarterialpressurebaseline_mmhg();
+
     dst.m_CurrentDriverCycleTime_s = src.currentdrivercycletime_s();
     dst.m_DriverCyclePeriod_s = src.drivercycleperiod_s();
     dst.m_LeftHeartElastanceModifier = src.leftheartelastancemodifier();
@@ -68,14 +69,23 @@ namespace pulse
     dst.m_RightHeartElastanceMax_mmHg_Per_mL = src.rightheartelastancemax_mmhg_per_ml();
     dst.m_RightHeartElastanceMin_mmHg_Per_mL = src.rightheartelastancemin_mmhg_per_ml();
 
-    dst.m_ArrhythmiaHeartElastanceModifier = src.arrhythmiaheartelastancemodifier();
-    dst.m_ArrhythmiaVascularToneModifier = src.arrhythmiavasculartonemodifier();
-    dst.m_StabilizedHeartRateBaseline_Per_min = src.stabilizedheartratebaseline_per_min();
-    dst.m_StabilizedMAPBaseline_mmHg = src.stabilizedmapbaseline_mmhg();
+    dst.m_EnableFeedbackAfterArrhythmiaTrasition = (eSwitch)src.enablefeedbackafterarrhythmiatrasition();
+    dst.m_StartCardiacArrest = src.startcardiacarrest();
+    dst.m_TransitionArrhythmia = src.transitionarrhythmia();
+    dst.m_CardiacArrestVitalsUpdateTimer_s = src.cardiacarrestvitalsupdatetimer_s();
 
-    dst.m_CompressionTime_s = src.compressiontime_s();
-    dst.m_CompressionRatio = src.compressionratio();
+    PBProperty::Load(src.heartratebaseline_per_min(), *dst.m_HeartRateBaseline_Per_min);
+    PBProperty::Load(src.heartcompliancemodifier(), *dst.m_HeartComplianceModifier);
+    PBProperty::Load(src.aortacompliancemodifier(), *dst.m_AortaComplianceModifier);
+    PBProperty::Load(src.venacavacompliancemodifier(), *dst.m_VenaCavaComplianceModifier);
+    PBProperty::Load(src.pulmonarycompliancemodifier(), *dst.m_PulmonaryComplianceModifier);
+    PBProperty::Load(src.systemicvascularresistancemodifier(), *dst.m_SystemicVascularResistanceModifier);
+    PBProperty::Load(src.systemicvascularcompliancemodifier(), *dst.m_SystemicVascularComplianceModifier);
+
+    dst.m_CompressionFrequencyCurrentTime_s = src.compressionfrequencycurrenttime_s();
+    dst.m_CompressionFrequencyDuration_s = src.compressionfrequencyduration_s();
     dst.m_CompressionPeriod_s = src.compressionperiod_s();
+    dst.m_CompressionPeriodCurrentTime_s = src.compressionperiodcurrenttime_s();
 
     dst.m_CardiacCycleDiastolicVolume_mL = src.cardiaccyclediastolicvolume_ml();
     dst.m_CardiacCycleAortaPressureLow_mmHg = src.cardiaccycleaortapressurelow_mmhg();
@@ -88,6 +98,11 @@ namespace pulse
     dst.m_CardiacCycleRightHeartPressureHigh_mmHg = src.cardiaccyclerightheartpressurehigh_mmhg();
     dst.m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = src.lastcardiaccyclemeanarterialco2partialpressure_mmhg();
     dst.m_CardiacCycleStrokeVolume_mL = src.cardiaccyclestrokevolume_ml();
+
+    for (int i = 0; i < src.leftcardiaccycleperfusionvolumes_ml_size(); i++)
+      dst.m_LeftCardiacCyclePerfusionVolumes_mL.push_back(src.leftcardiaccycleperfusionvolumes_ml()[i]);
+    for (int i = 0; i < src.rightcardiaccycleperfusionvolumes_ml_size(); i++)
+      dst.m_RightCardiacCyclePerfusionVolumes_mL.push_back(src.rightcardiaccycleperfusionvolumes_ml()[i]);
 
     PBProperty::Load(src.cardiaccyclearterialpressure_mmhg(), *dst.m_CardiacCycleArterialPressure_mmHg);
     PBProperty::Load(src.cardiaccyclearterialco2partialpressure_mmhg(), *dst.m_CardiacCycleArterialCO2PartialPressure_mmHg);
@@ -107,11 +122,11 @@ namespace pulse
   void PBPhysiology::Serialize(const CardiovascularModel& src, PULSE_BIND::CardiovascularData& dst)
   {
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
-    dst.set_startcardiacarrest(src.m_StartCardiacArrest);
-    dst.set_cardiacarrestvitalsupdatetimer_s(src.m_CardiacArrestVitalsUpdateTimer_s);
     dst.set_startsystole(src.m_StartSystole);
     dst.set_heartflowdetected(src.m_HeartFlowDetected);
-    dst.set_currentcardiaccycletime_s(src.m_CurrentCardiacCycleTime_s);
+    dst.set_fullycompressedheart(src.m_FullyCompressedHeart);
+    dst.set_stabilizedheartratebaseline_per_min(src.m_StabilizedHeartRateBaseline_Per_min);
+    dst.set_stabilizedmeanarterialpressurebaseline_mmhg(src.m_StabilizedMeanArterialPressureBaseline_mmHg);
     dst.set_currentdrivercycletime_s(src.m_CurrentDriverCycleTime_s);
     dst.set_drivercycleperiod_s(src.m_DriverCyclePeriod_s);
     dst.set_leftheartelastance_mmhg_per_ml(src.m_LeftHeartElastance_mmHg_Per_mL);
@@ -122,14 +137,23 @@ namespace pulse
     dst.set_rightheartelastancemax_mmhg_per_ml(src.m_RightHeartElastanceMax_mmHg_Per_mL);
     dst.set_rightheartelastancemin_mmhg_per_ml(src.m_RightHeartElastanceMin_mmHg_Per_mL);
 
-    dst.set_arrhythmiaheartelastancemodifier(src.m_ArrhythmiaHeartElastanceModifier);
-    dst.set_arrhythmiavasculartonemodifier(src.m_ArrhythmiaVascularToneModifier);
-    dst.set_stabilizedheartratebaseline_per_min(src.m_StabilizedHeartRateBaseline_Per_min);
-    dst.set_stabilizedmapbaseline_mmhg(src.m_StabilizedMAPBaseline_mmHg);
+    dst.set_enablefeedbackafterarrhythmiatrasition((CDM_BIND::eSwitch)src.m_EnableFeedbackAfterArrhythmiaTrasition);
+    dst.set_startcardiacarrest(src.m_StartCardiacArrest);
+    dst.set_transitionarrhythmia(src.m_TransitionArrhythmia);
+    dst.set_cardiacarrestvitalsupdatetimer_s(src.m_CardiacArrestVitalsUpdateTimer_s);
 
-    dst.set_compressiontime_s(src.m_CompressionTime_s);
-    dst.set_compressionratio(src.m_CompressionRatio);
+    dst.set_allocated_heartratebaseline_per_min(PBProperty::Unload(*src.m_HeartRateBaseline_Per_min));
+    dst.set_allocated_heartcompliancemodifier(PBProperty::Unload(*src.m_HeartComplianceModifier));
+    dst.set_allocated_aortacompliancemodifier(PBProperty::Unload(*src.m_AortaComplianceModifier));
+    dst.set_allocated_venacavacompliancemodifier(PBProperty::Unload(*src.m_VenaCavaComplianceModifier));
+    dst.set_allocated_pulmonarycompliancemodifier(PBProperty::Unload(*src.m_PulmonaryComplianceModifier));
+    dst.set_allocated_systemicvascularresistancemodifier(PBProperty::Unload(*src.m_SystemicVascularResistanceModifier));
+    dst.set_allocated_systemicvascularcompliancemodifier(PBProperty::Unload(*src.m_SystemicVascularComplianceModifier));
+
+    dst.set_compressionfrequencycurrenttime_s(src.m_CompressionFrequencyCurrentTime_s);
+    dst.set_compressionfrequencyduration_s(src.m_CompressionFrequencyDuration_s);
     dst.set_compressionperiod_s(src.m_CompressionPeriod_s);
+    dst.set_compressionperiodcurrenttime_s(src.m_CompressionPeriodCurrentTime_s);
 
     dst.set_cardiaccyclediastolicvolume_ml(src.m_CardiacCycleDiastolicVolume_mL);
     dst.set_cardiaccycleaortapressurelow_mmhg(src.m_CardiacCycleAortaPressureLow_mmHg);
@@ -142,6 +166,10 @@ namespace pulse
     dst.set_cardiaccyclerightheartpressurehigh_mmhg(src.m_CardiacCycleRightHeartPressureHigh_mmHg);
     dst.set_lastcardiaccyclemeanarterialco2partialpressure_mmhg(src.m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg);
     dst.set_cardiaccyclestrokevolume_ml(src.m_CardiacCycleStrokeVolume_mL);
+    for (double d : src.m_LeftCardiacCyclePerfusionVolumes_mL)
+      dst.mutable_leftcardiaccycleperfusionvolumes_ml()->Add(d);
+    for (double d : src.m_RightCardiacCyclePerfusionVolumes_mL)
+      dst.mutable_rightcardiaccycleperfusionvolumes_ml()->Add(d);
 
     dst.set_allocated_cardiaccyclearterialpressure_mmhg(PBProperty::Unload(*src.m_CardiacCycleArterialPressure_mmHg));
     dst.set_allocated_cardiaccyclearterialco2partialpressure_mmhg(PBProperty::Unload(*src.m_CardiacCycleArterialCO2PartialPressure_mmHg));
@@ -377,26 +405,28 @@ namespace pulse
 
     dst.m_BreathingCycle = src.breathingcycle();
     dst.m_NotBreathing = src.notbreathing();
+
     dst.m_TopBreathTotalVolume_L = src.topbreathtotalvolume_l();
-    dst.m_TopBreathAlveoliVolume_L = src.topbreathalveolivolume_l();
-    dst.m_TopBreathPleuralVolume_L = src.topbreathpleuralvolume_l();
-    dst.m_TopBreathAlveoliPressure_cmH2O = src.topbreathalveolipressure_cmh2o();
-    dst.m_TopBreathDriverPressure_cmH2O = src.topbreathdriverpressure_cmh2o();
-    dst.m_TopBreathPleuralPressure_cmH2O = src.topbreathpleuralpressure_cmh2o();
     dst.m_LastCardiacCycleBloodPH = src.lastcardiaccyclebloodph();
     dst.m_TopCarinaO2 = src.topcarinao2();
     dst.m_TopBreathElapsedTime_min = src.topbreathelapsedtime_min();
     dst.m_BottomBreathElapsedTime_min = src.bottombreathelapsedtime_min();
     dst.m_BottomBreathTotalVolume_L = src.bottombreathtotalvolume_l();
-    dst.m_BottomBreathAlveoliVolume_L = src.bottombreathalveolivolume_l();
-    dst.m_BottomBreathPleuralVolume_L = src.bottombreathpleuralvolume_l();
     dst.m_BottomBreathAlveoliPressure_cmH2O = src.bottombreathalveolipressure_cmh2o();
-    dst.m_BottomBreathDriverPressure_cmH2O = src.bottombreathdriverpressure_cmh2o();
-    dst.m_BottomBreathPleuralPressure_cmH2O = src.bottombreathpleuralpressure_cmh2o();
     dst.m_PeakAlveolarPressure_cmH2O = src.peakalveolarpressure_cmh2o();
     dst.m_MaximalAlveolarPressure_cmH2O = src.maximalalveolarpressure_cmh2o();
     PBProperty::Load(src.bloodphrunningaverage(), *dst.m_BloodPHRunningAverage);
     PBProperty::Load(src.meanairwaypressure_cmh2o(), *dst.m_MeanAirwayPressure_cmH2O);
+
+    for(int i=0; i<src.lefttopbreathacinarzonevolumes_l_size(); i++)
+      dst.m_LeftTopBreathAcinarZoneVolumes_L.push_back(src.lefttopbreathacinarzonevolumes_l()[i]);
+    for (int i=0; i<src.righttopbreathacinarzonevolumes_l_size(); i++)
+      dst.m_RightTopBreathAcinarZoneVolumes_L.push_back(src.righttopbreathacinarzonevolumes_l()[i]);
+    for (int i=0; i<src.leftbottombreathacinarzonevolumes_l_size(); i++)
+      dst.m_LeftBottomBreathAcinarZoneVolumes_L.push_back(src.leftbottombreathacinarzonevolumes_l()[i]);
+    for (int i=0; i<src.rightbottombreathacinarzonevolumes_l_size(); i++)
+      dst.m_RightBottomBreathAcinarZoneVolumes_L.push_back(src.rightbottombreathacinarzonevolumes_l()[i]);
+    dst.m_PreviousPleuralVolume_L = src.previouspleuralvolume_l();
 
     dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
     dst.m_ArterialCO2PartialPressure_mmHg = src.arterialco2partialpressure_mmhg();
@@ -420,9 +450,10 @@ namespace pulse
     dst.m_InspiratoryRiseFraction = src.inspiratoryrisefraction();
     dst.m_InspiratoryToExpiratoryPauseFraction = src.inspiratorytoexpiratorypausefraction();
     dst.m_ResidueFraction = src.residuefraction();
+    dst.m_PreviousDyspneaSeverity = src.previousdyspneaseverity();
 
-    dst.m_leftAlveoliDecrease_L = src.leftalveolidecrease_l();
-    dst.m_rightAlveoliDecrease_L = src.rightalveolidecrease_l();
+    dst.m_LeftAlveoliDecrease_L = src.leftalveolidecrease_l();
+    dst.m_RightAlveoliDecrease_L = src.rightalveolidecrease_l();
 
     dst.m_ActiveConsciousRespirationCommand = src.activeconsciousrespirationcommand();
 
@@ -441,26 +472,28 @@ namespace pulse
 
     dst.set_breathingcycle(src.m_BreathingCycle);
     dst.set_notbreathing(src.m_NotBreathing);
+
     dst.set_topbreathtotalvolume_l(src.m_TopBreathTotalVolume_L);
-    dst.set_topbreathalveolivolume_l(src.m_TopBreathAlveoliVolume_L);
-    dst.set_topbreathpleuralvolume_l(src.m_TopBreathPleuralVolume_L);
-    dst.set_topbreathalveolipressure_cmh2o(src.m_TopBreathAlveoliPressure_cmH2O);
-    dst.set_topbreathdriverpressure_cmh2o(src.m_TopBreathDriverPressure_cmH2O);
-    dst.set_topbreathpleuralpressure_cmh2o(src.m_TopBreathPleuralPressure_cmH2O);
     dst.set_lastcardiaccyclebloodph(src.m_LastCardiacCycleBloodPH);
     dst.set_topcarinao2(src.m_TopCarinaO2);
     dst.set_topbreathelapsedtime_min(src.m_TopBreathElapsedTime_min);
     dst.set_bottombreathelapsedtime_min(src.m_BottomBreathElapsedTime_min);
     dst.set_bottombreathtotalvolume_l(src.m_BottomBreathTotalVolume_L);
-    dst.set_bottombreathalveolivolume_l(src.m_BottomBreathAlveoliVolume_L);
-    dst.set_bottombreathpleuralvolume_l(src.m_BottomBreathPleuralVolume_L);
     dst.set_bottombreathalveolipressure_cmh2o(src.m_BottomBreathAlveoliPressure_cmH2O);
-    dst.set_bottombreathdriverpressure_cmh2o(src.m_BottomBreathDriverPressure_cmH2O);
-    dst.set_bottombreathpleuralpressure_cmh2o(src.m_BottomBreathPleuralPressure_cmH2O);
     dst.set_peakalveolarpressure_cmh2o(src.m_PeakAlveolarPressure_cmH2O);
     dst.set_maximalalveolarpressure_cmh2o(src.m_MaximalAlveolarPressure_cmH2O);
     dst.set_allocated_bloodphrunningaverage(PBProperty::Unload(*src.m_BloodPHRunningAverage));
     dst.set_allocated_meanairwaypressure_cmh2o(PBProperty::Unload(*src.m_MeanAirwayPressure_cmH2O));
+
+    for(double d : src.m_LeftTopBreathAcinarZoneVolumes_L)
+      dst.mutable_lefttopbreathacinarzonevolumes_l()->Add(d);
+    for (double d : src.m_RightTopBreathAcinarZoneVolumes_L)
+      dst.mutable_righttopbreathacinarzonevolumes_l()->Add(d);
+    for (double d : src.m_LeftBottomBreathAcinarZoneVolumes_L)
+      dst.mutable_leftbottombreathacinarzonevolumes_l()->Add(d);
+    for (double d : src.m_RightBottomBreathAcinarZoneVolumes_L)
+      dst.mutable_rightbottombreathacinarzonevolumes_l()->Add(d);
+    dst.set_previouspleuralvolume_l(src.m_PreviousPleuralVolume_L);
 
     dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);
     dst.set_arterialco2partialpressure_mmhg(src.m_ArterialCO2PartialPressure_mmHg);
@@ -484,11 +517,12 @@ namespace pulse
     dst.set_inspiratoryrisefraction(src.m_InspiratoryRiseFraction);
     dst.set_inspiratorytoexpiratorypausefraction(src.m_InspiratoryToExpiratoryPauseFraction);
     dst.set_residuefraction(src.m_ResidueFraction);
-
-    dst.set_leftalveolidecrease_l(src.m_leftAlveoliDecrease_L);
-    dst.set_rightalveolidecrease_l(src.m_rightAlveoliDecrease_L);
+    dst.set_previousdyspneaseverity(src.m_PreviousDyspneaSeverity);
 
     dst.set_activeconsciousrespirationcommand(src.m_ActiveConsciousRespirationCommand);
+
+    dst.set_leftalveolidecrease_l(src.m_LeftAlveoliDecrease_L);
+    dst.set_rightalveolidecrease_l(src.m_RightAlveoliDecrease_L);
 
     dst.set_respiratorycomplianceoverride_l_per_cmh2o(src.m_RespiratoryComplianceOverride_L_Per_cmH2O);
     dst.set_respiratoryresistanceoverride_cmh2o_s_per_l(src.m_RespiratoryResistanceOverride_cmH2O_s_Per_L);
@@ -503,11 +537,27 @@ namespace pulse
   void PBPhysiology::Serialize(const PULSE_BIND::TissueData& src, TissueModel& dst)
   {
     ::PBPhysiology::Serialize(src.common(), dst);
+    //dst.m_CardiacArrestCarbonDioxideProductionFactor = src.cardiacarrestcarbondioxideproductionfactor();
     dst.m_RestingTissueGlucose_g = src.restingtissueglucose_g();
     dst.m_RestingBloodGlucose_mg_Per_mL = src.restingbloodglucose_mg_per_ml();
     dst.m_RestingBloodLipid_mg_Per_mL = src.restingbloodlipid_mg_per_ml();
     dst.m_RestingBloodInsulin_mg_Per_mL = src.restingbloodinsulin_mg_per_ml();
     dst.m_RestingFluidMass_kg = src.restingfluidmass_kg();
+    for (auto sitr : src.cardiacarrestvascularflows_ml_per_min())
+    {
+      bool found = false;
+      for (auto ditr : dst.m_CardiacArrestVascularFlows_ml_per_min)
+      {
+        if (ditr.first->GetName() == sitr.first)
+        {
+          found = true;
+          dst.m_CardiacArrestVascularFlows_ml_per_min[ditr.first] = sitr.second;
+          break;
+        }
+      }
+      if(!found)
+        dst.Warning("Unknown vasculature cmpt in Tissue::CardiacArrestVascularFlows_ml_per_min : " + sitr.first);
+    }
   }
   PULSE_BIND::TissueData* PBPhysiology::Unload(const TissueModel& src)
   {
@@ -523,5 +573,7 @@ namespace pulse
     dst.set_restingbloodlipid_mg_per_ml(src.m_RestingBloodLipid_mg_Per_mL);
     dst.set_restingbloodinsulin_mg_per_ml(src.m_RestingBloodInsulin_mg_Per_mL);
     dst.set_restingfluidmass_kg(src.m_RestingFluidMass_kg);
+    for (auto ditr : src.m_CardiacArrestVascularFlows_ml_per_min)
+      (*dst.mutable_cardiacarrestvascularflows_ml_per_min())[ditr.first->GetName()] = ditr.second;
   }
 }

@@ -90,12 +90,3 @@ double SEActiveConditioning::GetSurfaceAreaFraction() const
     return SEScalar::dNaN();
   return m_SurfaceAreaFraction->GetValue();
 }
-
-void SEActiveConditioning::ToString(std::ostream &str) const
-{
-  str << "Active Conditioning :";
-  str << "\n\tPower :";                HasPower() ? str << *m_Power : str << "NaN";
-  str << "\n\tSurfaceArea :";          HasSurfaceArea() ? str << *m_SurfaceArea : str << "NaN";
-  str << "\n\tSurfaceAreaFraction :";  HasSurfaceAreaFraction() ? str << *m_SurfaceAreaFraction : str << "NaN";
-  str << std::flush;
-}

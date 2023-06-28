@@ -259,7 +259,6 @@ void SESubstanceManager::RemoveActiveCompound(const SESubstanceCompound& compoun
       m_cActiveCompounds.erase(m_cActiveCompounds.begin()+i);
       break;
     }
-    i++;
   }
 }
 
@@ -273,7 +272,8 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
 {
   bool succeed = true;
   Clear();
-
+  
+  Info("Reading substance files from " + data_dir);
   if (!FileExists(data_dir + "/substances/"))
   {
     Error("Unable to find substance directory : " + data_dir);
@@ -282,9 +282,13 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
 
   std::vector<std::string> substances;
   ListFiles(data_dir+"/substances/", substances, false, ".json");
+  if (substances.empty())
+    Error("No substances found...");
 
   std::vector<std::string> compounds;
   ListFiles(data_dir+"/substances/compounds/", compounds, false, ".json");
+  if (substances.empty())
+    Error("No substance compounds found...");
 
   std::string name, ext;
   for (auto filename : substances)
@@ -295,6 +299,8 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
       // If we don't want to make that assumption, we need to have
       // a map of filename to substance ptr and use it rather than GetSubstance by name.
       SplitFilenameExt(filename, name, ext);
+      if (ext != ".json")
+        continue; // Not a substance file
       SESubstance* sub = GetSubstance(name);
       if (!sub->SerializeFromFile(filename))
       {
@@ -317,6 +323,8 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
         // If we don't want to make that assumption, we need to have
         // a map of filename to substance ptr and use it rather than GetSubstance by name.
         SplitFilenameExt(filename, name, ext);
+        if (ext != ".json")
+          continue; // Not a substance file
         SESubstanceCompound* cmpd = GetCompound(name);
         if (!cmpd->SerializeFromFile(filename, *this))
         {

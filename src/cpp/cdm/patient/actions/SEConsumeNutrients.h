@@ -14,6 +14,9 @@ public:
   SEConsumeNutrients(Logger* logger=nullptr);
   virtual ~SEConsumeNutrients();
 
+  static constexpr char const* Name = "Consume Nutrients";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEConsumeNutrients& src, bool /*preserveState*/=false);
 
@@ -28,8 +31,6 @@ public:
   virtual std::string GetNutritionFile() const;
   virtual void SetNutritionFile(const std::string& fileName);
   virtual bool HasNutritionFile() const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

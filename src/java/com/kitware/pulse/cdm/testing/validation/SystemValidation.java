@@ -20,7 +20,6 @@ public class SystemValidation extends ValidationTool
   public static void main(String[] args)
   {
     JNIBridge.initialize();
-    Log.info("Running with agrs : "+Arrays.toString(args));
     SystemValidation me = new SystemValidation();
     if(args.length==0)
     {
@@ -28,8 +27,10 @@ public class SystemValidation extends ValidationTool
     }
     else
     {
+      if(args.length>=2 && args[1].equals("false"))
+        Log.output2Console = false;
+      Log.info("Running with agrs : "+Arrays.toString(args));
       me.loadData(args[0]);
     }
   }
-
 }

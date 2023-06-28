@@ -45,7 +45,7 @@ public:
 
   virtual void StateChange() { };
 
-  void SetReadOnly(bool b);  
+  void SetReadOnly(bool b);
 protected:
   
 

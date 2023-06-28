@@ -11,28 +11,36 @@ public:
 
   SECondition(Logger* logger);
   virtual ~SECondition();
-  
+
+  virtual std::string GetName() const = 0;
+  static constexpr char const* ConditionType = "Condition";
+  virtual std::string GetConditionType() const { return ConditionType; }
+
   virtual void Clear();
+
+  virtual bool SerializeToString(std::string& dst, eSerializationFormat fmt) const;
+  static SECondition* SerializeFromString(const std::string src, eSerializationFormat fmt, const SESubstanceManager& subMgr);
 
   virtual bool IsValid() const = 0;
   virtual bool IsActive() const = 0;
-
-  virtual std::string GetName() const = 0;
 
   virtual std::string GetComment() const;
   virtual void SetComment(const std::string& comment);
   virtual bool HasComment()const;
   virtual void InvalidateComment();
 
-  virtual void ToString(std::ostream &str) const=0;
+  static std::string PrettyPrint(const std::string& str);
+
+  virtual std::string ToJSON() const;
+  virtual std::string ToString() const;
 
 protected:
 
   std::string  m_Comment;
-};  
+};
 
-inline std::ostream& operator<< (std::ostream& out, const SECondition& a) 
+inline std::ostream& operator<< (std::ostream& out, const SECondition& c)
 {
-    a.ToString(out);
-    return out;
+  out << c.ToString();
+  return out;
 }

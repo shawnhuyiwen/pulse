@@ -80,6 +80,7 @@ CDM_BIND_DECL(HistogramData)
 CDM_BIND_DECL(HistogramFractionVsLengthData)
 
 CDM_BIND_DECL2(RunningAverage)
+CDM_BIND_DECL2(TemporalInterpolator)
 
 class CDM_DECL PBProperty
 {
@@ -447,10 +448,16 @@ public:
   static void Serialize(const CDM_BIND::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst);
   static void Serialize(const SEHistogramFractionVsLength& src, CDM_BIND::HistogramFractionVsLengthData& dst);
 
-
+  // Running Average
   static void Load(const CDM_BIND::RunningAverageData& src, SERunningAverage& dst);
   static CDM_BIND::RunningAverageData* Unload(const SERunningAverage& src);
   static void Serialize(const CDM_BIND::RunningAverageData& src, SERunningAverage& dst);
   static void Serialize(const SERunningAverage& src, CDM_BIND::RunningAverageData& dst);
+
+  // Temporal Interpolator
+  static void Load(const CDM_BIND::TemporalInterpolatorData& src, SETemporalInterpolator& dst);
+  static CDM_BIND::TemporalInterpolatorData* Unload(const SETemporalInterpolator& src);
+  static void Serialize(const CDM_BIND::TemporalInterpolatorData& src, SETemporalInterpolator& dst);
+  static void Serialize(const SETemporalInterpolator& src, CDM_BIND::TemporalInterpolatorData& dst);
 
 };

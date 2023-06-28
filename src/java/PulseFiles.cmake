@@ -10,6 +10,8 @@ set(PULSE_BIND_JAVA_FILES
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Circuit.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Compartment.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Conditions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/ECMO.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/ECMOActions.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/ElectroCardioGram.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Engine.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Enums.java
@@ -80,8 +82,9 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEAsthmaAttack.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEBrainInjury.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEBronchoconstriction.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEChestCompressionForce.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEChestCompressionForceScale.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEChestCompression.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEChestCompressionAutomated.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEChestCompressionInstantaneous.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEChestOcclusiveDressing.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEConsciousRespiration.java
@@ -93,6 +96,7 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEForcedInhale.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEForcedPause.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEHemorrhage.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEHemothorax.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEIntubation.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SELobarPneumoniaExacerbation.java
@@ -115,7 +119,6 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SECompleteBloodCount.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SEComprehensiveMetabolicPanel.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SEPatientAssessment.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SEPulmonaryFunctionTest.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SEUrinalysis.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SEUrinalysisMicroscopic.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.java
@@ -241,6 +244,9 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/ecmo/SEECMO.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/ecmo/actions/SEECMOAction.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/ecmo/actions/SEECMOConfiguration.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/electrocardiogram/SEElectroCardioGram.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveform.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/inhaler/SEInhaler.java
@@ -297,6 +303,7 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/testing/ScenarioTestDriver.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_AnesthesiaMachine.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_EngineUse.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_ECMO.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_Envionment.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_Hemorrhage.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_MechanicalVentilator.java
@@ -336,5 +343,4 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/csv/plots/PairPlotter.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/csv/plots/PlotDriver.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/csv/plots/Plotter.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/csv/plots/RespiratoryPFTPlotter.java
 )

@@ -2,32 +2,23 @@
   "Name": "HemorrhageClass1Femoral",
   "Description": "15% Blood Loss",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
+  "DataRequestFile": [
+    "StandardDataRequests.json"
+  ],
   "DataRequestManager":
   {
     "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 1 }, "PropertyName": "Weight", "Unit": "kg" },    
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "HeartRate", "Unit": "1/min" },   
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "HeartStrokeVolume",                 "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BloodVolume",                       "Unit": "L" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "ExtravascularFluidVolume",          "Unit": "L" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "MeanArterialPressure",              "Unit": "mmHg" },
-      { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "SystolicArterialPressure",          "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "DiastolicArterialPressure",         "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "CardiacOutput",                     "Unit": "L/min" },
-      { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "HemoglobinContent",                 "Unit": "g" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TidalVolume",                       "Unit": "mL" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "RespirationRate",                   "Unit": "1/min" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "OxygenSaturation",                  "Unit": "unitless" },    
-      
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "PropertyName": "InFlow",  "Unit": "mL/min" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "PropertyName": "InFlow",  "Unit": "mL/min" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",     "PropertyName": "InFlow",  "Unit": "mL/min" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeartVasculature",   "PropertyName": "InFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart",   "PropertyName": "InFlow",  "Unit": "mL/min" },
 
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "RightLeg", "PropertyName": "FlowRate", "Unit": "mL/s"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "RightLeg", "PropertyName": "TotalBloodLost", "Unit": "mL"},
+      
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhageRate", "Unit": "mL/s"},
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhagedVolume", "Unit": "mL"}
     ]
@@ -44,7 +35,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 90.0,
@@ -65,7 +56,7 @@
   }, {
     "PatientAction": {
       "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
+        "Compartment": "RightLeg",
         "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"

@@ -28,7 +28,7 @@ POP_PROTO_WARNINGS
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceManager.h"
 
-void PBCompartment::Serialize(const CDM_BIND::CompartmentData& src, SECompartment& dst)
+void PBCompartment::Serialize(const CDM_BIND::CompartmentData& /*src*/, SECompartment& /*dst*/)
 {
   // Name is set in ctor
 }
@@ -285,6 +285,19 @@ template<FLUID_COMPARTMENT_TEMPLATE>
 void PBCompartment::Serialize(const CDM_BIND::FluidCompartmentData& src, SEFluidCompartment<FLUID_COMPARTMENT_TYPES>& dst, SECircuitManager* circuits)
 {
   PBCompartment::Serialize(src.compartment(), dst);
+  if (src.has_averageinflow())
+  {
+    dst.GetAverageInFlow();
+    PBProperty::Load(src.averageinflow(), *dst.m_AverageInFlow);
+    PBProperty::Load(src.inflowrunningaverage(), *dst.m_AverageInFlow_mL_Per_s);
+  }
+  if (src.has_averageoutflow())
+  {
+    dst.GetAverageOutFlow();
+    PBProperty::Load(src.averageoutflow(), *dst.m_AverageOutFlow);
+    PBProperty::Load(src.outflowrunningaverage(), *dst.m_AverageOutFlow_mL_Per_s);
+  }
+
   // This compartment has children
   // We will not load any data as those are calculated on demand based on children
   if (src.compartment().child_size() > 0)
@@ -327,8 +340,18 @@ void PBCompartment::Serialize(const SEFluidCompartment<FLUID_COMPARTMENT_TYPES>&
   // Even if you have children or nodes, I am unloading everything, this makes the json actually usefull...
   if (src.HasInFlow())
     dst.set_allocated_inflow(PBProperty::Unload(src.GetInFlow()));
+  if (src.HasAverageInFlow())
+  {
+    dst.set_allocated_averageinflow(PBProperty::Unload(src.GetAverageInFlow()));
+    dst.set_allocated_inflowrunningaverage(PBProperty::Unload(*src.m_AverageInFlow_mL_Per_s));
+  }
   if (src.HasOutFlow())
     dst.set_allocated_outflow(PBProperty::Unload(src.GetOutFlow()));
+  if (src.HasAverageOutFlow())
+  {
+    dst.set_allocated_averageoutflow(PBProperty::Unload(src.GetAverageOutFlow()));
+    dst.set_allocated_outflowrunningaverage(PBProperty::Unload(*src.m_AverageOutFlow_mL_Per_s));
+  }
 
   // Yeah, I know
   // But, these will only modify member variables if they are being used as temporary variables
@@ -392,6 +415,13 @@ void PBCompartment::Serialize(const CDM_BIND::GasCompartmentData& src, SEGasComp
 {
   PBCompartment::Serialize(src.fluidcompartment(), dst, circuits);
 
+  if (src.has_diffusionsurfacearea())
+    PBProperty::Load(src.diffusionsurfacearea(), dst.GetDiffusionSurfaceArea());
+  if (src.has_ventilation())
+    PBProperty::Load(src.ventilation(), dst.GetVentilation());
+  if (src.has_ventilationperfusionratio())
+    PBProperty::Load(src.ventilationperfusionratio(), dst.GetVentilationPerfusionRatio());
+
   if (src.substancequantity_size() > 0)
   {
     for (int i = 0; i < src.substancequantity_size(); i++)
@@ -417,6 +447,14 @@ CDM_BIND::GasCompartmentData* PBCompartment::Unload(const SEGasCompartment& src)
 void PBCompartment::Serialize(const SEGasCompartment& src, CDM_BIND::GasCompartmentData& dst)
 {
   PBCompartment::Serialize(src, *dst.mutable_fluidcompartment());
+
+  if (src.HasDiffusionSurfaceArea())
+    dst.set_allocated_diffusionsurfacearea(PBProperty::Unload(*src.m_DiffusionSurfaceArea));
+  if (src.HasVentilation())
+    dst.set_allocated_ventilation(PBProperty::Unload(*src.m_Ventilation));
+  if (src.HasVentilationPerfusionRatio())
+    dst.set_allocated_ventilationperfusionratio(PBProperty::Unload(*src.m_VentilationPerfusionRatio));
+
   for (SEGasSubstanceQuantity* subQ : src.m_SubstanceQuantities)
     dst.mutable_substancequantity()->AddAllocated(PBSubstanceQuantity::Unload(*subQ));
 }
@@ -514,6 +552,8 @@ void PBCompartment::Serialize(const CDM_BIND::LiquidCompartmentData& src, SELiqu
       PBSubstanceQuantity::Serialize(d, dst.CreateSubstanceQuantity(*sub, false));
     }
   }
+  if (src.has_perfusion())
+    PBProperty::Load(src.perfusion(), dst.GetPerfusion());
   if (src.has_ph())
     PBProperty::Load(src.ph(), dst.GetPH());
   if (src.has_watervolumefraction())
@@ -532,6 +572,8 @@ void PBCompartment::Serialize(const SELiquidCompartment& src, CDM_BIND::LiquidCo
   for (SELiquidSubstanceQuantity* subQ : src.m_SubstanceQuantities)
     dst.mutable_substancequantity()->AddAllocated(PBSubstanceQuantity::Unload(*subQ));
 
+  if (src.HasPerfusion())
+    dst.set_allocated_perfusion(PBProperty::Unload(*src.m_Perfusion));
   if (src.HasPH())
     dst.set_allocated_ph(PBProperty::Unload(*src.m_pH));
   if (src.HasWaterVolumeFraction())

@@ -19,9 +19,9 @@ public:
   PhysiologyEngineThunk(const std::string& dataDir = "./");
   virtual ~PhysiologyEngineThunk();
 
-  //virtual void SetConfigurationOverride(std::string const& config)=0; // Not Implemented
+  virtual void Clear();
 
-  virtual bool ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format) = 0;
+  //virtual void SetConfigurationOverride(std::string const& config)=0; // Not Implemented
 
   bool SerializeFromFile(std::string const& filename, std::string const& data_requests, eSerializationFormat data_requests_format);
   bool SerializeToFile(std::string const& filename);
@@ -56,18 +56,18 @@ public:
   double* PullDataPtr();
   void PullData(std::vector<double>& data);
 
-  virtual void ForwardDebug(const std::string& msg, const std::string& origin);
-  virtual void ForwardInfo(const std::string& msg, const std::string& origin);
-  virtual void ForwardWarning(const std::string& msg, const std::string& origin);
-  virtual void ForwardError(const std::string& msg, const std::string& origin);
-  virtual void ForwardFatal(const std::string& msg, const std::string& origin);
+  void ForwardDebug(const std::string& msg) override;
+  void ForwardInfo(const std::string& msg) override;
+  void ForwardWarning(const std::string& msg) override;
+  void ForwardError(const std::string& msg) override;
+  void ForwardFatal(const std::string& msg) override;
 
-  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
-
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override;
 
 protected:
   virtual void AllocateEngine() = 0;
   virtual void SetupDefaultDataRequests();
+  virtual bool SetupRequests();
 
   std::unique_ptr<PhysiologyEngine> m_engine;
   SESubstanceManager* m_subMgr = nullptr;

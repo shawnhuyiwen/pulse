@@ -78,6 +78,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
 
     m_MechanicalVentilatorModel = new pulse::MechanicalVentilatorModel(*this);
 
+    // Add in the order to init/pre/post/process
+    m_Models.push_back(m_MechanicalVentilatorModel);
+    m_Models.push_back(m_RespiratoryModel);
+
     m_EventManager = new SEEventManager(GetLogger());
 
     // Create our derived objects
@@ -97,41 +101,5 @@ namespace pulse { namespace human_adult_ventilation_mechanics
       Warning("Provided conditions will be ignored, this engine does not need to stabilize");
 
     return true;// Nothing to do here, we are good to go!
-  }
-
-  void Controller::InitializeModels()
-  {
-    Info("Initializing Models");
-    m_RespiratoryModel->Clear();
-    m_MechanicalVentilatorModel->Clear();
-
-    m_RespiratoryModel->Initialize();
-    m_MechanicalVentilatorModel->Initialize();
-  }
-
-  void Controller::AtSteadyState(pulse::EngineState state)
-  {
-    m_State = state;
-
-    m_MechanicalVentilatorModel->AtSteadyState();
-    m_RespiratoryModel->AtSteadyState();
-  }
-
-  void Controller::PreProcess()
-  {
-    m_MechanicalVentilatorModel->PreProcess();
-    m_RespiratoryModel->PreProcess();
-  }
-
-  void Controller::Process()
-  {
-    m_MechanicalVentilatorModel->Process();
-    m_RespiratoryModel->Process();
-  }
-
-  void Controller::PostProcess()
-  {
-    m_MechanicalVentilatorModel->PostProcess();
-    m_RespiratoryModel->PostProcess();
   }
 END_NAMESPACE_EX

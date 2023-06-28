@@ -13,8 +13,11 @@ public:
   SESubstanceCompoundInfusion(const SESubstanceCompound& compound, Logger* logger=nullptr);
   virtual ~SESubstanceCompoundInfusion();
 
+  static constexpr char const* Name = "Substance Compound Infusion";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
-  virtual void Copy(const SESubstanceCompoundInfusion& src, bool /*preserveState*/=false);
+  virtual void Copy(const SESubstanceCompoundInfusion& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
@@ -30,8 +33,6 @@ public:
 
   virtual SESubstanceCompound& GetSubstanceCompound();
   virtual const SESubstanceCompound& GetSubstanceCompound() const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

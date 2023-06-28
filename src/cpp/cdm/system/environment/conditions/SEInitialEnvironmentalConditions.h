@@ -12,13 +12,14 @@ public:
   SEInitialEnvironmentalConditions(Logger* logger=nullptr);
   virtual ~SEInitialEnvironmentalConditions();
 
+  static constexpr char const* Name = "Initial Environmental Conditions";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEInitialEnvironmentalConditions& src, const SESubstanceManager& subMgr);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  virtual std::string GetName() const{ return "InitialEnvironmentalConditions"; }
 
   virtual bool HasEnvironmentalConditions() const;
   virtual SEEnvironmentalConditions& GetEnvironmentalConditions();
@@ -27,8 +28,6 @@ public:
   virtual std::string GetEnvironmentalConditionsFile() const;
   virtual void SetEnvironmentalConditionsFile(const std::string& fileName);
   virtual bool HasEnvironmentalConditionsFile() const;
-
-  virtual void ToString(std::ostream &str) const;
 
 protected:
   std::string                m_EnvironmentalConditionsFile;

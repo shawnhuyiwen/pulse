@@ -17,14 +17,16 @@ the engine.
 @anchor circuit-intro
 ## Introduction
 
-Engine systems use lumped parameter circuits to mimic the physiology
+Pulse systems use lumped parameter circuits to mimic the physiology
 of the human body.  These circuits use fluid or thermal elements that
 are analogous to electrical circuit elements.  The
 circuits have several types of feedback mechanisms that can be set and
-changed at every time step.  Figure&nbsp;1 presents a generic example of very low fidelity lumped
+changed at every time step.  Figure 1 presents a generic example of very low fidelity lumped
 parameter physiology circuits.  Circuits can be thought of as pipe networks for fluid analysis.
 
-<img src="./Images/Circuit/CircuitLumpExample.png">
+@htmlonly
+<a href="./Images/Circuit/CircuitLumpExample.png"><img src="./Images/Circuit/CircuitLumpExample.png"></a>
+@endhtmlonly
 <center>
 <i>Figure 1.  An example of physiology lumped parameter modeling.  This
 example shows very low fidelity models of specific cardiovascular
@@ -32,11 +34,13 @@ compartments (left), and a respiratory combined mechanical ventilation
 and free breathing model (right) @cite Clipp2012Humansim.</i>
 </center><br>
 
-*Note: For simplicity, this document uses electrical components and terminology when discussing the solver functionality.  See Table&nbsp;1 for analogies and details about the mapping of electrical components.*
+<i>Note: For simplicity, this document uses generic component/element terminology when discussing the solver functionality.  See Table 1 for analogies and details about the mapping of electrical components.</i>
 
-The CDM includes many of the same generic definitions traditionally used to define and analyze circuits.  Paths are ideal conductor branches that may contain elements (i.e., resistors, capacitors, inductors, diodes, etc.).  Nodes are junctions at the intersection of paths.  Figure&nbsp;2 shows these base circuit element definitions.  Paths are each assigned one source and one target node.  We use the convention of positive current from source to target when performing calculations.
+The CDM includes many of the same generic definitions traditionally used to define and analyze circuits.  Paths are ideal conductor branches that may contain elements (i.e., resistors, capacitors, inductors, diodes, etc.).  Nodes are junctions at the intersection of paths.  Figure 2 shows these base circuit element definitions.  Paths are each assigned one source and one target node.  We use the convention of positive current from source to target when performing calculations.
 
-<img src="./Images/Circuit/CircuitBaseDefinitions.png">
+@htmlonly
+<a href="./Images/Circuit/CircuitBaseDefinitions.png"><img src="./Images/Circuit/CircuitBaseDefinitions.png"></a>
+@endhtmlonly
 <center>
 <i>Figure 2. Nodes and paths are the lowest level elements used to define all circuits.  Paths correspond to ideal conductors (i.e., wires).  Nodes are placed at the intersections of paths.  In fluid systems, paths can be thought of as frictionless pipes and nodes as pipe junctions.</i>
 </center><br>
@@ -46,67 +50,28 @@ The CDM includes many of the same generic definitions traditionally used to defi
 
 ## Background and Scope
 
-### Legacy Solution
-
-The physiology engine from which the engine was spawned (released by
-Advanced Simulation Corporation as Body Simulation for Anesthesia&trade;)
-solved each lump parameter circuit using non-closed loop calculations
-contained within each system.  The systems were extensively
-interconnected and the circuit calculations were unable to be decoupled.
-This made it extremely difficult to find sources of errors and inconsistencies in output results.
-
-The circuit math was performed often using different approaches, with
-mixed results.  It became apparent that neither energy nor mass was
-being truly conserved.  This was true within the individual systems, as
-well as within the entire body.  One-way fluid valves in
-the %Cardiovascular System (similar to electrical diodes) would
-inadvertently allow backflow for a single time step when flows changed
-direction.  Little validation was done to provide a sound
-fundamental base on which to build physiological systems.
-
 ### Requirements
 
-Given the overall goals of the engine, we set out to create a generic
-circuit solver on which to expand.  The solver is required to efficiently
-solve transient linear and non-linear circuits.  Some other high-level
-requirements include:
+In the Pulse engine, the major systems are modeled using circuit analogs with homeostatic feedback to mimic the physiology and pathophysiology of the human body. These circuits are made of fluid (liquid or gas) or thermal compartments modeled as electrical circuit components. In order to ease the implementation of individual system models and ensure adherence to sound physics principles, a generic circuit solver was created to centralize and solve the lumped-parameter circuit math. This generalized calculation ensures an accurate and consistent solution that can be reused for any models using circuit analogs. The circuit solver must provide modeling flexibility by allowing the addition, removal, and/or modification of circuit components each time-step during simulations. Therefore, DC transient analysis must be performed on nonlinear networks with the following high-level requirements:
 
--   Generic - All systems should be able to use the same basic circuit
-    physics engine.  This allows rapid development, and makes engine
-    outputs much easier to validate and verify.
-
--   Computational Speed - The engine is required to maintain a transient
-    full-body solution faster than real time on typical personal
-    computers.
-
--   Modular - Using the same basis for design and construction will aid
-    in keeping the system decoupled.
-
--   Extensible - We must take future growth into consideration and allow
-    users and developers the proper tools and building blocks on which
-    to add new functionality.
-
--   Dynamic - Feedback mechanisms are required for each system.  It is
-    beneficial to be able to dynamically change, add, or remove
-    circuits, sub-circuits, elements, and connections at run time.
-
--   Conservation - We must uphold sound scientific principles and conserve energy, mass, and momentum.
-
--   Common Data Model - The entire solution must reside within and
-    effectively use the @ref CDM.
-
--   Circuits types - The engine will include fluid and thermal
-    circuits.  It is beneficial to use the same solver for both types of
-    systems.
-
--   Elements - The solver must be able to handle all base circuit
-    elements (i.e., resistors, capacitors, inductors, etc.), with room
-    for expansion.
-
--   Open source - As a whole, any third-party software must adhere to the same
-    license requirements as the engine.
+-   Generic - Leverageable by all physiological systems for rapid development and easy verification and validation (V&V)
+-   Multiphysics - Support simultaneous simulation of liquid, gas, and thermal circuits
+-   Comprehensive - Handle discrete passive components (i.e., wires, resistors, capacitors, inductors, switches, and diodes) and active components (i.e., voltage sources and current sources) with room for expansion
+-   Dynamic - Variable time-step and the ability to modify, add, or remove circuits, sub-circuits, components, and connections at run-time
+-   Modular - Support interdependent models for varying fidelity and complexity (e.g., multi-scale modeling) and aid in keeping systems decoupled
+-   Scalable - Able to efficiently solve any size network and connected networks
+-   Extensible - Reusable, repeatable, and interoperable implementation to allow for the addition of new capabilities and functionality 
+-   Robust - Reliable computation of valid networks with extensive error handling
+-   Credible - Validated conservation of energy, mass, and momentum through a first principles implementation
+-   Efficient - Maintain full-body simulation faster than real-time with a shared dynamic time-step of 20 milliseconds
+-   Compatible - Reside within the C++ standardized data model (CDM) for ontologies and interfaces
+-   Comprehensible - Readable and understandable source code
+-   Open-Source - All software must adhere to Apache 2.0 license requirements
+-   Cross-Platform - Easy compilation and deployment for standard operating systems (Windows, Mac, Linux, and ARM)
 
 ### Solutions Investigated
+
+Early techniques for circuit simulation using computers were introduced in the 1950s, and several limited-scope simulators were developed @cite najm_2010. The first general-purpose circuit simulator to experience widespread usage was SPICE (Simulation Program with Integrated Circuit Emphasis) coded in FORTRAN in the early 1970s. SPICE-based variations remain the most ubiquitous tools for circuit simulation software. There are several open-source successors, including XSPICE, CIDER, ngspice, and WRspice. 
 
 We considered several circuit solver options, including investigating existing
 software to determine if any would meet our needs.  The best external
@@ -116,172 +81,38 @@ variation on SPICE (Berkeley University&rsquo;s Spice3f5), called Ngspice
 purpose circuit simulation program for nonlinear and linear analyses.  It
 is developed with a C++ wrapper that maintains the original parametric
 netlist format (netlists can contain parameters and expressions)
-as inputs.
-
-During implementation, we found Ngspice to be a good fit for our
+as inputs. During implementation, we found Ngspice to be a good fit for our
 needs to solve closed-loop circuits, yet several negatives forced us to
-deviate from that path.  We discovered a small number of bugs, some with
-possible workarounds.  It was found to be very slow for our approach of
+deviate from that path.  It was found to be very slow for our approach of
 solving a new (i.e., dynamic) circuit each time step.  It was cumbersome
 to parse using the netlist input and output style.  The most significant
 downside against implementing Ngspice into the engine was the
 unavoidable build-up of memory that caused our software to crash.
 
-Due to the aforementioned complications, we ultimately determined that
-creating our own generalized circuit analysis code was ideal and less
-labor-intensive than implementing existing software.  This has the added
-benefit of allowing us to control every aspect of the analysis.
-
-@anchor circuit-data
-## Data Flow
-
-Our generic Circuit Solver intentionally mirrors the same data flow
-found in each of the systems.  Each time step consists of a Preprocess
-call to set up the circuits for analysis, a Process call to do the
-analysis, and a Post Process call to advance the time in preparation for the
-next time step.
-
-### Preprocess
-
-There is no literal Preprocess call within the circuit solver class (i.e., code).  Each system individually and directly modifies its circuit(s).  This allows our functionality to be entirely dynamic by performing a separate calculation every time step.  See the Data Model Implementation Appendix below for details about CDM circuit elements and the data they contain.
-
-### Process
-
-For the circuit-solving software to effectively calculate the nonlinear
-circuit states without human intervention, a robust, generic, and
-repeatable methodology is required.  The solver performs numerical
-integration through linearization (first order approximations) by
-assuming a direct current (DC) solution for the given time step.  The Modified Nodal
-Analysis (MNA) approach is used to determine the state of every node and path
-within the circuit.  The steps for solving a circuit in a given time step
-are (also see Figure&nbsp;3):
-
-1.  Perform numerical integration by using linearization (first order
-    approximations) through MNA, using the matrix
-    algebra equation:
-
-	<center>
-    \f[Ax = b\f]
-	</center>
-	
-	<center>
-	*Equation 1.*
-	</center><br>    
-
-    Where *A* is the matrix of constants, *x* is the vector of unknowns/variables, and *b* is the right side vector of knowns.
-
-    1.  Use Kirkoff&rsquo;s Current Laws (KCL) (sum of the currents is zero at
-        each node) to populate the *A* matrix and *b* vector.  Table&nbsp;2 shows the equations used for determining flows, where flows (*F*) are equivalent to currents, and pressures (*P*) are equivalent to voltages.
-
-    2.  Leverage the Eigen templated library (released by Tuxfamily) LU
-        decomposition linear solver (FullPivLU) to solve for unknown
-        variables (i.e., voltages and currents).  This decomposition
-        provides the generic approach to solving systems of linear
-        equations​, and represents an LU decomposition of any matrix
-        with complete pivoting.  The matrix *A* is decomposed as:
-
-		\f[A=P^{-1} LUQ^{-1} \f] 
-		<center>
-		*Equation 2.*
-		</center><br> 
-
-		Where *L* is unit-lower-triangular, *U* is upper-triangular, and *P* and *Q* are
-		permutation matrices.  This is a rank-revealing LU decomposition.  The
-		eigenvalues (diagonal coefficients) of *U* are sorted in such a way that
-		any zeroes are at the end.
-
-2.  Calculate remaining unknown currents using the Trapezoidal Rule,
-    where applicable.  For nonlinear elements from time *a* to *b*, this is:
-
-	\f[\int _{a}^{b}f(x)dx\approx (b-a)\left[\frac{f(a)+f(b)}{2} \right] \f] 
-
-	<center>
-	*Equation 3.*
-	</center><br>
-
-3.  Calculate diode currents using assumed open or closed switch states (cannot be solved directly).
-    Iterate Steps 1&ndash;3 until a satisfactory solution is attained.
-
-4.  Calculate the change in charge (*Q*) across capacitors based on the capacitance (*C*) and voltage (*V*) change, and increment the
-    total charge.  The charge is conserved on the source and target nodes by incrementing/decrementing this amount.  Selecting which node gains charge and which loses is done by the direction of the current in the path.
-	
-	\f[Q(t)=C*V(t)\f] 
-
-	<center>
-	*Equation 4.*
-	</center><br>
-
-5.  Invalidate the current on any path the user has specified to ignore.
-    Note that this is to prevent unwanted transport to the reference
-    node (i.e., ground).
-
-<center><img src="./Images/Circuit/CircuitDataFlow.png" width="400"></center>
-<center>
-*Figure 3.  Data flow chart showing the steps used at each time step to
-determine each circuit state.*
-</center><br>
-
-There are several nuances for the handling of certain elements:
-
--   Paths without elements are calculated as if they are zero voltage
-    sources, which allows for direct solving for the current.
-
--   Switches are modeled as elementless paths when closed and
-    essentially infinite resistances (10<sup>100</sup> ohms) when open.
-
--   Valves (i.e., Diodes) are modeled as closed switches when the path source node voltage is higher than the target node (on) and as open switches when the voltage is greater on the target node (off).
-
--   Polarized elements are modeled as an open switch when preventing polarity reversal
-
-Because diode and polarized element states cannot be determined
-before solving a circuit, we are forced to make a considered guess.
-Therefore, at each time step, we begin with an assumed on/off state for
-each of these elements in the circuit.  We begin with the previous time step solution
-to minimize the number of iterations.  The entire circuit is solved using
-this assumed state, and the currents and voltages associated with the
-paths are considered.  When a diode/polarized element is found to have an incorrect
-current direction or voltage reversed relative to its assumed state, the
-state is flipped.  This process is then repeated until the valid solution
-is found.  Intelligently choosing which diode states to switch is
-important because there are 2^(Number of Diodes/Polarized Elements) possible combinations in each circuit.
-
-### Post Process
-
-Post Process effectively advances time by moving the &ldquo;next&rdquo; time step
-parameter values to the &ldquo;current&rdquo; time step parameter values (see @ref SystemMethodology).
+After evaluation, it was determined that none of the existing open-source simulators met all criteria required for a generic Pulse circuit solver. It would have taken significant effort to extract and modify the underlying code and overcome the limitations.  Furthermore, many options examined have less permissive licensing requirements than Pulse. Therefore, we chose to create a tailored solution that is better suited to the specific needs of open-source physiology simulations.
 
 @anchor circuit-features
 ## Features and Capabilities
 
 ### Approach and Extensibility
 
-The engine systems use two different lumped parameter system types,
-each with analogies to electrical circuits.  Most systems models (%Cardiovascular, %Respiratory, etc.) use fluid units (pressures, flows,
-and volumes), while others (%Energy, %Environment, etc.) use thermal units
-(temperature, heat transfer rate, and heat).  Both model types use the same
-underlying physics to define relationships and solve for unknown values.
-We included the ability to calculate in native electrical
-units (voltage, current, and charge) to help with validation using known
-electrical circuit models and outputs.  Table&nbsp;1 lists system analogies and
-how they map to circuit elements.
+We created an analogical model that leverages the same standard network topology for all Pulse system types. Standardized circuits are defined in the CDM through paths connected by source and target nodes, similar to the netlists often used for electronic designs. Nodes hold information about the potential and quantity values and paths about the flux values. Paths can also include both passive and active components. Ideal resistances, capacitances, inductances, switches, diodes, potential sources, and flux sources are assignable to paths.  There is no set number of paths assigned to each node, so the combinations of series and parallel components are limitless.
+
+Table 1 shows the multiphysics mapping of circuit values across different domains. Mechanical (translational and rotational), fluid (liquid and gas), and thermal circuits are all defined. Our implementation uses the force-current and torque-current analogies. The resulting hydraulic equations that define fluid circuits approximately describe the relationship between a constant, laminar flow in a cylindrical pipe and the difference in pressure at each end. The reference/ground node is explicitly defined and the potential value can be set by the user for simulations that require ambient changes, like for the Pulse respiratory model that allows for altitude settings.
 
 <center><br>
-<i>Table 1.  The various types of circuits that can be solved by the
-Circuit Solver.  Some have units already defined and included in the CDM,
-while the others can be easily added.  Possible inputs, outputs, elements,
-and parameters are all defined.  Valves (diodes) and
-switches are not shown @cite riggs1976control.</i>
+<i>Table 1. The Pulse data model uses a templated approach to solve all circuit types with the same set of generic code. Highlighted cells were implemented as part of this work, while the other extensions can be easily added.</i>
 </center>
-<center><img src="./Images/Circuit/CircuitSystemAnalogies.png" width="800"></center>
+@htmlonly
+<center><a href="./Images/Circuit/CircuitSystemAnalogies.png"><img src="./Images/Circuit/CircuitSystemAnalogies.png" style="width:80%;"></a></center>
+@endhtmlonly
 <br>
 
-While we designed the generic Circuit Solver to analyze our fluid,
-thermal, and electrical models, we can easily extend it to include any
-of the model types in Table&nbsp;1.  Further details specific to the
-implementation of our model with the hydraulic analogy are shown in Table&nbsp;2.  
-A more intuitive pipe analogy is described through images.  The
-CDM defined fluid model elements are outlined in the first column.
-The flow equations are important for our analysis technique outlined earlier.
+The circuit solver data model leverages C++ templates to allow operation with generic variables and component types using native electrical, fluid, and thermal units through the same logic. Conversions to and from base units are done in the background using the CDM unit conversion functionality. These base units are selected to prevent unnecessary conversion that would use critical computation resources, while still maintaining a direct mathematical relationship on both sides of the equation. The current and previous time-step values for all parameters are stored to allow transient analysis of time-dependent components (i.e., capacitances and inductances). Component values can be changed each time-step and can alternatively be added or removed at any time during the simulation. Nodes and paths can also be dynamically added or removed during simulation.
+
+All three passive component types (resistors, capacitances, and inductances) have a polarized component modeling option for cases where reversed polarity is prohibited (e.g., elastic compartments that hold volume). When the target node potential becomes greater than that of the source node, polarized components act as a diode stopping all flux through the path. This allows the user to model electrolytic capacitors and further ensures fluid will not be added to hydraulic systems if compliances switch polarity.
+
+Further details specific to the implementation of our model with the hydraulic analogy are shown in Table 2. A more intuitive pipe analogy is described through images. The CDM defined fluid model elements are outlined in the first column. The flow equations are important for our analysis technique outlined earlier.
 
 <center><br>
 <i>Table 2.  In-depth description of the hydraulic analogy for electrical
@@ -289,16 +120,31 @@ circuits that are used extensively inside the engine.  The Elements are
 defined by the CDM and used by the solver.  The Flow equations are
 important for solving for the unknown parameters.  @cite HydraulicAnalogy2014 </i>
 </center>
-<center><img src="./Images/Circuit/CircuitHydraulicAnalogyTable.png" width="500"></center>
+@htmlonly
+<center><a href="./Images/Circuit/CircuitHydraulicAnalogyTable.png"><img src="./Images/Circuit/CircuitHydraulicAnalogyTable.png" style="width:50%;"></a></center>
+@endhtmlonly
 <br>
 
-The Circuit Solver is equipped to use all of the element types given in the second column of Table&nbsp;2.  All three passive element types (resistor, capacitor, and inductor) have a polarized element modeling option.  When active, polarized elements will short the circuit when the target node voltage becomes greater than that of the source node.  This allows the user to model electrolytic capacitors and further ensures fluid will not be added to hydraulic systems if compliances switch polarity.
+### Black Box Implementation
+
+Black box components have been designed in the circuit solver to allow for interfacing with external software or higher fidelity models.  These 0-D black boxes have no knowledge of the internal workings of the component, but instead, act as a control volume with boundary conditions. The same source/target terminology is used as with all other circuit components, where the nodes act as the ports of the internal network. The two boundary potentials (source and target), two boundary fluxes (source and target), and one internal potential (middle) can be optionally imposed externally in any combination. All properties that are not imposed will be solved and set each time-step. Figure 3 shows the black box properties used by the solver.
+
+@htmlonly
+<center><a href="./Images/Circuit/BlackBoxDescription.png"><img src="./Images/Circuit/BlackBoxDescription.png" style="width:45%;"></a></center>
+@endhtmlonly
+<center>
+<i>Figure 3. The black box element is solved as if it contains three nodes and two paths to allow for setting boundary potentials and fluxes as well as holding a quantity.</i>
+</center><br>
+
+Internally, black box component imposed properties are applied in the circuit solver as potential or flux sources. A phantom path to ground is used for imposed potentials to determine the flow into/out of the black box. The internal/middle node is either explicitly set with an externally imposed potential value or calculated as the average of the source and target boundary potentials.
+
+Black box compartments and links can be added to transport graphs for substance calculations the same as with any other circuit elements (see @ref SubstanceTransportMethodology).
 
 ### Data Model Implementation
 
-Our mathematical approach to solving circuits is relatively straightforward, but our CDM implementation and integration with physiological
+Our CDM implementation and integration with physiological
 models is novel.  We implemented the Circuit Solver to use generic terms
-that are not specific to any one model type (see Table&nbsp;1).  Conversions to base units for each model are done in the
+that are not specific to any one model type (see Table 1).  Conversions to base units for each model are done in the
 background using the CDM unit conversion functionality.  These base units
 are selected to prevent unnecessary conversion that would use critical
 computation resources, while still maintaining a direct mathematical
@@ -317,7 +163,7 @@ and the convention of positive current going from source node to target
 node is used.
 
 This sound foundation for defining and calculating circuit parameters, allows
-the engine to transport substances in a similarly generic fashion (see @ref DrugsMethodology).
+the engine to transport substances in a similarly generic fashion (see @ref SubstanceTransportMethodology).
 
 @anchor circuit-assumptions
 ## Assumptions
@@ -348,17 +194,95 @@ There are other assumptions specific to fluid systems:
 
 ## Limitations
 
-There are frequency response limitations that are directly tied to the
-time step set externally to the solver itself.  The engine uses a time step
-of 1/50 s (~ 2 ms).  Because the solver calculates nonlinear
-behavior through linearization using the trapezoid rule, extremely high
-frequency signal components will be lost.  However, this far exceeds the Nyquist frequency for all current system models.
-
 While it is not necessarily a limitation, users of the Circuit Solver
 must be careful to assign current and voltage source elements to set currents and voltages respectively.
 Attempting to directly set node voltages or path currents would result
 in an over-constrained solution.  In these instances, the solver will
 overwrite those values.
+
+@anchor circuit-data
+## Data Flow
+
+Our generic Circuit Solver intentionally mirrors the same data flow
+found in each of the systems.  Each time step consists of a Preprocess
+call to set up the circuits for analysis, a Process call to do the
+analysis, and a Post Process call to advance the time in preparation for the
+next time step.
+
+### Preprocess
+
+There is no literal Preprocess call within the circuit solver class (i.e., code).  Each system individually and directly modifies its circuit(s).  This allows our functionality to be entirely dynamic by performing a separate calculation every time step.  See the Data Model Implementation Appendix below for details about CDM circuit elements and the data they contain.
+
+### Process
+
+#### Network Analysis
+
+Several mathematical methods for solving the state of the closed-loop circuit network were considered, including Sparse Tableau Analysis and nodal analysis.  Ultimately, modified nodal analysis (MNA) was selected as the most advantageous approach. This technique leverages branch constitutive equations (i.e., potential-flux characteristics) and Kirkoff’s Laws to assemble the system and build the required network matrices. The key feature of MNA is assuming the sum of all path fluxes connected to each node is zero - inflows equal outflows. To achieve this balance, the solver iterates over all nodes contained in the circuit to generate a set of linear equations in the matrix form <i>Ax=b</i>. The matrix form of the solution is further defined by Equation 1, where <i>G</i> is the interconnections between passive components, <i>B</i> and <i>C</i>  are the connections between potential sources, <i>D</i> is zero because only independent sources are considered, <i>v</i> and <i>j</i> are the potentials and fluxes, respectively, <i>i</i> is the sum of fluxes through passive components, and <i>e</i> is the independent potential sources @cite najm_2010.
+
+<center>
+\f[\left[ {\begin{array}{*{20}{c}}
+G&B\\
+C&D
+\end{array}} \right]\left[ {\begin{array}{*{20}{c}}
+v\\
+j
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+i\\
+e
+\end{array}} \right]\f]
+</center>
+
+<center>
+<i>Equation 1.</i>
+</center><br>
+
+After the MNA linear equations are solved, all node potentials and fluxes for paths with no components or source components are parsed out of the <i>x</i> vector. Path fluxes that are not directly determined at this stage are then calculated using the equations shown in Table 3.
+
+<center><br>
+<i>Table 3. The flux equation on each path is dependent on what component is present. Some component types have their flux solved as direct variables using linear algebra. Some components are calculated differently depending on their state at that time. <i>P<sub>s</sub></i> and <i>P<sub>t</sub></i> are the source and target potentials respectively, <i>dt</i> is the time-step, and <i>F<sub>0</sub></i> is the previous time-step flux. Flux into a node is defined as positive and out is negative.</i>
+</center>
+@htmlonly
+<center><a href="./Images/Circuit/FlowEquationTable.png"><img src="./Images/Circuit/FlowEquationTable.png" style="width:40%;"></a></center>
+@endhtmlonly
+<br>
+
+Quantity values (<i>Q</i>) on nodes that are connected to paths with capacitances are incremented by Equation 2, where <i>Q<sub>0</sub></i> is the previous quantity value. Figure 4 further illustrates this general circuit solver logic. The MNA matrices are rebuilt each time-step by parsing each node and iteratively populating the <i>A</i> matrix and <i>x</i> vector.
+
+\f[Q = {Q_0} + F \cdot dt\f]
+
+<center>
+<i>Equation 2.</i>
+</center><br>
+
+#### Linear Solver
+
+The Pulse generic circuit solver leverages standard linear solver software. The <i>b</i> vector in Equation 1 is solved using methods provided by the Eigen open-source library for linear algebra. A number of algorithms within Eigen were tested for computationally efficient and accurate matrix solutions.  The most efficient linear solver for most circumstances in Pulse was determined to be Sparse supernodal LU factorization (SparseLU). However, the circuit solver logic is designed to shift to the slower, but more robust LU decomposition with complete pivoting (FullPivLU) approach when SparseLU fails to provide accurate results. This logic is shown on the right side of Figure 4.
+
+Nonlinear components (diodes and polarized components) have states with required behavior criteria, as shown in Table 3. These component states cannot be directly determined, but must be assumed and iteratively solved until a valid combination that meets all criteria is found. The conditional looping logic implemented in the circuit solver is shown on the left side of Figure 4.
+
+@htmlonly
+<center><a href="./Images/Circuit/CircuitDataFlow.png"><img src="./Images/Circuit/CircuitDataFlow.png" style="width:65%;"></a></center>
+@endhtmlonly
+<center>
+<i>Figure 4. The overall circuit solver logic. Nonlinear components (valves and polarized components) are checked based on the criteria in Table 3 and states are changed until a valid combination is determined. Invalid circuits are handled through error logging.</i>
+</center><br>
+
+There are several nuances for the handling of certain elements:
+
+-   Paths without elements are calculated as if they are zero voltage
+    sources, which allows for direct solving for the current.
+
+-   Switches are modeled as elementless paths when closed and
+    essentially infinite resistances (10<sup>100</sup> ohms) when open.
+
+-   Valves (i.e., Diodes) are modeled as closed switches when the path source node voltage is higher than the target node (on) and as open switches when the voltage is greater on the target node (off).
+
+-   Polarized elements are modeled as an open switch when preventing polarity reversal
+
+### Post Process
+
+Post Process effectively advances time by moving the &ldquo;next&rdquo; time step
+parameter values to the &ldquo;current&rdquo; time step parameter values (see @ref SystemMethodology).
 
 @anchor circuit-results
 # Results and Conclusions
@@ -373,11 +297,11 @@ SPICE simulator.  We created circuits using all elements
 individually and in combination.  We used several different types of
 dynamically-changing drivers to ensure proper transient functionality.
 The resulting voltage and current values were interpolated and validated
-to match for all 114 circuits.  Table&nbsp;3 shows a summary of the validation
+to match for all 114 circuits.  Table 3 shows a summary of the validation
 circuits investigated.
 
 <center><br>
-*Table 3.  The list of circuits created in the engine and validated against LTspice.  Every element is covered in combination with each other.*
+<i>Table 3.  The list of circuits created in the engine and validated against LTspice.  Every element is covered in combination with each other.</i>
 </center>
 
 |	Test Name	|	Purpose of test	|	Results Summary	|
@@ -491,57 +415,82 @@ convention of the current across voltage sources is reversed for LTspice,
 because it does not maintain the source-to-target positive current
 standard as is done with the engine.
 
-<center><img src="./Images/Circuit/Comprehensive2CircuitDiagram.png" width="800"></center>
+@htmlonly
+<center><a href="./Images/Circuit/Comprehensive2CircuitDiagram.png"><img src="./Images/Circuit/Comprehensive2CircuitDiagram.png" style="width:40%;"></a></center>
+@endhtmlonly
 <center>
-*Figure 4.  The LTspice circuit diagram for the first comprehensive
+<i>Figure 5.  The LTspice circuit diagram for the first comprehensive
 circuit that exemplifies the validation completed on the solver.  Many
 different types of elements and multiple voltage and current sources are
-included.  The same circuit was defined using the CDM for comparison.*
+included.  The same circuit was defined using the CDM for comparison.</i>
 </center><br>
 
-<center><img src="./Images/Circuit/ValidationComprehensive2SINCenteredPressure.png" width="800"></center>
+@htmlonly
 <center>
-*Figure 5.  Engine node voltage outputs for the first comprehensive
+<a href="./Images/Circuit/ValidationComprehensive2SINCenteredPressure.png"><img src="./Images/Circuit/ValidationComprehensive2SINCenteredPressure.png" style="width:70%;"></a>
+</center>
+@endhtmlonly
+<center>
+<i>Figure 6.  Engine node voltage outputs for the first comprehensive
 circuit compared to LTspice baseline values, using sinusoid sources.  All
-are very tightly correlated.*
+are very tightly correlated.</i>
 </center><br>
 
-<center><img src="./Images/Circuit/ValidationComprehensive2SINCenteredFlow.png" width="800"></center>
+@htmlonly
+<center><a href="./Images/Circuit/ValidationComprehensive2SINCenteredFlow.png"><img src="./Images/Circuit/ValidationComprehensive2SINCenteredFlow.png" style="width:70%;"></a></center>
+@endhtmlonly
 <center>
-*Figure 6.  Engine path current outputs for the first comprehensive
+<i>Figure 7.  Engine path current outputs for the first comprehensive
 circuit compared to LTspice baseline values.  All are very tightly
 correlated.  The signs of the current through voltage sources are reversed
-because of differing conventions for those elements.*
+because of differing conventions for those elements.</i>
 </center><br>
 
-<center><img src="./Images/Circuit/Comprehensive1CircuitDiagram.png" width="800"></center>
+@htmlonly
+<center><a href="./Images/Circuit/Comprehensive1CircuitDiagram.png"><img src="./Images/Circuit/Comprehensive1CircuitDiagram.png" style="width:55%;"></a></center>
+@endhtmlonly
 <center>
-*Figure 7.  The LTspice circuit diagram for the second comprehensive
+<i>Figure 8.  The LTspice circuit diagram for the second comprehensive
 circuit that exemplifies the validation completed on the solver.  Many
 different types of elements and multiple voltage and current sources are
-included.  The same circuit was defined using the CDM for comparison.*
+included.  The same circuit was defined using the CDM for comparison.</i>
 </center><br>
 
-<center><img src="./Images/Circuit/ValidationComprehensive1PulsePressure.png" width="800"></center>
+@htmlonly
+<center><a href="./Images/Circuit/ValidationComprehensive1PulsePressure.png"><img src="./Images/Circuit/ValidationComprehensive1PulsePressure.png" style="width:70%;"></a></center>
+@endhtmlonly
 <center>
-*Figure 8.  Engine node voltage outputs for the second comprehensive
+<i>Figure 9.  Engine node voltage outputs for the second comprehensive
 circuit compared to LTspice baseline values, using pulse sources.  All
-are very tightly correlated.*
+are very tightly correlated.</i>
 </center><br>
 
-<center><img src="./Images/Circuit/ValidationComprehensive1PulseFlow.png" width="800"></center>
+@htmlonly
+<center><a href="./Images/Circuit/ValidationComprehensive1PulseFlow.png"><img src="./Images/Circuit/ValidationComprehensive1PulseFlow.png" style="width:70%;"></a></center>
+@endhtmlonly
 <center>
-*Figure 9.  Engine path current outputs for the second comprehensive
+<i>Figure 10.  Engine path current outputs for the second comprehensive
 circuit compared to LTspice baseline values.  All are very tightly
 correlated.  The sign of the current through voltage sources are reversed
-because of differing conventions for those elements.*
+because of differing conventions for those elements.</i>
 </center><br>
 
-The engine has been shown to successfully conserve mass, energy, and momentum within all defined closed-loop systems. The successful conservation of mass provided by the solver is shown in Figure 10. The volume (quantity/charge) within cardiovascular circuit nodes through approximately 2.5 full heart beat cycles.  The total volume of all compartments remains at a constant value of 5L throughout the entire process.
+Figure 11 shows transient analysis results and the circuit diagram used for three sets of equivalent code blocks to illustrate the templated approach in setting up electrical, fluid, and thermal circuits.
 
-<img src="./Images/Circuit/CardiovascularCompartmentVolumes.png">
+@htmlonly
+<a href="./Images/Circuit/CircuitWaveforms.png"><img src="./Images/Circuit/CircuitWaveforms.png" style="width:75%;"></a>
+@endhtmlonly
 <center>
-*Figure 10.  The blood volume within each compartment continuously varies in the cardiovascular circuit.   The sum of these volumes does not change at any time step, and system mass is successfully conserved.*
+<i>Figure 11. The circuit and simulation outputs from a validation test of the multiphysics framework. The potential source for all three circuits is driven by a sinusoidal function and the switch is closed 15 seconds into the simulation. All three circuit types give the same values for potential, fluxes, and quantities with different native units. Labels for each plot from left to right are electrical, fluid, and thermal.</i>
+</center><br>
+
+The engine has been shown to successfully conserve mass, energy, and momentum within all defined closed-loop systems. The successful conservation of mass provided by the solver is shown in Figure 12. The volume (quantity/charge) within cardiovascular circuit nodes through approximately 2.5 full heart beat cycles.  The total volume of all compartments remains at a constant value of 5L throughout the entire process.
+
+@htmlonly
+<a href="./Images/Circuit/CardiovascularCompartmentVolumes.png"><img src="./Images/Circuit/CardiovascularCompartmentVolumes.png" style="width:60%;"></a>
+@endhtmlonly
+<center>
+<i>Figure 12.  The blood volume within each compartment continuously varies in the cardiovascular circuit.   The sum of these volumes does not change at any time step, and system mass is successfully conserved.</i>
 </center><br>
 
 All basic Circuit Solver functionality is further validated and verified with specific unit tests that target individual methods.  The following functionality has been successfully validated by individual tests:
@@ -554,6 +503,7 @@ All basic Circuit Solver functionality is further validated and verified with sp
 -   Non-zero reference node voltage
 -   Polarized elements
 -   Dynamically modifying capacitor charge
+-   Black boxes
 
 @anchor circuit-conclusion
 ## Conclusion
@@ -580,7 +530,7 @@ circuit analysis.
 
 The list below includes some of the planned functionality additions.
 
--   Functionality to create port connections between circuits for improved modularity between systems/subsystems
+-   Functionality to create grey boxes for improved modularity between systems/subsystems and reduced processing speeds of interconnected circuits
 
 ## Recommended Improvements
 

@@ -15,8 +15,8 @@ SEDynamicStabilizationPropertyConvergence::SEDynamicStabilizationPropertyConverg
   m_LastError = 0;
   m_LastErrorTime_s = 0;
   m_Optional = false;
-  *(reinterpret_cast<unsigned long long int *>(&m_LastError)) = SEScalar::NaN;
-  *(reinterpret_cast<unsigned long long int *>(&m_Target)) = SEScalar::NaN;
+  m_LastError = SEScalar::dNaN();
+  m_Target = SEScalar::dNaN();
   m_DataRequestScalar = new SEDataRequestScalar(logger);
 }
 

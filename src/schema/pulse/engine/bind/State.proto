@@ -43,15 +43,16 @@ message StateData
   EnvironmentData                               Environment          = 21;
   AnesthesiaMachineData                         AnesthesiaMachine    = 22;
   BagValveMaskData                              BagValveMask         = 23;
-  ElectroCardioGramData                         ElectroCardioGram    = 24;
-  InhalerData                                   Inhaler              = 25;
-  MechanicalVentilatorData                      MechanicalVentilator = 26;
-  pulse.cdm.bind.CompartmentManagerData         CompartmentManager   = 27;
-  pulse.cdm.bind.CircuitManagerData             CircuitManager       = 28;
-  repeated string                               ActiveSubstance      = 29;
-  repeated string                               ActiveCompound       = 30;
-  repeated pulse.cdm.bind.SubstanceData         Substance            = 31;
-  repeated pulse.cdm.bind.SubstanceCompoundData Compound             = 32;
-  ConfigurationData                             Configuration        = 33;
-  pulse.cdm.bind.DataRequestManagerData         DataRequestManager   = 34;
+  ECMOData                                      ECMO                 = 24;
+  ElectroCardioGramData                         ElectroCardioGram    = 25;
+  InhalerData                                   Inhaler              = 26;
+  MechanicalVentilatorData                      MechanicalVentilator = 27;
+  pulse.cdm.bind.CompartmentManagerData         CompartmentManager   = 28;
+  pulse.cdm.bind.CircuitManagerData             CircuitManager       = 29;
+  repeated string                               ActiveSubstance      = 30;
+  repeated string                               ActiveCompound       = 31;
+  repeated pulse.cdm.bind.SubstanceData         Substance            = 32;
+  repeated pulse.cdm.bind.SubstanceCompoundData Compound             = 33;
+  ConfigurationData                             Configuration        = 34;
+  pulse.cdm.bind.DataRequestManagerData         DataRequestManager   = 35;
 }

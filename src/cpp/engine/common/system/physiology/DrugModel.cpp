@@ -119,7 +119,7 @@ namespace pulse
     m_fatTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat);
     m_liverVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver);
     m_liverTissue = m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver);
-    m_IVToVenaCava = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::IVToVenaCava);
+    m_IVToVenaCava = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::IVToVenaCava1);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -231,8 +231,7 @@ namespace pulse
         subQ = m_muscleIntracellular->GetSubstanceQuantity(*sub);
         break;
       default:
-        /// \error Error: Unavailable Administration Route
-        Error("Unavailable Bolus Administration Route for substance " + sub->GetName(), "DrugModel::AdministerSubstanceBolus");
+        Error("Unavailable Bolus Administration Route for substance " + sub->GetName());
         completedBolus.push_back(sub);// Remove it
         continue;
       }
@@ -296,8 +295,7 @@ namespace pulse
       massIncrement_ug = rate_mL_Per_s * concentration_ug_Per_mL * m_data.GetTimeStep_s();
       subQ = m_venaCavaVascular->GetSubstanceQuantity(infusion->GetSubstance());
       subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
-      /// \todo Enforce limits and remove the fatal error
-      /// \error Fatal: Titration administration cannot be negative
+      //todo: Enforce limits and remove the fatal error
       if (massIncrement_ug < 0)
       {
         std::stringstream AdministeredTitrationDoseError;
@@ -349,8 +347,7 @@ namespace pulse
 
       rate_mL_Per_s = infusion->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);
       totalRate_mL_Per_s += rate_mL_Per_s;
-      /// \todo Enforce limits and remove the fatal error
-      /// \error Fatal: rate cannot exceed 285 mL/min
+      //todo: Enforce limits and remove the fatal error
       if (rate_mL_Per_s > 285) // from http://emedsa.org.au/EDHandbook/resuscitation/IVCannula.htm... 1000mL/3.5 min ~= 285 mL/min
       {
         m_ss << "Cannot specify an Infusion rate greater than 285 mL/min. Current administration rate is: " << infusion->GetRate();
@@ -426,8 +423,8 @@ namespace pulse
       {
         continue;
       }
-      SELiquidCompartment& ExtracellularFluid = m_data.GetCompartments().GetExtracellularFluid(*tissue);
-      SELiquidCompartment& IntracellularFluid = m_data.GetCompartments().GetIntracellularFluid(*tissue);
+      SELiquidCompartment& ExtracellularFluid = tissue->GetExtracellular();
+      SELiquidCompartment& IntracellularFluid = tissue->GetIntracellular();
 
       //Loop over substances
       for (SESubstance* sub : m_data.GetCompartments().GetLiquidCompartmentSubstances())
@@ -460,7 +457,6 @@ namespace pulse
         }
         else
         {
-          /// \error Fatal: Binding Protein not supported
           std::stringstream ss;
           ss << "The binding protein is not supported. Unable to compute partition coefficient for: ";
           ss << sub->GetName();

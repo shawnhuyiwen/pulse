@@ -58,6 +58,8 @@ void SEElectroCardioGram::Clear()
   INVALIDATE_PROPERTY(m_Lead12ElectricPotential);
 
   m_ActiveType = eElectroCardioGram_WaveformType::Sinus;
+
+  DELETE_VECTOR(m_Waveforms);
 }
 
 void SEElectroCardioGram::Copy(const SEElectroCardioGram& src)
@@ -428,6 +430,11 @@ void SEElectroCardioGram::PullCycleValues()
       case eElectroCardioGram_WaveformLead::Lead12:
       {
         w->GetCycleValue(GetLead12ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::NullLead:
+      {
+        Warning("Cannot get cycle value of null lead");
         break;
       }
       }

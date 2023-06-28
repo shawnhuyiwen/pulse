@@ -65,12 +65,30 @@ bool SEMechanicalVentilation::IsValid() const
       double total = 0;
       for (const SESubstanceFraction* sf : m_cGasFractions)
       {
+        if (sf->GetSubstance().GetState() != eSubstance_State::Gas)
+        {
+          Error("Mechanical Ventilation Gas fractions substances must be a gas");
+          return false;
+        }
+
         total += sf->GetFractionAmount();
       }
       if (!SEScalar::IsValue(1, total))
       {
         Error("Mechanical Ventilation Gas fractions do not sum to 1");
         return false;
+      }
+    }
+    if (HasAerosol())
+    {
+      for (const SESubstanceConcentration* sc : m_cAerosols)
+      {
+        if (sc->GetSubstance().GetState() != eSubstance_State::Solid &&
+            sc->GetSubstance().GetState() != eSubstance_State::Liquid)
+        {
+          Error("Mechanical Ventilation aerosol substances must be a solid or a liquid");
+          return false;
+        }
       }
     }
   }
@@ -274,30 +292,4 @@ void SEMechanicalVentilation::RemoveAerosols()
 {
   DELETE_VECTOR(m_Aerosols);
   m_cAerosols.clear();
-}
-
-void SEMechanicalVentilation::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Mechanical Ventilation";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-
-  str << "\n\tState: " << eSwitch_Name(GetState());
-  str << "\n\tFlow: ";  HasFlow() ? str << *m_Flow : str << "Not Set";
-  str << "\n\tPressure: "; HasPressure() ? str << *m_Pressure : str << "Not Set";
-  if (HasGasFraction())
-  {
-    for (const SESubstanceFraction* sf : GetGasFractions())
-    {
-      str << "\n\tSubstance : " << sf->GetSubstance().GetName() << " Fraction Amount " << sf->GetFractionAmount();
-    }
-  }
-  if (HasAerosol())
-  {
-    for (const SESubstanceConcentration* sc : GetAerosols())
-    {
-      str << "\n\tSubstance : " << sc->GetSubstance().GetName() << " Concentration (mg_Per_L) " << sc->GetConcentration(MassPerVolumeUnit::mg_Per_L);
-    }
-  }
-  str << std::flush;
 }

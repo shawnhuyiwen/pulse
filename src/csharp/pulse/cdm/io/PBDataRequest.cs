@@ -20,7 +20,18 @@ namespace Pulse.CDM
       for (int i = 0; i < src.DataRequest.Count; i++)
       {
         pulse.cdm.bind.DataRequestData dr = src.DataRequest[i];
-        dst.GetDataRequests().Add(SEDataRequest.New((eDataRequest_Category)dr.Category, dr.ActionName, dr.CompartmentName, dr.SubstanceName, dr.PropertyName, new Unit(dr.Unit)));
+        SEDataRequest dst_dr = SEDataRequest.New((eDataRequest_Category)dr.Category,
+                                                 dr.ActionName,
+                                                 dr.CompartmentName,
+                                                 dr.SubstanceName,
+                                                 dr.PropertyName,
+                                                 new Unit(dr.Unit));
+        if (dr.DecimalFormat != null)
+        {
+          dst_dr.GetDecimalFormat().precision = dr.DecimalFormat.Precision;
+          dst_dr.GetDecimalFormat().type = (eDecimalFormatType)dr.DecimalFormat.Type;
+        }
+        dst.GetDataRequests().Add(dst_dr);
       }
     }
     public static bool SerializeFromString(string src, SEDataRequestManager dst, eSerializationFormat format)
@@ -62,6 +73,13 @@ namespace Pulse.CDM
           dst_dr.PropertyName = dr.GetPropertyName();
         if (dr.HasUnit())
           dst_dr.Unit = dr.GetUnit().ToString();
+        if (dr.HasDecimalFormat())
+        {
+          dst_dr.DecimalFormat = new pulse.cdm.bind.DecimalFormatData();
+          dst_dr.DecimalFormat.Type =
+            (pulse.cdm.bind.DecimalFormatData.Types.eType)dr.GetDecimalFormat().type;
+          dst_dr.DecimalFormat.Precision = dr.GetDecimalFormat().precision;
+        }
         dst.DataRequest.Add(dst_dr);
       }
     }

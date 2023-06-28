@@ -91,9 +91,9 @@ namespace pulse
   };
 }
 
-///////////////////////////////
-// Respiratory Circuit Enums //
-///////////////////////////////
+///////////////////
+// Circuit Enums //
+///////////////////
 
 namespace pulse
 {
@@ -120,29 +120,6 @@ namespace pulse
     DEFINE_STATIC_STRING(Temperature);
     DEFINE_STATIC_STRING(InternalTemperature);
     DEFINE_STATIC_STRING(ExternalTemperature);
-  };
-
-  ///////////////////////////////////////
-  // Cerebrospinal Fluid Circuit Enums //
-  ///////////////////////////////////////
-
-  class CerebrospinalFluidNode
-  {
-  public:
-    DEFINE_STATIC_STRING(VascularCSFBarrier);
-    DEFINE_STATIC_STRING(IntracranialSpace1);
-    DEFINE_STATIC_STRING(IntracranialSpace2);
-  };
-
-  class CerebrospinalFluidPath
-  {
-  public:
- 
-    DEFINE_STATIC_STRING(IntracranialSpace2ToGround);
-    DEFINE_STATIC_STRING(GroundToIntracranialSpace1);
-    DEFINE_STATIC_STRING(Brain1ToVascularCSFBarrier);
-    DEFINE_STATIC_STRING(VascularCSFBarrierToIntracranialSpace1);
-    DEFINE_STATIC_STRING(IntracranialSpace1ToIntracranialSpace2);
   };
 
   ///////////////////////////
@@ -179,8 +156,10 @@ namespace pulse
     DEFINE_STATIC_STRING(LeftChestLeak);
     DEFINE_STATIC_STRING(LeftPleural);
     DEFINE_STATIC_STRING(LeftPleuralConnection);
+    DEFINE_STATIC_STRING(LeftNeedle);
 
     DEFINE_STATIC_STRING(Airway);
+    DEFINE_STATIC_STRING(Pharynx);
 
     DEFINE_STATIC_STRING(RightAlveoli);
     DEFINE_STATIC_STRING(RightAlveoliLeak);
@@ -189,6 +168,7 @@ namespace pulse
     DEFINE_STATIC_STRING(RightChestLeak);
     DEFINE_STATIC_STRING(RightPleural);
     DEFINE_STATIC_STRING(RightPleuralConnection);
+    DEFINE_STATIC_STRING(RightNeedle);
 
     DEFINE_STATIC_STRING(Stomach);
     DEFINE_STATIC_STRING(RespiratoryMuscle);
@@ -212,11 +192,15 @@ namespace pulse
     DEFINE_STATIC_STRING(LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
     DEFINE_STATIC_STRING(LeftAlveolarDeadSpaceToLeftAlveoli);
     DEFINE_STATIC_STRING(LeftChestLeakToLeftPleural);
-    DEFINE_STATIC_STRING(LeftPleuralToEnvironment);
+    DEFINE_STATIC_STRING(LeftNeedleToLeftPleural);
+    DEFINE_STATIC_STRING(EnvironmentToLeftNeedle);
+    DEFINE_STATIC_STRING(EnvironmentToLeftPleural);
     DEFINE_STATIC_STRING(LeftPleuralToRespiratoryMuscle);
 
-    DEFINE_STATIC_STRING(AirwayToCarina);
+    DEFINE_STATIC_STRING(AirwayToPharynx);
     DEFINE_STATIC_STRING(AirwayToStomach);
+    DEFINE_STATIC_STRING(PharynxToCarina);
+    DEFINE_STATIC_STRING(PharynxToEnvironment);
 
     DEFINE_STATIC_STRING(RightAlveoliLeakToRightPleural);
     DEFINE_STATIC_STRING(RightAlveoliToRightAlveoliLeak);
@@ -225,11 +209,21 @@ namespace pulse
     DEFINE_STATIC_STRING(RightAnatomicDeadSpaceToRightAlveolarDeadSpace);
     DEFINE_STATIC_STRING(RightAlveolarDeadSpaceToRightAlveoli);
     DEFINE_STATIC_STRING(RightChestLeakToRightPleural);
-    DEFINE_STATIC_STRING(RightPleuralToEnvironment);
+    DEFINE_STATIC_STRING(RightNeedleToRightPleural);
+    DEFINE_STATIC_STRING(EnvironmentToRightNeedle);
+    DEFINE_STATIC_STRING(EnvironmentToRightPleural);
     DEFINE_STATIC_STRING(RightPleuralToRespiratoryMuscle);
 
     DEFINE_STATIC_STRING(EnvironmentToRespiratoryMuscle);
     DEFINE_STATIC_STRING(StomachToEnvironment);
+  };
+
+  class ExpandedRespiratoryNode
+  {
+  };
+
+  class ExpandedRespiratoryPath
+  {
   };
 
   //////////////////////////////////////
@@ -531,19 +525,19 @@ namespace pulse
     DEFINE_STATIC_STRING(RightHeart2);
     DEFINE_STATIC_STRING(RightHeart3);
 
-    DEFINE_STATIC_STRING(MainPulmonaryArteries);
-    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryArteries);
-    DEFINE_STATIC_STRING(LeftPulmonaryArteries);
-    DEFINE_STATIC_STRING(RightIntermediatePulmonaryArteries);
-    DEFINE_STATIC_STRING(RightPulmonaryArteries);
+    DEFINE_STATIC_STRING(MainPulmonaryArteries1);
+    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryArteries1);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteries1);
+    DEFINE_STATIC_STRING(RightIntermediatePulmonaryArteries1);
+    DEFINE_STATIC_STRING(RightPulmonaryArteries1);
 
-    DEFINE_STATIC_STRING(LeftPulmonaryCapillaries);
-    DEFINE_STATIC_STRING(RightPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftPulmonaryCapillaries1);
+    DEFINE_STATIC_STRING(RightPulmonaryCapillaries1);
 
-    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryVeins);
-    DEFINE_STATIC_STRING(LeftPulmonaryVeins);
-    DEFINE_STATIC_STRING(RightIntermediatePulmonaryVeins);
-    DEFINE_STATIC_STRING(RightPulmonaryVeins);
+    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryVeins1);
+    DEFINE_STATIC_STRING(LeftPulmonaryVeins1);
+    DEFINE_STATIC_STRING(RightIntermediatePulmonaryVeins1);
+    DEFINE_STATIC_STRING(RightPulmonaryVeins1);
 
     DEFINE_STATIC_STRING(LeftHeart1);
     DEFINE_STATIC_STRING(LeftHeart2);
@@ -606,7 +600,7 @@ namespace pulse
 
     DEFINE_STATIC_STRING(Spleen1);
 
-    DEFINE_STATIC_STRING(VenaCava);
+    DEFINE_STATIC_STRING(VenaCava1);
 
     DEFINE_STATIC_STRING(Ground);
   };
@@ -615,31 +609,35 @@ namespace pulse
   {
   public:
     // Heart and Lungs
-    DEFINE_STATIC_STRING(VenaCavaToRightHeart2);
+    DEFINE_STATIC_STRING(VenaCava1ToRightHeart2);
     DEFINE_STATIC_STRING(RightHeart2ToRightHeart1);
     DEFINE_STATIC_STRING(RightHeart1ToRightHeart3);
     DEFINE_STATIC_STRING(RightHeart3ToGround);
-    DEFINE_STATIC_STRING(RightHeart1ToMainPulmonaryArteries);
-    DEFINE_STATIC_STRING(MainPulmonaryArteriesToRightIntermediatePulmonaryArteries);
-    DEFINE_STATIC_STRING(RightIntermediatePulmonaryArteriesToRightPulmonaryArteries);
-    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightPulmonaryVeins);
-    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightPulmonaryCapillaries);
-    DEFINE_STATIC_STRING(RightPulmonaryArteriesToGround);
-    DEFINE_STATIC_STRING(RightPulmonaryCapillariesToRightPulmonaryVeins);
-    DEFINE_STATIC_STRING(RightPulmonaryCapillariesToGround);
-    DEFINE_STATIC_STRING(RightPulmonaryVeinsToRightIntermediatePulmonaryVeins);
-    DEFINE_STATIC_STRING(RightPulmonaryVeinsToGround);
-    DEFINE_STATIC_STRING(RightIntermediatePulmonaryVeinsToLeftHeart2);
-    DEFINE_STATIC_STRING(MainPulmonaryArteriesToLeftIntermediatePulmonaryArteries);
-    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryArteriesToLeftPulmonaryArteries);
-    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToLeftPulmonaryVeins);
-    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToLeftPulmonaryCapillaries);
-    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToGround);
-    DEFINE_STATIC_STRING(LeftPulmonaryCapillariesToGround);
-    DEFINE_STATIC_STRING(LeftPulmonaryCapillariesToLeftPulmonaryVeins);
-    DEFINE_STATIC_STRING(LeftPulmonaryVeinsToLeftIntermediatePulmonaryVeins);
-    DEFINE_STATIC_STRING(LeftPulmonaryVeinsToGround);
-    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryVeinsToLeftHeart2)
+    DEFINE_STATIC_STRING(RightHeart1ToMainPulmonaryArteries1);
+    DEFINE_STATIC_STRING(MainPulmonaryArteries1ToRightIntermediatePulmonaryArteries1);
+    DEFINE_STATIC_STRING(RightIntermediatePulmonaryArteries1ToRightPulmonaryArteries1);
+    DEFINE_STATIC_STRING(RightPulmonaryArteries1ToRightPulmonaryVeins1);
+    DEFINE_STATIC_STRING(RightPulmonaryArteries1ToRightPulmonaryCapillaries1);
+    DEFINE_STATIC_STRING(RightPulmonaryArteries1ToGround);
+    DEFINE_STATIC_STRING(RightPulmonaryCapillaries1ToRightPulmonaryVeins1);
+    DEFINE_STATIC_STRING(RightPulmonaryCapillaries1ToGround);
+    DEFINE_STATIC_STRING(RightPulmonaryVeins1ToRightIntermediatePulmonaryVeins1);
+    DEFINE_STATIC_STRING(RightPulmonaryVeins1ToGround);
+    DEFINE_STATIC_STRING(RightPulmonaryVeinsLeak1ToGround);
+    DEFINE_STATIC_STRING(RightIntermediatePulmonaryVeins1ToLeftHeart2);
+    DEFINE_STATIC_STRING(MainPulmonaryArteries1ToLeftIntermediatePulmonaryArteries1);
+    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryArteries1ToLeftPulmonaryArteries1);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteries1ToLeftPulmonaryVeins1);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteries1ToGround);
+    DEFINE_STATIC_STRING(LeftPulmonaryCapillaries1ToGround);
+    DEFINE_STATIC_STRING(LeftPulmonaryCapillaries1ToLeftPulmonaryVeins1);
+    DEFINE_STATIC_STRING(LeftPulmonaryVeins1ToLeftIntermediatePulmonaryVeins1);
+    DEFINE_STATIC_STRING(LeftPulmonaryVeins1ToGround);
+    DEFINE_STATIC_STRING(LeftPulmonaryVeinsLeak1ToGround);
+    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryVeins1ToLeftHeart2)
+
+
     DEFINE_STATIC_STRING(LeftHeart2ToLeftHeart1);
     DEFINE_STATIC_STRING(LeftHeart1ToLeftHeart3);
     DEFINE_STATIC_STRING(LeftHeart3ToGround);
@@ -657,52 +655,52 @@ namespace pulse
     DEFINE_STATIC_STRING(Aorta1ToBrain1);
     DEFINE_STATIC_STRING(Brain1ToGround);
     DEFINE_STATIC_STRING(Brain1ToBrain2);
-    DEFINE_STATIC_STRING(Brain2ToVenaCava);
+    DEFINE_STATIC_STRING(Brain2ToVenaCava1);
     // Bone
     DEFINE_STATIC_STRING(Aorta1ToBone1);
     DEFINE_STATIC_STRING(Bone1ToGround);
     DEFINE_STATIC_STRING(Bone1ToBone2);
-    DEFINE_STATIC_STRING(Bone2ToVenaCava);
+    DEFINE_STATIC_STRING(Bone2ToVenaCava1);
     // Fat
     DEFINE_STATIC_STRING(Aorta1ToFat1);
     DEFINE_STATIC_STRING(Fat1ToGround);
     DEFINE_STATIC_STRING(Fat1ToFat2);
-    DEFINE_STATIC_STRING(Fat2ToVenaCava);
+    DEFINE_STATIC_STRING(Fat2ToVenaCava1);
     // Large Intestine
-    DEFINE_STATIC_STRING(Aorta1ToLargeIntestine);
-    DEFINE_STATIC_STRING(LargeIntestineToGround);
-    DEFINE_STATIC_STRING(LargeIntestineToPortalVein);
+    DEFINE_STATIC_STRING(Aorta1ToLargeIntestine1);
+    DEFINE_STATIC_STRING(LargeIntestine1ToGround);
+    DEFINE_STATIC_STRING(LargeIntestine1ToPortalVein1);
     // Left Arm
     DEFINE_STATIC_STRING(Aorta1ToLeftArm1);
     DEFINE_STATIC_STRING(LeftArm1ToGround);
     DEFINE_STATIC_STRING(LeftArm1ToLeftArm2);
-    DEFINE_STATIC_STRING(LeftArm2ToVenaCava);
+    DEFINE_STATIC_STRING(LeftArm2ToVenaCava1);
     // Left Kidney
     DEFINE_STATIC_STRING(Aorta1ToLeftKidney1);
     DEFINE_STATIC_STRING(LeftKidney1ToGround);
     DEFINE_STATIC_STRING(LeftKidney1ToLeftKidney2);
-    DEFINE_STATIC_STRING(LeftKidney2ToVenaCava);
+    DEFINE_STATIC_STRING(LeftKidney2ToVenaCava1);
     // Left Leg
     DEFINE_STATIC_STRING(Aorta1ToLeftLeg1);
     DEFINE_STATIC_STRING(LeftLeg1ToGround);
     DEFINE_STATIC_STRING(LeftLeg1ToLeftLeg2);
-    DEFINE_STATIC_STRING(LeftLeg2ToVenaCava);
+    DEFINE_STATIC_STRING(LeftLeg2ToVenaCava1);
     // Liver
     DEFINE_STATIC_STRING(Aorta1ToLiver1);
     DEFINE_STATIC_STRING(Liver1ToGround);
-    DEFINE_STATIC_STRING(PortalVeinToLiver1);
+    DEFINE_STATIC_STRING(PortalVein1ToLiver1);
     DEFINE_STATIC_STRING(Liver1ToLiver2);
-    DEFINE_STATIC_STRING(Liver2ToVenaCava);
+    DEFINE_STATIC_STRING(Liver2ToVenaCava1);
     // Muscle
     DEFINE_STATIC_STRING(Aorta1ToMuscle1);
     DEFINE_STATIC_STRING(Muscle1ToGround);
     DEFINE_STATIC_STRING(Muscle1ToMuscle2);
-    DEFINE_STATIC_STRING(Muscle2ToVenaCava);
+    DEFINE_STATIC_STRING(Muscle2ToVenaCava1);
     // Myocardium
     DEFINE_STATIC_STRING(Aorta1ToMyocardium1);
     DEFINE_STATIC_STRING(Myocardium1ToGround);
     DEFINE_STATIC_STRING(Myocardium1ToMyocardium2);
-    DEFINE_STATIC_STRING(Myocardium2ToVenaCava);
+    DEFINE_STATIC_STRING(Myocardium2ToVenaCava1);
     // Pericardium
     DEFINE_STATIC_STRING(Pericardium1ToGround);
     DEFINE_STATIC_STRING(GroundToPericardium1);
@@ -710,37 +708,392 @@ namespace pulse
     DEFINE_STATIC_STRING(Aorta1ToRightArm1);
     DEFINE_STATIC_STRING(RightArm1ToGround);
     DEFINE_STATIC_STRING(RightArm1ToRightArm2);
-    DEFINE_STATIC_STRING(RightArm2ToVenaCava);
+    DEFINE_STATIC_STRING(RightArm2ToVenaCava1);
     // Right Kidney
     DEFINE_STATIC_STRING(Aorta1ToRightKidney1);
     DEFINE_STATIC_STRING(RightKidney1ToGround);
     DEFINE_STATIC_STRING(RightKidney1ToRightKidney2);
-    DEFINE_STATIC_STRING(RightKidney2ToVenaCava);
+    DEFINE_STATIC_STRING(RightKidney2ToVenaCava1);
     // Right Leg
     DEFINE_STATIC_STRING(Aorta1ToRightLeg1);
     DEFINE_STATIC_STRING(RightLeg1ToGround);
     DEFINE_STATIC_STRING(RightLeg1ToRightLeg2);
-    DEFINE_STATIC_STRING(RightLeg2ToVenaCava);
+    DEFINE_STATIC_STRING(RightLeg2ToVenaCava1);
     // Skin
     DEFINE_STATIC_STRING(Aorta1ToSkin1);
     DEFINE_STATIC_STRING(Skin1ToGround);
     DEFINE_STATIC_STRING(Skin1ToSkin2);
-    DEFINE_STATIC_STRING(Skin2ToVenaCava);
+    DEFINE_STATIC_STRING(Skin2ToVenaCava1);
     // Small Intestine
-    DEFINE_STATIC_STRING(Aorta1ToSmallIntestine);
-    DEFINE_STATIC_STRING(SmallIntestineToGround);
-    DEFINE_STATIC_STRING(SmallIntestineToPortalVein);
+    DEFINE_STATIC_STRING(Aorta1ToSmallIntestine1);
+    DEFINE_STATIC_STRING(SmallIntestine1ToGround);
+    DEFINE_STATIC_STRING(SmallIntestine1ToPortalVein1);
     // Splanchnic
-    DEFINE_STATIC_STRING(Aorta1ToSplanchnic);
-    DEFINE_STATIC_STRING(SplanchnicToGround);
-    DEFINE_STATIC_STRING(SplanchnicToPortalVein);
+    DEFINE_STATIC_STRING(Aorta1ToSplanchnic1);
+    DEFINE_STATIC_STRING(Splanchnic1ToGround);
+    DEFINE_STATIC_STRING(Splanchnic1ToPortalVein1);
     // Spleen
-    DEFINE_STATIC_STRING(Aorta1ToSpleen);
-    DEFINE_STATIC_STRING(SpleenToGround);
-    DEFINE_STATIC_STRING(SpleenToPortalVein);
+    DEFINE_STATIC_STRING(Aorta1ToSpleen1);
+    DEFINE_STATIC_STRING(Spleen1ToGround);
+    DEFINE_STATIC_STRING(Spleen1ToPortalVein1);
     // Vena Cava
-    DEFINE_STATIC_STRING(VenaCavaToGround);
-    DEFINE_STATIC_STRING(IVToVenaCava);
+    DEFINE_STATIC_STRING(VenaCava1ToGround);
+    DEFINE_STATIC_STRING(IVToVenaCava1);
+  };
+
+  class ExpandedCardiovascularNode
+  {
+  public:
+    DEFINE_STATIC_STRING(RightHeart1);
+    DEFINE_STATIC_STRING(RightHeart2);
+    DEFINE_STATIC_STRING(RightHeart3);
+
+    DEFINE_STATIC_STRING(MainPulmonaryArteries1);
+    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryArteries1);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteries1);
+    DEFINE_STATIC_STRING(RightIntermediatePulmonaryArteries1);
+    DEFINE_STATIC_STRING(RightPulmonaryArteries1);
+
+    DEFINE_STATIC_STRING(LeftPulmonaryCapillaries1);
+    DEFINE_STATIC_STRING(RightPulmonaryCapillaries1);
+
+    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryVeins1);
+    DEFINE_STATIC_STRING(LeftPulmonaryVeins1);
+    DEFINE_STATIC_STRING(RightIntermediatePulmonaryVeins1);
+    DEFINE_STATIC_STRING(RightPulmonaryVeins1);
+
+    DEFINE_STATIC_STRING(LeftHeart1);
+    DEFINE_STATIC_STRING(LeftHeart2);
+    DEFINE_STATIC_STRING(LeftHeart3);
+
+    DEFINE_STATIC_STRING(Aorta1);
+    DEFINE_STATIC_STRING(Aorta2);
+    DEFINE_STATIC_STRING(Aorta3);
+    DEFINE_STATIC_STRING(Aorta4);
+    DEFINE_STATIC_STRING(Aorta5);
+
+    DEFINE_STATIC_STRING(AbdominalCavity1);
+
+    DEFINE_STATIC_STRING(Extracranial1);
+    DEFINE_STATIC_STRING(Extracranial2);
+    DEFINE_STATIC_STRING(Extracranial3);
+    DEFINE_STATIC_STRING(Intracranial1);
+    DEFINE_STATIC_STRING(Intracranial2);
+    DEFINE_STATIC_STRING(Intracranial3);
+
+    DEFINE_STATIC_STRING(Gut1);
+
+    DEFINE_STATIC_STRING(LargeIntestine1);
+
+    DEFINE_STATIC_STRING(Liver1);
+    DEFINE_STATIC_STRING(Liver2);
+    DEFINE_STATIC_STRING(PortalVein1);
+
+    DEFINE_STATIC_STRING(LeftArm1);
+    DEFINE_STATIC_STRING(LeftArm2);
+    DEFINE_STATIC_STRING(LeftArmBone1);
+    DEFINE_STATIC_STRING(LeftArmFat1);
+    DEFINE_STATIC_STRING(LeftArmMicroVasculature1);
+    DEFINE_STATIC_STRING(LeftArmMuscle1);
+    DEFINE_STATIC_STRING(LeftArmSkin1);
+
+    DEFINE_STATIC_STRING(LeftKidney1);
+    DEFINE_STATIC_STRING(LeftKidney2);
+    DEFINE_STATIC_STRING(LeftKidney3);
+
+    DEFINE_STATIC_STRING(LeftLeg1);
+    DEFINE_STATIC_STRING(LeftLeg2);
+    DEFINE_STATIC_STRING(LeftLegBone1);
+    DEFINE_STATIC_STRING(LeftLegFat1);
+    DEFINE_STATIC_STRING(LeftLegMicroVasculature1);
+    DEFINE_STATIC_STRING(LeftLegMuscle1);
+    DEFINE_STATIC_STRING(LeftLegSkin1);
+
+    DEFINE_STATIC_STRING(Myocardium1);
+    DEFINE_STATIC_STRING(Myocardium2);
+    DEFINE_STATIC_STRING(Myocardium3);
+
+    DEFINE_STATIC_STRING(Pericardium1);
+
+    DEFINE_STATIC_STRING(RightArm1);
+    DEFINE_STATIC_STRING(RightArm2);
+    DEFINE_STATIC_STRING(RightArmBone1);
+    DEFINE_STATIC_STRING(RightArmFat1);
+    DEFINE_STATIC_STRING(RightArmMicroVasculature1);
+    DEFINE_STATIC_STRING(RightArmMuscle1);
+    DEFINE_STATIC_STRING(RightArmSkin1);
+
+    DEFINE_STATIC_STRING(RightKidney1);
+    DEFINE_STATIC_STRING(RightKidney2);
+    DEFINE_STATIC_STRING(RightKidney3);
+
+    DEFINE_STATIC_STRING(RightLeg1);
+    DEFINE_STATIC_STRING(RightLeg2);
+    DEFINE_STATIC_STRING(RightLegBone1);
+    DEFINE_STATIC_STRING(RightLegFat1);
+    DEFINE_STATIC_STRING(RightLegMicroVasculature1);
+    DEFINE_STATIC_STRING(RightLegMuscle1);
+    DEFINE_STATIC_STRING(RightLegSkin1);
+
+    DEFINE_STATIC_STRING(SmallIntestine1);
+
+    DEFINE_STATIC_STRING(Splanchnic1);
+
+    DEFINE_STATIC_STRING(Spleen1);
+
+    DEFINE_STATIC_STRING(Torso1)
+    DEFINE_STATIC_STRING(Torso2)
+    DEFINE_STATIC_STRING(TorsoBone1);
+    DEFINE_STATIC_STRING(TorsoFat1);
+    DEFINE_STATIC_STRING(TorsoMicrovasculature1)
+    DEFINE_STATIC_STRING(TorsoMuscle1);
+    DEFINE_STATIC_STRING(TorsoSkin1);
+
+    DEFINE_STATIC_STRING(VenaCava1);
+    DEFINE_STATIC_STRING(VenaCava2);
+
+    DEFINE_STATIC_STRING(Ground);
+  };
+
+  class ExpandedCardiovascularPath
+  {
+  public:
+    // Heart and Lungs
+    DEFINE_STATIC_STRING(VenaCava1ToRightHeart2);
+    DEFINE_STATIC_STRING(RightHeart2ToRightHeart1);
+    DEFINE_STATIC_STRING(RightHeart1ToRightHeart3);
+    DEFINE_STATIC_STRING(RightHeart3ToGround);
+    DEFINE_STATIC_STRING(RightHeart1ToMainPulmonaryArteries1);
+    DEFINE_STATIC_STRING(MainPulmonaryArteries1ToRightIntermediatePulmonaryArteries1);
+    DEFINE_STATIC_STRING(RightIntermediatePulmonaryArteries1ToRightPulmonaryArteries1);
+    DEFINE_STATIC_STRING(RightPulmonaryArteries1ToRightPulmonaryVeins1);
+    DEFINE_STATIC_STRING(RightPulmonaryArteries1ToRightPulmonaryCapillaries1);
+    DEFINE_STATIC_STRING(RightPulmonaryArteries1ToGround);
+    DEFINE_STATIC_STRING(RightPulmonaryCapillaries1ToRightPulmonaryVeins1);
+    DEFINE_STATIC_STRING(RightPulmonaryCapillaries1ToGround);
+    DEFINE_STATIC_STRING(RightPulmonaryVeins1ToRightIntermediatePulmonaryVeins1);
+    DEFINE_STATIC_STRING(RightPulmonaryVeins1ToGround);
+    DEFINE_STATIC_STRING(RightIntermediatePulmonaryVeins1ToLeftHeart2);
+    DEFINE_STATIC_STRING(MainPulmonaryArteries1ToLeftIntermediatePulmonaryArteries1);
+    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryArteries1ToLeftPulmonaryArteries1);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteries1ToLeftPulmonaryVeins1);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteries1ToGround);
+    DEFINE_STATIC_STRING(LeftPulmonaryCapillaries1ToGround);
+    DEFINE_STATIC_STRING(LeftPulmonaryCapillaries1ToLeftPulmonaryVeins1);
+    DEFINE_STATIC_STRING(LeftPulmonaryVeins1ToLeftIntermediatePulmonaryVeins1);
+    DEFINE_STATIC_STRING(LeftPulmonaryVeins1ToGround);
+    DEFINE_STATIC_STRING(LeftIntermediatePulmonaryVeins1ToLeftHeart2)
+    DEFINE_STATIC_STRING(LeftHeart2ToLeftHeart1);
+    DEFINE_STATIC_STRING(LeftHeart1ToLeftHeart3);
+    DEFINE_STATIC_STRING(LeftHeart3ToGround);
+    DEFINE_STATIC_STRING(LeftHeart1ToAorta2);
+    DEFINE_STATIC_STRING(Aorta2ToAorta3);
+    DEFINE_STATIC_STRING(Aorta3ToAorta1);
+    DEFINE_STATIC_STRING(Aorta1ToAorta4);
+    DEFINE_STATIC_STRING(Aorta1ToAorta5);
+
+    // Abdominal Cavity
+    DEFINE_STATIC_STRING(GroundToAorta4);
+    DEFINE_STATIC_STRING(AbdominalCavity1ToGround);
+    DEFINE_STATIC_STRING(GroundToAbdominalCavity1);
+    // Brain
+    DEFINE_STATIC_STRING(Aorta5ToExtracranial1);
+    DEFINE_STATIC_STRING(Extracranial1ToGround);
+    DEFINE_STATIC_STRING(Extracranial2ToGround);
+    DEFINE_STATIC_STRING(Extracranial3ToGround);
+    DEFINE_STATIC_STRING(Extracranial1ToExtracranial2);
+    DEFINE_STATIC_STRING(Extracranial2ToExtracranial3);
+    DEFINE_STATIC_STRING(Extracranial3ToVenaCava2);
+    DEFINE_STATIC_STRING(Aorta5ToIntracranial1);
+    DEFINE_STATIC_STRING(Intracranial1ToGround);
+    DEFINE_STATIC_STRING(Intracranial2ToGround);
+    DEFINE_STATIC_STRING(Intracranial3ToGround);
+    DEFINE_STATIC_STRING(Intracranial1ToIntracranial2);
+    DEFINE_STATIC_STRING(Intracranial2ToIntracranial3);
+    DEFINE_STATIC_STRING(Intracranial3ToVenaCava2);
+    // Gut
+    DEFINE_STATIC_STRING(Aorta5ToGut1);
+    DEFINE_STATIC_STRING(Gut1ToGround);
+    // Large Intestine
+    DEFINE_STATIC_STRING(Gut1ToLargeIntestine1);
+    DEFINE_STATIC_STRING(LargeIntestine1ToGround);
+    DEFINE_STATIC_STRING(LargeIntestine1ToPortalVein1);
+    // Left Arm
+    DEFINE_STATIC_STRING(Aorta5ToLeftArm1);
+    DEFINE_STATIC_STRING(LeftArm1ToGround);
+    DEFINE_STATIC_STRING(LeftArm2ToGround);
+    DEFINE_STATIC_STRING(LeftArm1ToLeftArmBone1);
+    DEFINE_STATIC_STRING(LeftArmBone1ToGround);
+    DEFINE_STATIC_STRING(LeftArmBone1ToLeftArm2);
+    DEFINE_STATIC_STRING(LeftArm1ToLeftArmFat1);
+    DEFINE_STATIC_STRING(LeftArmFat1ToGround);
+    DEFINE_STATIC_STRING(LeftArmFat1ToLeftArm2);
+    DEFINE_STATIC_STRING(LeftArm1ToLeftArmMicrovasculature1);
+    DEFINE_STATIC_STRING(LeftArmMicrovasculature1ToGround);
+    DEFINE_STATIC_STRING(LeftArmMicrovasculature1ToLeftArm2);
+    DEFINE_STATIC_STRING(LeftArm1ToLeftArmMuscle1);
+    DEFINE_STATIC_STRING(LeftArmMuscle1ToGround);
+    DEFINE_STATIC_STRING(LeftArmMuscle1ToLeftArm2);
+    DEFINE_STATIC_STRING(LeftArm1ToLeftArmSkin1);
+    DEFINE_STATIC_STRING(LeftArmSkin1ToGround);
+    DEFINE_STATIC_STRING(LeftArmSkin1ToLeftArm2);
+    DEFINE_STATIC_STRING(LeftArm2ToVenaCava2);
+    // Left Kidney
+    DEFINE_STATIC_STRING(Aorta5ToLeftKidney1);
+    DEFINE_STATIC_STRING(LeftKidney1ToLeftKidney2);
+    DEFINE_STATIC_STRING(LeftKidney1ToGround);
+    DEFINE_STATIC_STRING(LeftKidney2ToGround);
+    DEFINE_STATIC_STRING(LeftKidney3ToGround);
+    DEFINE_STATIC_STRING(LeftKidney2ToLeftKidney3);
+    DEFINE_STATIC_STRING(LeftKidney3ToVenaCava2);
+    // Left Leg
+    DEFINE_STATIC_STRING(Aorta5ToLeftLeg1);
+    DEFINE_STATIC_STRING(LeftLeg1ToGround);
+    DEFINE_STATIC_STRING(LeftLeg2ToGround);
+    DEFINE_STATIC_STRING(LeftLeg1ToLeftLegBone1);
+    DEFINE_STATIC_STRING(LeftLegBone1ToGround);
+    DEFINE_STATIC_STRING(LeftLegBone1ToLeftLeg2);
+    DEFINE_STATIC_STRING(LeftLeg1ToLeftLegFat1);
+    DEFINE_STATIC_STRING(LeftLegFat1ToGround);
+    DEFINE_STATIC_STRING(LeftLegFat1ToLeftLeg2);
+    DEFINE_STATIC_STRING(LeftLeg1ToLeftLegMicrovasculature1);
+    DEFINE_STATIC_STRING(LeftLegMicrovasculature1ToGround);
+    DEFINE_STATIC_STRING(LeftLegMicrovasculature1ToLeftLeg2);
+    DEFINE_STATIC_STRING(LeftLeg1ToLeftLegMuscle1);
+    DEFINE_STATIC_STRING(LeftLegMuscle1ToGround);
+    DEFINE_STATIC_STRING(LeftLegMuscle1ToLeftLeg2);
+    DEFINE_STATIC_STRING(LeftLeg1ToLeftLegSkin1);
+    DEFINE_STATIC_STRING(LeftLegSkin1ToGround);
+    DEFINE_STATIC_STRING(LeftLegSkin1ToLeftLeg2);
+    DEFINE_STATIC_STRING(LeftLeg2ToVenaCava2);
+    // Liver
+    DEFINE_STATIC_STRING(Gut1ToLiver1);
+    DEFINE_STATIC_STRING(Liver1ToGround);
+    DEFINE_STATIC_STRING(Liver2ToGround);
+    DEFINE_STATIC_STRING(PortalVein1ToLiver1);
+    DEFINE_STATIC_STRING(Liver1ToLiver2);
+    DEFINE_STATIC_STRING(Liver2ToVenaCava2);
+    // Myocardium
+    DEFINE_STATIC_STRING(Aorta5ToMyocardium1);
+    DEFINE_STATIC_STRING(Myocardium1ToMyocardium2);
+    DEFINE_STATIC_STRING(Myocardium1ToGround);
+    DEFINE_STATIC_STRING(Myocardium2ToGround);
+    DEFINE_STATIC_STRING(Myocardium3ToGround);
+    DEFINE_STATIC_STRING(Myocardium2ToMyocardium3);
+    DEFINE_STATIC_STRING(Myocardium3ToVenaCava2);
+    // Pericardium
+    DEFINE_STATIC_STRING(Pericardium1ToGround);
+    DEFINE_STATIC_STRING(GroundToPericardium1);
+    // Right Arm
+    DEFINE_STATIC_STRING(Aorta5ToRightArm1);
+    DEFINE_STATIC_STRING(RightArm1ToGround);
+    DEFINE_STATIC_STRING(RightArm2ToGround);
+    DEFINE_STATIC_STRING(RightArm1ToRightArmBone1);
+    DEFINE_STATIC_STRING(RightArmBone1ToGround);
+    DEFINE_STATIC_STRING(RightArmBone1ToRightArm2);
+    DEFINE_STATIC_STRING(RightArm1ToRightArmFat1);
+    DEFINE_STATIC_STRING(RightArmFat1ToGround);
+    DEFINE_STATIC_STRING(RightArmFat1ToRightArm2);
+    DEFINE_STATIC_STRING(RightArm1ToRightArmMicrovasculature1);
+    DEFINE_STATIC_STRING(RightArmMicrovasculature1ToGround);
+    DEFINE_STATIC_STRING(RightArmMicrovasculature1ToRightArm2);
+    DEFINE_STATIC_STRING(RightArm1ToRightArmMuscle1);
+    DEFINE_STATIC_STRING(RightArmMuscle1ToGround);
+    DEFINE_STATIC_STRING(RightArmMuscle1ToRightArm2);
+    DEFINE_STATIC_STRING(RightArm1ToRightArmSkin1);
+    DEFINE_STATIC_STRING(RightArmSkin1ToGround);
+    DEFINE_STATIC_STRING(RightArmSkin1ToRightArm2);
+    DEFINE_STATIC_STRING(RightArm2ToVenaCava2);
+    // Right Kidney
+    DEFINE_STATIC_STRING(Aorta5ToRightKidney1);
+    DEFINE_STATIC_STRING(RightKidney1ToRightKidney2);
+    DEFINE_STATIC_STRING(RightKidney1ToGround);
+    DEFINE_STATIC_STRING(RightKidney2ToGround);
+    DEFINE_STATIC_STRING(RightKidney3ToGround);
+    DEFINE_STATIC_STRING(RightKidney2ToRightKidney3);
+    DEFINE_STATIC_STRING(RightKidney3ToVenaCava2);
+    // Right Leg
+    DEFINE_STATIC_STRING(Aorta5ToRightLeg1);
+    DEFINE_STATIC_STRING(RightLeg1ToGround);
+    DEFINE_STATIC_STRING(RightLeg2ToGround);
+    DEFINE_STATIC_STRING(RightLeg1ToRightLegBone1);
+    DEFINE_STATIC_STRING(RightLegBone1ToGround);
+    DEFINE_STATIC_STRING(RightLegBone1ToRightLeg2);
+    DEFINE_STATIC_STRING(RightLeg1ToRightLegFat1);
+    DEFINE_STATIC_STRING(RightLegFat1ToGround);
+    DEFINE_STATIC_STRING(RightLegFat1ToRightLeg2);
+    DEFINE_STATIC_STRING(RightLeg1ToRightLegMicrovasculature1);
+    DEFINE_STATIC_STRING(RightLegMicrovasculature1ToGround);
+    DEFINE_STATIC_STRING(RightLegMicrovasculature1ToRightLeg2);
+    DEFINE_STATIC_STRING(RightLeg1ToRightLegMuscle1);
+    DEFINE_STATIC_STRING(RightLegMuscle1ToGround);
+    DEFINE_STATIC_STRING(RightLegMuscle1ToRightLeg2);
+    DEFINE_STATIC_STRING(RightLeg1ToRightLegSkin1);
+    DEFINE_STATIC_STRING(RightLegSkin1ToGround);
+    DEFINE_STATIC_STRING(RightLegSkin1ToRightLeg2);
+    DEFINE_STATIC_STRING(RightLeg2ToVenaCava2);
+    // Small Intestine
+    DEFINE_STATIC_STRING(Gut1ToSmallIntestine1);
+    DEFINE_STATIC_STRING(SmallIntestine1ToGround);
+    DEFINE_STATIC_STRING(SmallIntestine1ToPortalVein1);
+    // Splanchnic
+    DEFINE_STATIC_STRING(Gut1ToSplanchnic1);
+    DEFINE_STATIC_STRING(Splanchnic1ToGround);
+    DEFINE_STATIC_STRING(Splanchnic1ToPortalVein1);
+    // Spleen
+    DEFINE_STATIC_STRING(Gut1ToSpleen1);
+    DEFINE_STATIC_STRING(Spleen1ToGround);
+    DEFINE_STATIC_STRING(Spleen1ToPortalVein1);
+    // Torso
+    DEFINE_STATIC_STRING(Aorta5ToTorso1);
+    DEFINE_STATIC_STRING(Torso1ToGround);
+    DEFINE_STATIC_STRING(Torso2ToGround);
+    DEFINE_STATIC_STRING(Torso1ToTorsoBone1);
+    DEFINE_STATIC_STRING(TorsoBone1ToGround);
+    DEFINE_STATIC_STRING(TorsoBone1ToTorso2);
+    DEFINE_STATIC_STRING(Torso1ToTorsoFat1);
+    DEFINE_STATIC_STRING(TorsoFat1ToGround);
+    DEFINE_STATIC_STRING(TorsoFat1ToTorso2);
+    DEFINE_STATIC_STRING(Torso1ToTorsoMicrovasculature1);
+    DEFINE_STATIC_STRING(TorsoMicrovasculature1ToGround);
+    DEFINE_STATIC_STRING(TorsoMicrovasculature1ToTorso2);
+    DEFINE_STATIC_STRING(Torso1ToTorsoMuscle1);
+    DEFINE_STATIC_STRING(TorsoMuscle1ToGround);
+    DEFINE_STATIC_STRING(TorsoMuscle1ToTorso2);
+    DEFINE_STATIC_STRING(Torso1ToTorsoSkin1);
+    DEFINE_STATIC_STRING(TorsoSkin1ToGround);
+    DEFINE_STATIC_STRING(TorsoSkin1ToTorso2);
+    DEFINE_STATIC_STRING(Torso2ToVenaCava2);
+    // Vena Cava
+    DEFINE_STATIC_STRING(VenaCava2ToVenaCava1);
+    DEFINE_STATIC_STRING(VenaCava1ToGround);
+    //DEFINE_STATIC_STRING(VenaCava2ToGround);
+    DEFINE_STATIC_STRING(IVToVenaCava1);
+  };
+
+
+  ///////////////////////////////////////
+  // Cerebrospinal Fluid Circuit Enums //
+  ///////////////////////////////////////
+
+  class CerebrospinalFluidNode
+  {
+  public:
+    DEFINE_STATIC_STRING(VascularCSFBarrier);
+    DEFINE_STATIC_STRING(IntracranialSpace1);
+    DEFINE_STATIC_STRING(IntracranialSpace2);
+  };
+
+  class CerebrospinalFluidPath
+  {
+  public:
+
+    DEFINE_STATIC_STRING(IntracranialSpace2ToGround);
+    DEFINE_STATIC_STRING(GroundToIntracranialSpace1);
+    DEFINE_STATIC_STRING(Brain1ToVascularCSFBarrier);
+    DEFINE_STATIC_STRING(VascularCSFBarrierToIntracranialSpace1);
+    DEFINE_STATIC_STRING(IntracranialSpace1ToIntracranialSpace2);
   };
 
   class TissueNode
@@ -835,7 +1188,7 @@ namespace pulse
     DEFINE_STATIC_STRING(GroundToLeftLungT3);
     DEFINE_STATIC_STRING(LeftLungT1ToLymph);
 
-    DEFINE_STATIC_STRING(LymphToVenaCava);
+    DEFINE_STATIC_STRING(LymphToVenaCava1);
 
     DEFINE_STATIC_STRING(Muscle1ToMuscleT2);
     DEFINE_STATIC_STRING(MuscleT2ToMuscleT1);
@@ -862,6 +1215,109 @@ namespace pulse
     DEFINE_STATIC_STRING(RightKidneyT1ToLymph);
 
     DEFINE_STATIC_STRING(Skin1ToSkinT2);
+    DEFINE_STATIC_STRING(SkinT2ToSkinT1);
+    DEFINE_STATIC_STRING(SkinT1ToSkinT3);
+    DEFINE_STATIC_STRING(GroundToSkinT3);
+    DEFINE_STATIC_STRING(SkinT1ToLymph);
+    DEFINE_STATIC_STRING(SkinSweating);
+
+    DEFINE_STATIC_STRING(Spleen1ToSpleenT2);
+    DEFINE_STATIC_STRING(SpleenT2ToSpleenT1);
+    DEFINE_STATIC_STRING(SpleenT1ToSpleenT3);
+    DEFINE_STATIC_STRING(GroundToSpleenT3);
+    DEFINE_STATIC_STRING(SpleenT1ToLymph);
+  };
+
+  class ExpandedCardiovascularTissuePath
+  {
+  public:
+    DEFINE_STATIC_STRING(TorsoBone1ToBoneT2);
+    DEFINE_STATIC_STRING(LeftArmBone1ToBoneT2);
+    DEFINE_STATIC_STRING(LeftLegBone1ToBoneT2);
+    DEFINE_STATIC_STRING(RightArmBone1ToBoneT2);
+    DEFINE_STATIC_STRING(RightLegBone1ToBoneT2);
+    DEFINE_STATIC_STRING(BoneT2ToBoneT1);
+    DEFINE_STATIC_STRING(BoneT1ToBoneT3);
+    DEFINE_STATIC_STRING(GroundToBoneT3);
+    DEFINE_STATIC_STRING(BoneT1ToLymph);
+
+    DEFINE_STATIC_STRING(Intracranial2ToBrainT2);
+    DEFINE_STATIC_STRING(BrainT2ToBrainT1);
+    DEFINE_STATIC_STRING(BrainT1ToBrainT3);
+    DEFINE_STATIC_STRING(GroundToBrainT3);
+    DEFINE_STATIC_STRING(BrainT1ToLymph);
+
+    DEFINE_STATIC_STRING(TorsoFat1ToFatT2);
+    DEFINE_STATIC_STRING(LeftArmFat1ToFatT2);
+    DEFINE_STATIC_STRING(LeftLegFat1ToFatT2);
+    DEFINE_STATIC_STRING(RightArmFat1ToFatT2);
+    DEFINE_STATIC_STRING(RightLegFat1ToFatT2);
+    DEFINE_STATIC_STRING(FatT2ToFatT1);
+    DEFINE_STATIC_STRING(FatT1ToFatT3);
+    DEFINE_STATIC_STRING(GroundToFatT3);
+    DEFINE_STATIC_STRING(FatT1ToLymph);
+
+    DEFINE_STATIC_STRING(SmallIntestine1ToGutT2);
+    DEFINE_STATIC_STRING(LargeIntestine1ToGutT2);
+    DEFINE_STATIC_STRING(Splanchnic1ToGutT2);
+    DEFINE_STATIC_STRING(GutT2ToGutT1);
+    DEFINE_STATIC_STRING(GutT1ToGutT3);
+    DEFINE_STATIC_STRING(GroundToGutT3);
+    DEFINE_STATIC_STRING(GutT1ToLymph);
+
+    DEFINE_STATIC_STRING(Liver1ToLiverT2);
+    DEFINE_STATIC_STRING(LiverT2ToLiverT1);
+    DEFINE_STATIC_STRING(LiverT1ToLiverT3);
+    DEFINE_STATIC_STRING(GroundToLiverT3);
+    DEFINE_STATIC_STRING(LiverT1ToLymph);
+
+    DEFINE_STATIC_STRING(LeftKidney2ToLeftKidneyT2);
+    DEFINE_STATIC_STRING(LeftKidneyT2ToLeftKidneyT1);
+    DEFINE_STATIC_STRING(LeftKidneyT1ToLeftKidneyT3);
+    DEFINE_STATIC_STRING(GroundToLeftKidneyT3);
+    DEFINE_STATIC_STRING(LeftKidneyT1ToLymph);
+
+    DEFINE_STATIC_STRING(LeftLung1ToLeftLungT2);
+    DEFINE_STATIC_STRING(LeftLungT2ToLeftLungT1);
+    DEFINE_STATIC_STRING(LeftLungT1ToLeftLungT3);
+    DEFINE_STATIC_STRING(GroundToLeftLungT3);
+    DEFINE_STATIC_STRING(LeftLungT1ToLymph);
+
+    DEFINE_STATIC_STRING(LymphToVenaCava);
+
+    DEFINE_STATIC_STRING(TorsoMuscle1ToMuscleT2);
+    DEFINE_STATIC_STRING(LeftArmMuscle1ToMuscleT2);
+    DEFINE_STATIC_STRING(LeftLegMuscle1ToMuscleT2);
+    DEFINE_STATIC_STRING(RightArmMuscle1ToMuscleT2);
+    DEFINE_STATIC_STRING(RightLegMuscle1ToMuscleT2);
+    DEFINE_STATIC_STRING(MuscleT2ToMuscleT1);
+    DEFINE_STATIC_STRING(MuscleT1ToMuscleT3);
+    DEFINE_STATIC_STRING(GroundToMuscleT3);
+    DEFINE_STATIC_STRING(MuscleT1ToLymph);
+
+    DEFINE_STATIC_STRING(Myocardium2ToMyocardiumT2);
+    DEFINE_STATIC_STRING(MyocardiumT2ToMyocardiumT1);
+    DEFINE_STATIC_STRING(MyocardiumT1ToMyocardiumT3);
+    DEFINE_STATIC_STRING(GroundToMyocardiumT3);
+    DEFINE_STATIC_STRING(MyocardiumT1ToLymph);
+
+    DEFINE_STATIC_STRING(RightLung1ToRightLungT2);
+    DEFINE_STATIC_STRING(RightLungT2ToRightLungT1);
+    DEFINE_STATIC_STRING(RightLungT1ToRightLungT3);
+    DEFINE_STATIC_STRING(GroundToRightLungT3);
+    DEFINE_STATIC_STRING(RightLungT1ToLymph);
+
+    DEFINE_STATIC_STRING(RightKidney2ToRightKidneyT2);
+    DEFINE_STATIC_STRING(RightKidneyT2ToRightKidneyT1);
+    DEFINE_STATIC_STRING(RightKidneyT1ToRightKidneyT3);
+    DEFINE_STATIC_STRING(GroundToRightKidneyT3);
+    DEFINE_STATIC_STRING(RightKidneyT1ToLymph);
+
+    DEFINE_STATIC_STRING(TorsoSkin1ToSkinT2);
+    DEFINE_STATIC_STRING(LeftArmSkin1ToSkinT2);
+    DEFINE_STATIC_STRING(LeftLegSkin1ToSkinT2);
+    DEFINE_STATIC_STRING(RightArmSkin1ToSkinT2);
+    DEFINE_STATIC_STRING(RightLegSkin1ToSkinT2);
     DEFINE_STATIC_STRING(SkinT2ToSkinT1);
     DEFINE_STATIC_STRING(SkinT1ToSkinT3);
     DEFINE_STATIC_STRING(GroundToSkinT3);
@@ -978,5 +1434,21 @@ namespace pulse
   {
   public:
     DEFINE_STATIC_STRING(GutChymeToSmallIntestineVascular);
+  };
+
+  class ECMONode
+  {
+  public:
+    DEFINE_STATIC_STRING(BloodSamplingPort);
+    DEFINE_STATIC_STRING(Oxygenator);
+  };
+
+  class ECMOPath
+  {
+  public:
+    DEFINE_STATIC_STRING(VascularToBloodSamplingPort);
+    DEFINE_STATIC_STRING(BloodSamplingPortToGround);
+    DEFINE_STATIC_STRING(GroundToOxygenator);
+    DEFINE_STATIC_STRING(OxygenatorToVasculature);
   };
 END_NAMESPACE

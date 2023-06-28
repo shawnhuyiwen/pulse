@@ -8,7 +8,6 @@ enum class ePatientAssessment_Type {
   ArterialBloodGasTest = 0,
   CompleteBloodCount,
   ComprehensiveMetabolicPanel,
-  PulmonaryFunctionTest,
   Urinalysis
 };
 extern const std::string& ePatientAssessment_Type_Name(ePatientAssessment_Type m);

@@ -26,7 +26,7 @@ Pulse has recently been incorporated into a number of commercial, research, and 
 
 ---------
 
-#### Validation Methodology
+##### Validation Methodology
 
 Models are validated using a combination of peer-reviewed publications and subject matter expertise. The validation process includes:
 
@@ -115,7 +115,7 @@ Below is a summary of our system and compartment level validation.
         <li class="definition col-sm-4">
           <span>
             Assessments formed at the level of a clinician's report, Intended to mimic test results
-            <span class="examples"><strong>Examples:</strong> Pulmonary Function Test</span>
+            <span class="examples"><strong>Examples:</strong> Complete Blood Count</span>
           </span>
         </li>
       </ol>

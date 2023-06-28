@@ -61,7 +61,7 @@ namespace Pulse.CDM
     {
       return this.settingsFile;
     }
-    public void SetConfigurationFile(string s)
+    public void SetSettingsFile(string s)
     {
       this.settingsFile = s;
     }

@@ -19,12 +19,17 @@ public:
   static void CalculateOsmolality(const SEScalarAmountPerVolume& sodiumMolarity, const SEScalarAmountPerVolume& potassiumMolarity, const SEScalarAmountPerVolume& glucoseMolarity, const SEScalarAmountPerVolume& ureaMolarity, const SEScalar& specificGravity, SEScalarOsmolality& fluidOsmolality);
   static bool CalculateSpecificGravity(const SEScalarMass& mass, const SEScalarVolume& volume, SEScalar& specificGravity, Logger* logger = nullptr);
 
-  static void   Combinations(std::vector<int> maxValues, std::vector<std::vector<int>>& permutations);
+  static void   Combinations(std::vector<size_t> maxValues, std::vector<std::vector<size_t>>& permutations);
 
   static bool LinearInterpolator(std::vector<double>& v, size_t newSize);
   static void LinearInterpolator1(std::vector<double>& v, size_t newSize);
+  static double LinearInterpolator(double initial, double target, double percent);
   static double LinearInterpolator(double x1, double x2, double y1, double y2, double xPrime);
+  static double PiecewiseLinearInterpolator(const std::vector<std::pair<double, double>>& points, double x);
   static void SplineInterpolater(std::vector<double>& v, size_t newSize);
+  static double ParbolicInterpolator(double min, double max, double factor);
+
+  static double Damper(double targetValue, double previousValue, double dampenFraction_perSec, double timeStep_s);
 
   static double PercentDifference(double expected, double calculated);
   static double PercentTolerance(double expected, double calculated, double epsilon = 1e-20);

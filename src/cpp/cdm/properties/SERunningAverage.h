@@ -12,10 +12,8 @@ public:
   SERunningAverage();
   virtual ~SERunningAverage();
 
-  virtual void Clear();
-
-  virtual void Invalidate();
-  virtual bool IsValid() const;
+  void Invalidate() override;
+  bool IsValid() const override;
 
   /** Add value to Sample list and return the new average */
   double Sample(double d);

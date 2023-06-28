@@ -321,6 +321,8 @@ void SEElectricalCompartment::AddLink(SEElectricalCompartmentLink& link)
 void SEElectricalCompartment::RemoveLink(SEElectricalCompartmentLink& link)
 {
   Remove(m_Links, &link);
+  Remove(m_IncomingLinks, &link);
+  Remove(m_OutgoingLinks, &link);
 }
 void SEElectricalCompartment::RemoveLinks()
 {

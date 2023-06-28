@@ -9,6 +9,7 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBConditions.h"
 #include "cdm/io/protobuf/PBPatientConditions.h"
 #include "cdm/io/protobuf/PBEnvironmentConditions.h"
+#include "cdm/io/protobuf/PBUtils.h"
 #include "cdm/patient/conditions/SEPatientCondition.h"
 #include "cdm/system/environment/conditions/SEEnvironmentCondition.h"
 #include "cdm/substance/SESubstanceManager.h"
@@ -22,6 +23,9 @@ SECondition* PBCondition::Load(const CDM_BIND::AnyConditionData& condition, cons
     return PBPatientCondition::Load(condition.patientcondition(), subMgr);
   case CDM_BIND::AnyConditionData::kEnvironmentCondition:
     return PBEnvironmentCondition::Load(condition.environmentcondition(), subMgr);
+  case CDM_BIND::AnyConditionData::CONDITION_NOT_SET:
+    subMgr.Warning("AnyConditionData is empty...was that intended?");
+    return nullptr;
   }
   subMgr.Error("Unknown Condition");
   return nullptr;
@@ -53,4 +57,16 @@ void PBCondition::Serialize(const CDM_BIND::ConditionData& src, SECondition& dst
 void PBCondition::Serialize(const SECondition& src, CDM_BIND::ConditionData& dst)
 {
   dst.set_comment(src.m_Comment);
+}
+
+bool PBCondition::SerializeToString(const SECondition& a, std::string& dst, eSerializationFormat fmt)
+{
+  auto* bind = Unload(a);
+  return PBUtils::SerializeToString(*bind, dst, fmt, nullptr);
+}
+SECondition* PBCondition::SerializeFromString(const std::string& src, eSerializationFormat fmt, const SESubstanceManager& subMgr)
+{
+  CDM_BIND::AnyConditionData bind;
+  PBUtils::SerializeFromString(src, bind, fmt, subMgr.GetLogger());
+  return PBCondition::Load(bind, subMgr);
 }

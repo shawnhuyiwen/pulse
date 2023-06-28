@@ -21,7 +21,21 @@ namespace HowTo_UseEngine
   public class MyLogListener : ILogListener
   {
     public void Debug(string msg) { Console.WriteLine("[DEBUG] " + msg); }
-    public void Info(string msg) { Console.WriteLine("[INFO] " + msg); }
+    public void Info(string msg)
+    {
+      if (msg.Contains("[Action]"))
+      {
+        Console.WriteLine("[INFO] " + msg.Substring(0, msg.IndexOf('\n')));
+        Console.WriteLine(SEAction.PrettyPrint(msg));
+      }
+      else if (msg.Contains("[Condition]"))
+      {
+       Console.WriteLine("[INFO] " + msg.Substring(0, msg.IndexOf('\n')));
+        Console.WriteLine(SECondition.PrettyPrint(msg));
+      }
+      else
+        Console.WriteLine("[INFO] " + msg);
+    }
     public void Warning(string msg) { Console.WriteLine("[WARN] " + msg); }
     public void Error(string msg) { Console.WriteLine("[ERROR] " + msg); }
     public void Fatal(string msg) { Console.WriteLine("[FATAL] " + msg); }
@@ -53,12 +67,14 @@ namespace HowTo_UseEngine
         SEDataRequest.CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit.C),
         SEDataRequest.CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit.mmHg),
         SEDataRequest.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit.mL),
+        //SEDataRequest.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit.mL), ENGINE WILL NOT INITIALIZE WITH DUPLICATE REQUESTS
         SEDataRequest.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit.mV),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
       // In addition to getting this data back via this API
       // You can have Pulse write the data you have requested to a CSV file
-      data_mgr.SetResultsFilename("./test_results/howto/HowTo_EngineUse.cs.csv");
+      string csvFilename = "./test_results/howto/HowTo_EngineUse.cs.csv";
+      data_mgr.SetResultsFilename(csvFilename);
       // Create a reference to a double[] that will contain the data returned from Pulse
       double[] data_values;
       // data_values[0] is ALWAYS the simulation time in seconds
@@ -89,7 +105,7 @@ namespace HowTo_UseEngine
         case InitializationType.StateFileName:
           {
             // Load a state file
-            if (!pulse.SerializeFromFile("./states/Soldier@0s.pbb", data_mgr))
+            if (!pulse.SerializeFromFile("./states/StandardMale@0s.json", data_mgr))
             {
               Console.WriteLine("Error Initializing Pulse!");
               return;
@@ -98,7 +114,7 @@ namespace HowTo_UseEngine
           }
         case InitializationType.StateString:
           {
-            string file_content = File.ReadAllText("./states/Soldier@0s.json");
+            string file_content = File.ReadAllText("./states/StandardMale@0s.json");
             if (!pulse.SerializeFromString(file_content, data_mgr, eSerializationFormat.JSON))
             {
               Console.WriteLine("Error Initializing Pulse!");
@@ -113,9 +129,9 @@ namespace HowTo_UseEngine
             SEPatientConfiguration cfg = new SEPatientConfiguration();
             // If we want to specify a file on disk that the C++ has access to, we can specify that file
             // (Maybe the Pulse engine is on hosted on another machine)
-            //cfg.SetPatientFile("./patients/Soldier.json");
+            //cfg.SetPatientFile("./patients/StandardMale.json");
             // Or, ou can load up a local file on disk
-            cfg.GetPatient().SerializeFromFile("./patients/Soldier.json");
+            cfg.GetPatient().SerializeFromFile("./patients/StandardMale.json");
             // Optionally, you can add conditions to the patient
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().SetValue(0.2);
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().SetValue(1.0);
@@ -226,9 +242,11 @@ namespace HowTo_UseEngine
       List<SEAction> actions = new List<SEAction>();
 
       SEHemorrhage h = new SEHemorrhage();
-      h.SetExternal(SEHemorrhage.ExternalCompartment.RightLeg);
-      // Optionally, You can set the flow rate of the hemorrhage,
-      // This needs to be provided the proper flow rate associated with the anatomy
+      h.SetCompartment(eHemorrhage_Compartment.RightLeg);
+      h.GetSeverity().SetValue(0.33);
+      // You must set the severity or flow rate of the hemorrhage
+      // We suggest you use severity as the flow rate will adjust as the blood pressure lowers
+      // The flow provided needs to reflect the rate associated with the anatomy
       // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
       // It is intended to interact with sensors or with something continuously monitoring physiology and updating the flow
       //h.GetFlowRate().SetValue(50, VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
@@ -336,6 +354,11 @@ namespace HowTo_UseEngine
         // And write it out to the console
         data_mgr.WriteData(data_values);
       }
+
+      // Close out the engine so we can open our csv file
+      pulse.Clear();
+      string text = File.ReadAllText(csvFilename);
+      Console.WriteLine(text);
     }
   }
 }

@@ -55,6 +55,7 @@ public:
 
   double GetProbe(size_t idx);
   double GetProbe(const std::string& name);
+  std::string GetProbeName(size_t idx);
 
   void Track(size_t idx, double time, double value);
   // Returning the index of this element, use it to avoid a string lookup

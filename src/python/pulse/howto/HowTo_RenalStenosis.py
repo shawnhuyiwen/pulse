@@ -23,11 +23,11 @@ def HowTo_UseRenalStenosis():
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_UseRenalStenosis()
 

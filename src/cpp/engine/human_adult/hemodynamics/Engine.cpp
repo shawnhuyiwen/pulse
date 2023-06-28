@@ -12,7 +12,7 @@ namespace pulse { namespace human_adult_hemodynamics
   }
   void Engine::AllocateController() const
   {
-    m_Controller = new Controller(GetLogger());
+    m_Controller = new Controller(m_Logger);
     ((Controller*)m_Controller)->Allocate();
   }
 END_NAMESPACE_EX

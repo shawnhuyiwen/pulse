@@ -75,6 +75,7 @@ namespace pulse { namespace human_adult_hemodynamics
     m_Conditions = new SEConditionManager(GetLogger());
 
     m_CardiovascularModel = new pulse::CardiovascularModel(*this);
+    m_Models.push_back(m_CardiovascularModel);
 
     // Not doing anything with these, but CV looks for data on them
     m_EnergyModel = new pulse::EnergyModel(*this);
@@ -100,35 +101,5 @@ namespace pulse { namespace human_adult_hemodynamics
       Warning("Provided conditions will be ignored, this engine does not need to stabilize");
 
     return true;// Nothing to do here, we are good to go!
-  }
-
-  void Controller::InitializeModels()
-  {
-    Info("Initializing Models");
-    m_CardiovascularModel->Clear();
-
-    m_CardiovascularModel->Initialize();
-  }
-
-  void Controller::AtSteadyState(pulse::EngineState state)
-  {
-    m_State = state;
-
-    m_CardiovascularModel->AtSteadyState();
-  }
-
-  void Controller::PreProcess()
-  {
-    m_CardiovascularModel->PreProcess();
-  }
-
-  void Controller::Process()
-  {
-    m_CardiovascularModel->Process();
-  }
-
-  void Controller::PostProcess()
-  {
-    m_CardiovascularModel->PostProcess();
   }
 END_NAMESPACE_EX

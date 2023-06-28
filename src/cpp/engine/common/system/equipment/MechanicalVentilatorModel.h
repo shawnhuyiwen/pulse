@@ -29,19 +29,19 @@ namespace pulse
     MechanicalVentilatorModel(Data& pc);
     virtual ~MechanicalVentilatorModel();
 
-    void Clear();
+    void Clear() override;
 
     // Set members to a stable homeostatic state
-    void Initialize();
+    void Initialize() override;
     // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
-    void SetUp();
+    void SetUp() override;
 
-    void StateChange();
+    void StateChange() override;
 
-    void AtSteadyState() {}
-    void PreProcess();
-    void Process(bool solve_and_transport = true);
-    void PostProcess(bool solve_and_transport = true);
+    void AtSteadyState() override {}
+    void PreProcess() override;
+    void Process(bool solve_and_transport = true) override;
+    void PostProcess(bool solve_and_transport = true) override;
 
   protected:
 
@@ -56,6 +56,7 @@ namespace pulse
     void CycleMode(bool patientTriggered);
     void SetLeak();
     void SetHold();
+    void SetValves();
     void CalculateRespiratoryParameters();
     void CalculateInspiratoryRespiratoryParameters();
     void CalculatePauseRespiratoryParameters();
@@ -79,6 +80,13 @@ namespace pulse
     double                m_PreviousYPieceToConnectionFlow_L_Per_s;
     double                m_PreviousConnectionPressure_cmH2O;
     eBreathState          m_CurrentBreathState;
+    bool                  m_Initializing;
+
+    double                m_PositiveEndExpiratoryPressure_cmH2O;
+    double                m_EndTidalCarbonDioxideFraction;
+    double                m_EndTidalCarbonDioxidePressure_cmH2O;
+    double                m_EndTidalOxygenFraction;
+    double                m_EndTidalOxygenPressure_cmH2O;
 
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
 
@@ -106,6 +114,9 @@ namespace pulse
     SEFluidCircuitPath*  m_ConnectionToReliefValve;
     SEFluidCircuitPath*  m_EnvironmentToReliefValve;
     SEFluidCircuitPath*  m_ConnectionToAirway;
-    double               m_DefaultClosedFlowResistance_cmH2O_s_Per_L;
+    double               m_MachineClosedResistance_cmH2O_s_Per_L;
+    double               m_MachineOpenResistance_cmH2O_s_Per_L;
+    // Piecewise linear function points
+    std::vector<std::pair<double, double>> m_leakPoints;
   };
 END_NAMESPACE

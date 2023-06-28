@@ -4,9 +4,10 @@ from enum import Enum
 from pulse.cdm.patient import SENutrition
 from pulse.cdm.physiology import SERespiratoryMechanics
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
-from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarForce, \
-                              SEScalarMassPerVolume, SEScalarPressure, \
-                              SEScalarTime, SEScalarVolumePerTime, SEScalarVolume
+from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarFrequency, \
+                              SEScalarForce, SEScalarLength, SEScalarMassPerVolume, \
+                              SEScalarPressure, SEScalarTime, \
+                              SEScalarVolumePerTime, SEScalarVolume
 
 class SEPatientAction(SEAction):
     def __init__(self):
@@ -251,20 +252,27 @@ class SEBronchoconstriction(SEPatientAction):
         return ("Bronchoconstriction\n"
                 "  Severity: {}").format(self._severity)
 
-class SEChestCompressionForce(SEPatientAction):
-    __slots__ = ["_force"]
+class SEChestCompression(SEPatientAction):
+    __slots__ = ["_force", "_depth", "_compression_period"]
 
     def __init__(self):
         super().__init__()
         self._force = None
+        self._depth = None
+        self._compression_period = None
 
     def clear(self):
         super().clear()
         if self._force is not None:
             self._force.invalidate()
+        if self._depth is not None:
+            self._depth.invalidate()
+        if self._compression_period is not None:
+            self._compression_period.invalidate()
 
     def is_valid(self):
-        return self.has_force()
+        # Must have exactly one of these
+        return (self.has_force() or self.has_depth()) and self.has_compression_period()
 
     def has_force(self):
         return self._force is not None
@@ -273,46 +281,123 @@ class SEChestCompressionForce(SEPatientAction):
             self._force = SEScalarForce()
         return self._force
 
+    def has_depth(self):
+        return self._depth is not None
+    def get_depth(self):
+        if self._depth is None:
+            self._depth = SEScalarLength()
+        return self._depth
+
+    def has_compression_period(self):
+        return self._compression_period is not None
+    def get_compression_period(self):
+        if self._compression_period is None:
+            self._compression_period = SEScalarTime()
+        return self._compression_period
+
     def __repr__(self):
         return ("Chest Compression\n"
-                "  Force: {}").format(self._force)
+                "  Force: {}\n"
+                "  Depth: {}\n"
+                "  Compression Period: {}").format(self._force, self._depth, self._compression_period)
 
-class SEChestCompressionForceScale(SEPatientAction):
-    __slots__ = ["_force_scale","_force_period"]
+class SEChestCompressionAutomated(SEPatientAction):
+    __slots__ = ["_applied_force_fraction", "_compression_frequency", "_force", "_depth"]
 
     def __init__(self):
         super().__init__()
-        self._force_scale = None
-        self._force_period = None
+        self._applied_force_fraction = None
+        self._compression_frequency = None
+        self._force = None
+        self._depth = None
 
     def clear(self):
         super().clear()
-        if self._force_scale is not None:
-            self._force_scale.invalidate()
-        if self._force_period is not None:
-            self._force_period.invalidate()
+        if self._applied_force_fraction is not None:
+            self._applied_force_fraction.invalidate()
+        if self._compression_frequency is not None:
+            self._compression_frequency.invalidate()
+        if self._force is not None:
+            self._force.invalidate()
+        if self._depth is not None:
+            self._depth.invalidate()
 
     def is_valid(self):
-        return self.has_force_scale() and self.has_force_period()
+        return (self.has_force() or self.has_depth()) and self.has_compression_frequency()
 
-    def has_force_scale(self):
-        return self._force_scale is not None
-    def get_force_scale(self):
-        if self._force_scale is None:
-            self._force_scale = SEScalar0To1()
-        return self._force_scale
+    def has_applied_force_fraction(self):
+        return self._applied_force_fraction is not None
+    def get_applied_force_fraction(self):
+        if self._applied_force_fraction is None:
+            self._applied_force_fraction = SEScalar0To1()
+        return self._applied_force_fraction
 
-    def has_force_period(self):
-        return self._force_period is not None
-    def get_force_period(self):
-        if self._force_period is None:
-            self._force_period = SEScalarTime()
-        return self._force_period
+    def has_compression_frequency(self):
+        return self._compression_frequency is not None
+    def get_compression_frequency(self):
+        if self._compression_frequency is None:
+            self._compression_frequency = SEScalarFrequency()
+        return self._compression_frequency
+
+    def has_force(self):
+        return self._force is not None
+    def get_force(self):
+        if self._force is None:
+            self._force = SEScalarForce()
+        return self._force
+
+    def has_depth(self):
+        return self._depth is not None
+    def get_depth(self):
+        if self._depth is None:
+            self._depth = SEScalarLength()
+        return self._depth
 
     def __repr__(self):
-        return ("Chest Compression\n"
-                "  Force Scale: {}\n"
-                "  Force Period: {}").format(self._force_scale, self._force_period)
+        return ("Chest Compression Automated\n"
+                "  Applied Force Fraction: {}\n"
+                "  Compression Frequency: {}\n"
+                "  Force: {}\n"
+                "  Depth: {}").format(self._applied_force_fraction, self._compression_frequency,
+                                            self._force, self._depth)
+
+class SEChestCompressionInstantaneous(SEPatientAction):
+    __slots__ = ["_force", "_depth"]
+
+    def __init__(self):
+        super().__init__()
+        self._force = None
+        self._depth = None
+
+    def clear(self):
+        super().clear()
+        if self._force is not None:
+            self._force.invalidate()
+        if self._depth is not None:
+            self._depth.invalidate()
+
+    def is_valid(self):
+        # Must have exactly one of these
+        return (self.has_force() or self.has_depth())
+
+    def has_force(self):
+        return self._force is not None
+    def get_force(self):
+        if self._force is None:
+            self._force = SEScalarForce()
+        return self._force
+
+    def has_depth(self):
+        return self._depth is not None
+    def get_depth(self):
+        if self._depth is None:
+            self._depth = SEScalarLength()
+        return self._depth
+
+    def __repr__(self):
+        return ("Chest Compression Instantaneous\n"
+                "  Force: {}\n"
+                "  Depth: {}").format(self._force, self._depth)
 
 class SEChestOcclusiveDressing(SEPatientAction):
     __slots__ = ["_state", "_side"]
@@ -672,36 +757,40 @@ class SEExercise(SEPatientAction):
         return ("Exercise\n"
                 "  Intensity: {}").format(self._intensity)
 
-class eHemorrhageType(Enum):
+class eHemorrhage_Type(Enum):
     External = 0
     Internal = 1
+
+class eHemorrhage_Compartment(Enum):
+    Aorta = 1
+    Brain = 2
+    Muscle = 3
+    LargeIntestine = 4
+    LeftArm = 5
+    LeftKidney = 6
+    LeftLeg = 7
+    Liver = 8
+    RightArm = 9
+    RightKidney = 10
+    RightLeg = 11
+    Skin = 12
+    SmallIntestine = 13
+    Splanchnic = 14
+    Spleen = 15
+    VenaCava = 16
 class SEHemorrhage(SEPatientAction):
     __slots__ = ["_type","_compartment","_flow_rate","_severity"]
 
-    class ExternalCompartment:
-        __slots__ = ["_value"]
-        def __init__(self, value: str):
-            self._value = value
-        def value(self):
-            return self._value
-
-    class InternalCompartment:
-        __slots__ = ["_value"]
-        def __init__(self, value: str):
-            self._value = value
-        def value(self):
-            return self._value
-
     def __init__(self):
         super().__init__()
-        self._type = eHemorrhageType.External
+        self._type = eHemorrhage_Type.External
         self._compartment = None
         self._flow_rate = None
         self._severity = None
 
     def clear(self):
         super().clear()
-        self._type = eHemorrhageType.External
+        self._type = eHemorrhage_Type.External
         self._compartment = None
         if self._flow_rate is not None:
             self._flow_rate.invalidate()
@@ -713,7 +802,7 @@ class SEHemorrhage(SEPatientAction):
 
     def get_type(self):
         return self._type
-    def set_type(self, type: eHemorrhageType):
+    def set_type(self, type: eHemorrhage_Type):
         self._type = type
 
     def has_compartment(self):
@@ -724,13 +813,6 @@ class SEHemorrhage(SEPatientAction):
         self._compartment = compartment
     def invalidate_compartment(self):
         self._compartment = None
-
-    def set_external(self, c:ExternalCompartment):
-        self._type = eHemorrhageType.External
-        self._compartment = c.value()
-    def set_internal(self, c:InternalCompartment):
-        self._type = eHemorrhageType.Internal
-        self._compartment = c.value()
 
     def has_flow_rate(self):
         return False if self._flow_rate is None else self._flow_rate.is_valid()
@@ -753,32 +835,52 @@ class SEHemorrhage(SEPatientAction):
                 "  Flow Rate: {}\n"
                 "  Severity: {}").format(self._type,self._compartment,self._flow_rate, self._severity)
 
-SEHemorrhage.ExternalCompartment.RightLeg = SEHemorrhage.ExternalCompartment("RightLeg")
-SEHemorrhage.ExternalCompartment.LeftLeg = SEHemorrhage.ExternalCompartment("LeftLeg")
-SEHemorrhage.ExternalCompartment.RightArm = SEHemorrhage.ExternalCompartment("RightArm")
-SEHemorrhage.ExternalCompartment.LeftArm = SEHemorrhage.ExternalCompartment("LeftArm")
-SEHemorrhage.ExternalCompartment.Skin = SEHemorrhage.ExternalCompartment("Skin")
-SEHemorrhage.ExternalCompartment.Muscle = SEHemorrhage.ExternalCompartment("Muscle")
-SEHemorrhage.ExternalCompartment.Brain = SEHemorrhage.ExternalCompartment("Brain")
-SEHemorrhage.ExternalCompartment.LeftKidney = SEHemorrhage.ExternalCompartment("LeftKidney")
-SEHemorrhage.ExternalCompartment.RightKidney = SEHemorrhage.ExternalCompartment("RightKidney")
-SEHemorrhage.ExternalCompartment.Liver = SEHemorrhage.ExternalCompartment("Liver")
-SEHemorrhage.ExternalCompartment.Spleen = SEHemorrhage.ExternalCompartment("Spleen")
-SEHemorrhage.ExternalCompartment.Splanchnic = SEHemorrhage.ExternalCompartment("Splanchnic")
-SEHemorrhage.ExternalCompartment.SmallIntestine = SEHemorrhage.ExternalCompartment("SmallIntestine")
-SEHemorrhage.ExternalCompartment.LargeIntestine = SEHemorrhage.ExternalCompartment("LargeIntestine")
-SEHemorrhage.ExternalCompartment.Aorta = SEHemorrhage.ExternalCompartment("Aorta")
-SEHemorrhage.ExternalCompartment.VenaCava = SEHemorrhage.ExternalCompartment("VenaCava")
+class SEHemothorax(SEPatientAction):
+    __slots__ = ["_side", "_severity", "_flow_rate"]
 
-SEHemorrhage.InternalCompartment.LeftKidney = SEHemorrhage.InternalCompartment("LeftKidney")
-SEHemorrhage.InternalCompartment.RightKidney = SEHemorrhage.InternalCompartment("RightKidney")
-SEHemorrhage.InternalCompartment.Liver = SEHemorrhage.InternalCompartment("Liver")
-SEHemorrhage.InternalCompartment.Spleen = SEHemorrhage.InternalCompartment("Spleen")
-SEHemorrhage.InternalCompartment.Splanchnic = SEHemorrhage.InternalCompartment("Splanchnic")
-SEHemorrhage.InternalCompartment.SmallIntestine = SEHemorrhage.InternalCompartment("SmallIntestine")
-SEHemorrhage.InternalCompartment.LargeIntestine = SEHemorrhage.InternalCompartment("LargeIntestine")
-SEHemorrhage.InternalCompartment.Aorta = SEHemorrhage.InternalCompartment("Aorta")
-SEHemorrhage.InternalCompartment.VenaCava = SEHemorrhage.InternalCompartment("VenaCava")
+    def __init__(self):
+        super().__init__()
+        self._side = eSide.NullSide
+        self._severity = None
+        self._flow_rate = None
+
+    def clear(self):
+        super().clear()
+        self._side = eSide.NullSide
+        if self._severity is not None:
+            self._severity.invalidate()
+        if self._flow_rate is not None:
+            self._flow_rate.invalidate()
+
+    def is_valid(self):
+        return self.has_side() and (self.has_severity() or self.has_flow_rate())
+
+    def has_side(self):
+        return self._side != eSide.NullSide
+    def set_side(self, side: eSide):
+        self._side = side
+    def get_side(self):
+        return self._side
+
+    def has_severity(self):
+        return False if self._severity is None else self._severity.is_valid()
+    def get_severity(self):
+        if self._severity is None:
+            self._severity = SEScalar0To1()
+        return self._severity
+
+    def has_flow_rate(self):
+        return False if self._flow_rate is None else self._flow_rate.is_valid()
+    def get_flow_rate(self):
+        if self._flow_rate is None:
+            self._flow_rate = SEScalarVolumePerTime()
+        return self._flow_rate
+
+    def __repr__(self):
+        return ("Hemothorax\n"
+                "  Side: {}\n"
+                "  Severity: {}\n"
+                "  Flow Rate: {}").format(self._side, self._severity, self._flow_rate)
 
 class SEImpairedAlveolarExchangeExacerbation(SEPatientAction):
     __slots__ = ["_impaired_surface_area", "_impaired_fraction", "_severity"]
@@ -1370,6 +1472,41 @@ class SETensionPneumothorax(SEPatientAction):
                 "  Type: {}\n"
                 "  Side: {}\n"
                 "  Severity: {}").format(self._type, self._side, self._severity)
+
+class SETubeThoracostomy(SEPatientAction):
+    __slots__ = ["_side", "_flow_rate"]
+
+    def __init__(self):
+        super().__init__()
+        self._side = eSide.NullSide
+        self._flow_rate = None
+
+    def clear(self):
+        super().clear()
+        self._side = eSide.NullSide
+        if self._flow_rate is not None:
+            self._flow_rate.invalidate()
+    def is_valid(self):
+        return self.has_side()
+
+    def has_side(self):
+        return self._side != eSide.NullSide
+    def set_side(self, side: eSide):
+        self._side = side
+    def get_side(self):
+        return self._side
+
+    def has_flow_rate(self):
+        return False if self._flow_rate is None else self._flow_rate.is_valid()
+    def get_flow_rate(self):
+        if self._flow_rate is None:
+            self._flow_rate = SEScalarVolumePerTime()
+        return self._flow_rate
+
+    def __repr__(self):
+        return ("Tube Thoracostomy\n"
+                "  Side: {}\n"
+                "  Flow Rate: {}").format(self._side, self._flow_rate)
 
 class SEUrinate(SEPatientAction):
     def __init__(self):

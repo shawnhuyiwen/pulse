@@ -203,7 +203,7 @@ namespace HowTo_DeathState
       // The rest of the data values are in order of the data_requests list provided
 
       // NOTE: No data requests are being provided, so Pulse will return the default vitals data
-      if (!pulse.SerializeFromFile("./states/Soldier@0s.pbb", data_mgr))
+      if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr))
       {
         Console.WriteLine("Error Initializing Pulse!");
         return;
@@ -221,19 +221,19 @@ namespace HowTo_DeathState
       // Setting up a realistic hemorrhage can be difficult
       // Here is an example of how the engine will act if you create an unrealistic hemorrhage
       rightLeg.SetType(eHemorrhage_Type.External);
-      rightLeg.SetCompartment("RightLegVasculature");
+      rightLeg.SetCompartment(eHemorrhage_Compartment.RightLeg);
       rightLeg.GetSeverity().SetValue(0.8);
       pulse.ProcessAction(rightLeg);
 
       SEHemorrhage rightArm = new SEHemorrhage();
       rightArm.SetType(eHemorrhage_Type.External);
-      rightArm.SetCompartment("RightArmVasculature");
+      rightArm.SetCompartment(eHemorrhage_Compartment.RightArm);
       rightArm.GetSeverity().SetValue(0.9);
       pulse.ProcessAction(rightArm);
 
       SEHemorrhage venaCava = new SEHemorrhage();
       venaCava.SetType(eHemorrhage_Type.External);
-      venaCava.SetCompartment("VenaCava");
+      venaCava.SetCompartment(eHemorrhage_Compartment.VenaCava);
       venaCava.GetSeverity().SetValue(0.1);
       pulse.ProcessAction(venaCava);
 

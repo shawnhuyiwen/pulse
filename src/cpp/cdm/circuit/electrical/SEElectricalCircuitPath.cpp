@@ -309,15 +309,60 @@ void SEElectricalCircuitPath::RemoveVoltageSource()
   SECircuitPath::RemovePotentialSource();
 }
 
-bool SEElectricalCircuitPath::HasValveBreakdownVoltage() const
+eGate SEElectricalCircuitPath::SEElectricalCircuitPath::GetDiode() const
 {
-  return HasValveBreakdownPotential();
+  return SECircuitPath::GetValve();
 }
-SEScalarElectricPotential& SEElectricalCircuitPath::GetValveBreakdownVoltage()
+void SEElectricalCircuitPath::SetDiode(eGate state)
 {
-  return GetValveBreakdownPotential();
+  SECircuitPath::SetValve(state);
 }
-double SEElectricalCircuitPath::GetValveBreakdownVoltage(const ElectricPotentialUnit& unit) const
+void SEElectricalCircuitPath::FlipDiode()
+{
+  SECircuitPath::FlipValve();
+}
+bool SEElectricalCircuitPath::HasDiode() const
+{
+  return SECircuitPath::HasValve();
+}
+void SEElectricalCircuitPath::InvalidateDiode()
+{
+  SECircuitPath::InvalidateValve();
+}
+eGate SEElectricalCircuitPath::GetNextDiode() const
+{
+  return SECircuitPath::GetNextValve();
+}
+void SEElectricalCircuitPath::SetNextDiode(eGate state)
+{
+  SECircuitPath::SetNextValve(state);
+}
+void SEElectricalCircuitPath::FlipNextDiode()
+{
+  SECircuitPath::FlipValve();
+}
+bool SEElectricalCircuitPath::HasNextDiode() const
+{
+  return SECircuitPath::HasNextValve();
+}
+void SEElectricalCircuitPath::InvalidateNextDiode()
+{
+  SECircuitPath::InvalidateNextValve();
+}
+void SEElectricalCircuitPath::RemoveDiode()
+{
+  SECircuitPath::RemoveValve();
+}
+
+bool SEElectricalCircuitPath::HasDiodeBreakdownVoltage() const
+{
+  return SECircuitPath::HasValveBreakdownPotential();
+}
+SEScalarElectricPotential& SEElectricalCircuitPath::GetDiodeBreakdownVoltage()
+{
+  return SECircuitPath::GetValveBreakdownPotential();
+}
+double SEElectricalCircuitPath::GetDiodeBreakdownVoltage(const ElectricPotentialUnit& unit) const
 {
   if (m_ValveBreakdownPotential == nullptr)
     return SEScalar::dNaN();

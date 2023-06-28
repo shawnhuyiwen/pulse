@@ -1,6 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+using System;
+using System.Linq;
+
 namespace Pulse.CDM
 {
   public enum eMergeType : int
@@ -53,5 +56,10 @@ namespace Pulse.CDM
     }
 
     public abstract bool IsValid();
+
+    public static string PrettyPrint(string msg)
+    {
+      return Logger.PrettyPrint(msg, Logger.ePrettyPrintType.Action);
+    }
   }
 }

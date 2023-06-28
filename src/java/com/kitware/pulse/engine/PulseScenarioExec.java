@@ -2,9 +2,12 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.pulse.engine;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.cdm.bind.Scenario.eSerializationFormat;
 import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.engine.bind.Enums.eModelType;
+import com.kitware.pulse.engine.bind.Scenario.ScenarioExecData;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 
@@ -15,9 +18,8 @@ import com.kitware.pulse.utilities.LogListener;
  * but this may work for most of your needs.
  * @author abray
  */
-public class PulseScenarioExec
+public class PulseScenarioExec extends SEScenarioExec
 {
-  
   protected static class MyListener extends LogListener
   {
     public String origin = "";
@@ -26,47 +28,102 @@ public class PulseScenarioExec
       super();
       listen(false);
     }    
-    @Override public void handleDebug(String msg) { Log.debug(msg, origin); }
-    @Override public void handleInfo(String msg)  { Log.info(msg, origin); }
-    @Override public void handleWarn(String msg)  { Log.warn(msg, origin); }
-    @Override public void handleError(String msg) { Log.error(msg, origin); }
-    @Override public void handleFatal(String msg) { Log.fatal(msg, origin); }
+    @Override public void handleDebug(String msg) { Log.debug(origin+msg); }
+    @Override public void handleInfo(String msg)  { Log.info(origin+msg); }
+    @Override public void handleWarn(String msg)  { Log.warn(origin+msg); }
+    @Override public void handleError(String msg) { Log.error(origin+msg); }
+    @Override public void handleFatal(String msg) { Log.fatal(origin+msg); }
   }
-  protected MyListener listener = new MyListener();
+  
+  protected MyListener logListener = new MyListener();
+  protected eModelType modelType;
+
   public PulseScenarioExec()
   {
-    this("./", eModelType.HumanAdultWholeBody);
+    clear();
   }
-  public PulseScenarioExec(eModelType m)
+
+  public void clear()
   {
-    this("./", m);
-  }
-  public PulseScenarioExec(String dataDir)
-  {
-    this(dataDir, eModelType.HumanAdultWholeBody);
-  }
-  public PulseScenarioExec(String dataDir, eModelType m)
-  {
-    engine=new PulseEngine(dataDir, m);
-    engine.setLogListener(listener);
+    super.clear();
+    modelType = eModelType.HumanAdultWholeBody;
   }
   
-  public void finalize()
+  public void copy(PulseScenarioExec src)
   {
-    engine.cleanUp();
-    engine = null;
+    PulseScenarioExec.load(PulseScenarioExec.unload(src), this);
   }
   
-  public boolean runScenario(SEScenarioExec execOpts)
+  public static void load(ScenarioExecData src, PulseScenarioExec dst)
   {
-    String resultsFile = execOpts.getDataRequestCSVFilename();
-    if(resultsFile.isEmpty())
-      listener.origin = "Scenario";
-    else
-      listener.origin = resultsFile.substring(resultsFile.lastIndexOf("/")+1,resultsFile.lastIndexOf("."));
-    
-    return engine.nativeExecuteScenario(engine.nativeObj, execOpts.toJSON(), eSerializationFormat.JSON_VALUE);
+    SEScenarioExec.load(src.getScenarioExec(), dst);
+    dst.modelType = src.getModelType();
+  }
+  public static ScenarioExecData unload(PulseScenarioExec src)
+  {
+    ScenarioExecData.Builder dst = ScenarioExecData.newBuilder();
+    unload(src,dst);
+    return dst.build();
+  }
+  protected static void unload(PulseScenarioExec src, ScenarioExecData.Builder dst)
+  {
+    SEScenarioExec.unload(src, dst.getScenarioExecBuilder());
+    dst.setModelType(src.modelType);
   }
   
-  protected PulseEngine engine;
+  public String toJSON() 
+  {
+    String json;
+    try
+    {
+      json = JsonFormat.printer().print(PulseScenarioExec.unload(this));
+    }
+    catch (InvalidProtocolBufferException e)
+    {
+      Log.error("Unable to generate json from PulseScenarioExec");
+      json = "";
+    }
+    return json;
+  }
+  
+  public eModelType getModelType() { return modelType; }
+  public void setModelType(eModelType mt) { modelType=mt; }
+  
+  public void setLogPrepend(String lp) { logListener.origin = lp.isEmpty() ? "" : lp+" "; }
+  
+  public boolean execute()
+  {
+    return nativeExecuteScenario(toJSON(), eSerializationFormat.JSON_VALUE);
+  }
+  protected native boolean nativeExecuteScenario(String sceOpts, int format);
+  
+  ///////////////////////
+  // LISTENER/HANDLERS //
+  ///////////////////////
+  
+  protected void handleDebug(String msg)
+  {
+    if(this.logListener!=null)
+    this.logListener.debug(msg);
+  }
+  protected void handleInfo(String msg)
+  {
+    if(this.logListener!=null)
+    this.logListener.info(msg);
+  }
+  protected void handleWarning(String msg)
+  {
+    if(this.logListener!=null)
+    this.logListener.warn(msg);
+  }
+  protected void handleError(String msg)
+  {
+    if(this.logListener!=null)
+    this.logListener.error(msg);
+  }
+  protected void handleFatal(String msg)
+  {
+    if(this.logListener!=null)
+    this.logListener.fatal(msg);
+  }
 }

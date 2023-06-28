@@ -8,6 +8,7 @@ const VolumePerTimeUnit VolumePerTimeUnit::L_Per_s("L/s");
 const VolumePerTimeUnit VolumePerTimeUnit::mL_Per_s("mL/s");
 const VolumePerTimeUnit VolumePerTimeUnit::mL_Per_day("mL/day");
 const VolumePerTimeUnit VolumePerTimeUnit::L_Per_day("L/day");
+const VolumePerTimeUnit VolumePerTimeUnit::L_Per_hr("L/hr");
 const VolumePerTimeUnit VolumePerTimeUnit::L_Per_min("L/min");
 const VolumePerTimeUnit VolumePerTimeUnit::m3_Per_s("m^3/s");
 const VolumePerTimeUnit VolumePerTimeUnit::mL_Per_min("mL/min");
@@ -22,6 +23,8 @@ bool VolumePerTimeUnit::IsValidUnit(const std::string& unit)
   if (mL_Per_day.GetString().compare(unit) == 0)
     return true;
   if (L_Per_day.GetString().compare(unit) == 0)
+    return true;
+  if (L_Per_hr.GetString().compare(unit) == 0)
     return true;
   if (L_Per_min.GetString().compare(unit) == 0)
     return true;
@@ -44,6 +47,8 @@ const VolumePerTimeUnit& VolumePerTimeUnit::GetCompoundUnit(const std::string& u
     return mL_Per_day;
   if (L_Per_day.GetString().compare(unit) == 0)
     return L_Per_day;
+  if (L_Per_hr.GetString().compare(unit) == 0)
+    return L_Per_hr;
   if (L_Per_min.GetString().compare(unit) == 0)
     return L_Per_min;
   if (m3_Per_s.GetString().compare(unit) == 0)

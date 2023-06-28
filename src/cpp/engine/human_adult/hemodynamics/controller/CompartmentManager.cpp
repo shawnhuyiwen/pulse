@@ -49,24 +49,11 @@ namespace pulse { namespace human_adult_hemodynamics
         if (GetLiquidCompartment(name) == nullptr)
           Warning("Could not find expected Extravascular compartment, " + name + " in compartment manager");
       }
-
-      SELiquidCompartment* cmpt;
-      m_ExtracellularFluid.clear();
-      m_IntracellularFluid.clear();
-      for (SETissueCompartment* t : m_TissueLeafCompartments)
-      {
-        cmpt = GetLiquidCompartment(t->GetName() + "Extracellular");
-        if (cmpt == nullptr)
-          Fatal("Could not find the tissue " + t->GetName() + " Extracellular compartment");
-        m_ExtracellularFluid[t] = cmpt;
-        cmpt = GetLiquidCompartment(t->GetName() + "Intracellular");
-        if (cmpt == nullptr)
-          Fatal("Could not find the tissue " + t->GetName() + " Intracellular compartment");
-        m_IntracellularFluid[t] = cmpt;
-      }
     }
     if (m_data.GetConfiguration().IsRenalEnabled())
+    {
       SORT_CMPTS(Urine, Liquid);
+    }
     SORT_CMPTS(Vascular, Liquid);
 
     m_CombinedCardiovascularGraph = GetLiquidGraph(pulse::Graph::ActiveCardiovascular);

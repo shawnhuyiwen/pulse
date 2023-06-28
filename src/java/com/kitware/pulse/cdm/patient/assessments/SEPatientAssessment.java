@@ -57,14 +57,6 @@ public abstract class SEPatientAssessment
     }
     catch(InvalidProtocolBufferException ex){}
     
-    try
-    {
-      SEPulmonaryFunctionTest pft = new SEPulmonaryFunctionTest();
-      pft.readFile(fileName);
-      return pft;
-    }
-    catch(InvalidProtocolBufferException ex){}
-    
     SEUrinalysis u = new SEUrinalysis();
     u.readFile(fileName);
     return u;
@@ -77,8 +69,6 @@ public abstract class SEPatientAssessment
       return FileUtils.writeFile(fileName, JsonFormat.printer().print(SECompleteBloodCount.unload((SECompleteBloodCount)ass)));
     if(ass instanceof SEComprehensiveMetabolicPanel)
       return FileUtils.writeFile(fileName, JsonFormat.printer().print(SEComprehensiveMetabolicPanel.unload((SEComprehensiveMetabolicPanel)ass)));
-    if(ass instanceof SEPulmonaryFunctionTest)
-      return FileUtils.writeFile(fileName, JsonFormat.printer().print(SEPulmonaryFunctionTest.unload((SEPulmonaryFunctionTest)ass)));
     if(ass instanceof SEUrinalysis)
       return FileUtils.writeFile(fileName, JsonFormat.printer().print(SEUrinalysis.unload((SEUrinalysis)ass)));
     Log.error("No write support for assesment of class "+ass.getClass().getName());

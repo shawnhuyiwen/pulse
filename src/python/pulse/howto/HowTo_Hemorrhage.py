@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.engine import eSerializationFormat
-from pulse.cdm.patient_actions import SEHemorrhage, eHemorrhageType
+from pulse.cdm.patient_actions import SEHemorrhage, eHemorrhage_Compartment
 from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.scalars import VolumePerTimeUnit
 
@@ -18,12 +18,12 @@ def HowTo_Hemorrhage():
 
     # Get default data at time 0s from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # Perform an action
     hemorrhage = SEHemorrhage()
     hemorrhage.set_comment("Laceration to the leg")
-    hemorrhage.set_external(SEHemorrhage.ExternalCompartment.RightLeg)
+    hemorrhage.set_compartment(eHemorrhage_Compartment.RightLeg)
     hemorrhage.get_severity().set_value(0.8)
     # Optionally, You can set the flow rate of the hemorrhage,
     # but this needs to be provided the proper flow rate associated with the anatomy
@@ -35,7 +35,7 @@ def HowTo_Hemorrhage():
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     # For this example, you will see a decrease in blood volume
 

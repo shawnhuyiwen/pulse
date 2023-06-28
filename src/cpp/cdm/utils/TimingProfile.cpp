@@ -9,55 +9,62 @@ void TimingProfile::Clear()
   m_timers.clear();
 }
 
-void TimingProfile::Reset(const std::string& label)
+TimingProfile::Timer& TimingProfile::GetTimer(const std::string& label)
 {
   if (label.empty())
   {
-    return;
+    return m_timers[""];
   }
-  if (m_timers[label].state == State::Running)
+
+  return m_timers[label];
+}
+
+void TimingProfile::Reset(Timer& timer)
+{
+  if (timer.state == State::Running)
   {
-    m_timers[label].start = Clock::now();
+    timer.start = Clock::now();
   }
-  else if (m_timers[label].state == State::Ran)
+  else if (timer.state == State::Ran)
   {
-    m_timers[label].state = State::Ready;
+    timer.state = State::Ready;
   }
 }
 
-void TimingProfile::Start(const std::string& label)
+void TimingProfile::Start(Timer& timer)
 {
-  if (label.empty())
-  {
-    return;
-  }
-
-  m_timers[label].start = Clock::now();
-  m_timers[label].state = State::Running;
+  timer.start = Clock::now();
+  timer.state = State::Running;
 }
 
-void TimingProfile::Stop(const std::string& label)
+void TimingProfile::Stop(Timer& timer)
 {
-  if (label.empty())
+  if (timer.state == State::Running)
   {
-    return;
-  }
-
-  if (m_timers[label].state == State::Running)
-  {
-    m_timers[label].end = Clock::now();
-    m_timers[label].state = State::Ran;
+    timer.end = Clock::now();
+    timer.state = State::Ran;
   }
 }
 
-double TimingProfile::GetElapsedTime_s(const std::string& label)
+double TimingProfile::GetElapsedTime_s(Timer& timer)
 {
-  if (label.empty())
-  {
-    return 0;
-  }
-
-  std::chrono::milliseconds::rep milliseconds = GetElapsedTime<std::chrono::milliseconds>(label);
+  std::chrono::milliseconds::rep milliseconds = GetElapsedTime<std::chrono::milliseconds>(timer);
   double seconds = milliseconds / 1000.0;
   return seconds;
+}
+
+TimingProfile::Clock::duration TimingProfile::GetDuration(Timer& timer)
+{
+  if (timer.state == State::Running)
+  {
+    return Clock::now() - timer.start;
+  }
+  else if (timer.state == State::Ran)
+  {
+    return timer.end - timer.start;
+  }
+  else
+  {
+    return TimingProfile::Clock::duration(0);
+  }
 }

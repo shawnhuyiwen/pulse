@@ -91,6 +91,7 @@ add_library_ex(CommonDataModel
     io/protobuf/PBCircuit.h
     io/protobuf/PBCompartment.h
     io/protobuf/PBConditions.h
+    io/protobuf/PBECMO.h
     io/protobuf/PBElectroCardioGram.h
     io/protobuf/PBEngine.h
     io/protobuf/PBEnvironment.h
@@ -122,8 +123,9 @@ add_library_ex(CommonDataModel
     patient/actions/SEAsthmaAttack.h
     patient/actions/SEBrainInjury.h
     patient/actions/SEBronchoconstriction.h
-    patient/actions/SEChestCompressionForce.h
-    patient/actions/SEChestCompressionForceScale.h
+    patient/actions/SEChestCompression.h
+    patient/actions/SEChestCompressionAutomated.h
+    patient/actions/SEChestCompressionInstantaneous.h
     patient/actions/SEChestOcclusiveDressing.h
     patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h
     patient/actions/SEConsciousRespiration.h
@@ -135,6 +137,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEForcedInhale.h
     patient/actions/SEForcedPause.h
     patient/actions/SEHemorrhage.h
+    patient/actions/SEHemothorax.h
     patient/actions/SEImpairedAlveolarExchangeExacerbation.h
     patient/actions/SEIntubation.h
     patient/actions/SELobarPneumoniaExacerbation.h
@@ -152,13 +155,13 @@ add_library_ex(CommonDataModel
     patient/actions/SESubstanceInfusion.h
     patient/actions/SESupplementalOxygen.h
     patient/actions/SETensionPneumothorax.h
+    patient/actions/SETubeThoracostomy.h
     patient/actions/SEUrinate.h
     patient/actions/SEUseInhaler.h
     patient/assessments/SEArterialBloodGasTest.h
     patient/assessments/SECompleteBloodCount.h
     patient/assessments/SEComprehensiveMetabolicPanel.h
     patient/assessments/SEPatientAssessment.h
-    patient/assessments/SEPulmonaryFunctionTest.h
     patient/assessments/SEUrinalysis.h
     patient/assessments/SEUrinalysisMicroscopic.h
     patient/conditions/SEAcuteRespiratoryDistressSyndrome.h
@@ -251,8 +254,10 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimeMass.h
     properties/SEScalarVolumePerTimePressure.h
     properties/SEScalarVolumePerTimePressureArea.h
+    properties/SETemporalInterpolator.h
     scenario/SEScenario.h
     scenario/SEScenarioExec.h
+    scenario/SEScenarioLog.h
     substance/SESubstance.h
     substance/SESubstanceAerosolization.h
     substance/SESubstanceClearance.h
@@ -300,6 +305,10 @@ add_library_ex(CommonDataModel
     system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h
     system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h
+    system/equipment/ecmo/SEECMO.h
+    system/equipment/ecmo/SEECMOSettings.h
+    system/equipment/ecmo/actions/SEECMOAction.h
+    system/equipment/ecmo/actions/SEECMOConfiguration.h
     system/equipment/electrocardiogram/SEElectroCardioGram.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h
     system/equipment/inhaler/SEInhaler.h
@@ -341,10 +350,6 @@ add_library_ex(CommonDataModel
     utils/TimingProfile.h
     utils/ThreadPool.h
     utils/base64.h
-    utils/taskrunner/Task.h
-    utils/taskrunner/TaskProcessor.h
-    utils/taskrunner/TaskQueue.h
-    utils/taskrunner/TaskRunner.h
     utils/testing/SETestCase.h
     utils/testing/SETestErrorStatistics.h
     utils/testing/SETestManager.h
@@ -448,6 +453,7 @@ add_library_ex(CommonDataModel
     io/protobuf/PBCompartment.cpp
     io/protobuf/PBCompartmentEnums.cpp
     io/protobuf/PBConditions.cpp
+    io/protobuf/PBECMO.cpp
     io/protobuf/PBElectroCardioGram.cpp
     io/protobuf/PBElectroCardioGramEnums.cpp
     io/protobuf/PBEngine.cpp
@@ -489,8 +495,9 @@ add_library_ex(CommonDataModel
     patient/actions/SEAsthmaAttack.cpp
     patient/actions/SEBrainInjury.cpp
     patient/actions/SEBronchoconstriction.cpp
-    patient/actions/SEChestCompressionForce.cpp
-    patient/actions/SEChestCompressionForceScale.cpp
+    patient/actions/SEChestCompression.cpp
+    patient/actions/SEChestCompressionAutomated.cpp
+    patient/actions/SEChestCompressionInstantaneous.cpp
     patient/actions/SEChestOcclusiveDressing.cpp
     patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.cpp
     patient/actions/SEConsciousRespiration.cpp
@@ -502,6 +509,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEForcedInhale.cpp
     patient/actions/SEForcedPause.cpp
     patient/actions/SEHemorrhage.cpp
+    patient/actions/SEHemothorax.cpp
     patient/actions/SEImpairedAlveolarExchangeExacerbation.cpp
     patient/actions/SEIntubation.cpp
     patient/actions/SELobarPneumoniaExacerbation.cpp
@@ -519,13 +527,13 @@ add_library_ex(CommonDataModel
     patient/actions/SESubstanceInfusion.cpp
     patient/actions/SESupplementalOxygen.cpp
     patient/actions/SETensionPneumothorax.cpp
+    patient/actions/SETubeThoracostomy.cpp
     patient/actions/SEUrinate.cpp
     patient/actions/SEUseInhaler.cpp
     patient/assessments/SEArterialBloodGasTest.cpp
     patient/assessments/SECompleteBloodCount.cpp
     patient/assessments/SEComprehensiveMetabolicPanel.cpp
     patient/assessments/SEPatientAssessment.cpp
-    patient/assessments/SEPulmonaryFunctionTest.cpp
     patient/assessments/SEUrinalysis.cpp
     patient/assessments/SEUrinalysisMicroscopic.cpp
     patient/conditions/SEAcuteRespiratoryDistressSyndrome.cpp
@@ -618,8 +626,11 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimeMass.cpp
     properties/SEScalarVolumePerTimePressure.cpp
     properties/SEScalarVolumePerTimePressureArea.cpp
+    properties/SETemporalInterpolator.cpp
     scenario/SEScenario.cpp
     scenario/SEScenarioExec.cpp
+    scenario/SEScenarioLog.cpp
+    scenario/SEScenarioLogLegacy.cpp
     substance/SESubstance.cpp
     substance/SESubstanceAerosolization.cpp
     substance/SESubstanceClearance.cpp
@@ -667,6 +678,10 @@ add_library_ex(CommonDataModel
     system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.cpp
     system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.cpp
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.cpp
+    system/equipment/ecmo/SEECMO.cpp
+    system/equipment/ecmo/SEECMOSettings.cpp
+    system/equipment/ecmo/actions/SEECMOAction.cpp
+    system/equipment/ecmo/actions/SEECMOConfiguration.cpp
     system/equipment/electrocardiogram/SEElectroCardioGram.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.cpp
     system/equipment/inhaler/SEInhaler.cpp
@@ -706,8 +721,6 @@ add_library_ex(CommonDataModel
     utils/SimpleLogger.cpp
     utils/TimingProfile.cpp
     utils/base64.cpp
-    utils/taskrunner/TaskProcessor.cpp
-    utils/taskrunner/TaskRunner.cpp
     utils/testing/SETestCase.cpp
     utils/testing/SETestErrorStatistics.cpp
     utils/testing/SETestReport.cpp

@@ -14,10 +14,10 @@ protected:
 public:
   virtual ~SEFluidCircuitPath();
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
-  virtual SEFluidCircuitNode& GetSourceNode() const { return m_FluidSourceNode; }
-  virtual SEFluidCircuitNode& GetTargetNode() const { return m_FluidTargetNode; }
+  SEFluidCircuitNode& GetSourceNode() const override { return m_FluidSourceNode; }
+  SEFluidCircuitNode& GetTargetNode() const override { return m_FluidTargetNode; }
 
   virtual bool HasFlow() const;
   virtual SEScalarVolumePerTime& GetFlow();
@@ -26,14 +26,14 @@ public:
   virtual SEScalarVolumePerTime& GetNextFlow();
   virtual double GetNextFlow(const VolumePerTimeUnit& unit) const;
 
-  virtual bool HasResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetResistance();
+  bool HasResistance() const override;
+  SEScalarPressureTimePerVolume& GetResistance() override;
   virtual double GetResistance(const PressureTimePerVolumeUnit& unit) const;
-  virtual bool HasNextResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetNextResistance();
+  bool HasNextResistance() const override;
+  SEScalarPressureTimePerVolume& GetNextResistance() override;
   virtual double GetNextResistance(const PressureTimePerVolumeUnit& unit) const;
-  virtual bool HasResistanceBaseline() const;
-  virtual SEScalarPressureTimePerVolume& GetResistanceBaseline();
+  bool HasResistanceBaseline() const override;
+  SEScalarPressureTimePerVolume& GetResistanceBaseline() override;
   virtual double GetResistanceBaseline(const PressureTimePerVolumeUnit& unit) const;
   virtual void RemoveResistance() override;
 

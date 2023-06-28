@@ -13,6 +13,9 @@ public:
   SEPatientAssessmentRequest(Logger* logger=nullptr);
   virtual ~SEPatientAssessmentRequest();
 
+  static constexpr char const* Name = "Patient Assessment Request";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEPatientAssessmentRequest& src, bool /*preserveState*/=false);
 
@@ -22,8 +25,6 @@ public:
 
   virtual ePatientAssessment_Type GetType() const;
   virtual void SetType(ePatientAssessment_Type type);
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
   

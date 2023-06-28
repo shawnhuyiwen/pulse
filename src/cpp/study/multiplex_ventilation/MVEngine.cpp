@@ -55,7 +55,7 @@ namespace pulse::study::multiplex_ventilation
 
     myLogger = true;
     GetLogger()->LogToConsole(cout_enabled);
-    Info("Logging to console : " + cout_enabled ? "True" : "False");
+    Info("Logging to console : " + std::string(cout_enabled ? "True" : "False"));
   }
   MVEngine::~MVEngine()
   {
@@ -85,16 +85,16 @@ namespace pulse::study::multiplex_ventilation
     m_FiO2 = nullptr;
   }
 
-  void MVEngine::HandleEvent(eEvent e, bool active, const SEScalarTime* simTime)
+  void MVEngine::HandleEvent(eEvent /*e*/, bool /*active*/, const SEScalarTime* /*simTime*/)
   {
 
   }
 
-  bool MVEngine::CreateEngine(const std::string& simulationDataStr, eSerializationFormat fmt)
+  bool MVEngine::CreateEngine(const std::string& simulationDataStr)
   {
     SAFE_DELETE(m_SimulationData);
     m_SimulationData = new pulse::study::bind::multiplex_ventilation::SimulationData();
-    SerializeFromString(simulationDataStr, *m_SimulationData, fmt);
+    SerializeFromString(simulationDataStr, *m_SimulationData);
     return CreateEngine(*m_SimulationData);
   }
 
@@ -287,8 +287,8 @@ namespace pulse::study::multiplex_ventilation
       m_MVC = new SEMechanicalVentilatorConfiguration(GetLogger());
       auto& mv = m_MVC->GetSettings();
       mv.SetConnection(eSwitch::On);
-      mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-      mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+      mv.SetInspirationWaveform(eDriverWaveform::Square);
+      mv.SetExpirationWaveform(eDriverWaveform::Square);
       mv.GetPeakInspiratoryPressure().SetValue(sim.pip_cmh2o(), PressureUnit::cmH2O);
       mv.GetPositiveEndExpiredPressure().SetValue(sim.peep_cmh2o(), PressureUnit::cmH2O);
       double respirationRate_per_min = sim.respirationrate_per_min();
@@ -315,7 +315,7 @@ namespace pulse::study::multiplex_ventilation
       std::cerr << cdm_ex.what() << std::endl;
       return false;
     }
-    catch (std::exception ex)
+    catch (std::exception& ex)
     {
       GetLogger()->Fatal("Exception caught runnning simulation " + sim.outputbasefilename());
       GetLogger()->Fatal(ex.what());
@@ -384,7 +384,7 @@ namespace pulse::study::multiplex_ventilation
         dynamic_cast<Model&>(pc->GetBloodChemistry()).PreProcess();
       // Since this is the last preprocess,
       // Check if we are in mechanical ventilator mode
-      int vent_count = 0;
+      size_t vent_count = 0;
       bool enableMultiplexVentilation = false;
       for (Controller* pc : m_Controllers)
       {
@@ -564,13 +564,13 @@ namespace pulse::study::multiplex_ventilation
     return success;
   }
 
-  std::string MVEngine::GetSimulationState(eSerializationFormat fmt)
+  std::string MVEngine::GetSimulationState()
   {
     if (!GetSimulationState(*m_SimulationData))
       return "";
 
     std::string content;
-    SerializeToString(*m_SimulationData, content, eSerializationFormat::JSON);
+    SerializeToString(*m_SimulationData, content);
     return content;
   }
   bool MVEngine::GetSimulationState(pulse::study::bind::multiplex_ventilation::SimulationData& sim)
@@ -694,7 +694,7 @@ namespace pulse::study::multiplex_ventilation
     trkr.SetupRequests();
   }
 
-  bool MVEngine::SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationData& src, std::string& dst, eSerializationFormat f)
+  bool MVEngine::SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationData& src, std::string& dst)
   {
     google::protobuf::util::JsonPrintOptions printOpts;
     printOpts.add_whitespace = true;
@@ -702,7 +702,7 @@ namespace pulse::study::multiplex_ventilation
     printOpts.always_print_primitive_fields = true;
     return google::protobuf::util::MessageToJsonString(src, &dst, printOpts).ok();
   }
-  bool MVEngine::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst, eSerializationFormat f)
+  bool MVEngine::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst)
   {
     google::protobuf::util::JsonParseOptions parseOpts;
     google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)

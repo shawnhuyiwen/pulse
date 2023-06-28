@@ -111,16 +111,3 @@ SEUseInhaler& SEConsciousRespiration::AddUseInhaler()
     m_Commands.push_back(myUse);
     return *myUse;
 }
-
-void SEConsciousRespiration::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Conscious Respiration";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  for (SEConsciousRespirationCommand* c : m_Commands)
-  {
-    str << "\n\t";
-    c->ToString(str);    
-  }
-  str << std::flush;
-}

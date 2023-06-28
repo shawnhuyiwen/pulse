@@ -6,6 +6,7 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/AnesthesiaMachineActions.proto";
 import "pulse/cdm/bind/BagValveMaskActions.proto";
+import "pulse/cdm/bind/ECMOActions.proto";
 import "pulse/cdm/bind/InhalerActions.proto";
 import "pulse/cdm/bind/MechanicalVentilatorActions.proto";
 
@@ -32,6 +33,8 @@ message AnyEquipmentActionData
     BagValveMaskAutomatedData                                BagValveMaskAutomated                                = 302;
     BagValveMaskInstantaneousData                            BagValveMaskInstantaneous                            = 303;
     BagValveMaskSqueezeData                                  BagValveMaskSqueeze                                  = 304;
+
+    ECMOConfigurationData                                    ECMOConfiguration                                    = 401;
     
     InhalerConfigurationData                                 InhalerConfiguration                                 = 101;
     

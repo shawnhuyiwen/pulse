@@ -22,6 +22,7 @@ class SEEngineTracker;
 namespace pulse
 {
   class StabilizationController;
+  class Model;
 
   class EnvironmentModel;
 
@@ -39,6 +40,7 @@ namespace pulse
 
   class AnesthesiaMachineModel;
   class BagValveMaskModel;
+  class ECMOModel;
   class ElectroCardioGramModel;
   class InhalerModel;
   class MechanicalVentilatorModel;
@@ -127,6 +129,8 @@ namespace pulse
     virtual SEBagValveMask&               GetBagValveMask() const;
     virtual bool                          HasECG() const;
     virtual SEElectroCardioGram&          GetECG() const;
+    virtual bool                          HasECMO() const;
+    virtual SEECMO&                       GetECMO() const;
     virtual bool                          HasInhaler() const;
     virtual SEInhaler&                    GetInhaler() const;
     virtual bool                          HasMechanicalVentilator() const;
@@ -201,6 +205,7 @@ namespace pulse
 
     AnesthesiaMachineModel*               m_AnesthesiaMachineModel = nullptr;
     BagValveMaskModel*                    m_BagValveMaskModel = nullptr;
+    ECMOModel*                            m_ECMOModel = nullptr;
     ElectroCardioGramModel*               m_ElectroCardioGramModel = nullptr;
     InhalerModel*                         m_InhalerModel = nullptr;
     MechanicalVentilatorModel*            m_MechanicalVentilatorModel = nullptr;
@@ -216,6 +221,8 @@ namespace pulse
     std::string                           m_DataDir;
 
     SEScalarProperties                    m_ScalarOverrides;
+  protected:
+    std::vector<pulse::Model*>            m_Models;
   };
 
   /**
@@ -244,6 +251,8 @@ namespace pulse
     virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration);
     virtual bool IsReady() const;
 
+    virtual void Clear();
+
     virtual bool SetConfigurationOverride(const SEEngineConfiguration* config);
 
     virtual void SetSimulationTime(const SEScalarTime& time);
@@ -261,20 +270,41 @@ namespace pulse
     virtual std::string GetTypeName() const = 0;
     virtual void LogBuildInfo() const;
     // Setup Circuit/Compartments for systems
+
+    // Default/Optimal Cardiovascular
     virtual void SetupCardiovascular();
     virtual void SetupRenal();
     virtual void SetupTissue();
     virtual void SetupCerebrospinalFluid();
+
+    // Optional Expanded Cardiovascular Circuit Setup Methods
+    virtual void SetupExpandedCardiovascular();
+    virtual void SetupExpandedCardiovascularRenal();
+    virtual void SetupExpandedCardiovascularTissue();
+    virtual void SetupExpandedCardiovascularCerebrospinalFluid();
+
+    // Default/Optimal Gastrointestinal
     virtual void SetupGastrointestinal();
+
+    // Default/Optimal Respiratory
     virtual void SetupRespiratory();
+
+    // Optional Expanded Respiratory and Cardiovascular Circuit Setup Methods
+    virtual void SetupExpandedPulmonaryRespiratory();
+    virtual void SetupExpandedPulmonaryCardiovascular();
+
+    // Default/Optimal Equipment
     virtual void SetupAnesthesiaMachine();
     virtual void SetupBagValveMask();
+    virtual void SetupECMO();
     virtual void SetupInhaler();
     virtual void SetupMechanicalVentilation();
     virtual void SetupMechanicalVentilator();
     virtual void SetupNasalCannula();
     virtual void SetupSimpleMask();
     virtual void SetupNonRebreatherMask();
+
+    // Default/Optimal Energy
     virtual void SetupExternalTemperature();
     virtual void SetupInternalTemperature();
 
@@ -288,12 +318,12 @@ namespace pulse
     virtual void Allocate() = 0;
     virtual bool SetupPatient(const SEPatient& patient) = 0;
     // Based on what modles are used, setup order for the following
-    virtual void InitializeModels() = 0;
+    virtual void InitializeModels();
     // Notify Models that steady state has been achieved
-    virtual void AtSteadyState(EngineState state) = 0;
-    virtual void PreProcess() = 0;
-    virtual void Process() = 0;
-    virtual void PostProcess() = 0;
+    virtual void AtSteadyState(EngineState state);
+    virtual void PreProcess();
+    virtual void Process();
+    virtual void PostProcess();
 
     PulseConfiguration const*m_ConfigOverride = nullptr;
     StabilizationController *m_Stabilizer = nullptr;
@@ -303,7 +333,7 @@ namespace pulse
   {
   public:
     StabilizationController(pulse::Controller& pc) : _pc(pc) {}
-    ~StabilizationController() = default;
+    virtual ~StabilizationController() = default;
 
     virtual bool AdvanceTime() override { return _pc.AdvanceModelTime(); }
     virtual SEEngineTracker* GetEngineTracker() override
@@ -325,13 +355,14 @@ namespace pulse
     FatalListner(SEEventManager& mgr, SEScalarTime& ct) : m_Events(mgr), m_CurrentTime(ct) {};
     ~FatalListner() = default;
 
-    virtual void ForwardDebug(const std::string& /*msg*/, const std::string& /*origin*/) override { }
-    virtual void ForwardInfo(const std::string& /*msg*/, const std::string& /*origin*/) override  { }
-    virtual void ForwardWarning(const std::string& /*msg*/, const std::string& /*origin*/) override  { }
-    virtual void ForwardError(const std::string& /*msg*/, const std::string& /*origin*/) override  { }
-    virtual void ForwardFatal(const std::string& /*msg*/, const std::string& /*origin*/) override
+    void ForwardDebug(const std::string& /*msg*/) override { }
+    void ForwardInfo(const std::string& /*msg*/) override  { }
+    void ForwardWarning(const std::string& /*msg*/) override  { }
+    void ForwardError(const std::string& /*msg*/) override  { }
+    void ForwardFatal(const std::string& /*msg*/) override
     {
       m_Events.SetEvent(eEvent::IrreversibleState, true, m_CurrentTime);
+      throw IrreversibleStateException(); // Caught in Common::AdvanceModelTime, so we do not do anything more in the engine
     }
 
   protected:

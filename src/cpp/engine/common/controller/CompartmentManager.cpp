@@ -26,10 +26,12 @@ std::vector<std::string> pulse::ChymeCompartment::_values;
 //std::vector<std::string> pulse::ChymeLink::_values;
 std::vector<std::string> pulse::PulmonaryCompartment::_values;
 std::vector<std::string> pulse::PulmonaryLink::_values;
+std::vector<std::string> pulse::ExpandedPulmonaryCompartment::_values;
 std::vector<std::string> pulse::TissueCompartment::_values;
 std::vector<std::string> pulse::ExtravascularCompartment::_values;
 std::vector<std::string> pulse::TemperatureCompartment::_values;
 //std::vector<std::string> pulse::TissueLink::_values;
+std::vector<std::string> pulse::ExpandedVascularCompartment::_values;
 std::vector<std::string> pulse::VascularCompartment::_values;
 std::vector<std::string> pulse::VascularLink::_values;
 std::vector<std::string> pulse::UrineCompartment::_values;
@@ -94,6 +96,8 @@ namespace pulse
     m_ChymeLeafCompartments.clear();
     m_PulmonaryCompartments.clear();
     m_PulmonaryLeafCompartments.clear();
+    m_ExpandedPulmonaryCompartments.clear();
+    m_ExpandedPulmonaryLeafCompartments.clear();
     m_TissueCompartments.clear();
     m_TissueLeafCompartments.clear();
     m_UrineCompartments.clear();
@@ -126,9 +130,6 @@ namespace pulse
     m_NonRebreatherMaskLeafCompartments.clear();
     m_SimpleMaskCompartments.clear();
     m_SimpleMaskLeafCompartments.clear();
-
-    m_ExtracellularFluid.clear();
-    m_IntracellularFluid.clear();
   }
 
 #define SORT_CMPTS(bin, type) \
@@ -146,6 +147,23 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
   if (!cmpt->HasChildren()) \
     m_##bin##LeafCompartments.push_back(cmpt); \
 } 
+
+#define SORT_CMPTS_EXPANDED(bin, type) \
+m_##bin##Compartments.clear(); \
+m_##bin##LeafCompartments.clear(); \
+for (const std::string& name : pulse::Expanded##bin##Compartment::GetValues()) \
+{ \
+  SE##type##Compartment* cmpt = Get##type##Compartment(name); \
+  if (cmpt == nullptr) \
+  { \
+    Warning("Could not find expected " + std::string(#bin) + " compartment, " + name + " in compartment manager"); \
+    continue; \
+  } \
+  m_##bin##Compartments.push_back(cmpt); \
+  if (!cmpt->HasChildren()) \
+    m_##bin##LeafCompartments.push_back(cmpt); \
+}
+
   void CompartmentManager::StateChange()
   {
     SECompartmentManager::StateChange();
@@ -154,6 +172,7 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
     // Anatomy
     SORT_CMPTS(Chyme, Liquid);
     SORT_CMPTS(Pulmonary, Gas);
+    SORT_CMPTS(ExpandedPulmonary, Gas);
     SORT_CMPTS(Temperature, Thermal);
     if (m_data.GetConfiguration().IsTissueEnabled())
     {
@@ -163,25 +182,20 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
         if (GetLiquidCompartment(name) == nullptr)
           Warning("Could not find expected Extravascular compartment, " + name + " in compartment manager");
       }
-
-      SELiquidCompartment* cmpt;
-      m_ExtracellularFluid.clear();
-      m_IntracellularFluid.clear();
-      for (SETissueCompartment* t : m_TissueLeafCompartments)
-      {
-        cmpt = GetLiquidCompartment(t->GetName() + "Extracellular");
-        if (cmpt == nullptr)
-          Fatal("Could not find the tissue " + t->GetName() + " Extracellular compartment");
-        m_ExtracellularFluid[t] = cmpt;
-        cmpt = GetLiquidCompartment(t->GetName() + "Intracellular");
-        if (cmpt == nullptr)
-          Fatal("Could not find the tissue " + t->GetName() + " Intracellular compartment");
-        m_IntracellularFluid[t] = cmpt;
-      }
     }
     if (m_data.GetConfiguration().IsRenalEnabled())
+    {
       SORT_CMPTS(Urine, Liquid);
-    SORT_CMPTS(Vascular, Liquid);
+    }
+    if (m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::On)
+    {
+      SORT_CMPTS_EXPANDED(Vascular, Liquid);
+    }
+    else
+    {
+      SORT_CMPTS(Vascular, Liquid);
+    }
+
     // Equipment
     SORT_CMPTS(AnesthesiaMachine, Gas);
     SORT_CMPTS(BagValveMask, Gas);
@@ -416,7 +430,7 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
     SECompartmentManager::AddLiquidCompartmentSubstance(sub);
   }
 
-  bool CompartmentManager::AllowGasSubstance(SESubstance& s, SEGasCompartment& cmpt) const
+  bool CompartmentManager::AllowGasSubstance(SESubstance& /*s*/, SEGasCompartment& /*cmpt*/) const
   {
     return true;
   }

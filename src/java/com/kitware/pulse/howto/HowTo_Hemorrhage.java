@@ -7,6 +7,8 @@ import java.util.List;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData;
+import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData.eCompartment;
+import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData.eType;
 import com.kitware.pulse.cdm.datarequests.SEDataRequest;
 import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEEventHandler;
@@ -101,14 +103,18 @@ public class HowTo_Hemorrhage
     SEHemorrhage rightLeg = new SEHemorrhage();
     // Setting up a realistic hemorrhage can be difficult
     // Here is an example of how the engine will act if you create an unrealistic hemorrhage
-    rightLeg.setExternal(SEHemorrhage.ExternalCompartment.RightLeg);
+    rightLeg.setCompartment(eCompartment.RightLeg);
     rightLeg.getSeverity().setValue(0.4);
     pe.processAction(rightLeg);
     
-    SEHemorrhage rightArm = new SEHemorrhage();
-    rightArm.setExternal(SEHemorrhage.ExternalCompartment.RightArm);
-    rightArm.getSeverity().setValue(0.2);
-    pe.processAction(rightArm);
+    // An internal hemorrhage will fill the abdominal cavity
+    SEHemorrhage internalLiver = new SEHemorrhage();
+    internalLiver.setType(eType.Internal);
+    internalLiver.setCompartment(eCompartment.Liver);
+    internalLiver.getSeverity().setValue(0.2);
+    pe.processAction(internalLiver);
+    // Note you can also set Type to External to have the blood exit the body
+    // By default, if you do not set Type, the type will be External
     
     // If the hemorrhage is very bad, a Hypovolemic Shock event will be thrown
     // Eventually Cardiovascular Collapse will be triggered, then you need to shut the engine down.

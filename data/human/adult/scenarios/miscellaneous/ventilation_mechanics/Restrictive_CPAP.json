@@ -4,187 +4,38 @@
   "Patient": {}
  },
  "DataRequestManager": {
-  "DataRequest": [
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "AirwayPressure",
-    "Unit": "cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "DynamicPulmonaryCompliance",
-    "Unit": "L/cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "EndTidalCarbonDioxideFraction"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "EndTidalCarbonDioxidePressure",
-    "Unit": "mmHg"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "EndTidalOxygenFraction"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "EndTidalOxygenPressure",
-    "Unit": "mmHg"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "ExpiratoryFlow",
-    "Unit": "L/s"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "ExpiratoryTidalVolume",
-    "Unit": "mL"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "InspiratoryExpiratoryRatio"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "InspiratoryFlow",
-    "Unit": "L/min"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "InspiratoryTidalVolume",
-    "Unit": "mL"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "IntrinsicPositiveEndExpiredPressure",
-    "Unit": "cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "LeakFraction"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "MeanAirwayPressure",
-    "Unit": "cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "PeakInspiratoryPressure",
-    "Unit": "cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "PlateauPressure",
-    "Unit": "cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "PositiveEndExpiratoryPressure",
-    "Unit": "cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "PulmonaryResistance",
-    "Unit": "cmH2O s/L"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "RespirationRate",
-    "Unit": "1/min"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "StaticPulmonaryCompliance",
-    "Unit": "L/cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "TidalVolume",
-    "Unit": "mL"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "TotalLungVolume",
-    "Unit": "mL"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "TotalPulmonaryVentilation",
-    "Unit": "L/s"
-   }
+  "DataRequest":
+  [
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "AirwayPressure", "Unit": "cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "DynamicPulmonaryCompliance", "Unit": "L/cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "EndTidalCarbonDioxideFraction" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "EndTidalCarbonDioxidePressure", "Unit": "mmHg" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "EndTidalOxygenFraction" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "EndTidalOxygenPressure", "Unit": "mmHg" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "ExpiratoryFlow", "Unit": "L/s" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "ExpiratoryTidalVolume", "Unit": "mL" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "InspiratoryExpiratoryRatio" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "InspiratoryFlow", "Unit": "L/min" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "InspiratoryTidalVolume", "Unit": "mL" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "IntrinsicPositiveEndExpiredPressure", "Unit": "cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "LeakFraction" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "MeanAirwayPressure", "Unit": "cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "PeakInspiratoryPressure", "Unit": "cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "PlateauPressure", "Unit": "cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "PositiveEndExpiratoryPressure", "Unit": "cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "PulmonaryResistance", "Unit": "cmH2O s/L" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "RespirationRate", "Unit": "1/min" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "StaticPulmonaryCompliance", "Unit": "L/cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "TidalVolume", "Unit": "mL" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "TotalLungVolume", "Unit": "mL" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "MechanicalVentilator", "PropertyName": "TotalPulmonaryVentilation", "Unit": "L/s" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "Physiology", "PropertyName": "LungCompliance", "Unit": "L/cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance", "Unit": "L/cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "Physiology", "PropertyName": "TransMusclePressure", "Unit": "cmH2O" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "Physiology", "PropertyName": "TotalLungVolume", "Unit": "mL" },
+   { "DecimalFormat": { "Precision": 6 }, "Category": "Physiology", "PropertyName": "TidalVolume", "Unit": "mL" }
   ]
  },
  "AnyAction": [
@@ -286,7 +137,7 @@
       },
       "InspiratoryPeakPressure": {
        "ScalarPressure": {
-        "Value": -13,
+        "Value": -8,
         "Unit": "cmH2O"
        }
       },
@@ -364,11 +215,24 @@
        "Unit": "cmH2O"
       }
      },
+     "ExpirationCycleFlow": {
+      "ScalarVolumePerTime": {
+       "Value": 5,
+       "Unit": "L/min"
+      }
+     },
      "FractionInspiredOxygen": {
       "Scalar0To1": {
        "Value": 0.21
       }
      },
+     "InspirationPatientTriggerFlow": {
+      "ScalarVolumePerTime": {
+       "Value": 5,
+       "Unit": "L/min"
+      }
+     },
+     "InspirationWaveform": "AscendingRamp",
      "PositiveEndExpiredPressure": {
       "ScalarPressure": {
        "Value": 5,
@@ -379,22 +243,6 @@
       "ScalarTime": {
        "Value": 0.2,
        "Unit": "s"
-      }
-     }
-    }
-   }
-  },
-  {
-   "EquipmentAction": {
-    "MechanicalVentilatorLeak": {
-     "MechanicalVentilatorAction": {
-      "EquipmentAction": {
-       "Action": {}
-      }
-     },
-     "Severity": {
-      "Scalar0To1": {
-       "Value": 0.26
       }
      }
     }

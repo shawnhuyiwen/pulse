@@ -101,27 +101,49 @@ def serialize_bronchoconstriction_from_bind(src: BronchoconstrictionData, dst: S
 
 #################################################################
 
-def serialize_chest_compression_force_to_bind(src: SEChestCompressionForce, dst: ChestCompressionForceData):
+def serialize_chest_compression_to_bind(src: SEChestCompression, dst: ChestCompressionData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     if src.has_force():
         serialize_scalar_force_to_bind(src.get_force(), dst.Force)
+    if src.has_depth():
+        serialize_scalar_length_to_bind(src.get_depth(), dst.Depth)
+    if src.has_compression_period():
+        serialize_scalar_time_to_bind(src.get_compression_period(), dst.CompressionPeriod)
 
-def serialize_chest_compression_force_from_bind(src: ChestCompressionForceData, dst: SEChestCompressionForce):
+def serialize_chest_compression_from_bind(src: ChestCompressionData, dst: SEChestCompression):
     serialize_patient_action_from_bind(src.PatientAction, dst)
-    raise Exception("serialize_chest_compression_force_from_bind not implemented")
+    raise Exception("serialize_chest_compression_from_bind not implemented")
 
 #################################################################
 
-def serialize_chest_compression_force_scale_to_bind(src: SEChestCompressionForceScale, dst: ChestCompressionForceScaleData):
+def serialize_chest_compression_automated_to_bind(src: SEChestCompressionAutomated, dst: ChestCompressionAutomatedData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
-    if src.has_force_period():
-        serialize_scalar_time_to_bind(src.get_force_period(), dst.ForcePeriod)
-    if src.has_force_scale():
-        serialize_scalar_0to1_to_bind(src.get_force_scale(), dst.ForceScale)
+    if src.has_force():
+        serialize_scalar_force_to_bind(src.get_force(), dst.Force)
+    if src.has_depth():
+        serialize_scalar_length_to_bind(src.get_depth(), dst.Depth)
+    if src.has_applied_force_fraction():
+        serialize_scalar_0to1_to_bind(src.get_applied_force_fraction(), dst.AppliedForceFraction)
+    if src.has_compression_frequency():
+        serialize_scalar_frequency_to_bind(src.get_compression_frequency(), dst.CompressionFrequency)
 
-def serialize_chest_compression_force_scale_from_bind(src: ChestCompressionForceScaleData, dst: SEChestCompressionForceScale):
+def serialize_chest_compression_automated_from_bind(src: ChestCompressionAutomatedData, dst: SEChestCompressionAutomated):
     serialize_patient_action_from_bind(src.PatientAction, dst)
-    raise Exception("serialize_chest_compression_force_scale_from_bind not implemented")
+    raise Exception("serialize_chest_compression_automated_from_bind not implemented")
+
+#################################################################
+
+def serialize_chest_compression_instantaneous_to_bind(src: SEChestCompressionInstantaneous, dst: ChestCompressionInstantaneousData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    if src.has_force():
+        serialize_scalar_force_to_bind(src.get_force(), dst.Force)
+    if src.has_depth():
+        serialize_scalar_length_to_bind(src.get_depth(), dst.Depth)
+
+def serialize_chest_compression_instantaneous_from_bind(src: ChestCompressionInstantaneousData, dst: SEChestCompressionInstantaneous):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+    raise Exception("serialize_chest_compression_instantaneous_from_bind not implemented")
+
 
 #################################################################
 
@@ -257,8 +279,7 @@ def serialize_exercise_from_bind(src: ExerciseData, dst: SEExercise):
 def serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     dst.Type = src.get_type().value
-    if src.has_compartment():
-        dst.Compartment = src.get_compartment()
+    dst.Compartment = src.get_compartment().value
     if src.has_flow_rate():
         serialize_scalar_volume_per_time_to_bind(src.get_flow_rate(), dst.FlowRate)
     if src.has_severity():
@@ -266,6 +287,19 @@ def serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
 
 def serialize_hemorrhage_from_bind(src: HemorrhageData, dst: SEHemorrhage):
     raise Exception("serialize_hemorrhage_from_bind not implemented")
+
+#################################################################
+
+def serialize_hemothorax_to_bind(src: SEHemothorax, dst: HemothoraxData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.Side = src.get_side().value
+    if src.has_severity():
+        serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+    if src.has_flow_rate():
+        serialize_scalar_volume_per_time_to_bind(src.get_flow_rate(), dst.FlowRate)
+
+def serialize_hemothorax_from_bind(src: HemothoraxData, dst: SEHemothorax):
+    raise Exception("serialize_hemothorax_from_bind not implemented")
 
 #################################################################
 
@@ -459,6 +493,17 @@ def serialize_tension_pneumothorax_to_bind(src: SETensionPneumothorax, dst: Tens
 def serialize_tension_pneumothorax_from_bind(src: TensionPneumothoraxData, dst: SETensionPneumothorax):
     serialize_patient_action_from_bind(src.PatientAction, dst)
     raise Exception("serialize_patient_action_from_bind not implemented")
+
+#################################################################
+
+def serialize_tube_thoracostomy_to_bind(src: SETubeThoracostomy, dst: TubeThoracostomyData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    dst.Side = src.get_side().value
+    if src.has_flow_rate():
+        serialize_scalar_volume_per_time_to_bind(src.get_flow_rate(), dst.FlowRate)
+
+def serialize_hemothorax_from_bind(src: HemothoraxData, dst: SEHemothorax):
+    raise Exception("serialize_hemothorax_from_bind not implemented")
 
 #################################################################
 

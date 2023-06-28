@@ -12,6 +12,7 @@ void HowToCreateAPatient();
 void HowToSerialize();
 void HowToPulseEnginePool();
 
+void HowToACLS();
 void HowToAirwayObstruction();
 void HowToAnesthesiaMachine();
 void HowToArrythmia();
@@ -24,20 +25,23 @@ void HowToConsumeNutrients();
 void HowToCOPD();
 void HowToCOVID19Ventilated();
 void HowToCPR();
+void HowToECMO();
 void HowToEnvironmentChange();
 void HowToExercise();
+void HowToExpandedVasculature();
 void HowToHemorrhage();
+void HowToHemothorax();
 void HowToLobarPneumonia();
 void HowToMechanicalVentilation();
 void HowToMechanicalVentilator();
 void HowToPulmonaryFibrosis();
-void HowToPulmonaryFunctionTest();
 void HowToRespiratoryMechanics();
 void HowToSmoke();
 void HowToTensionPneumothorax();
 
 void HowToConcurrentEngines();
 void HowToRunScenario();
+void HowToScenarioFromLog();
 void HowToDynamicHemorrhage();
 
 void HowToSandbox();
@@ -48,4 +52,5 @@ void HowToVentilationMechanics();
 class SEDataRequest;
 
 /// This mehod will advance time and write each data request value to the specified engine csv
+bool AdvanceAndTrackTime(PhysiologyEngine& engine);
 bool AdvanceAndTrackTime_s(double time_s, PhysiologyEngine& engine);

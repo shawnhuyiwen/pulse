@@ -5,6 +5,7 @@
 #include "engine/common/system/environment/EnvironmentModel.h"
 #include "engine/common/system/equipment/AnesthesiaMachineModel.h"
 #include "engine/common/system/equipment/BagValveMaskModel.h"
+#include "engine/common/system/equipment/ECMOModel.h"
 #include "engine/common/system/equipment/ElectroCardioGramModel.h"
 #include "engine/common/system/equipment/InhalerModel.h"
 #include "engine/common/system/equipment/MechanicalVentilatorModel.h"
@@ -40,7 +41,6 @@
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 #include "cdm/patient/assessments/SEUrinalysis.h"
 #include "cdm/utils/FileUtils.h"
 
@@ -97,40 +97,13 @@ namespace pulse
   void Data::SetupTracker()
   {
     m_EngineTrack = new SEEngineTracker(*m_CurrentPatient, *m_Actions, *m_Substances, *m_Compartments, m_Logger);
-    if (m_BloodChemistryModel)
-      m_EngineTrack->AddSystem(*m_BloodChemistryModel);
-    if (m_CardiovascularModel)
-      m_EngineTrack->AddSystem(*m_CardiovascularModel);
-    if (m_EndocrineModel)
-      m_EngineTrack->AddSystem(*m_EndocrineModel);
-    if (m_EnergyModel)
-      m_EngineTrack->AddSystem(*m_EnergyModel);
-    if (m_GastrointestinalModel)
-      m_EngineTrack->AddSystem(*m_GastrointestinalModel);
-    if (m_HepaticModel)
-      m_EngineTrack->AddSystem(*m_HepaticModel);
-    if (m_NervousModel)
-      m_EngineTrack->AddSystem(*m_NervousModel);
-    if (m_RenalModel)
-      m_EngineTrack->AddSystem(*m_RenalModel);
-    if (m_RespiratoryModel)
-      m_EngineTrack->AddSystem(*m_RespiratoryModel);
-    if (m_DrugModel)
-      m_EngineTrack->AddSystem(*m_DrugModel);
-    if (m_TissueModel)
-      m_EngineTrack->AddSystem(*m_TissueModel);
-    if (m_EnvironmentModel)
-      m_EngineTrack->AddSystem(*m_EnvironmentModel);
-    if (m_AnesthesiaMachineModel)
-      m_EngineTrack->AddSystem(*m_AnesthesiaMachineModel);
-    if (m_BagValveMaskModel)
-      m_EngineTrack->AddSystem(*m_BagValveMaskModel);
-    if (m_ElectroCardioGramModel)
-      m_EngineTrack->AddSystem(*m_ElectroCardioGramModel);
-    if (m_InhalerModel)
-      m_EngineTrack->AddSystem(*m_InhalerModel);
-    if (m_MechanicalVentilatorModel)
-      m_EngineTrack->AddSystem(*m_MechanicalVentilatorModel);
+    for (auto model : m_Models)
+    {
+      SESystem* s = dynamic_cast<SESystem*>(model);
+      if (s == nullptr)
+        throw CommonDataModelException("Setting up an engine with a model that is not an SESystem");
+      m_EngineTrack->AddSystem(*s);
+    }
   }
 
   SEEngineTracker& Data::GetEngineTracker() const { return *m_EngineTrack; }
@@ -173,6 +146,8 @@ namespace pulse
   SEBagValveMask& Data::GetBagValveMask() const { return *m_BagValveMaskModel; }
   bool Data::HasECG() const { return m_ElectroCardioGramModel != nullptr; }
   SEElectroCardioGram& Data::GetECG() const { return *m_ElectroCardioGramModel; }
+  bool Data::HasECMO() const { return m_ECMOModel != nullptr; }
+  SEECMO& Data::GetECMO() const { return *m_ECMOModel; }
   bool Data::HasInhaler() const { return m_InhalerModel != nullptr; }
   SEInhaler& Data::GetInhaler() const { return *m_InhalerModel; }
   bool Data::HasMechanicalVentilator() const { return m_MechanicalVentilatorModel != nullptr; }
@@ -202,7 +177,6 @@ namespace pulse
   Controller::Controller(Logger* logger) : Data(logger)
   {
     m_ConfigOverride = nullptr;
-    m_Logger->LogToConsole(true);
   }
   Controller::~Controller()
   {
@@ -239,6 +213,7 @@ namespace pulse
 
     SAFE_DELETE(m_AnesthesiaMachineModel);
     SAFE_DELETE(m_BagValveMaskModel);
+    SAFE_DELETE(m_ECMOModel);
     SAFE_DELETE(m_ElectroCardioGramModel);
     SAFE_DELETE(m_InhalerModel);
     SAFE_DELETE(m_MechanicalVentilatorModel);
@@ -277,25 +252,25 @@ namespace pulse
 
   bool Controller::SerializeFromFile(const std::string& filename)
   {
-    Info("Serializing from file " + filename);
+    Info("[SerializingFromFile] " + filename);
     LogBuildInfo();
     return PBState::SerializeFromFile(filename, *this, m_ConfigOverride);
   }
   bool Controller::SerializeToFile(const std::string& filename) const
   {
-    Info("Serializing to file " + filename);
+    Info("[SerializingToFile] " + filename);
     return PBState::SerializeToFile(*this, filename);
   }
 
   bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
   {
-    Info("Serializing from string");
+    Info("[SerializingFromString]");
     LogBuildInfo();
     return PBState::SerializeFromString(src, *this, m);
   }
   bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {
-    Info("Serializing to string");
+    Info("[SerializingToString]");
     return PBState::SerializeToString(*this, output, m);
   }
 
@@ -308,6 +283,7 @@ namespace pulse
 
   bool Controller::InitializeEngine(const SEPatientConfiguration& patient_configuration)
   {
+    Clear();
     Info("Initializing engine");
     LogBuildInfo();
 
@@ -354,6 +330,7 @@ namespace pulse
     }
     else
       return false;
+
     InitializeModels();
     AdvanceCallback(-1);
 
@@ -382,7 +359,8 @@ namespace pulse
 
   bool Controller::Initialize(SEPatient const& patient)
   {
-    Info("Configuring patient");
+    m_ss << "[Patient] " << patient;
+    Info(m_ss);
     if (!SetupPatient(patient))
       return false;
 
@@ -400,7 +378,7 @@ namespace pulse
     // Now, Let's see if there is anything to merge into our base configuration
     Info("Merging OnDisk Configuration");
     PulseConfiguration cFile(GetLogger());
-    cFile.SerializeFromFile("Configuration.json", *m_Substances);
+    cFile.SerializeFromFile("PulseConfiguration.json", *m_Substances);
     m_Config->Merge(cFile, *m_Substances);
 
     // Now, override anything with a configuration provided by the user or scenario
@@ -416,14 +394,18 @@ namespace pulse
     // Now we can check the config
     if (m_Config->IsWritingPatientBaselineFile())
     {
-      std::string stableDir = m_DataDir + "/stable/";
-      MakeDirectory(stableDir.c_str());
-      m_CurrentPatient->SerializeToFile(stableDir + m_CurrentPatient->GetName() + ".json");
+      std::string out = m_Config->GetInitialPatientBaselineFilepath();
+      if (out.empty())
+      {
+        out = m_DataDir + "/stable/";
+        MakeDirectory(out.c_str());
+        m_CurrentPatient->SerializeToFile(out + m_CurrentPatient->GetName() + ".json");
+      }
+      else
+      {
+        m_CurrentPatient->SerializeToFile(out);
+      }
     }
-
-    m_Actions->Clear();
-    m_Conditions->Clear();
-    m_EventManager->Clear();
 
     // This will also Initialize the environment
     // Due to needing the initial environment values for circuits to construct properly
@@ -516,6 +498,25 @@ namespace pulse
     return true;
   }
 
+  void Controller::Clear()
+  {
+    m_State = EngineState::NotReady;
+    m_Actions->Clear();
+    m_Conditions->Clear();
+    m_EventManager->Clear();
+
+    m_AirwayMode = eAirwayMode::Free;
+    m_Intubation = eSwitch::Off;
+    if (m_EngineTrack)
+      m_EngineTrack->ResetFile();
+
+    m_CurrentTime.SetValue(0, TimeUnit::s);
+    m_SimulationTime.SetValue(0, TimeUnit::s);
+    m_SpareAdvanceTime_s = 0;
+
+    Info("Clearing engine");
+  }
+
   void Controller::CheckIntubation()
   {
     if (m_Actions->GetPatientActions().HasIntubation())
@@ -539,10 +540,13 @@ namespace pulse
     if (!IsReady())
       return false;
 
-    CheckIntubation();
-    PreProcess();
-    Process();
-    PostProcess();
+    try
+    {
+      CheckIntubation();
+      PreProcess();
+      Process();
+      PostProcess();
+    }catch (IrreversibleStateException&) { }
 
     if (m_EventManager->IsEventActive(eEvent::IrreversibleState))
     {
@@ -595,7 +599,7 @@ namespace pulse
 
     if (!IsReady())
       return false;
-    m_ss << "[Action] " << m_SimulationTime << ", " << action;
+    m_ss << "[Action]\n" << action.ToJSON();
     Info(m_ss);
 
     const SEAdvanceTime* adv = dynamic_cast<const SEAdvanceTime*>(&action);
@@ -688,23 +692,6 @@ namespace pulse
         break;
       }
 
-      case ePatientAssessment_Type::PulmonaryFunctionTest:
-      {
-        SEPulmonaryFunctionTest pft(m_Logger);
-        if (GetPatientAssessment(pft))
-        {
-          // Write out the Assessement
-          std::string pftFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
-          if (pftFile.empty())
-            pftFile = "PulmonaryFunctionTest";
-          m_ss << "PFT@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
-          pftFile = Replace(pftFile, "Results", m_ss.str());
-          pftFile = Replace(pftFile, ".csv", ".json");
-          m_ss << "PulmonaryFunctionTest@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
-          pft.SerializeToFile(pftFile);
-        }
-        break;
-      }
       case ePatientAssessment_Type::Urinalysis:
       {
         SEUrinalysis upan(m_Logger);
@@ -733,5 +720,39 @@ namespace pulse
     }
 
     return GetActions().ProcessAction(action);
+  }
+
+  void Controller::InitializeModels()
+  {
+    for (auto model : m_Models)
+      model->Clear();
+    Info("Initializing Models");
+    for (auto model : m_Models)
+      model->Initialize();
+  }
+
+  void Controller::AtSteadyState(pulse::EngineState state)
+  {
+    m_State = state;
+    for (auto model : m_Models)
+      model->AtSteadyState();
+  }
+
+  void Controller::PreProcess()
+  {
+    for (auto model : m_Models)
+      model->PreProcess();
+  }
+
+  void Controller::Process()
+  {
+    for (auto model : m_Models)
+      model->Process();
+  }
+
+  void Controller::PostProcess()
+  {
+    for (auto model : m_Models)
+      model->PostProcess();
   }
 }

@@ -113,47 +113,76 @@ void HowToMechanicalVentilator()
 
   SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
   cpap.SetConnection(eSwitch::On);
-  cpap.GetDeltaPressureSupport().SetValue(8.0, PressureUnit::cmH2O);
+  cpap.SetInspirationWaveform(eDriverWaveform::AscendingRamp);
   cpap.GetFractionInspiredOxygen().SetValue(0.21);
+  cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
   cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   cpap.GetSlope().SetValue(0.2, TimeUnit::s);
+
+  cpap.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+  //Other trigger options (choose one):
+  //  cpap.GetInspirationPatientTriggerPressure().SetValue(-1.0, PressureUnit::cmH2O);
+  //  cpap.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
+  
+  cpap.GetExpirationCycleFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+  //Other cycle options (choose one):
+  //  cpap.GetExpirationCyclePressure().SetValue(0.000001, PressureUnit::cmH2O);
+  //  cpap.SetExpirationCycleRespiratoryModel(eSwitch::On);
+  
   pe->ProcessAction(cpap);
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
 
+
   SEMechanicalVentilatorPressureControl pc_ac;
   pc_ac.SetConnection(eSwitch::On);
-  // There are several different modes to choose from
+  pc_ac.SetMode(eMechanicalVentilator_PressureControlMode::AssistedControl);
+  pc_ac.SetInspirationWaveform(eDriverWaveform::Square);
   pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
-  pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
-  pc_ac.GetInspiratoryPressure().SetValue(13.0, PressureUnit::cmH2O);
+  pc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s); //This is optional
+  pc_ac.GetInspiratoryPressure().SetValue(23.0, PressureUnit::cmH2O);
   pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
-  pc_ac.GetSlope().SetValue(0.1, TimeUnit::s);
+  //pc_ac.GetSlope().SetValue(0.0, TimeUnit::s); //No slope for square waveform
+
+  pc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+  //Other trigger options (choose one):
+  //  pc_ac.GetInspirationPatientTriggerPressure().SetValue(-1.0, PressureUnit::cmH2O);
+  //  pc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
+
   pe->ProcessAction(pc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
 
+
   SEMechanicalVentilatorVolumeControl vc_ac;
   vc_ac.SetConnection(eSwitch::On);
-  // There are several different modes to choose from
   vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
-  vc_ac.GetFlow().SetValue(50.0, VolumePerTimeUnit::L_Per_min);
+  vc_ac.SetInspirationWaveform(eDriverWaveform::DescendingRamp);
+  vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit::L_Per_min);
   vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
-  vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
+  vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s); //This is optional
   vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
-  vc_ac.GetTidalVolume().SetValue(600.0, VolumeUnit::mL);
+  vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
+  vc_ac.GetSlope().SetValue(0.2, TimeUnit::s); //This is optional and would be left out for square waveforms
+
+  // Trigger options (choose one):
+  //  vc_ac.GetInspirationPatientTriggerPressure().SetValue(-1.0, PressureUnit::cmH2O);
+  //  vc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+  // If neither are provided, we will use the respiratory model trigger
+
   pe->ProcessAction(vc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
+
 
   // Here is an example of programming a custom ventilator mode
   SEMechanicalVentilatorConfiguration mv_config;
   SEMechanicalVentilatorSettings& mv = mv_config.GetSettings();
   mv.SetConnection(eSwitch::On);
-  mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+  mv.SetInspirationWaveform(eDriverWaveform::Square);
+  mv.SetExpirationWaveform(eDriverWaveform::Square);
   mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit::cmH2O);
   mv.GetPositiveEndExpiredPressure().SetValue(10.0, PressureUnit::cmH2O);
   SESubstanceFraction& fractionFiO2 = mv.GetFractionInspiredGas(*pe->GetSubstanceManager().GetSubstance("Oxygen"));
@@ -170,16 +199,66 @@ void HowToMechanicalVentilator()
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
 
-  // You can also perform a hold
+
+  // You can also perform holds
   SEMechanicalVentilatorHold hold;
+
+  //Do an instantaneous hold
   hold.SetState(eSwitch::On);
+  hold.SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle::Instantaneous);
   pe->ProcessAction(hold);
-  AdvanceAndTrackTime_s(5, *pe);
+  AdvanceAndTrackTime_s(3, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
   hold.SetState(eSwitch::Off);
   pe->ProcessAction(hold);
-  AdvanceAndTrackTime_s(5, *pe);
+
+  AdvanceAndTrackTime_s(10, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
+
+  //Activate inspiratory hold for 3s during plateau of the next inspiratory phase
+  hold.SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle::Inspiratory);
+  hold.SetState(eSwitch::On);
+  pe->ProcessAction(hold);
+  //Keep advancing until the hold is applied
+  while (pe->GetMechanicalVentilator()->GetBreathState() != eBreathState::InspiratoryHold)
+  {
+    AdvanceAndTrackTime(*pe);
+  }
+  //Hold for 3s
+  AdvanceAndTrackTime_s(3, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+  hold.SetState(eSwitch::Off);
+  pe->ProcessAction(hold);
+  //Output the resulting plateau pressure at end-inspiration
+  double airwayPressure_cmH2O = pe->GetMechanicalVentilator()->GetAirwayPressure(PressureUnit::cmH2O);
+  ss << "Inspiratory hold plateau pressure is " << airwayPressure_cmH2O << " cmH2O";
+  pe->GetLogger()->Info(ss);
+
+  AdvanceAndTrackTime_s(10, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+
+  //Activate expiratory hold for 3s at the end of expiration
+  hold.SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle::Expiratory);
+  hold.SetState(eSwitch::On);
+  pe->ProcessAction(hold);
+  //Keep advancing until the hold is applied
+  while (pe->GetMechanicalVentilator()->GetBreathState() != eBreathState::ExpiratoryHold)
+  {
+    AdvanceAndTrackTime(*pe);
+  }
+  //Hold for 3s
+  AdvanceAndTrackTime_s(3, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+  hold.SetState(eSwitch::Off);
+  pe->ProcessAction(hold);
+  //Output the resulting auto PEEP value
+  airwayPressure_cmH2O = pe->GetMechanicalVentilator()->GetAirwayPressure(PressureUnit::cmH2O);
+  ss << "Expiratory hold auto PEEP pressure is " << airwayPressure_cmH2O << " cmH2O";
+  pe->GetLogger()->Info(ss);
+
+  AdvanceAndTrackTime_s(10, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+
 
   // A leak can be specified
   SEMechanicalVentilatorLeak leak;

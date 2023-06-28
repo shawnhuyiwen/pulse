@@ -4,7 +4,7 @@
 #include "cdm/circuit/SECircuitPath.h"
 
 template<CIRCUIT_PATH_TEMPLATE>
-SECircuitPath<CIRCUIT_PATH_TYPES>::SECircuitPath(SECircuitNode<CIRCUIT_NODE_TYPES>& src, SECircuitNode<CIRCUIT_NODE_TYPES>& tgt, const std::string& name) : Loggable(src.GetLogger()), m_SourceNode(src), m_TargetNode(tgt), m_Name(name)
+SECircuitPath<CIRCUIT_PATH_TYPES>::SECircuitPath(SECircuitNode<CIRCUIT_NODE_TYPES>& src, SECircuitNode<CIRCUIT_NODE_TYPES>& tgt, const std::string& name) : Loggable(src.GetLogger()), m_Name(name), m_SourceNode(src), m_TargetNode(tgt)
 {
   m_Resistance = nullptr;
   m_NextResistance = nullptr;

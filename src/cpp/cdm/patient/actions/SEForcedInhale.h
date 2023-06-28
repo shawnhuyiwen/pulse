@@ -13,6 +13,9 @@ public:
 
   virtual ~SEForcedInhale();
 
+  static constexpr char const* Name = "Forced Inhale";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEForcedInhale& src);
 
@@ -35,7 +38,6 @@ public:
   virtual SEScalarTime& GetReleasePeriod();
   virtual double GetReleasePeriod(const TimeUnit& unit) const;
 
-  virtual void ToString(std::ostream &str) const;
 protected:
   SEScalar0To1* m_InspiratoryCapacityFraction;
   SEScalarTime* m_InhalePeriod;

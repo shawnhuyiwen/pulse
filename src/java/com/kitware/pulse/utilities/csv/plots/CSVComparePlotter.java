@@ -96,7 +96,8 @@ public class CSVComparePlotter
     }
     catch(Exception ex)
     {
-      Log.warn("Having a hard time deleting the old report directory",ex);
+      Log.warn("Having a hard time deleting the old report directory");
+      Log.warn(ex.getMessage());
     }
 
     
@@ -132,7 +133,8 @@ public class CSVComparePlotter
     }
     catch(Exception ex)
     {
-      Log.warn("Unable to read expected results file",ex);
+      Log.warn("Unable to read expected results file");
+      Log.warn(ex.getMessage());
     }
     
     try
@@ -153,7 +155,8 @@ public class CSVComparePlotter
     }
     catch(Exception ex)
     {
-      Log.error("Unable to read computed results file",ex);
+      Log.error("Unable to read computed results file");
+      Log.error(ex.getMessage());
       return;
     }
 
@@ -255,7 +258,8 @@ public class CSVComparePlotter
         }
         catch(Exception ex)
         {
-          Log.error("Unable to create graph for " + header, ex);
+          Log.error("Unable to create graph for " + header);
+          Log.error(ex.getMessage());
         }
       }
     }
@@ -286,7 +290,8 @@ public class CSVComparePlotter
       }
       catch(Exception ex)
       {
-        Log.error("Unable to create graph for " + header, ex);
+        Log.error("Unable to create graph for " + header);
+        Log.error(ex.getMessage());
       }
     }
   }

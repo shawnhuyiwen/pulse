@@ -16,6 +16,9 @@ public:
   SEBrainInjury(Logger* logger=nullptr);
   virtual ~SEBrainInjury();
 
+  static constexpr char const* Name = "Brain Injury";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEBrainInjury& src, bool /*preserveState*/=false);
 
@@ -29,8 +32,6 @@ public:
 
   virtual eBrainInjury_Type GetType() const;
   virtual void SetType(eBrainInjury_Type t);
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

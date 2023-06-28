@@ -7,6 +7,7 @@ CDM_BIND_DECL(ActionListData)
 CDM_BIND_DECL(ActionMapData)
 CDM_BIND_DECL(ConditionListData)
 CDM_BIND_DECL(DataRequestedListData)
+CDM_BIND_DECL(DataRequestListData)
 CDM_BIND_DECL2(DataRequest)
 CDM_BIND_DECL2(ValidationTarget)
 CDM_BIND_DECL2(DataRequested)
@@ -82,6 +83,14 @@ public:
   static void Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& dst);
   static void Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& dst);
   static void Copy(const SEDataRequest& src, SEDataRequest& dst);
+
+  static void Load(const CDM_BIND::DataRequestListData& src, std::vector<SEDataRequest*>& dst);
+  static void Serialize(const std::vector<SEDataRequest*>& src, CDM_BIND::DataRequestListData& dst);
+  static bool Serialize(const CDM_BIND::DataRequestListData& src, std::vector<SEDataRequest*>& dst);
+  static bool SerializeToString(const std::vector<SEDataRequest*>& src, std::string& output, eSerializationFormat m);
+  static bool SerializeToFile(const std::vector<SEDataRequest*>& src, const std::string& filename);
+  static bool SerializeFromString(const std::string& src, std::vector<SEDataRequest*>& dst, eSerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, std::vector<SEDataRequest*>& dst);
 
   static void Load(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst);
   static CDM_BIND::ValidationTargetData* Unload(const SEValidationTarget& src);

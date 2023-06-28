@@ -10,39 +10,42 @@
 
 SEHemorrhage::SEHemorrhage(Logger* logger) : SEPatientAction(logger)
 {
-  m_Compartment = "";
+  m_Type = eHemorrhage_Type::External;
+  m_Compartment = eHemorrhage_Compartment::None;
+  m_CompartmentName = "";
   m_FlowRate=nullptr;
   m_Severity = nullptr;
   m_TotalBloodLost = nullptr;
-  m_Type = eHemorrhage_Type::External;
 }
 
 SEHemorrhage::~SEHemorrhage()
 {
-  m_Compartment = "";
+
+  m_Type = eHemorrhage_Type::External;
+  m_Compartment = eHemorrhage_Compartment::None;
+  m_CompartmentName = "";
   SAFE_DELETE(m_FlowRate);
   SAFE_DELETE(m_Severity);
   SAFE_DELETE(m_TotalBloodLost);
-  m_Type = eHemorrhage_Type::External;
 }
 
 void SEHemorrhage::Clear()
 {
   SEPatientAction::Clear();
-  m_Compartment = "";
+  m_Type = eHemorrhage_Type::External;
+  m_Compartment = eHemorrhage_Compartment::None;
+  m_CompartmentName = "";
   INVALIDATE_PROPERTY(m_FlowRate);
   INVALIDATE_PROPERTY(m_Severity);
   INVALIDATE_PROPERTY(m_TotalBloodLost);
-  m_Type = eHemorrhage_Type::External;
 }
 
 void SEHemorrhage::Copy(const SEHemorrhage& src, bool preserveState)
 {
-  static double v;
-  static const VolumeUnit* vu;
+  double v = SEScalar::dNaN();
+  const VolumeUnit* vu = nullptr;
   if (preserveState)
   {
-    vu = nullptr;
     if (HasTotalBloodLost())
     {
       vu = GetTotalBloodLost().GetUnit();
@@ -89,45 +92,22 @@ const SEScalar* SEHemorrhage::GetScalar(const std::string& name)
   return nullptr;
 }
 
-eHemorrhage_Type SEHemorrhage::GetType() const
+bool SEHemorrhage::HasCompartment() const
 {
-  return m_Type;
+  return m_Compartment != eHemorrhage_Compartment::None;
 }
-void SEHemorrhage::SetType(eHemorrhage_Type Type)
-{
-  m_Type = Type;
-}
-
-std::string SEHemorrhage::GetCompartment() const
+eHemorrhage_Compartment SEHemorrhage::GetCompartment() const
 {
   return m_Compartment;
 }
-
-void SEHemorrhage::SetCompartment(const std::string& name)
+std::string SEHemorrhage::GetCompartmentName() const
 {
-  m_Compartment = name;
+  return m_CompartmentName;
 }
-
-bool SEHemorrhage::HasCompartment() const
+void SEHemorrhage::SetCompartment(eHemorrhage_Compartment cmpt)
 {
-  return !m_Compartment.empty();
-}
-
-void SEHemorrhage::InvalidateCompartment()
-{
-  m_Compartment = "";
-}
-
-void SEHemorrhage::SetExternal(const ExternalCompartment& c)
-{
-  SetType(eHemorrhage_Type::External);
-  SetCompartment(c.value);
-}
-
-void SEHemorrhage::SetInternal(const InternalCompartment& c)
-{
-  SetType(eHemorrhage_Type::Internal);
-  SetCompartment(c.value);
+  m_Compartment = cmpt;
+  m_CompartmentName = eHemorrhage_Compartment_Name(cmpt);
 }
 
 bool SEHemorrhage::HasFlowRate() const
@@ -181,44 +161,24 @@ double SEHemorrhage::GetTotalBloodLost(const VolumeUnit& unit) const
   return m_TotalBloodLost->GetValue(unit);
 }
 
-void SEHemorrhage::ToString(std::ostream &str) const
+bool ValidHemorrhageCompartment(const std::string& cmpt)
 {
-  str << "Patient Action : Hemorrhage";
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tType: " << eHemorrhage_Type_Name(GetType());
-  str << "\n\tFor Compartment: "; HasCompartment()? str << GetCompartment() : str << "No Compartment Set";
-  str << "\n\tFlowRate: "; HasFlowRate() ? str << *m_FlowRate : str << "Not Set";
-  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
-  str << "\n\tTotalBloodLost: "; HasTotalBloodLost() ? str << *m_TotalBloodLost : str << "Not Set";
-  str << std::flush;
+  if (cmpt == "Aorta") { return true; }
+  if (cmpt == "Brain") { return true; }
+  if (cmpt == "Muscle") { return true; }
+  if (cmpt == "LargeIntestine") { return true; }
+  if (cmpt == "LeftArm") { return true; }
+  if (cmpt == "LeftKidney") { return true; }
+  if (cmpt == "LeftLeg") { return true; }
+  if (cmpt == "Liver") { return true; }
+  if (cmpt == "RightArm") { return true; }
+  if (cmpt == "RightKidney") { return true; }
+  if (cmpt == "RightLeg") { return true; }
+  if (cmpt == "Skin") { return true; }
+  if (cmpt == "SmallIntestine") { return true; }
+  if (cmpt == "Splanchnic") { return true; }
+  if (cmpt == "Spleen") { return true; }
+  if (cmpt == "VenaCava") { return true; }
+
+  return false;
 }
-
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::RightLeg("RightLeg");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::LeftLeg("LeftLeg");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::RightArm("RightArm");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::LeftArm("LeftArm");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Skin("Skin");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Muscle("Muscle");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Brain("Brain");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::LeftKidney("LeftKidney");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::RightKidney("RightKidney");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Liver("Liver");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Spleen("Spleen");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Splanchnic("Splanchnic");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::SmallIntestine("SmallIntestine");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::LargeIntestine("LargeIntestine");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Aorta("Aorta");
-const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::VenaCava("VenaCava");
-SEHemorrhage::ExternalCompartment::ExternalCompartment(const std::string& v) : value(v) {}
-
-const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::LeftKidney("LeftKidney");
-const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::RightKidney("RightKidney");
-const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::Liver("Liver");
-const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::Spleen("Spleen");
-const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::Splanchnic("Splanchnic");
-const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::SmallIntestine("SmallIntestine");
-const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::LargeIntestine("LargeIntestine");
-const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::Aorta("Aorta");
-const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::VenaCava("VenaCava");
-SEHemorrhage::InternalCompartment::InternalCompartment(const std::string& v) : value(v) {}

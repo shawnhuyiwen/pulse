@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 import com.kitware.pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData;
 import com.kitware.pulse.cdm.bind.Enums.eBreathState;
 import com.kitware.pulse.cdm.bind.Enums.eCharge;
+import com.kitware.pulse.cdm.bind.Enums.eDriverWaveform;
 import com.kitware.pulse.cdm.bind.Enums.eGate;
 import com.kitware.pulse.cdm.bind.Enums.eSide;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Environment.EnvironmentalConditionsData;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
-import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData;
 import com.kitware.pulse.cdm.bind.Patient.PatientData;
 import com.kitware.pulse.cdm.bind.PatientActions.BrainInjuryData;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData;
@@ -46,6 +46,7 @@ import com.kitware.pulse.cdm.system.environment.actions.SEEnvironmentAction;
 import com.kitware.pulse.cdm.system.environment.conditions.SEEnvironmentCondition;
 import com.kitware.pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineAction;
 import com.kitware.pulse.cdm.system.equipment.bag_valve_mask.actions.SEBagValveMaskAction;
+import com.kitware.pulse.cdm.system.equipment.ecmo.actions.SEECMOAction;
 import com.kitware.pulse.cdm.system.equipment.inhaler.actions.SEInhalerAction;
 import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions.SEMechanicalVentilatorAction;
 import com.kitware.pulse.utilities.FileUtils;
@@ -114,6 +115,8 @@ public class CDM2MD
       for(Class<?> c : physSorted)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(eHeartRhythm.class, "", writer, skipProperties);
+      WriteDoxyTable(eBreathState.class, "", writer, skipProperties);
+      WriteDoxyTable(eDriverWaveform.class, "", writer, skipProperties);
 
       // PATIENT ACTIONS/CONDITIONS/ASSESSMENTS
       writer.append("#### The following tables describe the are actions that may be performed on the patient\n<hr>\n");
@@ -126,6 +129,7 @@ public class CDM2MD
       for(Class<?> c : cmds)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(BrainInjuryData.eType.class, "BrainInjuryData_", writer, skipProperties);
+      WriteDoxyTable(HemorrhageData.eCompartment.class, "HemorrhageData_", writer, skipProperties);
       WriteDoxyTable(HemorrhageData.eType.class, "HemorrhageData_", writer, skipProperties);
       WriteDoxyTable(IntubationData.eType.class, "IntubationData_", writer, skipProperties);
       WriteDoxyTable(SubstanceBolusData.eRoute.class, "SubstanceBolusData_", writer, skipProperties);
@@ -159,8 +163,6 @@ public class CDM2MD
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(EnvironmentalConditionsData.eSurroundingType.class, "EnvironmentalConditionsData_", writer, skipProperties);
 
-      WriteDoxyTable(eBreathState.class, "", writer, skipProperties);
-
       // ANESTHESIA MACHINE
       writer.append("#### The following tables describe the anesthesia machine\n<hr>\n");
       Set<Class<? extends Object>> anes = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.anesthesia_machine");
@@ -179,6 +181,15 @@ public class CDM2MD
         WriteDoxyTable(c, "", writer, skipProperties);
       Set<Class<? extends SEBagValveMaskAction>> bvmActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.bag_valve_mask.actions", SEBagValveMaskAction.class);
       for(Class<?> c : bvmActions)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      
+      // ECMO
+      writer.append("#### The following tables describe the ECMO machine\n<hr>\n");
+      Set<Class<? extends Object>> ecmo = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.ecmo");
+      for(Class<?> c : ecmo)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      Set<Class<? extends SEECMOAction>> ecmoActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.ecmo.actions", SEECMOAction.class);
+      for(Class<?> c : ecmoActions)
         WriteDoxyTable(c, "", writer, skipProperties);
       
       // ECG
@@ -204,7 +215,6 @@ public class CDM2MD
       Set<Class<? extends SEMechanicalVentilatorAction>> mvActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions", SEMechanicalVentilatorAction.class);
       for(Class<?> c : mvActions)
         WriteDoxyTable(c, "", writer, skipProperties);
-      WriteDoxyTable(MechanicalVentilatorSettingsData.eDriverWaveform.class, "MechanicalVentilatorSettingsData_", writer, skipProperties);
       
       // SUBSTSANCE
       writer.append("#### The following tables describe substances used in Pulse\n<hr>\n");
@@ -242,7 +252,8 @@ public class CDM2MD
     } 
     catch (Exception e)
     {
-      Log.error("Could not create directory .markdown",e);
+      Log.error("Could not create directory .markdown");
+      Log.error(e.getMessage());
     }
   }
 
@@ -286,7 +297,8 @@ public class CDM2MD
         } 
         catch (Exception ex)
         {
-          Log.info("Enum is not happy",ex);
+          Log.info("Enum is not happy");
+          Log.info(ex.getMessage());
         }
       }
     }
@@ -390,6 +402,16 @@ public class CDM2MD
               writer.print("|"+"List of SESubstanceConcentration");
               writer.print("|"+"@ref SubstanceConcentrationTable");
             }
+            else if(bag.propertyName.equals("SubstanceConcentration"))
+            {
+              writer.print("|"+"List of SESubstanceConcentration");
+              writer.print("|"+"@ref SubstanceConcentrationTable");
+            }
+            else if(bag.propertyName.equals("Waveforms"))
+            {
+              writer.print("|"+"List of SEElectroCardioGramWaveform");
+              writer.print("|"+"@ref ElectroCardioGramWaveformTable");
+            }
             else
               Log.error("Unsupported List type for :"+bag.propertyName+" on table "+tableName);
 
@@ -420,7 +442,8 @@ public class CDM2MD
     }
     catch(Exception ex)
     {
-      Log.error("Error writing cdm table for "+tableName,ex);
+      Log.error("Error writing cdm table for "+tableName);
+      Log.error(ex.getMessage());
     }
     writer.print("\n<hr>\n");
   }
@@ -436,7 +459,8 @@ public class CDM2MD
     }
     catch(Exception ex)
     {
-      Log.error("Could not pad "+s+" with a max of "+max,ex);
+      Log.error("Could not pad "+s+" with a max of "+max);
+      Log.error(ex.getMessage());
       return "";
     }
   }

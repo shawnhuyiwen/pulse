@@ -101,7 +101,8 @@ public class CSVContents
     }
     catch(Exception ex)
     {
-      Log.error("Unable to get buffer for file "+resultsFile, ex);
+      Log.error("Unable to get buffer for file "+resultsFile);
+      Log.error(ex.getMessage());
       return false;
     }        
     return buff!=null;
@@ -121,7 +122,8 @@ public class CSVContents
     }
     catch(Exception ex)
     {
-      Log.error("Error reading next line",ex);
+      Log.error("Error reading next line");
+      Log.error(ex.getMessage());
       return false;
     }
     return true;
@@ -179,7 +181,8 @@ public class CSVContents
         }
         catch(Exception ex)
         {
-          Log.error("Error reading next line",ex);
+          Log.error("Error reading next line");
+          Log.error(ex.getMessage());
           return false;
         }
       }
@@ -247,7 +250,8 @@ public class CSVContents
         }
         catch(Exception ex)
         {
-          Log.error("Error reading next line",ex);
+          Log.error("Error reading next line");
+          Log.error(ex.getMessage());
           return false;
         }
       }
@@ -294,7 +298,8 @@ public class CSVContents
     }
     catch(Exception ex)
     {
-      Log.error("Error reading next line",ex);
+      Log.error("Error reading next line");
+      Log.error(ex.getMessage());
       return false;
     }
     if(rowData==null)

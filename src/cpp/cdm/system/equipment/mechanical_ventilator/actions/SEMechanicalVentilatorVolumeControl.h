@@ -15,13 +15,16 @@ public:
   SEMechanicalVentilatorVolumeControl(Logger* logger = nullptr);
   virtual ~SEMechanicalVentilatorVolumeControl();
 
-  virtual void Clear();
+  static constexpr char const* Name = "Volume Control";
+  virtual std::string GetName() const { return Name; }
+
+  void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorVolumeControl& src, bool /*preserveState*/ = false);
   virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr) override;
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual eMechanicalVentilator_VolumeControlMode GetMode() const;
   virtual void SetMode(eMechanicalVentilator_VolumeControlMode c);
@@ -33,6 +36,18 @@ public:
   virtual bool HasFractionInspiredOxygen() const;
   virtual SEScalar0To1& GetFractionInspiredOxygen();
   virtual double GetFractionInspiredOxygen() const;
+
+  virtual bool HasInspirationPatientTriggerFlow() const;
+  virtual SEScalarVolumePerTime& GetInspirationPatientTriggerFlow();
+  virtual double GetInspirationPatientTriggerFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasInspirationPatientTriggerPressure() const;
+  virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
+  virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
+
+  virtual bool HasInspirationWaveform() const;
+  virtual eDriverWaveform GetInspirationWaveform() const;
+  virtual void SetInspirationWaveform(eDriverWaveform w);
 
   virtual bool HasInspiratoryPeriod() const;
   virtual SEScalarTime& GetInspiratoryPeriod();
@@ -50,17 +65,23 @@ public:
   virtual SEScalarVolume& GetTidalVolume();
   virtual double GetTidalVolume(const VolumeUnit& unit) const;
 
-  virtual void ToString(std::ostream& str) const;
+  virtual bool HasSlope() const;
+  virtual SEScalarTime& GetSlope();
+  virtual double GetSlope(const TimeUnit& unit) const;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
 
   eMechanicalVentilator_VolumeControlMode m_Mode;
   SEScalarVolumePerTime*                  m_Flow;
   SEScalar0To1*                           m_FractionInspiredOxygen;
+  SEScalarVolumePerTime*                  m_InspirationPatientTriggerFlow;
+  SEScalarPressure*                       m_InspirationPatientTriggerPressure;
+  eDriverWaveform                         m_InspirationWaveform;
   SEScalarTime*                           m_InspiratoryPeriod;
   SEScalarPressure*                       m_PositiveEndExpiredPressure;
   SEScalarFrequency*                      m_RespirationRate;
   SEScalarVolume*                         m_TidalVolume;
+  SEScalarTime*                           m_Slope;
 };

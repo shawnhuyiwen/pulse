@@ -45,6 +45,8 @@ def serialize_patient_to_bind(src: SEPatient, dst: PatientData):
         serialize_scalar_mass_per_volume_to_bind(src.get_body_density(), dst.BodyDensity)
     if src.has_body_fat_fraction():
         serialize_scalar_0to1_to_bind(src.get_body_fat_fraction(), dst.BodyFatFraction)
+    if src.has_body_mass_index():
+        serialize_scalar_to_bind(src.get_body_mass_index(), dst.BodyMassIndex)
     if src.has_ideal_body_weight():
         serialize_scalar_mass_to_bind(src.get_ideal_body_weight(), dst.IdealBodyWeight)
     if src.has_lean_body_mass():
@@ -65,6 +67,8 @@ def serialize_patient_to_bind(src: SEPatient, dst: PatientData):
         serialize_scalar_frequency_to_bind(src.get_heart_rate_baseline(), dst.HeartRateBaseline)
     if src.has_mean_arterial_pressure_baseline():
         serialize_scalar_pressure_to_bind(src.get_mean_arterial_pressure_baseline(), dst.MeanArterialPressureBaseline)
+    if src.has_pulse_pressure_baseline():
+        serialize_scalar_pressure_to_bind(src.get_pulse_pressure_baseline(), dst.PulsePressureBaseline)
     if src.has_respiration_rate_baseline():
         serialize_scalar_frequency_to_bind(src.get_respiration_rate_baseline(), dst.RespirationRateBaseline)
     if src.has_systolic_arterial_pressure_baseline():
@@ -104,6 +108,8 @@ def serialize_patient_from_bind(src: PatientData, dst: SEPatient):
         serialize_scalar_mass_per_volume_from_bind(src.BodyDensity, dst.get_body_density())
     if src.HasField("BodyFatFraction"):
         serialize_scalar_0to1_from_bind(src.BodyFatFraction, dst.get_body_fat_fraction())
+    if src.HasField("BodyMassIndex"):
+        serialize_scalar_from_bind(src.BodyMassIndex, dst.get_body_mass_index())
     if src.HasField("IdealBodyWeight"):
         serialize_scalar_mass_from_bind(src.IdealBodyWeight, dst.get_ideal_body_weight())
     if src.HasField("LeanBodyMass"):
@@ -124,6 +130,8 @@ def serialize_patient_from_bind(src: PatientData, dst: SEPatient):
         serialize_scalar_frequency_from_bind(src.HeartRateBaseline, dst.get_heart_rate_baseline())
     if src.HasField("MeanArterialPressureBaseline"):
         serialize_scalar_pressure_from_bind(src.MeanArterialPressureBaseline, dst.get_mean_arterial_pressure_baseline())
+    if src.HasField("PulsePressureBaseline"):
+        serialize_scalar_pressure_from_bind(src.PulsePressureBaseline, dst.get_pulse_pressure_baseline())
     if src.HasField("RespirationRateBaseline"):
         serialize_scalar_frequency_from_bind(src.RespirationRateBaseline, dst.get_respiration_rate_baseline())
     if src.HasField("SystolicArterialPressureBaseline"):
@@ -193,20 +201,20 @@ def serialize_nutrition_to_bind(src: SENutrition, dst: NutritionData):
 def serialize_nutrition_from_bind(src: NutritionData, dst: SENutrition):
     dst.clear()
     if src.HasField("Carbohydrate"):
-        serialize_scalar_mass_from_bind(src.Carbohydrate, dst.get_age())
+        serialize_scalar_mass_from_bind(src.Carbohydrate, dst.get_carbohydrate())
     if src.HasField("CarbohydrateDigestionRate"):
-        serialize_scalar_mass_per_time_from_bind(src.CarbohydrateDigestionRate, dst.get_weight())
+        serialize_scalar_mass_per_time_from_bind(src.CarbohydrateDigestionRate, dst.get_carbohydrate_digestion_rate())
     if src.HasField("Fat"):
-        serialize_scalar_mass_from_bind(src.Fat, dst.get_height())
+        serialize_scalar_mass_from_bind(src.Fat, dst.get_fat())
     if src.HasField("FatDigestionRate"):
-        serialize_scalar_mass_per_time_from_bind(src.FatDigestionRate, dst.get_body_density())
+        serialize_scalar_mass_per_time_from_bind(src.FatDigestionRate, dst.get_fat_digestion_rate())
     if src.HasField("Protein"):
-        serialize_scalar_mass_from_bind(src.Protein, dst.get_body_fat_fraction())
+        serialize_scalar_mass_from_bind(src.Protein, dst.get_protein())
     if src.HasField("ProteinDigestionRate"):
-        serialize_scalar_mass_per_time_from_bind(src.ProteinDigestionRate, dst.get_ideal_body_weight())
+        serialize_scalar_mass_per_time_from_bind(src.ProteinDigestionRate, dst.get_protein_digestion_rate())
     if src.HasField("Calcium"):
-        serialize_scalar_mass_from_bind(src.Calcium, dst.get_lean_body_mass())
+        serialize_scalar_mass_from_bind(src.Calcium, dst.get_calcium())
     if src.HasField("Sodium"):
-        serialize_scalar_mass_from_bind(src.Sodium, dst.get_alveoli_surface_area())
+        serialize_scalar_mass_from_bind(src.Sodium, dst.get_sodium())
     if src.HasField("Water"):
-        serialize_scalar_volume_from_bind(src.Water, dst.get_right_lung_ratio())
+        serialize_scalar_volume_from_bind(src.Water, dst.get_water())

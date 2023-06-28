@@ -12,6 +12,9 @@ public:
   SEPericardialEffusion(Logger* logger=nullptr);
   virtual ~SEPericardialEffusion();
 
+  static constexpr char const* Name = "Pericardial Effusion";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEPericardialEffusion& src, bool /*preserveState*/=false);
 
@@ -22,8 +25,6 @@ public:
   virtual bool HasEffusionRate() const;
   virtual SEScalarVolumePerTime& GetEffusionRate();
   virtual double GetEffusionRate(const VolumePerTimeUnit& unit) const;
-  
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

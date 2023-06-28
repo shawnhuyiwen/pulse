@@ -13,6 +13,9 @@ public:
   SEArrhythmia(Logger* logger=nullptr);
   virtual ~SEArrhythmia();
 
+  static constexpr char const* Name = "Arrhythmia";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEArrhythmia& src, bool /*preserveState*/=false);
 
@@ -22,8 +25,6 @@ public:
 
   virtual eHeartRhythm GetRhythm() const;
   virtual void SetRhythm(eHeartRhythm t);
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

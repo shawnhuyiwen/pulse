@@ -28,7 +28,7 @@ The energy system is required to simulate the effects of exercise and elevated p
 ### Approach
 The %Energy system is a physical model of heat transfer combined with a collection of empirical equations for heat production and exchange obtained from literature. Additional equations are derived from stoichiometric relationships and empirical data found in the literature, particularly the governing equations for the metabolic [production and consumption](@ref tissue-metabolic-production) of substances. It uses a thermal circuit to simulate heat transfer through the body, with the body circuit connected to the [environment](@ref EnvironmentMethodology) circuit. The body thermal circuit consists of a core node, representing core temperature, and a skin node, which represents the lumped peripheral temperature. The body thermal circuit is shown in Figure 1.
 
-<img src="./Images/Energy/internalThermal.png" width="400">
+<a href="./Images/Energy/internalThermal.png"><img src="./Images/Energy/internalThermal.png" width="400"></a>
 <center>
 *Figure 1. The body thermal circuit consists of two nodes and four paths. Two additional paths exist, connecting to the environment thermal circuit. The circuit is used to model the dynamic core and skin temperatures.*
 </center><br>
@@ -40,7 +40,7 @@ The [metabolic production and consumption](@ref tissue-metabolic-production) of 
 ### Thermal Regulation
 Thermal regulation in the %Energy system occurs through manipulation of the metabolic rate or through external losses (sweating). The thermal feedback mechanisms are a direct implementation from those discussed by Herman @cite herman2007physics. For high core temperature, a control equation specifies the sweat rate as a function of the difference between the current core temperature and the set-point (Equation 1). Sweat is removed from the body via a path connected between the skin and the environment (Figure 2). Note that sweat is currently composed of water only, a known limitation which will be addressed in the [future](@ref energy-future).
 
-<img src="./Images/Energy/sweat.png" width="400">
+<a href="./Images/Energy/sweat.png"><img src="./Images/Energy/sweat.png" width="400"></a>
 <center>
 *Figure 2. Sweat is removed from the body via a flow source path connected to ground. The flow source rate is computed using Equation 1.*
 </center><br>
@@ -127,7 +127,7 @@ Additional dependence on the cardiovascular system comes from the extravascular 
 
 @anchor energy-variability
 ### Patient Variability
-The basal metabolic rate is computed from the sex, height, weight, and age of the patient using the Harris-Benedict formula and will be directly affected by patient variability. Other indirect effects, such as fluid compositional changes due to sweating, may be observed. As with all of the systems, the energy system is validated using the Standard Male patient. A detailed discussion of patient variability is available in the @ref PatientMethodology report.
+The basal metabolic rate is computed from the sex, height, weight, and age of the patient using the Harris-Benedict formula and will be directly affected by patient variability. Other indirect effects, such as fluid compositional changes due to sweating, may be observed. As with all of the systems, the energy system is validated using the Standard patient. A detailed discussion of patient variability is available in the @ref PatientMethodology report.
 
 @anchor energy-assumptions
 Assumptions and Limitations
@@ -157,7 +157,7 @@ The exercise action is initiated by specifying the exercise intensity. The exerc
 The exercise capacity of the body is physiologically and psychologically limited @cite noakes2012fatigue. The amount of work produced by the exercise action is limited by the fatigue model; however, this limitation is purely physiologic. Fatigue is modeled as a system of interconnected energy storage compartments, as shown in Figure 3.
 
 <center>
-<img src="./Images/Energy/fatigue.png">
+<a href="./Images/Energy/fatigue.png"><img src="./Images/Energy/fatigue.png"></a>
 *Figure 3. The fatigue compartment model. The energy stores are represented by the blue buckets. The solid lines  show the energy flow pathways, and flow directions are indicated by the arrowheads. The dashed line is a future information pathway to control the endurance energy store fill rate. The amount of energy in each store is computed using equations 7 and 8. The energy flow rates through each path, labeled %Energy Path 1 through 7 in the figure, are  computed using equations 9 to 18. The refill rate of the endurance energy store is computed using equation 19. The outflow of energy from the usable energy store is only non-zero when the activity level of the body is above zero, and it is computed directly from the total work rate.*
 </center><br>
 
@@ -267,7 +267,14 @@ Validation - Resting Physiologic State
 <br><center>
 *Table 2. The %Energy system properties consist of core and skin temperature, as well as metabolic production rates. The properties show good agreement with the validation values.*
 </center>
-@insert ./test_results/tables/EnergyValidationTable.md
+
+<b>Standard Male</b>
+
+@insert ./test_results/tables/Energy-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/Energy-StandardFemaleValidationTable.md
 
 The resting system properties for the energy system are temperatures and metabolic production rates. From Table 2, it is shown that the temperatures meet the validation criteria extremely well for resting conditions. The production rates show reasonable agreement with the validation data. Gas consumption and production yield the largest disparity. This is due to accurate resting physiology being achieved for the displayed consumption and production rates. Additional refinement of the gas consumption and production rates can occur, but the change would propagate through the other systems. In order to preserve accurate resting physiology all other systems would need to be adjusted for this change. This is currently planned for a future release. The remaining metabolic production rates show good agreement with the validation data.
 
@@ -334,10 +341,10 @@ There are several physiological measures that are failing validation for the exe
 ### Cold Water Submersion
 
 <center>
-<img src="./plots/Energy/ColdWaterSubmersion_TotalMetabolicRate.jpg" width="1100">
-<img src="./plots/Energy/ColdWaterSubmersion_CoreTemp.jpg" width="1100">
-<img src="./plots/Energy/ColdWaterSubmersion_SkinTemp.jpg" width="1100">
-<img src="./plots/Energy/ColdWaterSubmersionLegend.jpg" width="1100">
+<a href="./plots/Energy/ColdWaterSubmersion_TotalMetabolicRate.jpg"><img src="./plots/Energy/ColdWaterSubmersion_TotalMetabolicRate.jpg" width="1100"></a>
+<a href="./plots/Energy/ColdWaterSubmersion_CoreTemp.jpg"><img src="./plots/Energy/ColdWaterSubmersion_CoreTemp.jpg" width="1100"></a>
+<a href="./plots/Energy/ColdWaterSubmersion_SkinTemp.jpg"><img src="./plots/Energy/ColdWaterSubmersion_SkinTemp.jpg" width="1100"></a>
+<a href="./plots/Energy/ColdWaterSubmersionLegend.jpg"><img src="./plots/Energy/ColdWaterSubmersionLegend.jpg" width="1100"></a>
 </center>
 <center>
 *Figure 5. The cold water submersion begins by submerging the patient in water that has a temperature of 10 degrees Celsius. A direct result of this is a drop in skin temperature due to an increased heat loss from the skin surface. The patient remains in the water for one hour, during which the metabolic rate increases via shivering. This rise in metabolic rate allows for the core temperature to stabilize just above 35 degrees Celsius. After one hour, the patient is removed and then active heating begins ten minutes later. The result of active heating is an increase in core and skin temperature, and a decline in the patient&rsquo;s metabolic rate.*
@@ -356,15 +363,15 @@ At a scenario time of 50 seconds, the patient is submerged in water with a tempe
 ### High Altitude Change
 <table border="0">
 <tr>
-    <td><img src="./plots/Energy/HighAltitude_HR.jpg" width="550"></td>
-    <td><img src="./plots/Energy/HighAltitude_O2PP.jpg" width="550"></td>
+    <td><a href="./plots/Energy/HighAltitude_HR.jpg"><img src="./plots/Energy/HighAltitude_HR.jpg" width="550"></a></td>
+    <td><a href="./plots/Energy/HighAltitude_O2PP.jpg"><img src="./plots/Energy/HighAltitude_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Energy/HighAltitude_O2Sat.jpg" width="550"></td>
-    <td><img src="./plots/Energy/HighAltitude_RR.jpg" width="550"></td>
+    <td><a href="./plots/Energy/HighAltitude_O2Sat.jpg"><img src="./plots/Energy/HighAltitude_O2Sat.jpg" width="550"></a></td>
+    <td><a href="./plots/Energy/HighAltitude_RR.jpg"><img src="./plots/Energy/HighAltitude_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Energy/HighAltitudeLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/Energy/HighAltitudeLegend.jpg"><img src="./plots/Energy/HighAltitudeLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 <center>

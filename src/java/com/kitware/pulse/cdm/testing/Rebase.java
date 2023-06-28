@@ -74,7 +74,8 @@ public class Rebase
     }
     catch(Exception ex)
     {
-      Log.error("Could not create to Directory : "+toDir,ex);
+      Log.error("Could not create to Directory : "+toDir);
+      Log.error(ex.getMessage());
       return;
     }
 
@@ -95,7 +96,7 @@ public class Rebase
           Log.error("A job has no expected result files!?!?");
           continue;
         }
-        if(!job.PlottableResults && !job.isAssessment)
+        if(!job.plottableResults && !job.isAssessment)
           continue;// Nothing to plot/compare, nothing to zip  
         // We assume all json will have something to zip...
         
@@ -150,7 +151,8 @@ public class Rebase
         } 
         catch (IOException ex)
         {
-          Log.error("Could not create directory : "+rPath, ex);
+          Log.error("Could not create directory : "+rPath);
+          Log.error(ex.getMessage());
         }
         File oldZip = new File(newFile);
         if(oldZip.exists())

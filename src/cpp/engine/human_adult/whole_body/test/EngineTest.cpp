@@ -64,10 +64,13 @@ namespace pulse { namespace human_adult_whole_body
     testFunction respCTTest = &EngineTest::RespiratoryCircuitAndTransportTest;
     testFunction anesthCTTest = &EngineTest::AnesthesiaMachineCircuitAndTransportTest;
     testFunction ventCTTest = &EngineTest::MechanicalVentilatorCircuitAndTransportTest;
+    testFunction setupPatientTest = &EngineTest::SetupPatientTest;
 
 
     testMap.insert(std::make_pair("ReadScenarios", &EngineTest::ReadScenarios));
     testMap.insert(std::make_pair("ReuseEngine", &EngineTest::ReuseEngine));
+    testMap.insert(std::make_pair("SerializationTest", &EngineTest::SerializationTest));
+    testMap.insert(std::make_pair("SetupPatientTest", setupPatientTest));
 
     //Fill a map that ties unit test names to their actual functions
     testMap.insert(std::make_pair("CardiovascularCircuitAndTransportTest", cardioCTTest));
@@ -118,8 +121,6 @@ namespace pulse { namespace human_adult_whole_body
     testMap.insert(std::make_pair("BrainInjuryTest", &EngineTest::BrainInjuryTest));
 
     testMap.insert(std::make_pair("ConditionCombinations", &EngineTest::ConditionCombinations));
-    testMap.insert(std::make_pair("MultiEngineTest", &EngineTest::MultiEngineTest));
-    testMap.insert(std::make_pair("SerializationTest", &EngineTest::SerializationTest));
     testMap.insert(std::make_pair("SolverSpeedTest", &EngineTest::SolverSpeedTest));
 
     testMap.insert(std::make_pair("AcidBaseMathTest", &EngineTest::AcidBaseMathTest));

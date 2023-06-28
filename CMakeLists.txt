@@ -33,7 +33,7 @@ set(CMAKE_DEBUG_POSTFIX "d")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-project(Pulse VERSION 4.1.0 LANGUAGES C CXX)
+project(Pulse VERSION 4.2.0 LANGUAGES C CXX)
 string(TOLOWER ${PROJECT_NAME} project_name)
 include(GNUInstallDirs)
 
@@ -60,18 +60,60 @@ set(CMAKE_MODULE_PATH
     )
 set(${PROJECT_NAME}_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-#-----------------------------------------------------------------------------
-# SUPERBUILD
-#-----------------------------------------------------------------------------
-option(${PROJECT_NAME}_SUPERBUILD "Initial pull and build of all dependent libraries/executables" ON)
+option(${PROJECT_NAME}_LIBS_ONLY "Only build libraries" OFF)
 option(${PROJECT_NAME}_DOWNLOAD_BASELINES "Download all V&V Scenarios and their baseline result files" OFF)
 option(${PROJECT_NAME}_CSHARP_API "Build C# API" OFF)
 option(${PROJECT_NAME}_JAVA_API "Build Java utils for data generation and testing" ON)
 option(${PROJECT_NAME}_PYTHON_API "Build Python API" OFF)
-option(${PROJECT_NAME}_SLAVE_BUILD "Pulse is being built as part of a different superbuild" OFF)
+option(${PROJECT_NAME}_DEPENDENT_BUILD "Pulse is being built as part of a different superbuild" OFF)
+# This dir inteded for use during cross compiling, provide the directory to the generated bindings from a native pulse build
+# This will be in a <build>/Innerbuild/src/schema
+set(${PROJECT_NAME}_NATIVE_BUILD_DIR "" CACHE PATH "For crosscompiling, provide the root folder of a native build with protobuf bindings")
+set(NATIVE_BIND_DIR "")
+if(EXISTS ${${PROJECT_NAME}_NATIVE_BUILD_DIR})
+  message(STATUS "Checking native bind directory...")
+  set(NATIVE_BIND_DIR ${${PROJECT_NAME}_NATIVE_BUILD_DIR}/Innerbuild/src/cpp/pulse)
+  if(NOT EXISTS ${NATIVE_BIND_DIR})
+    message(FATAL_ERROR "Could not find expected binding directory in provided NATIVE_BUILD_DIR, expecting:  ${NATIVE_BIND_DIR}")
+  endif()
+endif()
 
+#-----------------------------------------------------------------------------
+# iOS Support
+#-----------------------------------------------------------------------------
+if(iOS_TOOLCHAIN)
+  message(STATUS "Setting up build for iOS")
+
+  #set(APPLE_IOS ON)
+  #set(TARGET_OS_IPHONE ON)
+
+  set(${PROJECT_NAME}_LIBS_ONLY ON)
+  if(${PROJECT_NAME}_CSHARP_API)
+    set(${PROJECT_NAME}_CSHARP_API OFF)
+    message(STATUS "Disabling C# API for iOS build")
+  endif()
+  if(${PROJECT_NAME}_JAVA_API)
+    set(${PROJECT_NAME}_JAVA_API OFF)
+    message(STATUS "Disabling Java API for iOS build")
+  endif()
+  if(${PROJECT_NAME}_PYTHON_API)
+    set(${PROJECT_NAME}_PYTHON_API OFF)
+    message(STATUS "Disabling Python API for iOS build")
+  endif()
+
+  if(NOT EXISTS ${NATIVE_BIND_DIR})
+    message(FATAL_ERROR "Crosscompiling for iOS, you must provide ${PROJECT_NAME}_NATIVE_BUILD_DIR")
+  endif()
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fembed-bitcode")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fembed-bitcode")
+endif()
+
+#-----------------------------------------------------------------------------
+# SUPERBUILD
+#-----------------------------------------------------------------------------
+option(${PROJECT_NAME}_SUPERBUILD "Initial pull and build of all dependent libraries/executables" ON)
 if(${PROJECT_NAME}_SUPERBUILD)
-
   #-----------------------------------------------------------------------------
   # Define External dependencies
   #-----------------------------------------------------------------------------
@@ -87,6 +129,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
     find_package (Python3 COMPONENTS Interpreter Development)
     if(Python3_FOUND)
       define_dependency(pybind11)
+      message(STATUS "Using python: ${Python3_EXECUTABLE}")
       else()
         message(FATAL_ERROR "Unable to support Python API, cannot find Python3")
     endif()
@@ -94,7 +137,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
 
   if(${PROJECT_NAME}_DEPENDENCIES)
     if(MSVC OR XCode)
-      if(NOT ${PROJECT_NAME}_SLAVE_BUILD)
+      if(NOT ${PROJECT_NAME}_DEPENDENT_BUILD)
         message(STATUS "Optimizing your superbuild experience")
         set(${PROJECT_NAME}_MULTI_BUILD ON)
         set(CMAKE_CONFIGURATION_TYPES Release CACHE STRING INTERNAL FORCE)
@@ -136,7 +179,6 @@ if ( CMAKE_COMPILER_IS_GNUCC )
   endif()
 endif()
 
-
 set(${PROJECT_NAME}_INSTALL_FOLDER ${project_name})
 
 include(Find)# Our find macros
@@ -151,27 +193,45 @@ find_package(Eigen3 REQUIRED)
 
 # Tell protobuf-config.cmake to try to be compatible with FindProtobuf.cmake;
 # this makes it easier for us to work with either one
-set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "CMake built-in FindProtobuf.cmake module compatible" FORCE)
+set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "CMake built-in FindProtobuf.cmake module compatible")
 mark_as_advanced(protobuf_MODULE_COMPATIBLE)
+if(iOS_TOOLCHAIN)
+  set(protobuf_MODULE_COMPATIBLE OFF)
+endif()
 
 if(protobuf_DIR AND NOT EXISTS ${protobuf_DIR})
   # Linux systems can build libs to a variety of directories...
   message(STATUS "Provided protobuf_DIR, does not exist, looking for alternatives...")
-  message(STATUS "  protobuf_DIR : ${protobuf_DIR}")
-  string(FIND ${protobuf_DIR} "/lib/" _idx)
+  message(STATUS "  Original protobuf_DIR : ${protobuf_DIR}")
+
+  # We could be cross compiling for windows on linux, change to a linux path
+  string(FIND ${protobuf_DIR} "install/cmake" _idx)
   if(_idx GREATER_EQUAL 0)
-    # Depending on linux flavor, this could be in a lib64 dir
-    # So, replace /lib/ with /lib64/ and see if that exists
-    string(REPLACE "/lib/" "/lib64/" _lib64 ${protobuf_DIR})
-    message(STATUS "  Checking if this alternative exists : ${_lib64}")
-    if(EXISTS ${_lib64})
-      set(protobuf_DIR ${_lib64})
+    string(REPLACE "install/cmake" "/install/${CMAKE_INSTALL_LIBDIR}/cmake/protobuf" protobuf_DIR ${protobuf_DIR})
+    message(STATUS "  Checking if this alternative exists : ${protobuf_DIR}")
+    if(EXISTS ${protobuf_DIR})
       message(STATUS "It does! New protobuf_DIR is ${protobuf_DIR}")
+    else()
+      message(STATUS "Nope, that was not it")
+    endif()
+  endif()
+
+  if(NOT EXISTS ${protobuf_DIR})
+    string(FIND ${protobuf_DIR} "/lib/" _idx)
+    if(_idx GREATER_EQUAL 0)
+      # Depending on linux flavor, this could be in a lib64 dir
+      # So, replace /lib/ with /lib64/ and see if that exists
+      string(REPLACE "/lib/" "/lib64/" _lib64 ${protobuf_DIR})
+      message(STATUS "  Checking if this alternative exists : ${_lib64}")
+      if(EXISTS ${_lib64})
+        set(protobuf_DIR ${_lib64})
+        message(STATUS "It does! New protobuf_DIR is ${protobuf_DIR}")
+      else()
+        message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
+      endif()
     else()
       message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
     endif()
-  else()
-    message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
   endif()
 endif()
 # Try to use the config written by protobuf
@@ -212,8 +272,31 @@ add_subdirectory(src)
 add_subdirectory(data)
 
 #--------------------------------------------------------------------------
-# Add setup script for *nix systems
+# Setup development utility scripts
 #--------------------------------------------------------------------------
+
+# Pulse uses Python in its development utility scripts
+find_package(Python3 COMPONENTS Interpreter)
+if(Python3_FOUND)
+  message(STATUS "Using Python: ${Python3_EXECUTABLE}")
+  #get_filename_component(Python_CMD ${Python3_EXECUTABLE} NAME)
+  set(Python_CMD ${Python3_EXECUTABLE})
+else()
+  set(Python_CMD "python")
+  message(WARNING "The Pulse `run` utility uses python, which could not be found")
+  message(WARNING "To use the `run` utility, setup python in this environment and reconfigure cmake")
+endif()
+
+# Pulse uses Java in its development utility scripts
+find_package(Java REQUIRED)
+include(UseJava)
+if(Java_JAVA_EXECUTABLE)
+  message(STATUS "Using Java executable : ${Java_JAVA_EXECUTABLE}")
+  set(Java_CMD ${Java_JAVA_EXECUTABLE})
+else()
+  message(STATUS "Could not find Java_JAVA_EXECUTABLE")
+endif()
+
 if(NOT WIN32)
   # Create setup shell script to create an environment for running examples
   set(LIBRARY_PATH_VAR "LD_LIBRARY_PATH")

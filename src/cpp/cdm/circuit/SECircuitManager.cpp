@@ -302,7 +302,7 @@ template<CIRCUIT_LEDGER_TEMPLATE> PathType& SECircuitManager::CreatePath(NodeTyp
   PathType* path = ledger.paths[name];
   if (path != nullptr)
   {
-    Error(" path already exists with name " + name + ", not creating a new path, returning the existing path");
+    Warning("Path already exists with name " + name + ", not creating a new path, returning the existing path");
     return *path;
   }
   path = new PathType(src, tgt, name);

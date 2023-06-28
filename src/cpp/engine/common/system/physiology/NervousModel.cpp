@@ -72,7 +72,8 @@ namespace pulse
     GetBaroreceptorHeartElastanceScale().SetValue(1.0);
     GetBaroreceptorResistanceScale().SetValue(1.0);
     GetBaroreceptorComplianceScale().SetValue(1.0);
-    GetChemoreceptorHeartRateScale().SetValue(1.0);
+    GetChemoreceptorHeartRateScale().SetValue(0.0);
+    GetChemoreceptorHeartElastanceScale().SetValue(0.0);
     GetLeftEyePupillaryResponse().GetSizeModifier().SetValue(0);
     GetLeftEyePupillaryResponse().GetShapeModifier().SetValue(0);
     GetLeftEyePupillaryResponse().GetReactivityModifier().SetValue(0);
@@ -133,19 +134,37 @@ namespace pulse
   {
     if (m_data.GetState() == EngineState::AtInitialStableState)
     {
-      SetChemoreceptorFeedback(m_data.GetConfiguration().GetChemoreceptorFeedback()); // The set-points (Baselines) get reset at the end of each stabilization period.
+      m_ChemoreceptorFeedback = m_data.GetConfiguration().GetChemoreceptorFeedback(); // The set-points (Baselines) get reset at the end of each stabilization period.
     }
     else if (m_data.GetState() == EngineState::AtSecondaryStableState)
     {
-      SetBaroreceptorFeedback(m_data.GetConfiguration().GetBaroreceptorFeedback());
+      m_BaroreceptorFeedback = m_data.GetConfiguration().GetBaroreceptorFeedback();
     }
-    // The set-points (Baselines) get reset at the end of each stabilization period.
+    // Set-baselines at the end of each stabilization period.
+    SetBaselines();
+  }
+
+  void NervousModel::SetBaselines()
+  {
     m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
     m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
     m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
     double meanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
     m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / meanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
     m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
+  }
+
+  void NervousModel::SetBaroreceptorFeedback(eSwitch s)
+  {
+    if (s == eSwitch::On && m_BaroreceptorFeedback == eSwitch::Off)
+      SetBaselines();
+    SENervousSystem::SetBaroreceptorFeedback(s);
+  }
+  void NervousModel::SetChemoreceptorFeedback(eSwitch s)
+  {
+    if (s == eSwitch::On && m_ChemoreceptorFeedback == eSwitch::Off)
+      SetBaselines();
+    SENervousSystem::SetChemoreceptorFeedback(s);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -229,9 +248,8 @@ namespace pulse
     if (m_ChemoreceptorFeedback == eSwitch::On)
       ChemoreceptorFeedback();
     else
-      GetChemoreceptorHeartRateScale().SetValue(1.0);
+      GetChemoreceptorHeartRateScale().SetValue(0.0);
     CerebralSpinalFluidUpdates();
-
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -400,7 +418,7 @@ namespace pulse
         m_BaroreceptorSaturationStatus = true;
         Info("Baroreceptors Saturated ");
       }
-      if (normalizedMAP <= 0.985 && normalizedMAP >= 0.48)
+      if (normalizedMAP <= 0.985 && meanArterialPressure_mmHg >= 47)
       {
         //new baroreceptor effect curves
         if (m_PreviousBloodVolume_mL - m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL) > 0)
@@ -411,15 +429,26 @@ namespace pulse
         {
           m_BaroreceptorEffectivenessParameter = normalizedMAP * 0.005;
         }
-
       }
-      else if (normalizedMAP <= 0.44 && normalizedMAP >= 0.42)
+      else if (meanArterialPressure_mmHg > 43 && meanArterialPressure_mmHg < 47)
+      {
+        if (m_PreviousBloodVolume_mL - m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL) > 0)
+        {
+          m_BaroreceptorEffectivenessParameter -= 0.0001;
+          if (m_BaroreceptorEffectivenessParameter < -0.25)
+          {
+            m_BaroreceptorEffectivenessParameter = -0.25;
+          }
+        }
+        // keep previous parameter if blood volume is not decreasing.
+      }
+      else if (meanArterialPressure_mmHg <= 43 && meanArterialPressure_mmHg >= 41)
       {
         //last ditch effort
         //m_BaroreceptorEffectivenessParameter += 0.0001;
         m_BaroreceptorEffectivenessParameter = 0.0007;
       }
-      else if (normalizedMAP < 0.42)
+      else if (meanArterialPressure_mmHg < 41)
       {
         m_BaroreceptorEffectivenessParameter -= 0.00004;
       }
@@ -481,24 +510,20 @@ namespace pulse
     //Intracranial Hypertension
     if (icp_mmHg > 25.0) // \cite steiner2006monitoring
     {
-      /// \event Patient: Intracranial Hypertension. The intracranial pressure has risen above 25 mmHg.
       m_data.GetEvents().SetEvent(eEvent::IntracranialHypertension, true, m_data.GetSimulationTime());
     }
     else if (m_data.GetEvents().IsEventActive(eEvent::IntracranialHypertension) && icp_mmHg < 24.0)
     {
-      /// \event Patient: End Intracranial Hypertension. The intracranial pressure has fallen below 24 mmHg.
       m_data.GetEvents().SetEvent(eEvent::IntracranialHypertension, false, m_data.GetSimulationTime());
     }
 
     //Intracranial Hypotension
     if (icp_mmHg < 7.0) // \cite steiner2006monitoring
     {
-      /// \event Patient: Intracranial Hypotension. The intracranial pressure has fallen below 7 mmHg.
       m_data.GetEvents().SetEvent(eEvent::IntracranialHypotension, true, m_data.GetSimulationTime());
     }
     else if (m_data.GetEvents().IsEventActive(eEvent::IntracranialHypotension) && icp_mmHg > 7.5)
     {
-      /// \event Patient: End Intracranial Hypotension. The intracranial pressure has risen above 7.5 mmHg.
       m_data.GetEvents().SetEvent(eEvent::IntracranialHypertension, false, m_data.GetSimulationTime());
     }
   }

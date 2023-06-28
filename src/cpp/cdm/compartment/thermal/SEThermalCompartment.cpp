@@ -79,7 +79,7 @@ bool SEThermalCompartment::HasHeat() const
 SEScalarEnergy& SEThermalCompartment::GetHeat()
 {
   if (m_Nodes.HasMapping())
-    return m_Nodes.GetQuantity();    
+    return m_Nodes.GetQuantity();
   if (m_Heat == nullptr)
     m_Heat = new SEScalarEnergy();
   if (!m_Children.empty())
@@ -96,7 +96,7 @@ SEScalarEnergy& SEThermalCompartment::GetHeat()
 double SEThermalCompartment::GetHeat(const EnergyUnit& unit) const
 {
   if (m_Nodes.HasMapping())
-    return m_Nodes.GetQuantity(unit);      
+    return m_Nodes.GetQuantity(unit);
   if (!m_Children.empty())
   {
     double heat = 0;
@@ -155,7 +155,7 @@ double SEThermalCompartment::GetTemperature(const TemperatureUnit& unit) const
     return m_Nodes.GetPotential(unit);
   if (!m_Children.empty())
   {
-    double temperature = 0;    
+    double temperature = 0;
     if (HasHeat())
     {
       double totalHeat_J = GetHeat(EnergyUnit::J);
@@ -321,6 +321,8 @@ void SEThermalCompartment::AddLink(SEThermalCompartmentLink& link)
 void SEThermalCompartment::RemoveLink(SEThermalCompartmentLink& link)
 {
   Remove(m_Links, &link);
+  Remove(m_IncomingLinks, &link);
+  Remove(m_OutgoingLinks, &link);
 }
 void SEThermalCompartment::RemoveLinks()
 {

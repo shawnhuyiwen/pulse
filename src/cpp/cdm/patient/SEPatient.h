@@ -18,7 +18,7 @@ public:
   virtual ~SEPatient();
 
   virtual void Clear();
-  virtual void Copy(const SEPatient& src);
+  void Copy(const SEPatient& src);
 
   bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
@@ -75,6 +75,10 @@ public:
   virtual SEScalar0To1& GetBodyFatFraction();
   virtual double GetBodyFatFraction() const;
 
+  virtual bool HasBodyMassIndex() const;
+  virtual SEScalar& GetBodyMassIndex();
+  virtual double GetBodyMassIndex() const;
+
   virtual bool HasDiastolicArterialPressureBaseline() const;
   virtual SEScalarPressure& GetDiastolicArterialPressureBaseline();
   virtual double GetDiastolicArterialPressureBaseline(const PressureUnit& unit) const;
@@ -119,6 +123,10 @@ public:
   virtual SEScalarPressure& GetMeanArterialPressureBaseline();
   virtual double GetMeanArterialPressureBaseline(const PressureUnit& unit) const;    
 
+  virtual bool HasPulsePressureBaseline() const;
+  virtual SEScalarPressure& GetPulsePressureBaseline();
+  virtual double GetPulsePressureBaseline(const PressureUnit& unit) const;  
+
   virtual bool HasResidualVolume() const;
   virtual SEScalarVolume& GetResidualVolume();
   virtual double GetResidualVolume(const VolumeUnit& unit) const;
@@ -160,6 +168,7 @@ protected:
   SEScalarLength*            m_Height;
   SEScalarMassPerVolume*     m_BodyDensity;
   SEScalar0To1*              m_BodyFatFraction;
+  SEScalar*                  m_BodyMassIndex;
   SEScalarMass*              m_LeanBodyMass;
   SEScalarMass*              m_IdealBodyWeight;
 
@@ -172,6 +181,7 @@ protected:
   SEScalarPressure*          m_DiastolicArterialPressureBaseline;
   SEScalarFrequency*         m_HeartRateBaseline;
   SEScalarPressure*          m_MeanArterialPressureBaseline;
+  SEScalarPressure*          m_PulsePressureBaseline;
   SEScalarFrequency*         m_RespirationRateBaseline;
   SEScalarPressure*          m_SystolicArterialPressureBaseline;
   SEScalarVolume*            m_TidalVolumeBaseline;
@@ -186,3 +196,12 @@ protected:
   SEScalarVolume*            m_TotalLungCapacity;
   SEScalarVolume*            m_VitalCapacity;
 };
+
+inline std::ostream& operator<< (std::ostream& out, const SEPatient& p)
+{
+  std::string s;
+  if (!p.SerializeToString(s, eSerializationFormat::TEXT))
+    p.Error("Unable to serialize patient");
+  out << s;
+  return out;
+}

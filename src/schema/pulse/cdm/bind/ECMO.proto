@@ -1,0 +1,34 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "com.kitware.pulse.cdm.bind";
+option csharp_namespace = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Properties.proto";
+import "pulse/cdm/bind/Substance.proto";
+
+
+enum eECMOCannulationLocation
+{
+  NullCannulationLocation        = 0;
+  InternalJugular                = 1;
+  RightFemoralVein               = 2;
+  LeftFemoralVein                = 3;
+  RightSubclavianVein            = 4;
+  LeftSubclavianVein             = 5;
+}
+message ECMOSettingsData
+{
+  eECMOCannulationLocation              InflowLocation                            = 1;/**<< @brief @ref eECMOCannulationLocation */
+  eECMOCannulationLocation              OutflowLocation                           = 2;/**<< @brief @ref eECMOCannulationLocation */
+  ScalarVolumeData                      OxygenatorVolume                          = 3;/**<< @brief Includes the volume in the device and tubing. */
+  ScalarVolumePerTimeData               TransfusionFlow                           = 4;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
+  
+  string                                SubstanceCompound                         = 5;/**<< @brief Add the compound substance concentrations to the oxygenator. */
+  repeated SubstanceConcentrationData   SubstanceConcentrations                   = 6;/**<< @brief Set specific substance concentrations in the oxygenator. */
+}
+
+message ECMOData
+{
+  ECMOSettingsData                      Settings                                  = 1;
+}

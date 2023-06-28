@@ -33,17 +33,17 @@ namespace pulse
     TissueModel(Data& data);
     virtual ~TissueModel();
 
-    void Clear();
+    void Clear() override;
 
     // Set members to a stable homeostatic state
-    void Initialize();
+    void Initialize() override;
     // Set pointers and other member variables common to both homeostatic initialization and loading a state
-    void SetUp();
+    void SetUp() override;
 
-    void AtSteadyState();
-    void PreProcess();
-    void Process(bool solve_and_transport = true);
-    void PostProcess(bool solve_and_transport = true);
+    void AtSteadyState() override;
+    void PreProcess() override;
+    void Process(bool solve_and_transport = true) override;
+    void PostProcess(bool solve_and_transport = true) override;
 
   protected:
     void ComputeExposedModelParameters() override;
@@ -69,7 +69,7 @@ namespace pulse
     double PerfusionLimitedDiffusion(SETissueCompartment& tissue, SELiquidCompartment& vascular, const SESubstance& sub, double partitionCoeff, double timestep_s);
     void AlveolarPartialPressureGradientDiffusion(SEGasCompartment& pulmonary, SELiquidCompartment& vascular, SESubstance& sub, double DiffusingCapacityO2_mL_Per_s_mmHg, double timestep_s);
 
-    double MoveMassByInstantDiffusion(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub, double timestep_s);
+    double MoveMassByInstantDiffusion(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub);
     double MoveMassBySimpleDiffusion(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub, double permeabilityCofficient_mL_Per_s, double timestep_s);
     double MoveMassByFacilitatedDiffusion(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub, double combinedCoefficient_g_Per_s, double timestep_s);
     double MoveMassByActiveTransport(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub, double DiffusingCapacityO2_mL_Per_s_mmHg, double timestep_s);
@@ -81,6 +81,8 @@ namespace pulse
     double m_RestingBloodInsulin_mg_Per_mL;
     double m_RestingPatientMass_kg;
     double m_RestingFluidMass_kg;
+    // Cache of flows to use to calculate consumption/production during cardiac arrest
+    std::map<SELiquidCompartment*, double> m_CardiacArrestVascularFlows_ml_per_min;
 
     // Stateless member variable (Set in SetUp())
     double m_AlbuminProdutionRate_g_Per_s;
@@ -122,6 +124,7 @@ namespace pulse
     SELiquidCompartment* m_LeftPulmonaryCapillaries;
     SELiquidCompartment* m_RightPulmonaryCapillaries;
 
+    std::vector<SEFluidCircuitPath*>                     m_VascularResistances;
     std::map<SETissueCompartment*, SELiquidCompartment*> m_TissueToVascular;
     std::vector<SETissueCompartment*>                    m_ConsumptionProdutionTissues;
   };

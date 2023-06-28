@@ -85,17 +85,7 @@ namespace pulse { namespace human_adult_whole_body
     const double normalTotalCO2_mM = 28.86;
     double currentTotalO2_mM;
     double currentTotalCO2_mM;
-    const double normalDissolvedCO2_gPerL = 0.05526; // 0.05526;
-    const double normalDissolvedO2_gPerL = 0.004287; // 0.004287;
-    const double normalBicarbonate_gPerL = 0.026 * 61.0168;
     const double normalHgb_mM = 1.55;
-    const double percentNothingBound = 0.01;
-    const double percentO2OnlyBound = 0.73;
-    const double percentO2CO2Bound = 0.25;
-    const double percentCO2Bound = 0.01;
-    //double O2ppGuess_mmHg = 100.0;
-    //double CO2ppGuess_mmHg = 1000.0*normalDissolvedCO2_gPerL/(44.01*0.0314);
-    //normalDissolvedCO2_gPerL = CO2ppGuess_mmHg*(44.01*0.0314) / 1000.0;
 
     SEScalarMassPerVolume   albuminConcentration;
     SEScalar0To1        hematocrit;
@@ -681,12 +671,10 @@ namespace pulse { namespace human_adult_whole_body
     strongIonDifference.SetValue(41.0, AmountPerVolumeUnit::mmol_Per_L);
     phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
 
-    double phValue = 0.0;
     double testID = 1.0;
 
     //extreme values: 
     std::vector<double> tempValues_C = { 0.0 , 100.0 };
-    std::vector<double> pHValues = { 5.0, 9.0 };
     std::vector<double> saturationValues = { 0.0 , 100.0 };
     std::vector<double> strongIonValues = { 20.0, 50.0 };
     std::vector<double> PhosphateValues = { 2.0 , 6.0 };
@@ -731,7 +719,6 @@ namespace pulse { namespace human_adult_whole_body
                       bodyTemp.SetValue(tempValues_C[i], TemperatureUnit::C);
                       strongIonDifference.SetValue(strongIonValues[k], AmountPerVolumeUnit::mmol_Per_L);
                       phosphate.SetValue(PhosphateValues[m], AmountPerVolumeUnit::mmol_Per_L);
-                      phValue = pHValues[j];
                       normalDissolvedCO2_gPerL = normalDissolvedCO2Values_gPerL[p];
                       normalDissolvedO2_gPerL = normalDissolvedO2Values_gPerL[q];
                       normalBicarbonate_gPerL = normalBicarbonateValues_gPerL[r];
@@ -839,6 +826,9 @@ namespace pulse { namespace human_adult_whole_body
     case RESPIRATORY_ALKALOSIS:
       testCase.SetName("RespiratoryAlkalosis");
       break;
+    default:
+      testCase.Error("Unsupported blood compartment");
+      return;
     };
 
     //Create the compartment

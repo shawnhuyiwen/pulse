@@ -43,20 +43,20 @@ namespace pulse
     CardiovascularModel(Data& data);
     virtual ~CardiovascularModel();
 
-    void Clear();
+    void Clear() override;
 
     // Set members to a stable homeostatic state
-    void Initialize();
+    void Initialize() override;
     // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
-    void SetUp();
+    void SetUp() override;
 
     void SetHeartRhythm(eHeartRhythm Rhythm) override;
     void SetHeartRhythm(eHeartRhythm Rhythm, bool force);
 
-    void AtSteadyState();
-    void PreProcess();
-    void Process(bool solve_and_transport=true);
-    void PostProcess(bool solve_and_transport=true);
+    void AtSteadyState() override;
+    void PreProcess() override;
+    void Process(bool solve_and_transport=true) override;
+    void PostProcess(bool solve_and_transport=true) override;
 
   protected:
     void ComputeExposedModelParameters() override;
@@ -82,13 +82,16 @@ namespace pulse
     void ProcessActions();
     //Action methods
     /**/void CPR();
-    /****/void CalculateAndSetCPRcompressionForce();
+    /****/double CalculateDepthForce(double compressionDepth_cm);
+    /****/double ShapeCPRForce(double compressionForce_N);
+    /****/void   ApplyCPRForce(double compressionForce_N);
     /**/void Arrhythmia();
     /**/void Hemorrhage();
-    /**/void InternalHemorrhagePressureApplication();
     /**/void PericardialEffusion();
     /**/void PericardialEffusionPressureApplication();
     /**/void TraumaticBrainInjury();
+    void UpdatePulmonaryCapillaries();
+    void CalculateHemothorax();
     //Respiratory effects
     void CalculatePleuralCavityVenousEffects();
 
@@ -98,10 +101,11 @@ namespace pulse
     // Serializable member variables (Set in Initialize and in schema)
     //Driver
     bool   m_StartSystole;
-    bool   m_StartCardiacArrest; // Can't go into cardiac arrest during the middle of a cycle
     bool   m_HeartFlowDetected;
+    bool   m_FullyCompressedHeart;
+    double m_StabilizedHeartRateBaseline_Per_min; // store for moving between arrhytmias
+    double m_StabilizedMeanArterialPressureBaseline_mmHg; // store for moving between arrhytmias
     double m_CurrentDriverCycleTime_s;
-    double m_CurrentCardiacCycleTime_s;
     double m_DriverCyclePeriod_s;
     double m_LeftHeartElastanceModifier;// from Heart Failure and such
     double m_LeftHeartElastance_mmHg_Per_mL;
@@ -111,16 +115,24 @@ namespace pulse
     double m_RightHeartElastanceMax_mmHg_Per_mL;
     double m_RightHeartElastanceMin_mmHg_Per_mL;
     // Arrhythmia
-    double m_ArrhythmiaHeartElastanceModifier; //need to apply a modifier for to the elastance for some arrhythmias
-    double m_ArrhythmiaVascularToneModifier;  //need to modify the vascular tone to represent some of the pressure drop
-    double m_StabilizedHeartRateBaseline_Per_min; // store for moving between arrhytmias
-    double m_StabilizedMAPBaseline_mmHg; //store for moving between arrhythmias
-    //CPR
-    double m_CompressionTime_s;
-    double m_CompressionRatio;
-    double m_CompressionPeriod_s;
-    // Vitals and Averages
+    eSwitch m_EnableFeedbackAfterArrhythmiaTrasition;
+    bool   m_StartCardiacArrest; // Can't go into cardiac arrest during the middle of a cycle
+    bool   m_TransitionArrhythmia;
     double m_CardiacArrestVitalsUpdateTimer_s;
+    // Transition Modifiers
+    SETemporalInterpolator* m_HeartRateBaseline_Per_min;
+    SETemporalInterpolator* m_HeartComplianceModifier;
+    SETemporalInterpolator* m_AortaComplianceModifier;
+    SETemporalInterpolator* m_VenaCavaComplianceModifier;
+    SETemporalInterpolator* m_PulmonaryComplianceModifier;
+    SETemporalInterpolator* m_SystemicVascularResistanceModifier;
+    SETemporalInterpolator* m_SystemicVascularComplianceModifier;
+    //CPR
+    double m_CompressionFrequencyCurrentTime_s;
+    double m_CompressionFrequencyDuration_s;
+    double m_CompressionPeriod_s;
+    double m_CompressionPeriodCurrentTime_s;
+    // Vitals and Averages
     double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
     double m_CardiacCycleAortaPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
     double m_CardiacCycleAortaPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
@@ -132,6 +144,10 @@ namespace pulse
     double m_CardiacCycleRightHeartPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
     double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
     double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
+    //Needed for expanded pulmonary methodology
+    std::vector<double> m_LeftCardiacCyclePerfusionVolumes_mL;
+    std::vector<double> m_RightCardiacCyclePerfusionVolumes_mL;
+
     SERunningAverage* m_CardiacCycleArterialPressure_mmHg;
     SERunningAverage* m_CardiacCycleArterialCO2PartialPressure_mmHg;
     SERunningAverage* m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg;
@@ -141,79 +157,71 @@ namespace pulse
     SERunningAverage* m_CardiacCycleCentralVenousPressure_mmHg;
     SERunningAverage* m_CardiacCycleSkinFlow_mL_Per_s;
 
+
     // Stateless member variable (Set in SetUp())
 
     // Hemorrhage
     struct HemorrhageTrack
     {
       SELiquidCompartment* Compartment=nullptr;
-      std::vector<SEFluidCircuitNode*> Nodes;
-      std::map<SEFluidCircuitPath*, SELiquidCompartmentLink*> Paths2Links;
-      short NumNodesWithVolume=0;
+      std::map<SELiquidCompartment* , std::vector<SELiquidCompartmentLink*>> CmptHemorrhageLinks;
     };
-    std::map<SEHemorrhage*, HemorrhageTrack*>m_HemorrhageTrack;
+    std::map<SEHemorrhage*, HemorrhageTrack*> m_HemorrhageTrack;
+    SEFluidCircuitPath*                       m_InternalHemorrhageToAorta;
 
-    double                           m_minIndividialSystemicResistance_mmHg_s_Per_mL;
+    double                           m_MAPCollapse_mmHg;
+    double                           m_MinIndividialSystemicResistance_mmHg_s_Per_mL;
   
-    SEFluidCircuitCalculator*        m_circuitCalculator;
-    SELiquidTransporter*             m_transporter;
+    SEFluidCircuitCalculator*        m_CircuitCalculator;
+    SELiquidTransporter*             m_Transporter;
 
     SEFluidCircuit*                  m_CirculatoryCircuit;
     SELiquidCompartmentGraph*        m_CirculatoryGraph;
 
-    SEFluidCircuitNode*              m_MainPulmonaryArteries;
-    SEFluidCircuitNode*              m_LeftHeart2;
-    SEFluidCircuitNode*              m_Ground;
+    SEFluidCircuitNode*              m_GroundNode;
+    SEFluidCircuitNode*              m_AbdominalCavityNode;
+    
+    SEFluidCircuitPath*              m_AortaToBrain;
+    SEFluidCircuitPath*              m_AortaToMyocardium;
+    SEFluidCircuitPath*              m_AortaCompliancePath;
+    SEFluidCircuitPath*              m_AortaResistancePath;
+    SEFluidCircuitNode*              m_LeftPulmonaryVeinsNode;
+    SEFluidCircuitNode*              m_RightPulmonaryVeinsNode;
 
-    SEFluidCircuitPath*              m_AortaCompliance;
-    SEFluidCircuitPath*              m_AortaResistance;
-    SEFluidCircuitPath*              m_VenaCavaCompliance;
-    SEFluidCircuitPath*              m_RightHeartResistance;
+    SEFluidCircuitPath*              m_VenaCavaCompliancePath;
 
-    SEFluidCircuitPath*              m_LeftPulmonaryArteriesToVeins;
-    SEFluidCircuitPath*              m_LeftPulmonaryArteriesToCapillaries;
-    SEFluidCircuitPath*              m_RightPulmonaryArteriesToVeins;
-    SEFluidCircuitPath*              m_RightPulmonaryArteriesToCapillaries;
+    SEFluidCircuitPath*              m_BrainToVenaCava;
+    SEFluidCircuitPath*              m_MyocardiumToVenaCava;
 
-    SEFluidCircuitPath*              m_InternalHemorrhageToAorta;
-    SEFluidCircuitPath*              m_pAortaToBone;
-    SEFluidCircuitPath*              m_pAortaToBrain;
-    SEFluidCircuitPath*              m_pBrainToVenaCava;
-    SEFluidCircuitPath*              m_pAortaToLiver;
-    SEFluidCircuitPath*              m_pAortaToLeftKidney;
-    SEFluidCircuitPath*              m_pAortaToLargeIntestine;
-    SEFluidCircuitPath*              m_pAortaToMuscle;
-    SEFluidCircuitPath*              m_pMuscleToVenaCava;
-    SEFluidCircuitPath*              m_pAortaToMyocardium;
-    SEFluidCircuitPath*              m_pMyocardiumToVenaCava;
-    SEFluidCircuitPath*              m_pAortaToRightKidney;
-    SEFluidCircuitPath*              m_pAortaToSkin;
-    SEFluidCircuitPath*              m_pAortaToSmallIntestine;
-    SEFluidCircuitPath*              m_pAortaToSplanchnic;
-    SEFluidCircuitPath*              m_pAortaToSpleen;
+    SEFluidCircuitPath*              m_LeftPulmonaryVeinsLeak;
+    SEFluidCircuitPath*              m_RightPulmonaryVeinsLeak;
 
-    SEFluidCircuitPath*              m_pGndToPericardium;
-    SEFluidCircuitPath*              m_pPericardiumToGnd;
-    SEFluidCircuitPath*              m_pRightHeartToGnd;
-    SEFluidCircuitPath*              m_pRightHeart;
-    SEFluidCircuitPath*              m_pLeftHeartToGnd;
-    SEFluidCircuitPath*              m_pLeftHeart;
+    SEFluidCircuitPath*              m_GndToPericardium;
+    SEFluidCircuitPath*              m_PericardiumToGnd;
+
+    SEFluidCircuitPath*              m_RightHeartToGnd;
+    SEFluidCircuitPath*              m_RightHeartCompliancePath;
+    SEFluidCircuitPath*              m_RightHeartResistancePath;
+
+    SEFluidCircuitPath*              m_LeftHeartToGnd;
     SEFluidCircuitPath*              m_LeftHeartToAorta;
+    SEFluidCircuitPath*              m_LeftHeartCompliancePath;
 
-    SEFluidCircuitPath*              m_pBrainResistanceUpstream;
-    SEFluidCircuitPath*              m_pBrainResistanceDownstream;
+    SEFluidCircuitPath*              m_BrainResistanceUpstreamPath;
+    SEFluidCircuitPath*              m_BrainResistanceDownstreamPath;
 
-    SEFluidCircuitPath*              m_leftRenalArteryPath;
-    SEFluidCircuitPath*              m_rightRenalArteryPath;
+    SEFluidCircuitPath*              m_GndToAbdominalCavity;
+    SEFluidCircuitPath*              m_AbdominalCavityToGnd;
 
-    SEFluidCircuitPath*              m_pGndToAbdominalCavity;
-    SEFluidCircuitPath*              m_pAbdominalCavityToGnd;
-  
+    SEFluidCircuitPath*              m_LeftRenalArteryPath;
+    SEFluidCircuitPath*              m_RightRenalArteryPath;
+
+    SELiquidCompartment*             m_Abdomen;
     SELiquidCompartment*             m_AbdominalCavity;
     SELiquidCompartment*             m_Aorta;
     SELiquidSubstanceQuantity*       m_AortaCO2;
     SELiquidCompartment*             m_Brain;
-    SELiquidCompartment*             m_Groundcmpt;
+    SELiquidCompartment*             m_Ground;
     SELiquidCompartment*             m_LeftHeart;
     SELiquidCompartment*             m_LeftPulmonaryCapillaries;
     SELiquidCompartment*             m_LeftPulmonaryArteries;
@@ -225,12 +233,24 @@ namespace pulse
     SELiquidCompartment*             m_RightPulmonaryVeins;
     SELiquidCompartment*             m_VenaCava;
 
-    SEGasCompartment*                m_leftPleuralCavity;
-    SEGasCompartment*                m_rightPleuralCavity;
+    SEGasCompartment*                m_LeftPleuralCavity;
+    SEGasCompartment*                m_RightPleuralCavity;
     SEGasCompartment*                m_PleuralCavity;
     SEGasCompartment*                m_Ambient;
 
-    std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
-    std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_HeartCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_AortaCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_VenaCavaCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_PulmonaryCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_SystemicCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_SystemicResistancePaths;
+    std::vector<SEFluidCircuitPath*> m_MuscleResistancePaths;
+    std::vector<SEFluidCircuitPath*> m_SkinPaths;
+
+    //Needed for expanded pulmonary methodology
+    std::vector<SEFluidCircuitPath*> m_LeftPulmonaryArteriesToVeins;
+    std::vector<SEFluidCircuitPath*> m_LeftPulmonaryArteriesToCapillaries;
+    std::vector<SEFluidCircuitPath*> m_RightPulmonaryArteriesToVeins;
+    std::vector<SEFluidCircuitPath*> m_RightPulmonaryArteriesToCapillaries;
   };
 END_NAMESPACE

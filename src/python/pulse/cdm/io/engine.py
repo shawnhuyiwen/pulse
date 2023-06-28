@@ -22,6 +22,7 @@ from pulse.cdm.io.patient_actions import *
 from pulse.cdm.io.patient_conditions import *
 from pulse.cdm.io.environment_actions import *
 from pulse.cdm.io.environment_conditions import *
+from pulse.cdm.io.ecmo_actions import *
 from pulse.cdm.io.mechanical_ventilator_actions import *
 
 def serialize_event_change_list_to_bind(src: [], dst: EventChangeListData):
@@ -195,12 +196,16 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_bronchoconstriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
                 dst.AnyAction.append(any_action)
                 continue
-            if isinstance(action, SEChestCompressionForce):
-                serialize_chest_compression_force_to_bind(action, any_action.PatientAction.ChestCompressionForce)
+            if isinstance(action, SEChestCompression):
+                serialize_chest_compression_to_bind(action, any_action.PatientAction.ChestCompression)
                 dst.AnyAction.append(any_action)
                 continue
-            if isinstance(action, SEChestCompressionForceScale):
-                serialize_chest_compression_force_scale_to_bind(action, any_action.PatientAction.ChestCompressionForceScale)
+            if isinstance(action, SEChestCompressionInstantaneous):
+                serialize_chest_compression_instantaneous_to_bind(action, any_action.PatientAction.ChestCompressionInstantaneous)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEChestCompressionAutomated):
+                serialize_chest_compression_automated_to_bind(action, any_action.PatientAction.ChestCompressionAutomated)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEChestOcclusiveDressing):
@@ -229,6 +234,10 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 continue
             if isinstance(action, SEHemorrhage):
                 serialize_hemorrhage_to_bind(action, any_action.PatientAction.Hemorrhage)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEHemothorax):
+                serialize_hemothorax_to_bind(action, any_action.PatientAction.Hemothorax)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEImpairedAlveolarExchangeExacerbation):
@@ -287,10 +296,15 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_tension_pneumothorax_to_bind(action, any_action.PatientAction.TensionPneumothorax)
                 dst.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SETubeThoracostomy):
+                serialize_tube_thoracostomy_to_bind(action, any_action.PatientAction.TubeThoracostomy)
+                dst.AnyAction.append(any_action)
+                continue
             if isinstance(action, SEUrinate):
                 serialize_urinate_to_bind(action, any_action.PatientAction.Urinate)
                 dst.AnyAction.append(any_action)
                 continue
+            print("Uknown Patient Action")
         if isinstance(action, SEEnvironmentAction):
             if isinstance(action, SEChangeEnvironmentalConditions):
                 serialize_change_environmental_conditions_to_bind(action, any_action.EnvironmentAction.ChangeEnvironmentalConditions)
@@ -329,6 +343,11 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_mechanical_ventilator_leak_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorLeak)
                 dst.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SEECMOConfiguration):
+                serialize_ecmo_configuration_to_bind(action, any_action.EquipmentAction.ECMOConfiguration)
+                dst.AnyAction.append(any_action)
+                continue
+            print("Unknown Equipment Action")
 
 def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
     action_list = ActionListData()
@@ -378,6 +397,8 @@ def serialize_patient_configuration_from_bind(src: PatientConfigurationData, dst
 
 # Data Requests and Manager
 def serialize_data_request_to_bind(src: SEDataRequest, dst: DataRequestData):
+    if src.has_action_name():
+        dst.ActionName = src.get_action_name()
     if src.has_compartment_name():
         dst.CompartmentName = src.get_compartment_name()
     if src.has_substance_name():

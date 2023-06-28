@@ -12,13 +12,13 @@ def HowTo_AcuteStress():
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.pbb", None):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None):
         print("Unable to load initial state file")
         return
 
     # Get some data from the engine
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
     acute_stress = SEAcuteStress()
     acute_stress.set_comment("Patient undergoes acute stress")
@@ -28,7 +28,7 @@ def HowTo_AcuteStress():
     # Advance some time and print out the vitals
     pulse.advance_time_s(60)
     results = pulse.pull_data()
-    print(results)
+    pulse.print_results()
 
 HowTo_AcuteStress()
 

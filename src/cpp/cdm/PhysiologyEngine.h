@@ -28,6 +28,7 @@ class SETissueSystem;
 class SEEnvironment;
 class SEAnesthesiaMachine;
 class SEBagValveMask;
+class SEECMO;
 class SEElectroCardioGram;
 class SEInhaler;
 class SEMechanicalVentilator;
@@ -121,6 +122,14 @@ public:
   ///
   //--------------------------------------------------------------------------------------------------
   virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration) = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  ///
+  /// Closes out any files and resets state
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual void Clear() = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -352,6 +361,13 @@ public:
   ///
   //--------------------------------------------------------------------------------------------------
   virtual const SEBagValveMask* GetBagValveMask() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+ /// \brief
+ /// Returns the current state of the ECMO machine
+ ///
+ //--------------------------------------------------------------------------------------------------
+  virtual const SEECMO* GetECMO() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

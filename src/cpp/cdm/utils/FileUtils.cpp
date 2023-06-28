@@ -4,6 +4,8 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/utils/FileUtils.h"
 #include <iterator>
+#include <chrono>
+#include <thread>
 
    // We haven't checked which filesystem to include yet
 #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
@@ -79,13 +81,38 @@ std::string Replace(const std::string& original, const std::string& replace, con
 {
   size_t idx = 0;
   std::string s = original;
-  idx = s.find(replace);
-  if (idx != std::string::npos)
+  while (true)
   {
-    s.erase(idx, replace.length());
-    s.insert(idx, withThis);
+    idx = s.find(replace);
+    if (idx != std::string::npos)
+    {
+      s.erase(idx, replace.length());
+      s.insert(idx, withThis);
+    }
+    else
+      break;
   }
   return s;
+}
+
+void TrimFront(std::string& s)
+{
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch)
+  {
+    return !std::isspace(ch);
+  }));
+}
+void TrimBack(std::string& s)
+{
+  s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch)
+  {
+    return !std::isspace(ch);
+  }).base(), s.end());
+}
+void Trim(std::string& s)
+{
+  TrimFront(s);
+  TrimBack(s);
 }
 
 bool CreatePath(const std::string& path)
@@ -121,7 +148,7 @@ bool CreateFilePath(const std::string& filenamePath)
     if(!std::filesystem::exists(dirs))
       result = std::filesystem::create_directories(dirs, e);
   }
-  return result; // Nothing to do... 
+  return result; // Nothing to do...
 }
 
 bool WriteFile(const std::string& content, const std::string& filename)
@@ -154,7 +181,13 @@ bool IsDirectory(const std::string& dir)
   return std::filesystem::is_directory(dir);
 }
 
-void ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask)
+bool IsRelativePath(const std::string& path)
+{
+  std::filesystem::path p(path);
+  return p.is_relative();
+}
+
+void ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask, const std::string& exclusion)
 {
   std::string filename;
   if (recursive)
@@ -164,8 +197,12 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
       if (std::filesystem::exists(entry.status()) && std::filesystem::is_regular_file(entry.status()))
       {
         filename = entry.path().string();
+        std::replace(filename.begin(), filename.end(), '\\', '/');
         if (filename.find(mask) != std::string::npos)
-          files.push_back(filename);
+        {
+          if (exclusion.empty() || filename.find(exclusion) == std::string::npos)
+            files.push_back(filename);
+        }
       }
 
     }
@@ -177,10 +214,13 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
       if (std::filesystem::exists(entry.status()) && std::filesystem::is_regular_file(entry.status()))
       {
         filename = entry.path().string();
+        std::replace(filename.begin(), filename.end(), '\\', '/');
         if (filename.find(mask) != std::string::npos)
-          files.push_back(filename);
+        {
+          if (exclusion.empty() || filename.find(exclusion) == std::string::npos)
+            files.push_back(filename);
+        }
       }
-      
     }
   }
 }
@@ -190,7 +230,21 @@ void MakeDirectory(std::string const& dir)
   std::filesystem::create_directory(dir);
 }
 
-bool DeleteDirectory(const std::string &dir)
+bool DeleteFile(const std::string &dir, short retry)
+{
+  if (std::remove(dir.c_str()) != 0)
+  {
+    for (int r=0; r<retry; r++)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      if (std::remove(dir.c_str()) == 0)
+        return true;
+    }
+    return false;
+  }
+  return true;
+}
+bool DeleteDirectory(const std::string& dir)
 {
   return std::filesystem::remove_all(dir);
 }
@@ -205,23 +259,113 @@ bool FileExists(const std::string& filename)
   return std::filesystem::exists(filename);
 }
 
+bool FindFileInFilePath(const std::string& filepath, const std::string& find, std::string& found)
+{
+  std::string filepathf = filepath;
+  if (filepathf.back() != '/')
+    filepathf += "/";
+
+  // Treat empty string as current working directory
+  if (filepathf.empty())
+    filepathf = "./";
+
+  if (!IsRelativePath(find))
+  {
+    if (FileExists(find))
+    {
+      found = find;
+      return true;
+    }
+    return false;
+  }
+
+  std::string path;
+  SplitPath(filepathf, path);
+
+  while (!path.empty())
+  {
+    std::string possFilePath = path + find;
+    if (FileExists(possFilePath))
+    {
+      found = possFilePath;
+      return true;
+    }
+
+    size_t slash;
+    if (path.length() < 2 || (slash = path.find_last_of("/", path.length() - 2)) == std::string::npos)
+      break;
+    path = path.substr(0, ++slash);
+  }
+
+  return false;
+}
+
 bool IsJSONFile(const std::string& filename)
 {
   size_t ext = filename.find_last_of(".");
+  if (ext == std::string::npos)
+    return false;
   return filename.substr(ext) == ".json";
 }
 
-bool SplitFilenamePath(const std::string& filepath, std::string& filename)
+std::string CDM_DECL RelativePathFrom(const std::string& dir, const std::string& filepath)
 {
-  auto slash = filepath.find_last_of("/");
+  std::string dirf = dir;
+  std::replace(dirf.begin(), dirf.end(), '\\', '/');
+
+  std::string filepathf = filepath;
+  std::replace(filepathf.begin(), filepathf.end(), '\\', '/');
+
+  if (filepathf.rfind(dirf,0) != std::string::npos)
+  {
+    auto slash = filepathf.find_last_of("/");
+    return filepathf.substr(dir.length(),slash-dir.length());
+  }
+  return "";
+}
+
+std::uintmax_t CDM_DECL FileSize(const std::string& filename)
+{
+  std::filesystem::path fp = filename;
+  return std::filesystem::file_size(fp);
+}
+
+void SplitPath(const std::string& filepath, std::string& path)
+{
+  std::string filename;
+  std::string ext;
+  SplitPathFilenameExt(filepath, path, filename, ext);
+}
+void SplitFilename(const std::string& filepath, std::string& filename)
+{
+  std::string path;
+  std::string ext;
+  SplitPathFilenameExt(filepath, path, filename, ext);
+  filename = filename + ext;
+}
+void SplitPathFilename(const std::string& filepath, std::string& path, std::string& filename)
+{
+  std::string ext;
+  SplitPathFilenameExt(filepath, path, filename, ext);
+  filename = filename + ext;
+}
+void SplitFilenameExt(const std::string& filepath, std::string& filename, std::string& ext)
+{
+  std::string path;
+  SplitPathFilenameExt(filepath, path, filename, ext);
+}
+void SplitPathFilenameExt(const std::string& filepath, std::string& path, std::string& filename, std::string& ext)
+{
+  std::string filepathf = filepath;
+  std::replace(filepathf.begin(), filepathf.end(), '\\', '/');
+
+  // Get the filename
+  auto slash = filepathf.find_last_of("/");
   (slash == std::string::npos) ?
     slash = 0 : slash++;
-  filename = filepath.substr(slash);
-  return true;
-}
-bool SplitFilenameExt(const std::string& filepath, std::string& filename, std::string& ext)
-{
-  SplitFilenamePath(filepath, filename);
+  filename = filepathf.substr(slash);
+
+  // Split off the ext from the filename
   auto ePos = filename.find_last_of(".");
   if (ePos != std::string::npos)
   {
@@ -233,5 +377,10 @@ bool SplitFilenameExt(const std::string& filepath, std::string& filename, std::s
     // No extension...
     ext = "";
   }
-  return true;
+
+  // Get the path
+  if (slash == 0)
+    path = "./";
+  else
+    path = filepathf.substr(0, slash);
 }

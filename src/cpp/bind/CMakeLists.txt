@@ -12,6 +12,8 @@ add_library_ex(DataModelBindings
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Circuit.pb.h"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Compartment.pb.h"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Conditions.pb.h"
+    "${DST_ROOT}/cpp/${CDM_PACKAGE}/ECMO.pb.h"
+    "${DST_ROOT}/cpp/${CDM_PACKAGE}/ECMOActions.pb.h"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/ElectroCardioGram.pb.h"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Engine.pb.h"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Enums.pb.h"
@@ -46,6 +48,7 @@ add_library_ex(DataModelBindings
 # study bindings
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/Hydrocephalus.pb.h"
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/MultiplexVentilation.pb.h"
+    "${DST_ROOT}/cpp/${STUDY_PACKAGE}/PatientVariability.pb.h"
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/SensitivityAnalysis.pb.h"
   CPP_FILES
 # cdm bindings
@@ -58,6 +61,8 @@ add_library_ex(DataModelBindings
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Circuit.pb.cc"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Compartment.pb.cc"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Conditions.pb.cc"
+    "${DST_ROOT}/cpp/${CDM_PACKAGE}/ECMO.pb.cc"
+    "${DST_ROOT}/cpp/${CDM_PACKAGE}/ECMOActions.pb.cc"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/ElectroCardioGram.pb.cc"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Engine.pb.cc"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Enums.pb.cc"
@@ -92,6 +97,7 @@ add_library_ex(DataModelBindings
 # study bindings
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/Hydrocephalus.pb.cc"
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/MultiplexVentilation.pb.cc"
+    "${DST_ROOT}/cpp/${STUDY_PACKAGE}/PatientVariability.pb.cc"
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/SensitivityAnalysis.pb.cc"
   PRIVATE_DEPENDS
     protobuf::libprotobuf

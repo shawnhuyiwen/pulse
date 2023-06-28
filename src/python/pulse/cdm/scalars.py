@@ -1,6 +1,8 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import PyPulse
+
 class SEScalar():
     __slots__ = ["_value"]
 
@@ -74,6 +76,8 @@ class SEScalarUnit():
 
     def __repr__(self):
         return "({})".format(self._string)
+    def __str__(self):
+        return self._string
 
 class AreaUnit(SEScalarUnit):
     @staticmethod
@@ -108,7 +112,7 @@ class SEScalarArea(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: AreaUnit):
         if isinstance(units, AreaUnit):
@@ -151,7 +155,7 @@ class SEScalarElectricPotential(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: ElectricPotentialUnit):
         if isinstance(units, ElectricPotentialUnit):
@@ -200,7 +204,7 @@ class SEScalarEquivalentWeightPerVolume(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: EquivalentWeightPerVolumeUnit):
         if isinstance(units, EquivalentWeightPerVolumeUnit):
@@ -246,7 +250,7 @@ class SEScalarForce(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: ForceUnit):
         if isinstance(units, ForceUnit):
@@ -294,7 +298,7 @@ class SEScalarFrequency(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: FrequencyUnit):
         if isinstance(units, FrequencyUnit):
@@ -342,7 +346,7 @@ class SEScalarHeatResistanceArea(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: HeatResistanceAreaUnit):
         if isinstance(units, HeatResistanceAreaUnit):
@@ -390,7 +394,7 @@ class SEScalarInversePressure(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: InversePressureUnit):
         if isinstance(units, InversePressureUnit):
@@ -444,7 +448,7 @@ class SEScalarLength(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: LengthUnit):
         if isinstance(units, LengthUnit):
@@ -501,7 +505,7 @@ class SEScalarLengthPerTime(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: LengthPerTimeUnit):
         if isinstance(units, LengthPerTimeUnit):
@@ -553,7 +557,7 @@ class SEScalarMass(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: MassUnit):
         if isinstance(units, MassUnit):
@@ -622,7 +626,7 @@ class SEScalarMassPerAmount(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: MassPerAmountUnit):
         if isinstance(units, MassPerAmountUnit):
@@ -661,7 +665,7 @@ class SEScalarMassPerAreaTime(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: MassPerAreaTimeUnit):
         if isinstance(units, MassPerAreaTimeUnit):
@@ -721,7 +725,7 @@ class SEScalarMassPerTime(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: MassPerTimeUnit):
         if isinstance(units, MassPerTimeUnit):
@@ -799,7 +803,7 @@ class SEScalarMassPerVolume(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: MassPerVolumeUnit):
         if isinstance(units, MassPerVolumeUnit):
@@ -853,7 +857,7 @@ class SEScalarPower(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: PowerUnit):
         if isinstance(units, PowerUnit):
@@ -904,7 +908,7 @@ class SEScalarPressure(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: PressureUnit):
         if isinstance(units, PressureUnit):
@@ -950,7 +954,7 @@ class SEScalarPressurePerVolume(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: PressurePerVolumeUnit):
         if isinstance(units, PressurePerVolumeUnit):
@@ -1004,7 +1008,7 @@ class SEScalarPressureTimePerVolume(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: PressureTimePerVolumeUnit):
         if isinstance(units, PressureTimePerVolumeUnit):
@@ -1053,7 +1057,7 @@ class SEScalarTemperature(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: TemperatureUnit):
         if isinstance(units, TemperatureUnit):
@@ -1104,7 +1108,7 @@ class SEScalarTime(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: TimeUnit):
         if isinstance(units, TimeUnit):
@@ -1152,7 +1156,7 @@ class SEScalarVolume(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: VolumeUnit):
         if isinstance(units, VolumeUnit):
@@ -1203,7 +1207,7 @@ class SEScalarVolumePerPressure(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: VolumePerPressureUnit):
         if isinstance(units, VolumePerPressureUnit):
@@ -1263,7 +1267,7 @@ class SEScalarVolumePerTime(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: VolumePerTimeUnit):
         if isinstance(units, VolumePerTimeUnit):
@@ -1314,7 +1318,7 @@ class SEScalarVolumePerTimeMass(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: VolumePerTimeMassUnit):
         if isinstance(units, VolumePerTimeMassUnit):
@@ -1362,7 +1366,7 @@ class SEScalarVolumePerTimePressure(SEScalarQuantity):
         if self._units is units:
             return self._value
         else:
-            raise Exception("Unit converter not connected")
+            return PyPulse.convert(self._value, str(self._units), str(units))
 
     def set_value(self, value: float, units: VolumePerTimePressureUnit):
         if isinstance(units, VolumePerTimePressureUnit):
@@ -1370,3 +1374,49 @@ class SEScalarVolumePerTimePressure(SEScalarQuantity):
             self._units = units
         else:
             raise Exception("Provided argument must be a VolumePerTimePressureUnit")
+
+
+def get_unit(u: str):
+    if not u:
+        return None
+
+    fns = [
+        AreaUnit.from_string,
+        ElectricPotentialUnit.from_string,
+        EquivalentWeightPerVolumeUnit.from_string,
+        ForceUnit.from_string,
+        FrequencyUnit.from_string,
+        HeatResistanceAreaUnit.from_string,
+        InversePressureUnit.from_string,
+        LengthUnit.from_string,
+        LengthPerTimeUnit.from_string,
+        MassUnit.from_string,
+        MassPerAmountUnit.from_string,
+        MassPerAreaTimeUnit.from_string,
+        MassPerTimeUnit.from_string,
+        MassPerVolumeUnit.from_string,
+        PowerUnit.from_string,
+        PressureUnit.from_string,
+        PressurePerVolumeUnit.from_string,
+        PressureTimePerVolumeUnit.from_string,
+        TemperatureUnit.from_string,
+        TimeUnit.from_string,
+        VolumeUnit.from_string,
+        VolumePerPressureUnit.from_string,
+        VolumePerTimeUnit.from_string,
+        VolumePerTimeMassUnit.from_string,
+        VolumePerTimePressureUnit.from_string,
+    ]
+    for f in fns:
+        try:
+            return f(u)
+        except:
+            pass
+
+    raise Exception(f"Provided unit string could not be identified: {u}")
+
+if __name__ == "__main__":
+    area = SEScalarArea()
+    area.set_value(5, AreaUnit.m2)
+    cm2 = area.get_value(AreaUnit.cm2)
+    print (cm2)

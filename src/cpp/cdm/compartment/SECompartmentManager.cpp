@@ -74,6 +74,7 @@ void SECompartmentManager::Clear()
   m_LiquidSubstances.clear(); 
   DELETE_VECTOR(m_LiquidGraphs);
   m_LiquidName2Graphs.clear();
+  m_CardiacCycleSampledCompartments.clear();
 
   DELETE_VECTOR(m_ThermalCompartments);
   m_ThermalName2Compartments.clear();
@@ -100,8 +101,9 @@ bool SECompartmentManager::HasCompartment(eCompartment_Type type, const std::str
     return HasThermalCompartment(name);
   case eCompartment_Type::Tissue:
     return HasTissueCompartment(name);
+  default:
+    return false;
   }
-  return false;
 }
 SECompartment* SECompartmentManager::GetCompartment(eCompartment_Type type, const std::string& name)
 {
@@ -115,8 +117,9 @@ SECompartment* SECompartmentManager::GetCompartment(eCompartment_Type type, cons
     return GetThermalCompartment(name);
   case eCompartment_Type::Tissue:
     return GetTissueCompartment(name);
+  default:
+    return nullptr;
   }
-  return nullptr;
 }
 const SECompartment* SECompartmentManager::GetCompartment(eCompartment_Type type, const std::string& name) const
 {
@@ -130,8 +133,9 @@ const SECompartment* SECompartmentManager::GetCompartment(eCompartment_Type type
     return GetThermalCompartment(name);
   case eCompartment_Type::Tissue:
     return GetTissueCompartment(name);
+  default:
+    return nullptr;
   }
-  return nullptr;
 }
 
 //////////////////////
@@ -416,6 +420,18 @@ const std::vector<SESubstance*>& SECompartmentManager::GetLiquidCompartmentSubst
   return m_LiquidSubstances;
 }
 
+void SECompartmentManager::SampleByCardiacCyle(bool CycleStart)
+{
+  for (SELiquidCompartment* cmpt : m_CardiacCycleSampledCompartments)
+    cmpt->Sample(CycleStart);
+}
+void SECompartmentManager::SampleByCardiacCyle(SELiquidCompartment& cmpt)
+{
+  if (!Contains(m_CardiacCycleSampledCompartments, cmpt))
+    m_CardiacCycleSampledCompartments.push_back(&cmpt);
+  cmpt.SampleFlow();
+}
+
 //////////////////////////
 // THERMAL COMPARTMENTS //
 //////////////////////////
@@ -495,7 +511,10 @@ SETissueCompartment& SECompartmentManager::CreateTissueCompartment(const std::st
   if (HasTissueCompartment(name))
       throw CommonDataModelException("Compartment already exists for name(" + name + ")");
 
-  SETissueCompartment* tissue = new SETissueCompartment(name, GetLogger());
+  SELiquidCompartment& extracellular = CreateLiquidCompartment(name + "Extracellular");
+  SELiquidCompartment& intracellular = CreateLiquidCompartment(name + "Intracellular");
+
+  SETissueCompartment* tissue = new SETissueCompartment(name, extracellular, intracellular, GetLogger());
   m_TissueName2Compartments[name] = tissue;
   return *tissue;
 }

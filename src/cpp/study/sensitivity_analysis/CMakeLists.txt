@@ -14,6 +14,9 @@ add_library_ex(SensitivityAnalysisEngine
   )
 set_target_properties(SensitivityAnalysisEngine PROPERTIES FOLDER "Studies//SensitivityAnalysis")
 
+if(${PROJECT_NAME}_LIBS_ONLY)
+  return()
+endif()
 add_executable_ex(SensitivityAnalysisDriver main.cpp)
 set_target_properties(SensitivityAnalysisDriver PROPERTIES FOLDER "Studies//SensitivityAnalysis")
 target_link_libraries(SensitivityAnalysisDriver SensitivityAnalysisEngine protobuf::libprotobuf)

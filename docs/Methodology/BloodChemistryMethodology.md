@@ -30,9 +30,6 @@ The Stewart approach has been the subject of criticism. Some researchers have us
 - Acid-base status 
 - %Respiratory and metabolic acid-base disturbances
 
-### Existing
-A simple oxygen-hemoglobin binding curve.
-
 @anchor bloodchemistry-approach
 ### Approach
 The Blood Chemistry system is the link between compartment-level and system-level blood constituent data. It populates system-level concentration and other data from compartment level data. 
@@ -160,14 +157,14 @@ Additionally, blood cells are not modeled. We attempt to account for the contrib
 Events
 ------
 ### Hypercapnia
-Hypercapnia occurs when the partial pressure of carbon dioxide in the blood rises to greater than 60&nbsp;mmHg @cite guyton2006medical, as is most commonly seen in respiratory conditions, such as severe airway obstruction. This condition manifests as a decrease in blood pH and an increase in cardiac output, blood pressure, and heart rate.
+Hypercapnia occurs when the partial pressure of carbon dioxide in the blood rises to greater than 60 mmHg @cite guyton2006medical, as is most commonly seen in respiratory conditions, such as severe airway obstruction. This condition manifests as a decrease in blood pH and an increase in cardiac output, blood pressure, and heart rate.
 
-The engine triggers the hypercapnia event when the partial pressure of carbon dioxide in the aorta rises above 60&nbsp;mmHg. This is a reversible condition and is considered resolved when the partial pressure falls below 57&nbsp;mmHg. This 3&nbsp;mmHg window provides a buffer to account for normal fluctuations in the model.
+The engine triggers the hypercapnia event when the partial pressure of carbon dioxide in the aorta rises above 60 mmHg. This is a reversible condition and is considered resolved when the partial pressure falls below 57 mmHg. This 3 mmHg window provides a buffer to account for normal fluctuations in the model.
 
 ### Hypoxia
-Hypoxia occurs when the partial pressure of oxygen in the blood falls below 65&nbsp;mmHg @cite Pierson2000Pathophysiology. This can be due to a number of conditions that range from heart failure to poor respiratory function. This condition manifests as a decrease in oxygen saturation, increased heart rate, increased respiratory rate, decreased tidal volume, and pulmonary hypertension.
+Hypoxia occurs when the partial pressure of oxygen in the blood falls below 65 mmHg @cite Pierson2000Pathophysiology. This can be due to a number of conditions that range from heart failure to poor respiratory function. This condition manifests as a decrease in oxygen saturation, increased heart rate, increased respiratory rate, decreased tidal volume, and pulmonary hypertension.
 
-The engine triggers the hypoxia event when the partial pressure of oxygen in the aorta falls below 65&nbsp;mmHg. This is a reversible condition and is considered resolved when the partial pressure rises above 68&nbsp;mmHg. This 3&nbsp;mmHg window provides a buffer to account for normal fluctuations in the model.
+The engine triggers the hypoxia event when the partial pressure of oxygen in the aorta falls below 65 mmHg. This is a reversible condition and is considered resolved when the partial pressure rises above 68 mmHg. This 3 mmHg window provides a buffer to account for normal fluctuations in the model.
 
 ### Hyperoxemia
 Hyperoxemia occurs when the partial pressure of oxygen in the blood rises above 120 mmHg, usually due to excessive supplemental oxygen delivery. Hyperoxemia can induce cerebral vasoconstriction, neuronal cell death, and seizures. In addition, hyperoxemia reduces the cardiac index and heart rate while increasing peripheral vascular resistance @cite gershengorn2014hyperoxemia.
@@ -191,24 +188,24 @@ There are two events in the engine related to an oxygen deficit in the brain: Br
 ### Myocardium Oxygen Deficit
 Blood flow through the coronary arteries provides required oxygen to the heart muscle. If the oxygen supply to the heart is limited through respiratory distress or some other condition, the demand for oxygen will cause dilation of the coronary arteries. By increasing the flow of blood to the heart muscle, the oxygen supply increases @cite guyton2006medical. This effect is not currently modeled in the engine, but the myocardium oxygen level is observed and an event is triggered when it becomes too low. In the future, the resistance to flow in the coronary arteries will be increased to represent blood vessel dilation, and the asystole rhythm change will be tied to the arterial partial pressure of oxygen.
 
-The engine triggers the myocardium oxygen deficit event when the partial pressure of oxygen is less than 5&nbsp;mmHg. 
+The engine triggers the myocardium oxygen deficit event when the partial pressure of oxygen is less than 5 mmHg. 
 
 ### Acid-Base Disturbance Events
 Acid-base disturbances can be respiratory or metabolic in origin. When an acid-base disturbance is caused by a change in the total amount of carbon dioxide in the blood, it is considered to be a respiratory disturbance because that system regulates carbon dioxide. If the origin is a change in the strong ion difference, then the disturbance is said to be metabolic in origin. Because the respiratory system responds to a metabolic disturbance and the renal and other systems respond to a respiratory disturbance with compensatory mechanisms, it is difficult to observe a purely metabolic or respiratory disturbance. For that reason, disturbances are sometimes further classified as acute, compensated, and mixed @cite hall2011guyton. There are four acid-base disturbance events observed in the engine.
 
 #### Metabolic Acidosis
-The metabolic acidosis event is triggered when the blood pH drops below the lower bound of the normal range, which is 7.35 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the bicarbonate concentration is less than 22.0&nbsp;mM. This reversible event is removed when the blood pH increases above 7.38. The small buffer of 0.03 is to allow for numerical fluctuations during transitions.
+The metabolic acidosis event is triggered when the blood pH drops below the lower bound of the normal range, which is 7.35 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the bicarbonate concentration is less than 22.0 mM. This reversible event is removed when the blood pH increases above 7.38. The small buffer of 0.03 is to allow for numerical fluctuations during transitions.
 
 #### Metabolic Alkalosis
-The metabolic alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the bicarbonate concentration is greater than 26.0&nbsp;mM. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions.
+The metabolic alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the bicarbonate concentration is greater than 26.0 mM. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions.
 
-#### %Respiratory Acidosis
-The respiratory acidosis event is triggered when the blood pH drops below the lower bound of the normal range, which is 7.35 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries is greater than 47.0&nbsp;mmHg. This reversible event is removed when the blood pH increases above 7.38. The small buffer of 0.03 is to allow for numerical fluctuations during transitions.
+#### Respiratory Acidosis
+The respiratory acidosis event is triggered when the blood pH drops below the lower bound of the normal range, which is 7.35 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries is greater than 47.0 mmHg. This reversible event is removed when the blood pH increases above 7.38. The small buffer of 0.03 is to allow for numerical fluctuations during transitions.
 
-#### %Respiratory Alkalosis
-The respiratory alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries less than 44.0&nbsp;mmHg. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions. 
+#### Respiratory Alkalosis
+The respiratory alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries less than 44.0 mmHg. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions. 
 
-<img src="./Images/BloodChemistry/BloodChemistryAcidBaseEvents.png">
+<a href="./Images/BloodChemistry/BloodChemistryAcidBaseEvents.png"><img src="./Images/BloodChemistry/BloodChemistryAcidBaseEvents.png"></a>
 <center>
 *Figure 2. The acidosis and alkalosis events are broken down into either metabolic or respiratory induced. Metabolic induced acidosis/alkalosis is driven from a shift in bicarbonate
 while respiratory induced acidosis/alkalosis is due to a chance in arterial carbon dioxide. The shift between either acidosis or alkalosis occurs at a blood pH of 7.4.*
@@ -236,25 +233,31 @@ Results and Conclusions
 
 Validation - Resting Physiologic State
 --------------------------------------
-Published values from the literature were compared to the engine output to perform a quantitative validation of the blood chemistry resting physiology. Table&nbsp;1 shows the validation results.  The validation is specified with a color coding system, with green indicating a less than 10% error, yellow indicating a less than 30% error, and red indicating a greater than 30% error when comparing the engine output to the published values. All references are noted in the table.
+Published values from the literature were compared to the engine output to perform a quantitative validation of the blood chemistry resting physiology. Table 1 shows the validation results.  The validation is specified with a color coding system, with green indicating a less than 10% error, yellow indicating a less than 30% error, and red indicating a greater than 30% error when comparing the engine output to the published values. All references are noted in the table.
 
 <center>
 *Table 1. Results of the resting physiology validation of the Blood Chemistry System.*
 </center>
 
-@insert ./test_results/tables/BloodChemistryValidationTable.md
+<b>Standard Male</b>
+
+@insert ./test_results/tables/BloodChemistry-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/BloodChemistry-StandardFemaleValidationTable.md
 
 Overall, the engine meets validation, with all but two of the validation parameters having less than a 10% error when compared to published values.  Only one parameter has an error greater than than 30%. 
 
 Validation - Conditions and Actions
 -----------------------
 ## Hemorrhage
-The Blood Chemistry system does not have any conditions or actions directly embedded, but the outputs of Blood Chemistry are dependent on the actions and conditions of other systems. An example is the Hemorrhage insult, an action of the [Cardiovascular](@ref CardiovascularMethodology) System. Figure&nbsp;2 shows the effects of hemorrhage and fluid resuscitation with saline on the total blood volume and the total hemoglobin for the patient.
+The Blood Chemistry system does not have any conditions or actions directly embedded, but the outputs of Blood Chemistry are dependent on the actions and conditions of other systems. An example is the Hemorrhage insult, an action of the [Cardiovascular](@ref CardiovascularMethodology) System. Figure 2 shows the effects of hemorrhage and fluid resuscitation with saline on the total blood volume and the total hemoglobin for the patient.
 
 <center>
-<img src="./plots/BloodChemistry/Volume.jpg" width="1100">
-<img src="./plots/BloodChemistry/Hemoglobin.jpg" width="1100">
-<img src="./plots/BloodChemistry/BloodChemistryLegend.jpg" width="500">
+<a href="./plots/BloodChemistry/Volume.jpg"><img src="./plots/BloodChemistry/Volume.jpg" width="1100"></a>
+<a href="./plots/BloodChemistry/Hemoglobin.jpg"><img src="./plots/BloodChemistry/Hemoglobin.jpg" width="1100"></a>
+<a href="./plots/BloodChemistry/BloodChemistryLegend.jpg"><img src="./plots/BloodChemistry/BloodChemistryLegend.jpg" width="500"></a>
 </center>
 <center>
 *Figure 3. The total blood volume decreases with the hemorrhage, then increases as saline is infused. The total hemoglobin also decreases with the hemorrhage but remains reduced after the hemorrhage is stopped.*
@@ -263,25 +266,43 @@ The Blood Chemistry system does not have any conditions or actions directly embe
 @anchor bloodchemistry-validation-assessments
 Validation - Assessments
 ------------------------
-There are three asessments in the Blood Chemistry system. Each assessment provides all of the values associated with a specific "blood test" as a single output. The three assessments currently supported are an arterial blood gas test, a metabolic panel (Chem-14), and a complete blood count. These assessments were validated with published data, as shown in Table&nbsp;2, Table&nbsp;3, and Table&nbsp;4, respectively. As with the resting physiology, the references for all values are provided and the results are color coded. 
+There are three asessments in the Blood Chemistry system. Each assessment provides all of the values associated with a specific "blood test" as a single output. The three assessments currently supported are an arterial blood gas test, a metabolic panel (Chem-14), and a complete blood count. These assessments were validated with published data, as shown in Table 2, Table 3, and Table 4, respectively. As with the resting physiology, the references for all values are provided and the results are color coded. 
 
 <center>
 *Table 2. Results of the arterial blood gas test as compiled during the healthy resting physiology.*
 </center>
 
-@insert ./test_results/tables/ArterialBloodGasTestValidationTable.md
+<b>Standard Male</b>
+
+@insert ./test_results/tables/ArterialBloodGasTest-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/ArterialBloodGasTest-StandardFemaleValidationTable.md
 
 <center>
 *Table 3. Results of the metabolic panel as compiled during the healthy resting physiology.*
 </center>
 
-@insert ./test_results/tables/CompleteMetabolicPanelValidationTable.md
+<b>Standard Male</b>
+
+@insert ./test_results/tables/CompleteMetabolicPanel-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/CompleteMetabolicPanel-StandardFemaleValidationTable.md
 
 <center>
 *Table 4. Results of the complete blood count as compiled during the healthy resting physiology.*
 </center>
 
-@insert ./test_results/tables/CompleteBloodCountValidationTable.md
+<b>Standard Male</b>
+
+@insert ./test_results/tables/CompleteBloodCount-StandardMaleValidationTable.md
+
+<b>Standard Female</b>
+
+@insert ./test_results/tables/CompleteBloodCount-StandardFemaleValidationTable.md
 
 All of the measures in the two Blood Chemistry assessments meet validation. 
 
@@ -290,7 +311,7 @@ Four Compartment Test
 ------------------------
 As mentioned above, the Blood Chemistry system serves the primary purpose of storing and relaying information between the other systems. This heavy reliance on other systems can make it difficult to test the funcitonality of blood gas balance. To this end, the scalability of the engine was leveraged to create a simpler system comprised of only four compartments: Pulmonary, to represent the capillaries in the lungs where oxygen and carbon dioxide exchange occurs; Arteries, representing all of the oxygen-rich vasculature running to the tissues; Capillaries, representing the location of oxygen removal from the vasculature; and Veins, representing the section of the vasulature containing oxygen-poor blood. A diagram of this simplified system can be seen in Figure 4 below.
 
-<img src="./Images/BloodChemistry/BloodChemistryFourCompartment.png" width="600">
+<a href="./Images/BloodChemistry/BloodChemistryFourCompartment.png"><img src="./Images/BloodChemistry/BloodChemistryFourCompartment.png" width="600"></a>
 <center>
 *Figure 4. The simplified Four Compartment test uses only Pulmonary, Arteries, Capillaries, and Veins to hone in on the functionality in the Blood Chemistry system.*
 </center><br>

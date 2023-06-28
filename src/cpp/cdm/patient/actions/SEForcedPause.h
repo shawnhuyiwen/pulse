@@ -13,6 +13,9 @@ public:
 
   virtual ~SEForcedPause();
 
+  static constexpr char const* Name = "Forced Pause";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEForcedPause& src);
 
@@ -23,7 +26,6 @@ public:
   virtual SEScalarTime& GetPeriod();
   virtual double GetPeriod(const TimeUnit& unit) const;
 
-  virtual void ToString(std::ostream &str) const;
 protected:
   SEScalarTime*     m_Period;
 };  

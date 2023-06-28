@@ -32,6 +32,8 @@ void PBPatient::Serialize(const CDM_BIND::PatientData& src, SEPatient& dst)
     PBProperty::Load(src.bodydensity(), dst.GetBodyDensity());
   if (src.has_bodyfatfraction())
     PBProperty::Load(src.bodyfatfraction(), dst.GetBodyFatFraction());
+  if (src.has_bodymassindex())
+    PBProperty::Load(src.bodymassindex(), dst.GetBodyMassIndex());
   if (src.has_leanbodymass())
     PBProperty::Load(src.leanbodymass(), dst.GetLeanBodyMass());
   if (src.has_idealbodyweight())
@@ -54,6 +56,8 @@ void PBPatient::Serialize(const CDM_BIND::PatientData& src, SEPatient& dst)
     PBProperty::Load(src.heartratebaseline(), dst.GetHeartRateBaseline());
   if (src.has_meanarterialpressurebaseline())
     PBProperty::Load(src.meanarterialpressurebaseline(), dst.GetMeanArterialPressureBaseline());
+  if (src.has_pulsepressurebaseline())
+    PBProperty::Load(src.pulsepressurebaseline(), dst.GetPulsePressureBaseline());
   if (src.has_respirationratebaseline())
     PBProperty::Load(src.respirationratebaseline(), dst.GetRespirationRateBaseline());
   if (src.has_systolicarterialpressurebaseline())
@@ -102,6 +106,8 @@ void PBPatient::Serialize(const SEPatient& src, CDM_BIND::PatientData& dst)
     dst.set_allocated_bodydensity(PBProperty::Unload(*src.m_BodyDensity));
   if (src.HasBodyFatFraction())
     dst.set_allocated_bodyfatfraction(PBProperty::Unload(*src.m_BodyFatFraction));
+  if (src.HasBodyMassIndex())
+    dst.set_allocated_bodymassindex(PBProperty::Unload(*src.m_BodyMassIndex));
   if (src.HasLeanBodyMass())
     dst.set_allocated_leanbodymass(PBProperty::Unload(*src.m_LeanBodyMass));
   if (src.HasIdealBodyWeight())
@@ -124,6 +130,8 @@ void PBPatient::Serialize(const SEPatient& src, CDM_BIND::PatientData& dst)
     dst.set_allocated_heartratebaseline(PBProperty::Unload(*src.m_HeartRateBaseline));
   if (src.HasMeanArterialPressureBaseline())
     dst.set_allocated_meanarterialpressurebaseline(PBProperty::Unload(*src.m_MeanArterialPressureBaseline));
+  if (src.HasPulsePressureBaseline())
+    dst.set_allocated_pulsepressurebaseline(PBProperty::Unload(*src.m_PulsePressureBaseline));
   if (src.HasRespirationRateBaseline())
     dst.set_allocated_respirationratebaseline(PBProperty::Unload(*src.m_RespirationRateBaseline));
   if (src.HasSystolicArterialPressureBaseline())

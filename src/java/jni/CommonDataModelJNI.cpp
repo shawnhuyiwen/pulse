@@ -9,20 +9,19 @@
 #include "CommonDataModelTest.h"
 
 extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_pulse_utilities_jniBridge_nativeInitialize(JNIEnv *env, jobject obj)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_utilities_jniBridge_nativeInitialize(JNIEnv* /*env*/, jobject /*obj*/)
 {
-  Logger::Initialize();
+  
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_pulse_utilities_jniBridge_nativeDeinitialize(JNIEnv *env, jobject obj)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_utilities_jniBridge_nativeDeinitialize(JNIEnv* /*env*/, jobject /*obj*/)
 {
   CUnitConversionEngine::DestroyEngine();
-  Logger::Deinitialize();// Free up logger before the DllMain quits so we can stop threads on windows
 }
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_com_kitware_pulse_cdm_testing_CDMUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_com_kitware_pulse_cdm_testing_CDMUnitTestDriver_nativeAllocate(JNIEnv* /*env*/, jobject /*obj*/)
 {
   CommonDataModelTest *executor = new CommonDataModelTest();
   executor->GetLogger()->LogToConsole(false);
@@ -30,14 +29,14 @@ JNIEXPORT jlong JNICALL Java_com_kitware_pulse_cdm_testing_CDMUnitTestDriver_nat
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_pulse_cdm_testing_CDMUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_cdm_testing_CDMUnitTestDriver_nativeDelete(JNIEnv* /*env*/, jobject /*obj*/, jlong ptr)
 {
   CommonDataModelTest *executor = reinterpret_cast<CommonDataModelTest*>(ptr);
   SAFE_DELETE(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_pulse_cdm_testing_CDMUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_cdm_testing_CDMUnitTestDriver_nativeExecute(JNIEnv *env, jobject /*obj*/, jlong ptr, jstring test, jstring toDir)
 {
   const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
   const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);
@@ -49,7 +48,7 @@ JNIEXPORT void JNICALL Java_com_kitware_pulse_cdm_testing_CDMUnitTestDriver_nati
 
 // Tests if a value can be converted from 1 unit to another.
 extern "C"
-JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeIsCompatibleWithUnit(JNIEnv *env, jobject obj, jstring testUnit, jstring unit)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeIsCompatibleWithUnit(JNIEnv *env, jobject /*obj*/, jstring testUnit, jstring unit)
 { 
   const char* unitBuf = env->GetStringUTFChars(unit, JNI_FALSE);
   const char* testUnitBuf = env->GetStringUTFChars(testUnit, JNI_FALSE);
@@ -87,7 +86,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_native
 
 // tests if a unit is the same quantity type as the provided unitTemplate
 extern "C"
-JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeIsOfQuantityType(JNIEnv *env, jobject obj, jstring templateUnit, jstring unit)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeIsOfQuantityType(JNIEnv *env, jobject /*obj*/, jstring templateUnit, jstring unit)
 { 
   const char* unitBuf = env->GetStringUTFChars(unit, JNI_FALSE);
   const char* templateUnitBuf = env->GetStringUTFChars(templateUnit, JNI_FALSE);
@@ -120,7 +119,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_native
 // tests if a unit is the same quantity type as the provided unitTemplates
 // list is an array of unit strings, like {"J", "cm", "Hz"}. (This example works for testing ELambdaNu.)
 extern "C"
-JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeIsCompatibleWithUnitList(JNIEnv *env, jobject obj, jobjectArray list, jstring unit)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeIsCompatibleWithUnitList(JNIEnv *env, jobject /*obj*/, jobjectArray list, jstring unit)
 { 
   if(list==nullptr)
     return JNI_FALSE;
@@ -179,7 +178,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_native
 
 // list is an array of quantity type strings, like {"Energy", "Distance", "Frequency"}. (This example also works for testing ELambdaNu.)
 extern "C"
-JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeIsOfQuantityTypes(JNIEnv *env, jobject obj, jobjectArray templateUnits, jstring unit)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeIsOfQuantityTypes(JNIEnv *env, jobject /*obj*/, jobjectArray templateUnits, jstring unit)
 { 
   if(templateUnits==nullptr)
     return JNI_FALSE;
@@ -231,7 +230,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_native
 }
 // basic conversion
 extern "C"
-JNIEXPORT jdouble JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeConvert(JNIEnv *env, jobject obj, jdouble val, jstring unit_from, jstring unit_to)
+JNIEXPORT jdouble JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeConvert(JNIEnv *env, jobject /*obj*/, jdouble val, jstring unit_from, jstring unit_to)
 { 
   const char* uFrom = (const char*)env->GetStringUTFChars(unit_from,JNI_FALSE);
   const char* uTo = (char*)env->GetStringUTFChars(unit_to,JNI_FALSE);
@@ -248,7 +247,7 @@ JNIEXPORT jdouble JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeC
 extern "C"
 // Returns true if succeeds
 JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_nativeGenerateUnitConverterData
-  (JNIEnv *env, jclass obj, jobject qtcd)
+  (JNIEnv *env, jobject /*obj*/, jobject qtcd)
 {
   int i;
   size_t fromDim, toDim;

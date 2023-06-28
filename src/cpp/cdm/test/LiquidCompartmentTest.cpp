@@ -173,14 +173,14 @@ void CommonDataModelTest::TestLiquidHierarchyFlows(SETestSuite& testSuite, SESub
   TimingProfile pTimer;
   pTimer.Start("Test");
 
-  //                L0C0
-  //               /    \
-  //           L1C0      L1C1
-  //           /  \      /  \
-  //        L2C0  L2C1 L2C2 L2C3 <-- Only these cmpts have data
-  //        L2C4  L2C5 L2C6 L2C7 <-- Have Data, same level as above, but these will not be in the cmpt hierarchy
-  //                                 They define the L0 and L1 Level compartment input/output links
-
+  /*                L0C0
+  *                /    \
+  *            L1C0      L1C1
+  *            /  \      /  \
+  *         L2C0  L2C1 L2C2 L2C3 <-- Only these cmpts have data
+  *         L2C4  L2C5 L2C6 L2C7 <-- Have Data, same level as above, but these will not be in the cmpt hierarchy
+  *                                 They define the L0 and L1 Level compartment input/output links
+  */
   SECompartmentManager cmptMgr(subMgr);
   cmptMgr.Setup();
   SELiquidCompartment* L0C0 = &cmptMgr.CreateLiquidCompartment("L0C0");
@@ -314,12 +314,12 @@ void CommonDataModelTest::TestLiquidHierarchy(SETestSuite& testSuite, SESubstanc
   TimingProfile pTimer;
   pTimer.Start("Test");
 
-  //         L0C0
-  //        /    \
-  //    L1C0      L1C1
-  //    /  \      /  \
-  // L2C0  L2C1 L2C3 L2C4 <-- Only these cmpts have data
-
+  /*         L0C0
+  *         /    \
+  *     L1C0      L1C1
+  *     /  \      /  \
+  * L2C0  L2C1 L2C3 L2C4 <-- Only these cmpts have data
+  */
   SECompartmentManager cmptMgr(subMgr);
   cmptMgr.Setup();
   // Level 0
@@ -833,12 +833,12 @@ void CommonDataModelTest::TestLiquidHierarchySaturation(SETestSuite& testSuite, 
   SESubstance* HbCO2   = subMgr.GetSubstance("Carbaminohemoglobin");
   SESubstance* HbO2CO2 = subMgr.GetSubstance("OxyCarbaminohemoglobin");
 
-  //         L0C0
-  //        /    \
-  //    L1C0      L1C1
-  //    /  \      /  \
-  // L2C0  L2C1 L2C3 L2C4 <-- Only these cmpts have data
-
+  /*         L0C0
+  *         /    \
+  *     L1C0      L1C1
+  *     /  \      /  \
+  * L2C0  L2C1 L2C3 L2C4 <-- Only these cmpts have data
+  */
   SECompartmentManager cmptMgr(subMgr);
   cmptMgr.Setup();
   // Level 0

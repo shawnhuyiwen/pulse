@@ -9,8 +9,10 @@
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 
-#include <Eigen/Core>
-#include <Eigen/LU>
+PUSH_EIGEN_WARNINGS
+#include "Eigen/Core"
+#include "Eigen/LU"
+POP_EIGEN_WARNINGS
 
 //#define VERBOSE
 #define ZERO_APPROX 1e-10
@@ -89,11 +91,9 @@ void SESubstanceTransporter<GraphType, FluxUnit, QuantityUnit, ExtensiveUnit, In
     {
       if (quantity.IsNegative())
       {
-        ///\error Fatal: Can't transport with a negative quantity included.
         std::stringstream ss;
         ss << "Can't transport with a negative volume included. Node = " << v->GetName()
           << ". Volume = " << v->GetQuantity().GetValue(VolumeUnit::mL) << " mL";
-        ///\error Fatal: Can't transport with a negative volume included.
         Fatal(ss);
       }
 

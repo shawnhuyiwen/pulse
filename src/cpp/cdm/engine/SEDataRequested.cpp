@@ -105,30 +105,30 @@ const LogMessages& SEDataRequested::GetLogMessages() const
   return m_LogMessages;
 }
 
-void SEDataRequested::ForwardDebug(const std::string& msg, const std::string& origin)
+void SEDataRequested::ForwardDebug(const std::string& msg)
 {
   if (m_KeepLogMessages)
-    m_LogMessages.debug_msgs.push_back(msg + origin);
+    m_LogMessages.debug_msgs.push_back(msg);
 }
-void SEDataRequested::ForwardInfo(const std::string& msg, const std::string& origin)
+void SEDataRequested::ForwardInfo(const std::string& msg)
 {
   if (m_KeepLogMessages)
-    m_LogMessages.info_msgs.push_back(msg + origin);
+    m_LogMessages.info_msgs.push_back(msg);
 }
-void SEDataRequested::ForwardWarning(const std::string& msg, const std::string& origin)
+void SEDataRequested::ForwardWarning(const std::string& msg)
 {
   if (m_KeepLogMessages)
-    m_LogMessages.warning_msgs.push_back(msg + origin);
+    m_LogMessages.warning_msgs.push_back(msg);
 }
-void SEDataRequested::ForwardError(const std::string& msg, const std::string& origin)
+void SEDataRequested::ForwardError(const std::string& msg)
 {
   m_IsActive = false;
   if (m_KeepLogMessages)
-    m_LogMessages.error_msgs.push_back(msg + origin);
+    m_LogMessages.error_msgs.push_back(msg);
 }
-void SEDataRequested::ForwardFatal(const std::string& msg, const std::string& origin)
+void SEDataRequested::ForwardFatal(const std::string& msg)
 {
   m_IsActive = false;
   if (m_KeepLogMessages)
-    m_LogMessages.fatal_msgs.push_back(msg + origin);
+    m_LogMessages.fatal_msgs.push_back(msg);
 }

@@ -163,8 +163,7 @@ namespace pulse
           std::string file = c.GetNutritionFile();
           if (!c.GetNutrition().SerializeFromFile(file))
           {
-            /// \error Unable to read consume meal action file
-            Error("Could not read provided nutrition file", "GastrointestinalModel::PreProcess");
+            Error("Could not read provided nutrition file");
           }
         }
         DefaultNutritionRates(c.GetNutrition());

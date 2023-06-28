@@ -114,7 +114,8 @@ public class FileUtils
     }
     catch(IOException e)
     {
-      Log.error("Filename invalid: "+fileName,e);
+      Log.error("Filename invalid: "+fileName);
+      Log.error(e.getMessage());
       return false;
     }
   }
@@ -140,7 +141,7 @@ public class FileUtils
     }
     catch (Exception e)
     {
-      Log.error(e);
+      Log.error(e.getMessage());
       return false;
     }
     finally
@@ -153,7 +154,7 @@ public class FileUtils
         }
         catch (Exception e1)
         {
-          Log.error(e1);
+          Log.error(e1.getMessage());
           return false;
         }
       }
@@ -216,7 +217,8 @@ public class FileUtils
     }
     catch (Exception e)
     {
-      Log.error("Could not read file " + f.getAbsolutePath(),e);
+      Log.error("Could not read file " + f.getAbsolutePath());
+      Log.error(e.getMessage());
       return null;
     }
     finally
@@ -346,7 +348,8 @@ public class FileUtils
     }
     catch (Exception e)
     {
-      Log.error("Unable to export file: " + filename, e);
+      Log.error("Unable to export file: " + filename);
+      Log.error(e.getMessage());
     }  
 
     return file;
@@ -792,7 +795,8 @@ public class FileUtils
     }
     catch (IOException e) 
     {
-      Log.error("Error compressing files to " + zipFileName + "\n", e);
+      Log.error("Error compressing files to " + zipFileName + "\n");
+      Log.error(e.getMessage());
     }
   }
 
