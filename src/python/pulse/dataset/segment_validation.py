@@ -5,8 +5,8 @@ import sys
 import logging
 import numpy as np
 from pathlib import Path
-from typing import Dict, List
 from textwrap import TextWrapper
+from typing import Dict, List, Optional
 
 import PyPulse
 from pulse.cdm.engine import SESegmentValidationTarget, SESegmentValidationTargetSegment
@@ -19,7 +19,7 @@ from pulse.cdm.io.engine import serialize_segment_validation_target_segment_from
 _pulse_logger = logging.getLogger('pulse')
 
 
-def validate(targets_dir: Path, results_dir: Path) -> None:
+def validate(targets_dir: Path, results_dir: Path, md_dir: Optional[Path]=None) -> None:
     # Get all validation targets from files
     val_segments = {}
     prefix = "Segment"
@@ -44,7 +44,8 @@ def validate(targets_dir: Path, results_dir: Path) -> None:
         }
 
     scenario_name = targets_dir.name
-    md_dir = results_dir / "docs/markdown/"
+    if md_dir is None:
+        md_dir = results_dir / "docs" / "markdown"
     md_dir.mkdir(parents=True, exist_ok=True)
 
     # Evaluate targets and create markdown tables for each segment
@@ -261,11 +262,12 @@ if __name__ == "__main__":
     results_dir = None
 
     if len(sys.argv) < 3:
-        _pulse_logger.error("Expected inputs : <validation targets directory> <results directory>")
+        _pulse_logger.error("Expected inputs : <validation targets directory> <results directory> [markdown directory]")
         sys.exit(1)
 
     targets_dir = Path(sys.argv[1])
     results_dir = Path(sys.argv[2])
+    markdown_dir = None
 
     if not targets_dir.is_dir():
         _pulse_logger.error("Please provide a valid validation targets directory")
@@ -275,4 +277,11 @@ if __name__ == "__main__":
         _pulse_logger.error("Please provide a valid results directory")
         sys.exit(1)
 
-    validate(targets_dir, results_dir)
+    if len(sys.argv) > 3:
+        markdown_dir = Path(sys.argv[3])
+        if not markdown_dir.is_dir():
+            _pulse_logger.error("Please provide a valid markdown directory")
+            sys.exit(1)
+
+
+    validate(targets_dir, results_dir, markdown_dir)

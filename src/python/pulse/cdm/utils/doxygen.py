@@ -47,7 +47,7 @@ def process_file(fpath: Path, t_dir: Path, d_dir: Path, ancestors: Optional[Set[
                     i_out_fname = d_dir.resolve() / f.stem
                     i_out_fname = i_out_fname.with_suffix(i_out_fname.suffix+".md")
                     with open(i_out_fname, "r") as i_out:
-                        i_lines = i_out.readline()
+                        i_lines = i_out.readlines()
                         out_lines.extend(i_lines)
                 else:
                     out_lines.extend(_process_file(f, ancestors.copy()))

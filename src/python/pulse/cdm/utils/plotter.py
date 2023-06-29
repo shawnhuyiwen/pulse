@@ -832,6 +832,8 @@ def clear_current_plot():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+    logging.getLogger('PIL').setLevel(logging.INFO)
+    plt.set_loglevel("info")
 
     benchmark = False
     plot_file = None

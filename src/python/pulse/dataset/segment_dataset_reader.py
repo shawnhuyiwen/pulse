@@ -15,7 +15,7 @@ from typing import Dict, Hashable, List, Tuple
 
 from pulse.cdm.engine import SESegmentValidationTarget, SESegmentValidationTargetSegment
 from pulse.cdm.scenario import SEScenario
-from pulse.cdm.utils.file_utils import get_data_dir
+from pulse.cdm.utils.file_utils import get_validation_dir
 from pulse.cdm.io.engine import serialize_segment_validation_target_segment_to_file
 from pulse.dataset.utils import generate_data_request
 
@@ -23,7 +23,7 @@ from pulse.dataset.utils import generate_data_request
 _pulse_logger = logging.getLogger('pulse')
 
 
-def load_data(xls_file: Path) -> None:
+def load_data(xls_file: Path) -> Tuple[str, str]:
     # Remove and recreate directory
     output_dir = Path("./validation/scenarios/")
     results_dir = Path("./test_results/scenarios/")
@@ -48,6 +48,8 @@ def load_data(xls_file: Path) -> None:
             continue
         if not read_sheet(workbook[s], output_dir, results_dir):
             _pulse_logger.error(f"Unable to read {s} sheet")
+
+    return output_dir, results_dir
 
 
 # Read xlsx sheet and generate corresponding scenario file and validation target files
@@ -342,9 +344,9 @@ if __name__ == "__main__":
 
     xls_file = Path(sys.argv[1])
     if not xls_file.is_file():
-        xls_file = Path(get_data_dir()+sys.argv[1])
+        xls_file = Path(Path(get_validation_dir()) / xls_file)
         if not xls_file.is_file():
             _pulse_logger.error("Please provide a valid xls file")
             sys.exit(1)
 
-    load_data(xls_file)
+    _ = load_data(xls_file)
