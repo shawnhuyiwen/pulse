@@ -5,7 +5,6 @@ import sys
 import logging
 import numpy as np
 from pathlib import Path
-from textwrap import TextWrapper
 from typing import Dict, List, Optional
 
 import PyPulse
@@ -52,7 +51,6 @@ def validate(targets_dir: Path, results_dir: Path, md_dir: Optional[Path]=None) 
     headers = ["Property Name", "Validation", "Engine Value", "Percent Error", "Percent Change", "Notes"]
     fields = list(range(len(headers)))
     align = [('<', '<')] * len(headers)
-    text_wrapper = TextWrapper(width=150) # Increase markdown readability
     for seg_id in sorted(val_segments.keys()):
         md_filename = md_dir / f"{scenario_name}-Segment{seg_id}Validation.md"
         table_data = []
@@ -67,8 +65,9 @@ def validate(targets_dir: Path, results_dir: Path, md_dir: Optional[Path]=None) 
                 _pulse_logger.info(f"Writing {md_filename}")
 
                 if val_segment.has_notes():
-                    md_file.writelines(text_wrapper.fill(val_segment.get_notes()))
-                    md_file.write("\n\n")
+                    md_file.writelines(
+                        f"<center>\n*@tabledef {scenario_name}Segment{seg_id} {val_segment.get_notes()}*\n</center>\n\n"
+                    )
 
                 table(
                     md_file,

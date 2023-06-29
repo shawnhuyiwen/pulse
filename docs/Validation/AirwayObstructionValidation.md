@@ -21,7 +21,7 @@ The airway obstruction action was validated with a scenario that applies varying
 </center>
 @endhtmlonly
 <center>
-<i>Figure 22. Select outputs from the airway obstruction scenario.</i>
+<i>*@figuredef AirwayObstructionVariedOutputs Select outputs from the airway obstruction scenario.*</i>
 </center><br>
 
 #### Segment 1

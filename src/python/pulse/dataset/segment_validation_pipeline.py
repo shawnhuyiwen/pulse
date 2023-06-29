@@ -61,7 +61,8 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, run_scenarios: bo
     process_file(
         fpath=md_template,
         t_dir=results_dir,
-        d_dir=Path("./docs/markdown")
+        d_dir=Path("./docs/markdown"),
+        replace_refs=True
     )
 
     # TODO: Run doxygen?
