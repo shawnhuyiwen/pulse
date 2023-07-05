@@ -66,7 +66,7 @@ def validate(targets_dir: Path, results_dir: Path, md_dir: Optional[Path]=None) 
 
                 if val_segment.has_notes():
                     md_file.writelines(
-                        f"<center>\n*@tabledef {scenario_name}Segment{seg_id} {val_segment.get_notes()}*\n</center>\n\n"
+                        f"<center>\n*@tabledef {scenario_name}Segment{seg_id} {val_segment.get_notes().rstrip()}*\n</center>\n\n"
                     )
 
                 table(
