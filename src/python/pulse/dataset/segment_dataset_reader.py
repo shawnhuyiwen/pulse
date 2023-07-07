@@ -330,7 +330,14 @@ def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationTarge
     if all_actions:
         scenario_dict["AnyAction"] = all_actions
 
-    return json.dumps(scenario_dict, indent=2)
+    config_dict = {"TimeStep": {"ScalarTime": {"Value": 0.02, "Unit": "s"}}}
+
+    out_dict = {
+        "Configuration": config_dict,
+        "Scenario": scenario_dict
+    }
+
+    return json.dumps(out_dict, indent=2)
 
 
 if __name__ == "__main__":

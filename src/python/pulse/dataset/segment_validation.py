@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import PyPulse
+from pulse.dataset.generate_monitors import generate_monitors
 from pulse.cdm.engine import SESegmentValidationTarget, SESegmentValidationTargetSegment
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.math_utils import generate_percentage_span, percent_change, percent_difference
@@ -18,7 +19,7 @@ from pulse.cdm.io.engine import serialize_segment_validation_target_segment_from
 _pulse_logger = logging.getLogger('pulse')
 
 
-def validate(targets_dir: Path, results_dir: Path, md_dir: Optional[Path]=None) -> None:
+def validate(targets_dir: Path, results_dir: Path, md_dir: Optional[Path]=None, monitors_dir: Optional[Path]=None) -> None:
     # Get all validation targets from files
     val_segments = {}
     prefix = "Segment"
@@ -32,20 +33,34 @@ def validate(targets_dir: Path, results_dir: Path, md_dir: Optional[Path]=None) 
     results = {}
     prefix = "Segment"
     postfix = ".json"
+    times_s = []
     for filename in results_dir.glob(f"{prefix}*{postfix}"):
         seg_id = int(filename.name[len(prefix):-len(postfix)])
 
         drr = serialize_data_requested_result_from_file(filename)
         # In this case the DRR will only have one timestep, so get values from there
-        drr_values = drr.segments_per_sim_time_s[list(drr.segments_per_sim_time_s.keys())[0]]
+        time = list(drr.segments_per_sim_time_s.keys())[0]
+        drr_values = drr.segments_per_sim_time_s[time]
         results[seg_id] = {
             header: value for header, value in zip(drr.headers, drr_values)
         }
+        if seg_id: # Skip 0th slice for monitors
+            times_s.append(time)
 
     scenario_name = targets_dir.name
     if md_dir is None:
         md_dir = results_dir / "docs" / "markdown"
     md_dir.mkdir(parents=True, exist_ok=True)
+
+    # Generate vital and ventilator monitor images if requested
+    if monitors_dir is not None:
+        generate_monitors(
+            csv_file= results_dir / f"{scenario_name}.csv",
+            times_s=sorted(times_s),
+            dest_dir=monitors_dir,
+            filename_prefix=f"{scenario_name}-"
+        )
+
 
     # Evaluate targets and create markdown tables for each segment
     headers = ["Property Name", "Validation", "Engine Value", "Percent Error", "Percent Change", "Notes"]
@@ -76,6 +91,38 @@ def validate(targets_dir: Path, results_dir: Path, md_dir: Optional[Path]=None) 
                     headers,
                     align
                 )
+
+                # Add monitors figure
+                if monitors_dir is not None:
+                    prefix = ""
+                    rel_dir = monitors_dir
+                    if not monitors_dir.is_absolute():
+                        prefix = "./"
+                        rel_dir = rel_dir.relative_to("./docs/html")
+                    vitals_monitor = prefix + (rel_dir / f"{scenario_name}-vitals_monitor_{seg_id}.jpg").as_posix()
+                    ventilator_monitor = prefix +  (rel_dir / f"{scenario_name}-ventilator_monitor_{seg_id}.jpg").as_posix()
+                    ventilator_loops = prefix + (rel_dir / f"{scenario_name}-ventilator_loops_{seg_id}.jpg").as_posix()
+
+                    lines = []
+                    lines.append('\n@htmlonly\n')
+                    lines.append('<center>\n')
+                    lines.append('<table border="0">\n')
+                    lines.append('<tr>\n')
+                    lines.append(f'<td colspan="2"><a href="{vitals_monitor}"><img src="{vitals_monitor}" width="1100"></td>\n')
+                    lines.append('</tr>\n')
+                    lines.append('<tr>\n')
+                    lines.append(f'<td><a href="{ventilator_monitor}"><img src="{ventilator_monitor}" width="550"></td>\n')
+                    lines.append(f'<td><a href="{ventilator_loops}"><img src="{ventilator_loops}" width="550"></td>\n')
+                    lines.append('</tr>\n')
+                    lines.append('</table>\n')
+                    lines.append('<br>\n')
+                    lines.append('</center>\n')
+                    lines.append('@endhtmlonly\n')
+                    lines.append('<center>\n')
+                    lines.append(f'<i>*@figuredef {scenario_name}MonitorsSegment{seg_id} Vitals and ventilator monitors for Segment {seg_id}.*</i>\n')
+                    lines.append('</center>\n')
+                    lines.append('<br>\n')
+                    md_file.writelines(lines)
 
 
 def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dict[str, float]]) -> List[str]:

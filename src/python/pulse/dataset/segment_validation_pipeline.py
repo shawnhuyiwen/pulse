@@ -4,6 +4,8 @@
 import sys
 import logging
 import argparse
+import platform
+import subprocess
 import matplotlib.pyplot as plt
 from pathlib import Path
 from typing import Optional
@@ -18,7 +20,7 @@ from pulse.dataset.segment_validation import validate
 _pulse_logger = logging.getLogger('pulse')
 
 
-def segment_validation_pipeline(xls_file: Path, doc_dir: Path, run_scenarios: bool=False) -> None:
+def segment_validation_pipeline(xls_file: Path, doc_dir: Path, run_scenarios: bool=False, gen_monitors: bool=False) -> None:
     xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
 
     # Create scenario and validation target files from xls file
@@ -30,8 +32,14 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, run_scenarios: bo
 
     # Run scenarios if needed
     if run_scenarios:
-        # TODO: Run scenarios
-        pass
+        # TODO: Replace with pypulse call?
+        command = "./PulseScenarioDriver"
+        if platform.system() == "Windows":
+            command = ".\PulseScenarioDriver.exe"
+
+        for scenario in scenarios:
+            scenario_file = validation_dir / scenario / f"{scenario}.json"
+            subprocess.run([command, scenario_file.resolve()])
     else:
         results_dir = Path(*["verification" if part == "test_results" else part for part in results_dir.parts])
 
@@ -43,12 +51,15 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, run_scenarios: bo
             _pulse_logger.error(f"Unable to locate results for {scenario}. Continuing without validating.")
             continue
 
-        validate(sce_val_dir, sce_res_dir, md_dir=results_dir)
+        monitors_dir = None
+        if gen_monitors:
+            monitors_dir = Path("./docs/html/plots") / xls_basename
+        validate(sce_val_dir, sce_res_dir, md_dir=results_dir, monitors_dir=monitors_dir)
 
     # TODO: ALways generate plots?
     plot_file = doc_dir / f"{xls_basename}.json"
     if not plot_file.is_file():
-        _pulse_logger.warning(f"Plot file ({plot_file}) does not seem to exist. Skipping plot generation.")
+        _pulse_logger.info(f"Plot file ({plot_file}) does not seem to exist. Skipping plot generation.")
     else:
         # TODO: Change results file if needed?
         create_plots(plot_file)
@@ -65,7 +76,7 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, run_scenarios: bo
         replace_refs=True
     )
 
-    # TODO: Run doxygen?
+    # TODO: Run doxygen? On/with what?
 
 
 if __name__ == "__main__":
@@ -85,9 +96,13 @@ if __name__ == "__main__":
         help="whether to run scenarios or use existing verification results"
     )
     parser.add_argument(
+        "-m", "--gen-monitors",
+        action="store_true",
+        help="whether to generate monitor images"
+    )
+    parser.add_argument(
         "-d", "--doc-dir",
         type=Path,
-        # TODO: Is this the correct default?
         default=Path(get_root_dir()) / "docs" / "Validation",
         help="directory where the markdown file and optional plot file can be found (default: %(default)s)"
     )
@@ -105,4 +120,4 @@ if __name__ == "__main__":
         _pulse_logger.error(f"Please provide a valid documents directory: {doc_dir}")
         sys.exit(1)
 
-    segment_validation_pipeline(xls_file, doc_dir, opts.run_scenarios)
+    segment_validation_pipeline(xls_file, doc_dir, opts.run_scenarios, opts.gen_monitors)

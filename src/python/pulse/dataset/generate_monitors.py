@@ -1,0 +1,383 @@
+# Distributed under the Apache License, Version 2.0.
+# See accompanying NOTICE file for details.
+
+import sys
+import logging
+import argparse
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from pathlib import Path
+from typing import Sequence
+
+
+_pulse_logger = logging.getLogger('pulse')
+
+
+def generate_monitors(csv_file: Path, times_s: Sequence[float], dest_dir: Path=Path("."), filename_prefix: str=""):
+    # Make sure destination dir exists
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    vitals_monitor_timeframe_s = 10.
+    ventilator_timeframe_s = 15.
+    for idx, end_time_s in enumerate(times_s):
+        start_time_s = end_time_s - vitals_monitor_timeframe_s
+        if start_time_s < 0:
+            _pulse_logger.warning("Full vitals monitor timeframe not possible, restricting start time to 0")
+            start_time_s = 0.
+        out_file = dest_dir / f"{filename_prefix}vitals_monitor_{idx+1}.jpg"
+        create_vitals_monitor_image(csv_file, start_time_s, end_time_s, out_file)
+
+        start_time_s = end_time_s - ventilator_timeframe_s
+        if start_time_s < 0:
+            _pulse_logger.warning("Full ventilator monitor timeframe not possible, restricting start time to 0")
+            start_time_s = 0.
+        out_file = dest_dir / f"{filename_prefix}ventilator_monitor_{idx+1}.jpg"
+        create_ventilator_monitor_image(csv_file, start_time_s, end_time_s, out_file)
+
+        out_file = dest_dir / f"{filename_prefix}ventilator_loops_{idx+1}.jpg"
+        create_ventilator_loops_image(csv_file, start_time_s, end_time_s, out_file)
+
+
+def create_vitals_monitor_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="vitals_monitor.jpg"):
+    # Read the CSV file
+    data = pd.read_csv(csv_file)
+
+    # Filter rows between start time and end time in the "Time(s)" column
+    filtered_data = data[(data["Time(s)"] >= start_time_s) & (data["Time(s)"] <= end_time_s)]
+    if len(filtered_data) == 0:
+        _pulse_logger.error(f"No data found between times {start_time_s} and {end_time_s}. Cannot create vitals monitor {fig_name}")
+        return
+
+    # Extract required data for subplots
+    time = filtered_data["Time(s)"]
+    ecg = filtered_data["ECG-Lead3ElectricPotential(mV)"] if "ECG-Lead3ElectricPotential(mV)" in filtered_data else pd.Series([np.nan] * len(time))
+    arterial_pressure = filtered_data["ArterialPressure(mmHg)"] if "ArterialPressure(mmHg)" in filtered_data else pd.Series([np.nan] * len(time))
+    carbon_dioxide_partial_pressure = filtered_data["Carina-CarbonDioxide-PartialPressure(mmHg)"] if "Carina-CarbonDioxide-PartialPressure(mmHg)" in filtered_data else pd.Series([np.nan] * len(time))
+
+    # Extract required data for number values
+    heart_rate = f'{filtered_data["HeartRate(1/min)"].iloc[-1]:.0f}' if "HeartRate(1/min)" in filtered_data else "--"
+    mean_arterial_pressure = f'{filtered_data["MeanArterialPressure(mmHg)"].iloc[-1]:.0f}' if "MeanArterialPressure(mmHg)" in filtered_data else "--"
+    systolic_arterial_pressure = f'{filtered_data["SystolicArterialPressure(mmHg)"].iloc[-1]:.0f}' if "SystolicArterialPressure(mmHg)" in filtered_data else "--"
+    diastolic_arterial_pressure = f'{filtered_data["DiastolicArterialPressure(mmHg)"].iloc[-1]:.0f}' if "DiastolicArterialPressure(mmHg)" in filtered_data else "--"
+    oxygen_saturation = f'{filtered_data["OxygenSaturation"].iloc[-1]*100:.0f}' if "OxygenSaturation" in filtered_data else "--"
+    end_tidal_carbon_dioxide_pressure = f'{filtered_data["EndTidalCarbonDioxidePressure(mmHg)"].iloc[-1]:.0f}' if "EndTidalCarbonDioxidePressure(mmHg)" in filtered_data else "--"
+    respiration_rate = f'{filtered_data["RespirationRate(1/min)"].iloc[-1]:.0f}' if "RespirationRate(1/min)" in filtered_data else "--"
+    core_temperature = f'{filtered_data["CoreTemperature(degC)"].iloc[-1]:.1f}' if "CoreTemperature(degC)" in filtered_data else "--"
+
+    # Create the figure and subplots
+    fig, axs = plt.subplots(3, 1, figsize=(14, 8))
+
+    # Set the facecolor of each subplot
+    for ax in axs:
+        ax.set_facecolor("black")
+
+    # Configure the subplots
+    axs[0].plot(time, ecg, color="green")
+    axs[0].set_ylabel("ECGIII (mV)", color="green", fontsize=18)
+    axs[0].tick_params(colors="white")
+    axs[0].spines["bottom"].set_color("white")
+    axs[0].spines["top"].set_color("white")
+    axs[0].spines["right"].set_color("white")
+    axs[0].spines["left"].set_color("white")
+
+    axs[1].plot(time, arterial_pressure, color="red")
+    axs[1].set_ylabel("ABP (mmHg)", color="red", fontsize=18)
+    axs[1].tick_params(colors="white")
+    axs[1].spines["bottom"].set_color("white")
+    axs[1].spines["top"].set_color("white")
+    axs[1].spines["right"].set_color("white")
+    axs[1].spines["left"].set_color("white")
+
+    axs[2].plot(time, carbon_dioxide_partial_pressure, color="yellow")
+    axs[2].set_xlabel("Time (s)", color="white", fontsize=18)
+    axs[2].set_ylabel("CO2 (mmHg)", color="yellow", fontsize=18)
+    axs[2].tick_params(colors="white")
+    axs[2].spines["bottom"].set_color("white")
+    axs[2].spines["top"].set_color("white")
+    axs[2].spines["right"].set_color("white")
+    axs[2].spines["left"].set_color("white")
+
+    # Create the number value boxes
+    value_boxes_headings = [
+        f"HR (/min)\n",
+        f"BP  (mmHg)\n",
+        f"SpO2 (%)\n",
+        f"etCO2 (mmHg)\n",
+        f"RR (/min)\n",
+        f"T (oC)\n",
+    ]
+
+    value_boxes_values = [
+        f"\n{heart_rate}",
+        f"\n{systolic_arterial_pressure} / {diastolic_arterial_pressure} ({mean_arterial_pressure})",
+        f"\n{oxygen_saturation}",
+        f"\n{end_tidal_carbon_dioxide_pressure}",
+        f"\n{respiration_rate}",
+        f"\n{core_temperature}",
+    ]
+
+    colors = [
+        "green",
+        "red",
+        "blue",
+        "yellow",
+        "purple",
+        "orange",
+    ]
+
+    value_box_height = 0.15
+    value_box_width = 0.3
+    value_box_start = 0.65
+
+    for i, value_box_heading in enumerate(value_boxes_headings):
+        rect = plt.Rectangle(
+            (value_box_start, 1 - (i + 1) * value_box_height),
+            value_box_width,
+            value_box_height,
+            edgecolor="white",
+            facecolor="black",
+        )
+        fig.add_artist(rect)
+        fig.text(
+            value_box_start + 0.02,
+            1 - (i + 1) * value_box_height + 0.08,
+            value_box_heading,
+            color=colors[i],
+            fontsize=18,
+            va="center",
+            ha="left",
+            linespacing=1.5
+        )
+        fig.text(
+            value_box_start + value_box_width / 2,
+            1 - (i + 1) * value_box_height + 0.08,
+            value_boxes_values[i],
+            color=colors[i],
+            fontsize=36,
+            weight='bold',
+            va="center",
+            ha="center",
+            linespacing=1.5
+        )
+
+    # Adjust spacing between subplots
+    plt.subplots_adjust(left=0.1, right=value_box_start-0.05, top=0.95, bottom=0.1)
+
+    # Set the background color of the figure
+    fig.patch.set_facecolor("black")
+
+    # Save the image
+    _pulse_logger.info(f"Saving {fig_name}")
+    plt.savefig(fig_name, facecolor="black", bbox_inches="tight")
+    #plt.show()
+
+
+def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="ventilator_monitor.jpg"):
+    # Read the CSV file
+    data = pd.read_csv(csv_file)
+
+    # Filter rows between 1.0 and 20.0 in the "Time(s)" column
+    filtered_data = data[(data["Time(s)"] >= start_time_s) & (data["Time(s)"] <= end_time_s)]
+    if len(filtered_data) == 0:
+        _pulse_logger.error(f"No data found between times {start_time_s} and {end_time_s}. Cannot create ventilator monitor {fig_name}")
+        return
+
+    # Extract required data for subplots
+    time = filtered_data["Time(s)"]
+    airway_pressure = filtered_data["MechanicalVentilator-AirwayPressure(cmH2O)"] if "MechanicalVentilator-AirwayPressure(cmH2O)" in filtered_data else pd.Series([np.nan] * len(time))
+    inspiratory_flow = filtered_data["MechanicalVentilator-InspiratoryFlow(L/min)"] if "MechanicalVentilator-InspiratoryFlow(L/min)" in filtered_data else pd.Series([np.nan] * len(time))
+    total_lung_volume = filtered_data["MechanicalVentilator-TotalLungVolume(mL)"] if "MechanicalVentilator-TotalLungVolume(mL)" in filtered_data else pd.Series([np.nan] * len(time))
+
+    # Extract required data for number values
+    peak_inspiratory_pressure = f'{filtered_data["MechanicalVentilator-PeakInspiratoryPressure(cmH2O)"].iloc[-1]:.0f}' if "MechanicalVentilator-PeakInspiratoryPressure(cmH2O)" in filtered_data else "--"
+    mean_airway_pressure = f'{filtered_data["MechanicalVentilator-MeanAirwayPressure(cmH2O)"].iloc[-1]:.0f}' if "MechanicalVentilator-MeanAirwayPressure(cmH2O)" in filtered_data else "--"
+    tidal_volume = f'{filtered_data["MechanicalVentilator-TidalVolume(mL)"].iloc[-1]:.0f}' if "MechanicalVentilator-TidalVolume(mL)" in filtered_data else "--"
+    respiration_rate = f'{filtered_data["MechanicalVentilator-RespirationRate(1/min)"].iloc[-1]:.0f}' if "MechanicalVentilator-RespirationRate(1/min)" in filtered_data else "--"
+    end_tidal_carbon_dioxide_pressure = f'{filtered_data["MechanicalVentilator-EndTidalCarbonDioxidePressure(mmHg)"].iloc[-1]:.0f}' if "MechanicalVentilator-EndTidalCarbonDioxidePressure(mmHg)" in filtered_data else "--"
+    dynamic_pulmonary_compliance = f'{filtered_data["MechanicalVentilator-DynamicPulmonaryCompliance(L/cmH2O)"].iloc[-1]:.3f}' if "MechanicalVentilator-DynamicPulmonaryCompliance(L/cmH2O)" in filtered_data else "--"
+    inspiratory_expiratory_ratio = f'{filtered_data["MechanicalVentilator-InspiratoryExpiratoryRatio"].iloc[-1]:.2f}' if "MechanicalVentilator-InspiratoryExpiratoryRatio" in filtered_data else "--"
+
+    # Create the figure and subplots
+    fig, axs = plt.subplots(3, 1, figsize=(14, 8))
+
+    # Set the facecolor of each subplot
+    for ax in axs:
+        ax.set_facecolor("black")
+
+    # Configure the subplots
+    axs[0].plot(time, airway_pressure, color="white")
+    axs[0].set_ylabel("Paw (cmH2O)", color="white", fontsize=18)
+    axs[0].tick_params(colors="white")
+    axs[0].spines["bottom"].set_color("white")
+    axs[0].spines["top"].set_color("white")
+    axs[0].spines["right"].set_color("white")
+    axs[0].spines["left"].set_color("white")
+    axs[0].axhline(0, color='grey')
+
+    axs[1].plot(time, inspiratory_flow, color="white")
+    axs[1].set_ylabel("Flow (L/min)", color="white", fontsize=18)
+    axs[1].tick_params(colors="white")
+    axs[1].spines["bottom"].set_color("white")
+    axs[1].spines["top"].set_color("white")
+    axs[1].spines["right"].set_color("white")
+    axs[1].spines["left"].set_color("white")
+    axs[1].axhline(0, color='grey')
+
+    axs[2].plot(time, total_lung_volume, color="white")
+    axs[2].set_xlabel("Time (s)", color="white", fontsize=18)
+    axs[2].set_ylabel("Volume (mL)", color="white", fontsize=18)
+    axs[2].tick_params(colors="white")
+    axs[2].spines["bottom"].set_color("white")
+    axs[2].spines["top"].set_color("white")
+    axs[2].spines["right"].set_color("white")
+    axs[2].spines["left"].set_color("white")
+    axs[2].axhline(0, color='grey')
+
+    # Create the number value boxes
+    value_boxes_headings = [
+        f"PIP (cmH2O)\n",
+        f"Pmean (cmH2O)\n",
+        f"VT (mL)\n",
+        f"RR (/min)\n",
+        f"etCO2 (mmHg)\n",
+        f"cDyn (L/cmH2O)\n",
+        f"I:E\n",
+    ]
+
+    value_boxes_values = [
+        f"\n{peak_inspiratory_pressure}",
+        f"\n{mean_airway_pressure}",
+        f"\n{tidal_volume}",
+        f"\n{respiration_rate}",
+        f"\n{end_tidal_carbon_dioxide_pressure}",
+        f"\n{dynamic_pulmonary_compliance}",
+        f"\n{inspiratory_expiratory_ratio}",
+    ]
+
+    value_box_height = 0.14
+    value_box_width = 0.3
+    value_box_start = 0.65
+
+    for i, value_box_heading in enumerate(value_boxes_headings):
+        rect = plt.Rectangle(
+            (value_box_start, 1 - (i + 1) * value_box_height),
+            value_box_width,
+            value_box_height,
+            edgecolor="white",
+            facecolor="black",
+        )
+        fig.add_artist(rect)
+        fig.text(
+            value_box_start + 0.02,
+            1 - (i + 1) * value_box_height + 0.08,
+            value_box_heading,
+            color="white",
+            fontsize=18,
+            va="center",
+            ha="left",
+            linespacing=1.5
+        )
+        fig.text(
+            value_box_start + value_box_width / 2,
+            1 - (i + 1) * value_box_height + 0.08,
+            value_boxes_values[i],
+            color="white",
+            fontsize=36,
+            weight='bold',
+            va="center",
+            ha="center",
+            linespacing=1.5
+        )
+
+    # Adjust spacing between subplots
+    plt.subplots_adjust(left=0.1, right=value_box_start-0.05, top=0.95, bottom=0.1)
+
+    # Set the background color of the figure
+    fig.patch.set_facecolor("black")
+
+    # Save the image
+    _pulse_logger.info(f"Saving {fig_name}")
+    plt.savefig(fig_name, facecolor="black", bbox_inches="tight")
+    #plt.show()
+
+
+def create_ventilator_loops_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="ventilator_loops.jpg"):
+    # Read the CSV file
+    data = pd.read_csv(csv_file)
+
+    # Filter rows between 1.0 and 20.0 in the "Time(s)" column
+    filtered_data = data[(data["Time(s)"] >= start_time_s) & (data["Time(s)"] <= end_time_s)]
+    if len(filtered_data) == 0:
+        _pulse_logger.error(f"No data found between times {start_time_s} and {end_time_s}. Cannot create ventilator loops {fig_name}")
+        return
+
+    # Extract required data for subplots
+    airway_pressure = filtered_data["MechanicalVentilator-AirwayPressure(cmH2O)"] if "MechanicalVentilator-AirwayPressure(cmH2O)" in filtered_data else pd.Series([], dtype="float64")
+    inspiratory_flow = filtered_data["MechanicalVentilator-InspiratoryFlow(L/min)"] if "MechanicalVentilator-InspiratoryFlow(L/min)" in filtered_data else pd.Series([np.nan] * len(airway_pressure), dtype="float64")
+    total_lung_volume = filtered_data["MechanicalVentilator-TotalLungVolume(mL)"] if "MechanicalVentilator-TotalLungVolume(mL)" in filtered_data else pd.Series([np.nan] * len(inspiratory_flow), dtype="float64")
+    if airway_pressure.empty and not inspiratory_flow.empty:
+        airway_pressure = pd.Series([np.nan] * len(inspiratory_flow))
+
+    # Create the figure and subplots
+    fig, axs = plt.subplots(2, 1, figsize=(6, 12))
+
+    # Set the facecolor of each subplot
+    for ax in axs:
+        ax.set_facecolor("black")
+
+    # Configure the subplots
+    axs[0].plot(airway_pressure, total_lung_volume, color="white")
+    axs[0].set_xlabel("Pressure (cmH2O)", color="white", fontsize=18)
+    axs[0].set_ylabel("Volume (mL)", color="white", fontsize=18)
+    axs[0].tick_params(colors="white")
+    axs[0].spines["bottom"].set_color("white")
+    axs[0].spines["top"].set_color("white")
+    axs[0].spines["right"].set_color("white")
+    axs[0].spines["left"].set_color("white")
+
+    axs[1].plot(total_lung_volume, inspiratory_flow, color="white")
+    axs[1].set_xlabel("Volume (mL)", color="white", fontsize=18)
+    axs[1].set_ylabel("Flow (L/min)", color="white", fontsize=18)
+    axs[1].tick_params(colors="white")
+    axs[1].spines["bottom"].set_color("white")
+    axs[1].spines["top"].set_color("white")
+    axs[1].spines["right"].set_color("white")
+    axs[1].spines["left"].set_color("white")
+
+    # Set the background color of the figure
+    fig.patch.set_facecolor("black")
+
+    plt.subplots_adjust(wspace=0.25, hspace=0.25)
+
+    # Save the image
+    _pulse_logger.info(f"Saving {fig_name}")
+    plt.savefig(fig_name, facecolor="black", bbox_inches="tight")
+    #plt.show()
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+    logging.getLogger('PIL').setLevel(logging.INFO)
+    plt.set_loglevel("info")
+
+    parser = argparse.ArgumentParser(description="Generate monitor snapshots for the given results file and times")
+    parser.add_argument(
+        "csv_file",
+        type=Path,
+        help="results csv filepath"
+    )
+    parser.add_argument(
+        "times_s",
+        type=float,
+        nargs='+',
+        help="times of interest (seconds)"
+    )
+    parser.add_argument(
+        "-d", "--destination",
+        type=Path,
+        default=Path("."),
+        help="where to save generated imaged (default:  %(default)s)"
+    )
+    opts = parser.parse_args()
+    generate_monitors(opts.csv_file, opts.times_s, opts.destination)

@@ -84,4 +84,3 @@ def table(file, records, fields, headings, alignment = None):
     file.write(ruling.rstrip() + '\n')
     for row in zip(*columns):
         file.write(row_template.format(*row).rstrip() + '\n')
-    file.close()
