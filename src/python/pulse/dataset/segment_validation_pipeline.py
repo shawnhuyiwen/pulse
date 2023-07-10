@@ -20,7 +20,9 @@ from pulse.dataset.segment_validation import validate
 _pulse_logger = logging.getLogger('pulse')
 
 
-def segment_validation_pipeline(xls_file: Path, doc_dir: Path, run_scenarios: bool=False, gen_monitors: bool=False) -> None:
+def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_monitors: bool=False,
+                                run_scenarios: bool=False, use_baseline: bool=False
+) -> None:
     xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
 
     # Create scenario and validation target files from xls file
@@ -30,8 +32,10 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, run_scenarios: bo
     # Get list of all scenarios
     scenarios = [item.name for item in validation_dir.glob("*") if item.is_dir()]
 
+    if use_baseline:
+        results_dir = Path(*["verification" if part == "test_results" else part for part in results_dir.parts])
     # Run scenarios if needed
-    if run_scenarios:
+    elif run_scenarios:
         # TODO: Replace with pypulse call?
         command = "./PulseScenarioDriver"
         if platform.system() == "Windows":
@@ -40,8 +44,10 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, run_scenarios: bo
         for scenario in scenarios:
             scenario_file = validation_dir / scenario / f"{scenario}.json"
             subprocess.run([command, scenario_file.resolve()])
-    else:
-        results_dir = Path(*["verification" if part == "test_results" else part for part in results_dir.parts])
+
+    if not results_dir.is_dir():
+        _pulse_logger.error(f"Results directory ({results_dir}) does not exist. Aborting")
+        return
 
     # Carry out validation on each scenario
     for scenario in scenarios:
@@ -91,11 +97,6 @@ if __name__ == "__main__":
         help="xls file to process during this pipeline run"
     )
     parser.add_argument(
-        "-r", "--run-scenarios",
-        action="store_true",
-        help="whether to run scenarios or use existing verification results"
-    )
-    parser.add_argument(
         "-m", "--gen-monitors",
         action="store_true",
         help="whether to generate monitor images"
@@ -105,6 +106,17 @@ if __name__ == "__main__":
         type=Path,
         default=Path(get_root_dir()) / "docs" / "Validation",
         help="directory where the markdown file and optional plot file can be found (default: %(default)s)"
+    )
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "-b", "--use-baseline",
+        action="store_true",
+        help="use results in verification directory instead of test_results"
+    )
+    group.add_argument(
+        "-r", "--run-scenarios",
+        action="store_true",
+        help="whether to run scenarios or use existing results (cannot be used if using baseline results)"
     )
     opts = parser.parse_args()
 
@@ -120,4 +132,10 @@ if __name__ == "__main__":
         _pulse_logger.error(f"Please provide a valid documents directory: {doc_dir}")
         sys.exit(1)
 
-    segment_validation_pipeline(xls_file, doc_dir, opts.run_scenarios, opts.gen_monitors)
+    segment_validation_pipeline(
+        xls_file=xls_file,
+        doc_dir=doc_dir,
+        gen_monitors=opts.gen_monitors,
+        run_scenarios=opts.run_scenarios,
+        use_baseline=opts.use_baseline
+    )
