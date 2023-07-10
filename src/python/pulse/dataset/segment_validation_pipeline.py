@@ -4,8 +4,6 @@
 import sys
 import logging
 import argparse
-import platform
-import subprocess
 import matplotlib.pyplot as plt
 from pathlib import Path
 from typing import Optional
@@ -15,6 +13,7 @@ from pulse.cdm.utils.file_utils import get_root_dir, get_validation_dir
 from pulse.cdm.utils.plotter import create_plots
 from pulse.dataset.segment_dataset_reader import load_data
 from pulse.dataset.segment_validation import validate
+from pulse.engine.PulseScenarioExec import PulseScenarioExec
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -36,14 +35,12 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_monitors: boo
         results_dir = Path(*["verification" if part == "test_results" else part for part in results_dir.parts])
     # Run scenarios if needed
     elif run_scenarios:
-        # TODO: Replace with pypulse call?
-        command = "./PulseScenarioDriver"
-        if platform.system() == "Windows":
-            command = ".\PulseScenarioDriver.exe"
-
         for scenario in scenarios:
             scenario_file = validation_dir / scenario / f"{scenario}.json"
-            subprocess.run([command, scenario_file.resolve()])
+            sce_exec = PulseScenarioExec()
+            sce_exec.set_scenario_filename(scenario_file.as_posix())
+            if not sce_exec.execute_scenario():
+                _pulse_logger.warning("Scenario {scenario} was not sucessfully run.")
 
     if not results_dir.is_dir():
         _pulse_logger.error(f"Results directory ({results_dir}) does not exist. Aborting")
@@ -62,7 +59,7 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_monitors: boo
             monitors_dir = Path("./docs/html/plots") / xls_basename
         validate(sce_val_dir, sce_res_dir, md_dir=results_dir, monitors_dir=monitors_dir)
 
-    # TODO: ALways generate plots?
+    # TODO: Always generate plots?
     plot_file = doc_dir / f"{xls_basename}.json"
     if not plot_file.is_file():
         _pulse_logger.info(f"Plot file ({plot_file}) does not seem to exist. Skipping plot generation.")
