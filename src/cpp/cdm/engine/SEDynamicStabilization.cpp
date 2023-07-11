@@ -224,12 +224,9 @@ bool SEDynamicStabilization::Stabilize(Controller& engine, const SEDynamicStabil
       break;
 
     engine.AdvanceTime();
-    if (m_currentTime_s == 0)
-      tracker->SetupRequests();
     stablizationTime_s += dT_s;
-    m_currentTime_s += dT_s;
     if (track==eSwitch::On)
-      tracker->TrackData(m_currentTime_s);
+      tracker->TrackData(engine.GetSimulationTime(TimeUnit::s));
     if (m_LogProgress)
     {
       statusTime_s += dT_s;

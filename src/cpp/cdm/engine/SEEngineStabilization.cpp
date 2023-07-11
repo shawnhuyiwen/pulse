@@ -8,7 +8,6 @@
 SEEngineStabilization::SEEngineStabilization(Logger *logger) : Loggable(logger)
 {
   m_StabilizationDuration = nullptr;
-  m_currentTime_s = 0;
   m_TrackingStabilization = eSwitch::Off;
 }
 

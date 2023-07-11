@@ -337,14 +337,18 @@ namespace pulse
     StabilizationController(pulse::Controller& pc) : _pc(pc) {}
     virtual ~StabilizationController() = default;
 
-    virtual bool AdvanceTime() override { return _pc.AdvanceModelTime(); }
-    virtual SEEngineTracker* GetEngineTracker() override
+    bool AdvanceTime() override { return _pc.AdvanceModelTime(); }
+    SEEngineTracker* GetEngineTracker() override
     {
       return &_pc.GetData().GetEngineTracker();
     }
-    virtual double GetTimeStep(const TimeUnit& unit) override
+    double GetTimeStep(const TimeUnit& unit) override
     {
       return _pc.GetData().GetTimeStep().GetValue(unit);
+    }
+    double GetSimulationTime(const TimeUnit& unit) override
+    {
+      return _pc.GetData().GetSimulationTime().GetValue(unit);
     }
 
   protected:

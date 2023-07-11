@@ -31,6 +31,7 @@
 #include "cdm/engine/SEDataRequested.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SEAdvanceUntilStable.h"
 #include "cdm/engine/SESerializeRequested.h"
 #include "cdm/engine/SESerializeState.h"
 #include "cdm/engine/SEOverrides.h"
@@ -641,6 +642,13 @@ namespace pulse
     const SEAdvanceTime* adv = dynamic_cast<const SEAdvanceTime*>(&action);
     if (adv != nullptr)
       return AdvanceModelTime(adv->GetTime(TimeUnit::s), TimeUnit::s);
+
+    const SEAdvanceUntilStable* adv2Stable = dynamic_cast<const SEAdvanceUntilStable*>(&action);
+    if (adv2Stable != nullptr)
+    {
+      m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
+      return m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer);
+    }
 
     const SESerializeRequested* serializeRequested = dynamic_cast<const SESerializeRequested*>(&action);
     if (serializeRequested != nullptr)

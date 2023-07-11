@@ -16,6 +16,7 @@ public:
     virtual bool AdvanceTime() = 0;
     virtual SEEngineTracker* GetEngineTracker() = 0;
     virtual double GetTimeStep(const TimeUnit& unit) = 0;
+    virtual double GetSimulationTime(const TimeUnit& unit) = 0;
   };
   SEEngineStabilization(Logger* logger);
   virtual ~SEEngineStabilization();
@@ -46,7 +47,6 @@ protected:
   bool m_Cancelled;
   bool m_LogProgress;
   eSwitch m_TrackingStabilization;
-  double m_currentTime_s;
   std::stringstream m_ss;
 
   SEScalarTime* m_StabilizationDuration;
