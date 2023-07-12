@@ -7,7 +7,7 @@ import argparse
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-from pulse.cdm.utils.doxygen import process_file
+from pulse.cdm.utils.markdown import process_file
 from pulse.cdm.utils.file_utils import get_root_dir, get_validation_dir
 from pulse.cdm.utils.plotter import create_plots
 from pulse.dataset.segment_dataset_reader import load_data
@@ -18,7 +18,7 @@ from pulse.engine.PulseScenarioExec import PulseScenarioExec
 _pulse_logger = logging.getLogger('pulse')
 
 
-def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_monitors: bool=False,
+def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_only: bool=False, gen_monitors: bool=False,
                                 run_scenarios: bool=False, use_baseline: bool=False
 ) -> None:
     xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
@@ -26,6 +26,8 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_monitors: boo
     # Create scenario and validation target files from xls file
     # TODO: Do we need to regenerate this if we're not runnning scenarios?
     validation_dir, results_dir = load_data(xls_file)
+    if gen_only:
+        return
 
     # Get list of all scenarios
     scenarios = [item.name for item in validation_dir.glob("*") if item.is_dir()]
@@ -73,8 +75,8 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_monitors: boo
         return
     process_file(
         fpath=md_template,
-        t_dir=results_dir,
-        d_dir=Path("./docs/markdown"),
+        ref_dir=results_dir,
+        dest_dir=Path("./docs/markdown"),
         replace_refs=True
     )
 
@@ -102,6 +104,11 @@ if __name__ == "__main__":
         type=Path,
         default=Path(get_root_dir()) / "docs" / "Validation",
         help="directory where the markdown file and optional plot file can be found (default: %(default)s)"
+    )
+    parser.add_argument(
+        "-g", "--generate-only",
+        action="store_true",
+        help="only generate scenarios and validation target files, don't carry out validation"
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -132,6 +139,7 @@ if __name__ == "__main__":
     segment_validation_pipeline(
         xls_file=xls_file,
         doc_dir=doc_dir,
+        gen_only=opts.generate_only,
         gen_monitors=opts.gen_monitors,
         run_scenarios=opts.run_scenarios,
         use_baseline=opts.use_baseline

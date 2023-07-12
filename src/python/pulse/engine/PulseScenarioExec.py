@@ -25,7 +25,6 @@ class PulseScenarioExec(SEScenarioExec):
     def set_model_type(self, t: eModelType) -> None:
         self._model_type = t
 
-
     def execute_scenario(self) -> bool:
         from pulse.engine.io.PulseScenarioExec import serialize_pulse_scenario_exec_to_string
         import PyPulse
