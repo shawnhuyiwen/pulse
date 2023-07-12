@@ -6,7 +6,6 @@ import logging
 import argparse
 import matplotlib.pyplot as plt
 from pathlib import Path
-from typing import Optional
 
 from pulse.cdm.utils.doxygen import process_file
 from pulse.cdm.utils.file_utils import get_root_dir, get_validation_dir
@@ -40,7 +39,7 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_monitors: boo
             sce_exec = PulseScenarioExec()
             sce_exec.set_scenario_filename(scenario_file.as_posix())
             if not sce_exec.execute_scenario():
-                _pulse_logger.warning("Scenario {scenario} was not sucessfully run.")
+                _pulse_logger.warning("Scenario {scenario} was not successfully run.")
 
     if not results_dir.is_dir():
         _pulse_logger.error(f"Results directory ({results_dir}) does not exist. Aborting")
@@ -119,8 +118,9 @@ if __name__ == "__main__":
 
     xls_file = opts.xls_file
     if not xls_file.is_file():
-        xls_file = Path(get_validation_dir()) / xls_file
+        xls_file = Path(get_validation_dir()) / "Scenarios" / xls_file
         if not xls_file.is_file():
+            _pulse_logger.error("Could not find "+str(xls_file))
             _pulse_logger.error("Please provide a valid xls file")
             sys.exit(1)
 
@@ -136,3 +136,11 @@ if __name__ == "__main__":
         run_scenarios=opts.run_scenarios,
         use_baseline=opts.use_baseline
     )
+
+    # Pipeline Flow
+    # 1. Read the xlsx and generate scenario(s) and validation target(s)
+    # 2. Optionally, run the generated scenario(s)
+    # 3. Generate validation tables
+    # 4. Generate any plots
+    # 5. Preprocess markdown file (inserts tables, option to number tables/images/formula's)
+    # 6. Run doxygen
