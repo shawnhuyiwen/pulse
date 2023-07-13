@@ -98,7 +98,11 @@ def validate(targets_dir: Path, results_dir: Path, md_dir: Optional[Path]=None, 
                     rel_dir = monitors_dir
                     if not monitors_dir.is_absolute():
                         prefix = "./"
-                        rel_dir = rel_dir.relative_to("./docs/html")
+                        if "plots" in monitors_dir.parts:
+                            plots_dir_idx = monitors_dir.parts.index('plots')
+                            rel_dir = monitors_dir.relative_to(*monitors_dir.parts[:plots_dir_idx])
+                        else:
+                            _pulse_logger.warning(f"plots directory not found within path ({monitors_dir}). Plot reference may not be resolved properly.")
                     vitals_monitor = prefix + (rel_dir / f"{scenario_name}-vitals_monitor_{seg_id}.jpg").as_posix()
                     ventilator_monitor = prefix +  (rel_dir / f"{scenario_name}-ventilator_monitor_{seg_id}.jpg").as_posix()
                     ventilator_loops = prefix + (rel_dir / f"{scenario_name}-ventilator_loops_{seg_id}.jpg").as_posix()

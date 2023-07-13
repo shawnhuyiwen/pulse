@@ -18,8 +18,8 @@ from pulse.engine.PulseScenarioExec import PulseScenarioExec
 _pulse_logger = logging.getLogger('pulse')
 
 
-def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_only: bool=False, gen_monitors: bool=False,
-                                run_scenarios: bool=False, use_baseline: bool=False
+def segment_validation_pipeline(xls_file: Path, doc_dir: Path, out_dir: Path, gen_only: bool=False,
+                                gen_monitors: bool=False, run_scenarios: bool=False, use_baseline: bool=False
 ) -> None:
     xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
 
@@ -57,7 +57,7 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_only: bool=Fa
 
         monitors_dir = None
         if gen_monitors:
-            monitors_dir = Path("./docs/html/plots") / xls_basename
+            monitors_dir = out_dir / "html" / "plots" / xls_basename
         validate(sce_val_dir, sce_res_dir, md_dir=results_dir, monitors_dir=monitors_dir)
 
     # TODO: Always generate plots?
@@ -76,7 +76,7 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, gen_only: bool=Fa
     process_file(
         fpath=md_template,
         ref_dir=results_dir,
-        dest_dir=Path("./docs/markdown"),
+        dest_dir=out_dir/"markdown",
         replace_refs=True
     )
 
@@ -95,15 +95,21 @@ if __name__ == "__main__":
         help="xls file to process during this pipeline run"
     )
     parser.add_argument(
-        "-m", "--gen-monitors",
-        action="store_true",
-        help="whether to generate monitor images"
-    )
-    parser.add_argument(
         "-d", "--doc-dir",
         type=Path,
         default=Path(get_root_dir()) / "docs" / "Validation",
         help="directory where the markdown file and optional plot file can be found (default: %(default)s)"
+    )
+    parser.add_argument(
+        "-o,", "--out-dir",
+        type=Path,
+        default=Path("./docs/"),
+        help="Directory to place final outputs (default: %(default)s)"
+    )
+    parser.add_argument(
+        "-m", "--gen-monitors",
+        action="store_true",
+        help="whether to generate monitor images"
     )
     parser.add_argument(
         "-g", "--generate-only",
@@ -139,6 +145,7 @@ if __name__ == "__main__":
     segment_validation_pipeline(
         xls_file=xls_file,
         doc_dir=doc_dir,
+        out_dir=opts.out_dir,
         gen_only=opts.generate_only,
         gen_monitors=opts.gen_monitors,
         run_scenarios=opts.run_scenarios,
