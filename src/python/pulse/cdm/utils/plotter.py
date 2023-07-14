@@ -559,7 +559,7 @@ def create_plot(plot_sources: [SEPlotSource],
     setup_fmt_cycler = cycler(linestyle=['-', '--', '-.', ':']) * cycler(color=['r', 'b', 'g', 'y', 'm', 'c'])
     if plot_config.get_plot_actions() or plot_config.get_plot_events(): # Don't overlap colors between cyclers
         setup_fmt_cycler = cycler(linestyle=['-', '--', '-.', ':']) * cycler(color=['b', 'g', 'c'])
-    setup_action_event_fmt_cycler = cycler(color=["lime", "k", "magenta", "yellow", "r"])
+    setup_action_event_fmt_cycler = cycler(color=["magenta", "lime", "yellow", "slateblue", "sandybrown", "dodgerblue"])
     fmt_cycler = setup_fmt_cycler()
     action_event_fmt_cycler = setup_action_event_fmt_cycler()
 
@@ -741,6 +741,13 @@ def create_plot(plot_sources: [SEPlotSource],
                 elif u < 0:
                     u = 0
                 ax.set_ylim(l, u)
+
+    # Ensure negative times aren't shown
+    if x_header.lower().startswith("time"):
+        l, u = ax1.get_xlim()
+        if l < 0:
+            l = 0
+        ax1.set_xlim(l, u)
 
 
     # Dual axis for action/event plots
