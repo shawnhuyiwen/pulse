@@ -195,8 +195,8 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
     tidal_volume = f'{filtered_data["MechanicalVentilator-TidalVolume(mL)"].iloc[-1]:.0f}' if "MechanicalVentilator-TidalVolume(mL)" in filtered_data else "--"
     respiration_rate = f'{filtered_data["MechanicalVentilator-RespirationRate(1/min)"].iloc[-1]:.0f}' if "MechanicalVentilator-RespirationRate(1/min)" in filtered_data else "--"
     end_tidal_carbon_dioxide_pressure = f'{filtered_data["MechanicalVentilator-EndTidalCarbonDioxidePressure(mmHg)"].iloc[-1]:.0f}' if "MechanicalVentilator-EndTidalCarbonDioxidePressure(mmHg)" in filtered_data else "--"
-    dynamic_pulmonary_compliance = f'{filtered_data["MechanicalVentilator-DynamicPulmonaryCompliance(L/cmH2O)"].iloc[-1]:.3f}' if "MechanicalVentilator-DynamicPulmonaryCompliance(L/cmH2O)" in filtered_data else "--"
-    inspiratory_expiratory_ratio = f'{filtered_data["MechanicalVentilator-InspiratoryExpiratoryRatio"].iloc[-1]:.2f}' if "MechanicalVentilator-InspiratoryExpiratoryRatio" in filtered_data else "--"
+    dynamic_pulmonary_compliance = f'{filtered_data["MechanicalVentilator-DynamicPulmonaryCompliance(L/cmH2O)"].iloc[-1]:.3f}' if "MechanicalVentilator-DynamicPulmonaryCompliance(mL/cmH2O)" in filtered_data else "--"
+    inspiratory_expiratory_ratio = f'1:{1 / filtered_data["MechanicalVentilator-InspiratoryExpiratoryRatio"].iloc[-1]:.1f}' if "MechanicalVentilator-InspiratoryExpiratoryRatio" in filtered_data else "--"
 
     # Create the figure and subplots
     fig, axs = plt.subplots(3, 1, figsize=(14, 8))
@@ -335,6 +335,7 @@ def create_ventilator_loops_image(csv_file: Path, start_time_s: float, end_time_
     axs[0].spines["top"].set_color("white")
     axs[0].spines["right"].set_color("white")
     axs[0].spines["left"].set_color("white")
+    axs[0].axhline(0, color='grey')
 
     axs[1].plot(total_lung_volume, inspiratory_flow, color="white")
     axs[1].set_xlabel("Volume (mL)", color="white", fontsize=18)
@@ -344,6 +345,7 @@ def create_ventilator_loops_image(csv_file: Path, start_time_s: float, end_time_
     axs[1].spines["top"].set_color("white")
     axs[1].spines["right"].set_color("white")
     axs[1].spines["left"].set_color("white")
+    axs[1].axhline(0, color='grey')
 
     # Set the background color of the figure
     fig.patch.set_facecolor("black")
