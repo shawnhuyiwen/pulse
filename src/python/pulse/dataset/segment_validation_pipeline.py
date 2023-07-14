@@ -23,6 +23,10 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, out_dir: Path, ge
 ) -> None:
     xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
 
+    doxy_dir = out_dir
+    if "docs" == doxy_dir.parts[-1]:
+        doxy_dir = doxy_dir.parent
+
     # Create scenario and validation target files from xls file
     # TODO: Do we need to regenerate this if we're not runnning scenarios?
     validation_dir, results_dir = load_data(xls_file)
@@ -57,7 +61,7 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, out_dir: Path, ge
 
         monitors_dir = None
         if gen_monitors:
-            monitors_dir = out_dir / "html" / "plots" / xls_basename
+            monitors_dir = doxy_dir / "docs" / "html" / "plots" / xls_basename
         validate(sce_val_dir, sce_res_dir, md_dir=results_dir, monitors_dir=monitors_dir)
 
     # TODO: Always generate plots?
@@ -76,7 +80,7 @@ def segment_validation_pipeline(xls_file: Path, doc_dir: Path, out_dir: Path, ge
     process_file(
         fpath=md_template,
         ref_dir=results_dir,
-        dest_dir=out_dir/"markdown",
+        dest_dir=doxy_dir / "docs" / "markdown",
         replace_refs=True
     )
 
