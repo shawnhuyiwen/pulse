@@ -195,7 +195,7 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
     tidal_volume = f'{filtered_data["MechanicalVentilator-TidalVolume(mL)"].iloc[-1]:.0f}' if "MechanicalVentilator-TidalVolume(mL)" in filtered_data else "--"
     respiration_rate = f'{filtered_data["MechanicalVentilator-RespirationRate(1/min)"].iloc[-1]:.0f}' if "MechanicalVentilator-RespirationRate(1/min)" in filtered_data else "--"
     end_tidal_carbon_dioxide_pressure = f'{filtered_data["MechanicalVentilator-EndTidalCarbonDioxidePressure(mmHg)"].iloc[-1]:.0f}' if "MechanicalVentilator-EndTidalCarbonDioxidePressure(mmHg)" in filtered_data else "--"
-    dynamic_pulmonary_compliance = f'{filtered_data["MechanicalVentilator-DynamicPulmonaryCompliance(L/cmH2O)"].iloc[-1]:.3f}' if "MechanicalVentilator-DynamicPulmonaryCompliance(mL/cmH2O)" in filtered_data else "--"
+    dynamic_pulmonary_compliance = f'{filtered_data["MechanicalVentilator-DynamicPulmonaryCompliance(mL/cmH2O)"].iloc[-1]:.3f}' if "MechanicalVentilator-DynamicPulmonaryCompliance(mL/cmH2O)" in filtered_data else "--"
     inspiratory_expiratory_ratio = f'1:{1 / filtered_data["MechanicalVentilator-InspiratoryExpiratoryRatio"].iloc[-1]:.1f}' if "MechanicalVentilator-InspiratoryExpiratoryRatio" in filtered_data else "--"
 
     # Create the figure and subplots
