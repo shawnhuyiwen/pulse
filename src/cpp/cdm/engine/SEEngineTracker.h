@@ -84,9 +84,9 @@ public:
 
   virtual bool SetupRequests();
   // Set to false if you have already pulled the latest values
-  virtual void LogRequestedValues(bool pullData=true);
-  virtual void TrackData(double currentTime_s=0);
-  virtual void PullData();
+  virtual void LogRequestedValues();
+  virtual void TrackData(double currentTime_s);
+  virtual void PullData(double currentTime_s);
   virtual bool TrackRequest(SEDataRequest& dr);
   virtual void ForceConnection() { m_ForceConnection = true; }
 
@@ -101,6 +101,7 @@ protected:
 
   TrackMode                    m_Mode= TrackMode::CSV;
   bool                         m_ForceConnection;
+  double                       m_LastPullTime_s;
   DataTrack*                   m_DataTrack;
 
   std::stringstream            m_ss;

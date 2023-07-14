@@ -171,6 +171,6 @@ void HowToVentilationMechanics()
   for (int i = 0; i < 12; i++)
   {
     AdvanceAndTrackTime_s(10.0, *pe);
-    pe->GetEngineTracker()->LogRequestedValues(false);
+    pe->GetEngineTracker()->LogRequestedValues();
   }
 }

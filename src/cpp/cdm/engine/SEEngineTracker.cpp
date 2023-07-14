@@ -68,6 +68,7 @@ SEEngineTracker::SEEngineTracker(SEPatient& p, SEActionManager& a, SESubstanceMa
   m_DataTrack = new DataTrack(logger);
   m_DataRequestMgr = new SEDataRequestManager(logger);
   m_ForceConnection = false;
+  m_LastPullTime_s = -1;
 }
 
 SEEngineTracker::~SEEngineTracker()
@@ -153,6 +154,7 @@ bool SEEngineTracker::SetupRequests()
   if (m_Mode == TrackMode::CSV)
   {
     bool isOpen = m_ResultsStream.is_open();
+
     if (!isOpen || m_ForceConnection)
     {// Process/Hook up all requests with their associated scalers
       DELETE_MAP_SECOND(m_Request2Scalar);// Get our scalars again
@@ -187,11 +189,9 @@ bool SEEngineTracker::SetupRequests()
   return success;
 }
 
-void SEEngineTracker::LogRequestedValues(bool pullData)
+void SEEngineTracker::LogRequestedValues()
 {
   SEDataRequestScalar* ds;
-  if (pullData)
-    PullData();
   for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
   {
     ds = m_Request2Scalar[dr];
@@ -213,13 +213,16 @@ void SEEngineTracker::TrackData(double time_s)
     return;// Nothing to do here...
 
   SetupRequests();
-  PullData();
+  PullData(time_s);
 
   if(m_Mode == TrackMode::CSV)
     m_DataTrack->StreamProbesToFile(time_s, m_ResultsStream);
 }
-void SEEngineTracker::PullData()
+void SEEngineTracker::PullData(double time_s)
 {
+  if (time_s == m_LastPullTime_s)
+    return;
+
   SEDataRequestScalar* ds;
   for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
   {
@@ -252,6 +255,7 @@ void SEEngineTracker::PullData()
     else
       m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
   }
+  m_LastPullTime_s = time_s;
 }
 
 bool SEEngineTracker::TrackRequest(SEDataRequest& dr)

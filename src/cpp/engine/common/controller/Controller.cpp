@@ -375,6 +375,8 @@ namespace pulse
     SEEventHandler* event_handler = m_EventManager->GetEventHandler();
     m_EventManager->ForwardEvents(nullptr);
 
+    // Setup any data requests
+
     if (!Stabilize(patient_configuration))
     {
       Error("Pulse needs stabilization criteria, none provided in configuration file");
@@ -385,12 +387,16 @@ namespace pulse
     // Use Quantity/Potential/Flux Sources
     m_Circuits->SetReadOnly(true);
 
-    AtSteadyState(EngineState::Active);
     if (!m_Config->GetStabilization()->IsTrackingStabilization())
+    {
       m_SimulationTime.SetValue(0, TimeUnit::s);
+      // Track Time 0
+      GetEngineTracker().TrackData(0);
+    }
     // Hook up the handlers (Note events will still be in the log)
     m_EventManager->ForwardEvents(event_handler);
-
+    // Ready to go!
+    AtSteadyState(EngineState::Active);
     return true;
   }
 
@@ -647,16 +653,19 @@ namespace pulse
     if (adv2Stable != nullptr)
     {
       m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
-      return m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer);
+      if (!m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer))
+        Error("Engine was unable to AdvanceUntilStable");
+      return true;
     }
 
     const SESerializeRequested* serializeRequested = dynamic_cast<const SESerializeRequested*>(&action);
     if (serializeRequested != nullptr)
     {
       std::string output;
-      GetEngineTracker().TrackData();
+      double currentSimTime_s = GetSimulationTime().GetValue(TimeUnit::s);
+      GetEngineTracker().PullData(currentSimTime_s);
       m_DataRequested->ClearDataRequested();
-      m_DataRequested->PullDataRequested(GetSimulationTime().GetValue(TimeUnit::s), GetDataTrack());
+      m_DataRequested->PullDataRequested(currentSimTime_s, GetDataTrack());
       m_DataRequested->SerializeToString(output, eSerializationFormat::JSON);
       if (serializeRequested->HasFilename())
       {

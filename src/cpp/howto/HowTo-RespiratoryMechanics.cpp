@@ -57,7 +57,7 @@ void HowToRespiratoryMechanics()
   for (size_t i = 0; i < 6; i++)
   {
     AdvanceAndTrackTime_s(10, *pe);
-    pe->GetEngineTracker()->LogRequestedValues(false);
+    pe->GetEngineTracker()->LogRequestedValues();
   }
 
   SERespiratoryMechanicsConfiguration config;
@@ -131,6 +131,6 @@ void HowToRespiratoryMechanics()
   for (size_t i = 0; i < 12; i++)
   {
     AdvanceAndTrackTime_s(10, *pe);
-    pe->GetEngineTracker()->LogRequestedValues(false);
+    pe->GetEngineTracker()->LogRequestedValues();
   }
 }

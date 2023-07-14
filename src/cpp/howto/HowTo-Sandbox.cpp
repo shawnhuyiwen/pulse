@@ -114,7 +114,7 @@ void HowToSandbox()
     pe->GetEngineTracker()->TrackData(pe->GetSimulationTime(TimeUnit::s));
     // Print values every 10s
     if (i%500 == 0)
-      pe->GetEngineTracker()->LogRequestedValues(false);
+      pe->GetEngineTracker()->LogRequestedValues();
 
     // Check the Systolic Pressure
     double dBP = pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg);
