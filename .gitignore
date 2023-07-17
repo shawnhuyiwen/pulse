@@ -11,3 +11,7 @@
 .classpath
 .project
 
+# PyCharm Files
+/src/python/.idea/*
+/src/python/pulse.egg*
+
