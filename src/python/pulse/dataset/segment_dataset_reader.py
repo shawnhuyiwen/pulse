@@ -252,7 +252,7 @@ def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationTarge
         if idx == len(segments) - 1 and all_actions_str != '{"AnyAction": [':
             all_actions_str += ','
         all_actions_str += '{"SerializeRequested": {'
-        segment_file_name = results_dir / f"Segment{s.get_segment_id()}.json"
+        segment_file_name = (results_dir / f"Segment{s.get_segment_id()}.json").as_posix()
         all_actions_str += f'"Filename": "{segment_file_name}"'
         all_actions_str += '}}'
         if idx != len(segments) - 1:
