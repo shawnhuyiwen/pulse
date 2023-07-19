@@ -2790,7 +2790,6 @@ namespace pulse
         chestWallPath = m_RightPleuralToRespiratoryMuscle;
         lungPath = m_RightAlveoliToRightPleuralConnection;
         healthyChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
-        healthyLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
 
         if (HasActiveRespiratoryMechanics())
         {
@@ -2808,7 +2807,6 @@ namespace pulse
         chestWallPath = m_LeftPleuralToRespiratoryMuscle;
         lungPath = m_LeftAlveoliToLeftPleuralConnection;
         healthyChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
-        healthyLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
 
         if (HasActiveRespiratoryMechanics())
         {
@@ -2824,6 +2822,7 @@ namespace pulse
 
       double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) * lungRatio;
 
+      healthyLungCompliance_L_Per_cmH2O = lungPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
       double baselineCompliance_L_Per_cmH2O = 0.0;
       double lowerCorner_cmH2O = 0.0;
       double upperCorner_cmH2O = 0.0;
@@ -3131,7 +3130,6 @@ namespace pulse
       m_LeftAlveoliNode->GetVolume().IncrementValue(m_LeftAlveoliDecrease_L - leftAlveoliDecrease_L, VolumeUnit::L);
       m_LeftAlveoliNode->GetNextVolume().SetReadOnly(true);
       m_LeftAlveoliNode->GetVolume().SetReadOnly(true);
-      m_LeftAlveoliDecrease_L = leftAlveoliDecrease_L;
 
       m_LeftPleuralNode->GetNextVolume().SetReadOnly(false);
       m_LeftPleuralNode->GetVolume().SetReadOnly(false);
@@ -3139,6 +3137,8 @@ namespace pulse
       m_LeftPleuralNode->GetVolume().IncrementValue(m_LeftAlveoliDecrease_L - leftAlveoliDecrease_L, VolumeUnit::L);
       m_LeftPleuralNode->GetNextVolume().SetReadOnly(true);
       m_LeftPleuralNode->GetVolume().SetReadOnly(true);
+
+      m_LeftAlveoliDecrease_L = leftAlveoliDecrease_L;
     }
 
     if (rightAlveoliDecrease_L != m_RightAlveoliDecrease_L)
@@ -3149,7 +3149,6 @@ namespace pulse
       m_RightAlveoliNode->GetVolume().IncrementValue(m_RightAlveoliDecrease_L - rightAlveoliDecrease_L, VolumeUnit::L);
       m_RightAlveoliNode->GetNextVolume().SetReadOnly(true);
       m_RightAlveoliNode->GetVolume().SetReadOnly(true);
-      m_RightAlveoliDecrease_L = rightAlveoliDecrease_L;
 
       m_RightPleuralNode->GetNextVolume().SetReadOnly(false);
       m_RightPleuralNode->GetVolume().SetReadOnly(false);
@@ -3157,6 +3156,8 @@ namespace pulse
       m_RightPleuralNode->GetVolume().IncrementValue(m_RightAlveoliDecrease_L - rightAlveoliDecrease_L, VolumeUnit::L);
       m_RightPleuralNode->GetNextVolume().SetReadOnly(true);
       m_RightPleuralNode->GetVolume().SetReadOnly(true);
+
+      m_RightAlveoliDecrease_L = rightAlveoliDecrease_L;
     }
 
     m_LeftAlveolarDeadSpaceNode->GetNextVolume().SetValue(leftAlveolarDeadSpace_L, VolumeUnit::L);
