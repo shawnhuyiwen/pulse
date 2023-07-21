@@ -15,7 +15,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/AirwayObstructionValidation/AirwayObstructionVariedResults.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/AirwayObstruction/AirwayObstructionVariedResults.csv" }
           ],
           "Series":
           [
