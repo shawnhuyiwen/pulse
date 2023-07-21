@@ -2,10 +2,11 @@
 # See accompanying NOTICE file for details.
 
 import numpy as np
-from abc import ABC, abstractmethod
-from collections import OrderedDict
 from enum import Enum
+from dataclasses import dataclass
+from abc import ABC, abstractmethod
 from typing import List, Optional, Union
+
 from pulse.cdm.scalars import SEScalarTime, SEScalarUnit
 
 class eSerializationFormat(Enum):
@@ -617,14 +618,81 @@ class SEDataRequest(SEDecimalFormat):
     def get_unit(self):
         return self._unit
 
-class SEDataRequested: # TODO follow CDM get/set pattern?
-    __slots__ = ['id', 'is_active', 'headers', 'segments_per_sim_time_s']
+
+class SEDataRequested: # Event and Log support
+    __slots__ = ['_id', '_is_active', '_headers', '_header_idxs', '_segments']
+
+    @dataclass
+    class Segment:
+        id: int
+        time_s: float
+        values: [float]
 
     def __init__(self):
-        self.id = -1
-        self.is_active = False
-        self.headers = []
-        self.segments_per_sim_time_s = {}
+        self._id = -1
+        self._is_active = False
+        self._headers = [str]
+        self._header_idxs = {}
+        self._segments = []
+
+    def clear(self):
+        self._id = -1
+        self._is_active = False
+        self._headers = [str]
+        self._segments = []
+
+    def set_id(self, i: int):
+        self._id = i
+    def get_id(self) ->int:
+        return self._id
+
+    def set_active(self, a: bool):
+        self._is_active = a
+    def get_active(self) ->bool:
+        return self._is_active
+
+    def has_headers(self):
+        return len(self._headers) > 0
+    def get_headers(self) ->[str]:
+        return self._headers
+    def set_headers(self, h: [str]):
+        self._headers = h.copy()
+        idx = 0
+        for header in self._headers:
+            paren_idx = header.find("(")
+            if paren_idx != -1:
+                header = header[:paren_idx]
+            self._header_idxs[header] = idx
+            idx = idx + 1
+    def get_header_index(self, header: str) ->int:
+        paren_idx = header.find("(")
+        if paren_idx != -1:
+            header = header[:paren_idx]
+        if header in self._header_idxs:
+            return self._header_idxs[header]
+        return None
+
+    def has_segment(self, id_: int) ->bool:
+        for s in self._segments:
+            if s.id == id_:
+                return True
+        return False
+    def add_segment(self, id_: int, time_s: float, values: [float]):
+        s = self.get_segment(id_)
+        if s is not None:
+            s.time_s = time_s
+            s.values = values
+            return
+        s = SEDataRequested.Segment(id_, time_s, values)
+        self._segments.append(s)
+    def get_segment(self, id_: int):
+        for s in self._segments:
+            if s.id == id_:
+                return s
+        return None
+
+    def get_segments(self) -> [Segment]:
+        return self._segments
 
 
 class SEDataRequestManager:
@@ -883,7 +951,7 @@ class SESegmentValidationTarget(SEValidationTarget):
         self._target_segment = 0
 
 
-class SESegmentValidationTargetSegment:
+class SESegmentValidationSegment:
     __slots__ = ["_segment_id", "_notes", "_validation_targets", "_actions"]
 
     def __init__(self):
@@ -933,6 +1001,31 @@ class SESegmentValidationTargetSegment:
         self._actions = actions
     def invalidate_actions(self) -> None:
         self._actions = ""
+
+class SESegmentValidationPlots:
+    __slots__ = ["_create_vitals_monitor_plots",
+                 "_create_ventilator_monitor_plots",
+                 "_plotters"]
+    def __init__(self):
+        self.clear()
+
+    def clear(self) -> None:
+        self._create_vitals_monitor_plots = False
+        self._create_ventilator_monitor_plots = False
+        self._plotters = []
+
+    def create_vitals_monitor_plots(self) -> bool:
+        return self._create_vitals_monitor_plots
+    def set_create_vitals_monitor_plots(self, b: bool) -> None:
+        self._create_vitals_monitor_plots = b
+
+    def create_ventilator_monitor_plots(self) -> bool:
+        return self._create_ventilator_monitor_plots
+    def set_create_ventilator_monitor_plots(self, b: bool) -> None:
+        self._create_ventilator_monitor_plots = b
+
+    def get_plotters(self) -> []:
+        return self._plotters
 
 
 class SETimeSeriesValidationTarget(SEValidationTarget):

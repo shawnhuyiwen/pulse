@@ -19,6 +19,12 @@ public:
 
   virtual bool IsValid() const;
 
+  virtual int GetID() const { return m_ID; }
+  virtual void SetID(int id) { m_ID = id; }
+
+  virtual bool GetClearCache() const { return m_ClearCache; }
+  virtual void SetClearCache(bool b) { m_ClearCache = b; }
+
   virtual bool HasFilename() const;
   virtual std::string GetFilename() const;
   virtual void SetFilename(const std::string& filename);
@@ -27,6 +33,7 @@ public:
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
-
+  bool                m_ClearCache;
   std::string         m_Filename;
+  int                 m_ID;
 };

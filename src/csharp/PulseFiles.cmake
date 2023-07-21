@@ -31,6 +31,7 @@ set(PULSE_CSHARP_BIND_FILES
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/PatientConditions.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/PatientNutrition.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Physiology.cs
+  ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Plots.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Properties.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Scenario.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Substance.cs

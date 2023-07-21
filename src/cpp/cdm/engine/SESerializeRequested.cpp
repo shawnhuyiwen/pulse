@@ -7,6 +7,8 @@
 SESerializeRequested::SESerializeRequested(Logger* logger) : SEAction(logger)
 {
   m_Filename="";
+  m_ClearCache = true;
+  m_ID = 0;
 }
 
 SESerializeRequested::~SESerializeRequested()
@@ -18,6 +20,8 @@ void SESerializeRequested::Clear()
 {
   SEAction::Clear();
   m_Filename = "";
+  m_ClearCache = true;
+  m_ID = 0;
 }
 
 bool SESerializeRequested::IsValid() const

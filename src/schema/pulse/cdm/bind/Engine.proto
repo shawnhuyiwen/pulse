@@ -10,6 +10,7 @@ import "pulse/cdm/bind/Actions.proto";
 import "pulse/cdm/bind/Patient.proto";
 import "pulse/cdm/bind/PatientActions.proto";
 import "pulse/cdm/bind/PatientConditions.proto";
+import "pulse/cdm/bind/Plots.proto";
 import "pulse/cdm/bind/EnvironmentActions.proto";
 import "pulse/cdm/bind/EnvironmentConditions.proto";
 import "pulse/cdm/bind/EquipmentActions.proto";
@@ -82,8 +83,9 @@ message DataRequestedData
   
   message SegmentData
   {
-    double                                              SimTime_s                       = 1;
-    repeated double                                     Value                           = 2;
+    int32                                               ID                              = 1;
+    double                                              SimTime_s                       = 2;
+    repeated double                                     Value                           = 3;
   }
 
   
@@ -127,13 +129,24 @@ message SegmentValidationTargetData
     RangeData                                           Range                           = 10;
   }
 }
-message SegmentValidationTargetSegmentData
+message SegmentValidationSegmentData
 {
 
   int32                                                 Segment                         = 1;
   string                                                Notes                           = 2;
   repeated SegmentValidationTargetData                  SegmentValidationTarget         = 3;
 }
+message SegmentValidationSegmentListData
+{
+  repeated SegmentValidationSegmentData                 SegmentValidationSegment   = 1;
+}
+message SegmentValidationPlotsData
+{
+  bool                                                  CreateVitalsMonitorPlots        = 1;
+  bool                                                  CreateVentilatorMonitorPlots    = 2;
+  PlotterListData                                       Plots                           = 3;
+}
+
 message TimeSeriesValidationTargetData
 {
   enum eType

@@ -39,7 +39,7 @@ void SEDataRequested::Clear()
   m_EventChanges.clear();
   m_LogMessages.Clear();
   m_Headers.clear();
-  m_SegmentsPerSimTime_s.clear();
+  m_Segments.clear();
 }
 
 int SEDataRequested::GetID() const
@@ -60,7 +60,7 @@ void SEDataRequested::SetIsActive(bool b)
   m_IsActive = b;
 }
 
-void SEDataRequested::PullDataRequested(double currentTime_s, DataTrack& tracker)
+void SEDataRequested::PullDataRequested(int id, double currentTime_s, DataTrack& tracker)
 {
   size_t length = tracker.NumTracks();
   if (m_Headers.empty())
@@ -68,13 +68,16 @@ void SEDataRequested::PullDataRequested(double currentTime_s, DataTrack& tracker
     for (size_t i = 0; i < length; i++)
       m_Headers.push_back(tracker.GetProbeName(i));
   }
-  auto& values = m_SegmentsPerSimTime_s[currentTime_s];
+  Segment s;
+  s.id = id;
+  s.time_s = currentTime_s;
   for (size_t i = 0; i < length; i++)
-    values.push_back(tracker.GetProbe(i));
+    s.values.push_back(tracker.GetProbe(i));
+  m_Segments.push_back(s);
 }
 void SEDataRequested::ClearDataRequested()
 {
-  m_SegmentsPerSimTime_s.clear();
+  m_Segments.clear();
   m_EventChanges.clear();
   m_LogMessages.Clear();
 }
@@ -128,7 +131,7 @@ const std::vector<std::string>& SEDataRequested::GetHeaders() const
 {
   return m_Headers;
 }
-const std::map<double, std::vector<double>>& SEDataRequested::GetAllValues() const
+const std::vector<SEDataRequested::Segment>& SEDataRequested::GetSegments() const
 {
-  return m_SegmentsPerSimTime_s;
+  return m_Segments;
 }

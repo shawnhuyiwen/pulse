@@ -5,7 +5,7 @@ from typing import List
 
 from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEDataRequested, SEDecimalFormat, \
                              SEConditionManager, SEEngineInitialization, SEValidationTarget, \
-                             SESegmentValidationTarget, SESegmentValidationTargetSegment, \
+                             SESegmentValidationTarget, SESegmentValidationSegment, \
                              SETimeSeriesValidationTarget
 from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       ActionListData, ActionMapData, \
@@ -15,13 +15,14 @@ from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       DataRequestedData, DataRequestedListData, DecimalFormatData, \
                                       EngineInitializationData, EngineInitializationListData, \
                                       LogMessagesData, ValidationTargetData, \
-                                      SegmentValidationTargetData, SegmentValidationTargetSegmentData, \
+                                      SegmentValidationTargetData, SegmentValidationSegmentData,\
+                                      SegmentValidationSegmentListData, SegmentValidationPlotsData, \
                                       TimeSeriesValidationTargetData, TimeSeriesValidationTargetListData
 from pulse.cdm.bind.Events_pb2 import ActiveEventListData, EventChangeListData
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.equipment_actions import SEEquipmentAction
-from pulse.cdm.engine import SEEventChange, eEvent
+from pulse.cdm.engine import SEEventChange, eEvent, SESegmentValidationPlots
 
 from pulse.cdm.io.action import *
 from pulse.cdm.io.patient_actions import *
@@ -30,6 +31,7 @@ from pulse.cdm.io.environment_actions import *
 from pulse.cdm.io.environment_conditions import *
 from pulse.cdm.io.ecmo_actions import *
 from pulse.cdm.io.mechanical_ventilator_actions import *
+from pulse.cdm.io.plots import *
 
 def serialize_event_change_list_to_bind(src: [], dst: EventChangeListData):
     raise Exception("serialize_event_change_list_to_bind not implemented")
@@ -487,11 +489,12 @@ def serialize_engine_initializations_to_string(src: [SEEngineInitialization], fm
     return json_format.MessageToJson(dst, True, True)
 
 def serialize_data_requested_result_from_bind(src: DataRequestedData, dst: SEDataRequested):
-    dst.is_active = src.IsActive
-    dst.id = src.ID
-    dst.headers = list(src.Headers)
-    for segment in src.Segment:
-        dst.segments_per_sim_time_s[segment.SimTime_s] = list(segment.Value)
+    dst.set_id(src.ID)
+    dst.set_active(src.IsActive)
+    dst.set_headers(list(src.Headers))
+    for s in src.Segment:
+        dst.add_segment(s.ID, s.SimTime_s, list(s.Value))
+
 def serialize_data_requested_result_from_string(string: str, fmt: eSerializationFormat):
     src = DataRequestedData()
     json_format.Parse(string, src)
@@ -583,13 +586,13 @@ def serialize_segment_validation_target_from_bind(src: SegmentValidationTargetDa
         pass
     else:
         raise ValueError(f"Unknown expected field: {src.WhichOneOf('Expected')}")
-def serialize_segment_validation_target_segment_to_bind(src: SESegmentValidationTargetSegment, dst: SegmentValidationTargetSegmentData):
+def serialize_segment_validation_segment_to_bind(src: SESegmentValidationSegment, dst: SegmentValidationSegmentData):
     dst.Segment = src.get_segment_id()
     dst.Notes = src.get_notes()
     for tgt in src.get_validation_targets():
         serialize_segment_validation_target_to_bind(tgt, dst.SegmentValidationTarget.add())
-def serialize_segment_validation_target_segment_from_bind(src: SegmentValidationTargetSegmentData):
-    dst = SESegmentValidationTargetSegment()
+def serialize_segment_validation_segment_from_bind(src: SegmentValidationSegmentData):
+    dst = SESegmentValidationSegment()
 
     dst.set_notes(src.Notes)
     dst.set_segment_id(src.Segment)
@@ -602,23 +605,49 @@ def serialize_segment_validation_target_segment_from_bind(src: SegmentValidation
     dst.set_validation_targets(tgts)
 
     return dst
-def serialize_segment_validation_target_segment_to_string(src: SESegmentValidationTargetSegment, fmt: eSerializationFormat):
-    dst = SegmentValidationTargetSegmentData()
-    serialize_segment_validation_target_segment_to_bind(src, dst)
+
+def serialize_segment_validation_segment_list_to_bind(src: List[SESegmentValidationSegment], dst: SegmentValidationSegmentListData):
+    for segment in src:
+        serialize_segment_validation_segment_to_bind(segment, dst.SegmentValidationSegment.add())
+def serialize_segment_validation_segment_list_from_bind(src: SegmentValidationSegmentListData):
+    dst = []
+    for segmentData in src.SegmentValidationSegment:
+        dst.append(serialize_segment_validation_segment_from_bind(segmentData))
+
+    return dst
+
+def serialize_segment_validation_segment_list_to_string(src: List[SESegmentValidationSegment], fmt: eSerializationFormat):
+    dst = SegmentValidationSegmentListData()
+    serialize_segment_validation_segment_list_to_bind(src, dst)
     return json_format.MessageToJson(dst, True, True)
-def serialize_segment_validation_target_segment_to_file(src: SESegmentValidationTargetSegment, filename: str):
-    string = serialize_segment_validation_target_segment_to_string(src, eSerializationFormat.JSON)
+def serialize_segment_validation_segment_list_to_file(src: List[SESegmentValidationSegment], filename: str):
+    string = serialize_segment_validation_segment_list_to_string(src, eSerializationFormat.JSON)
     file = open(filename, "w")
     n = file.write(string)
     file.close()
-def serialize_segment_validation_target_segment_from_string(string: str, fmt: eSerializationFormat):
-    src = SegmentValidationTargetSegmentData()
+def serialize_segment_validation_segment_list_from_string(string: str, fmt: eSerializationFormat):
+    src = SegmentValidationSegmentListData()
     json_format.Parse(string, src)
-    return serialize_segment_validation_target_segment_from_bind(src)
-def serialize_segment_validation_target_segment_from_file(filename: str):
+    return serialize_segment_validation_segment_list_from_bind(src)
+def serialize_segment_validation_segment_list_from_file(filename: str):
     with open(filename) as f:
         string = f.read()
-    return serialize_segment_validation_target_segment_from_string(string, eSerializationFormat.JSON)
+    return serialize_segment_validation_segment_list_from_string(string, eSerializationFormat.JSON)
+
+def serialize_segment_validation_plots_from_file(filename: str, dst: SESegmentValidationPlots):
+    with open(filename) as f:
+        string = f.read()
+    serialize_segment_validation_plots_from_string(string, dst, eSerializationFormat.JSON)
+def serialize_segment_validation_plots_from_string(string: str, dst: SESegmentValidationPlots, fmt: eSerializationFormat):
+    src = SegmentValidationPlotsData()
+    json_format.Parse(string, src)
+    serialize_segment_validation_plots_from_bind(src, dst)
+def serialize_segment_validation_plots_from_bind(src: SegmentValidationPlotsData, dst: SESegmentValidationPlots):
+    dst.clear()
+
+    dst.set_create_vitals_monitor_plots(src.CreateVitalsMonitorPlots)
+    dst.set_create_ventilator_monitor_plots(src.CreateVentilatorMonitorPlots)
+    serialize_plotter_list_from_bind(src.Plots, dst.get_plotters())
 
 def serialize_time_series_validation_target_to_bind(src: SETimeSeriesValidationTarget, dst: TimeSeriesValidationTargetData):
     serialize_validation_target_to_bind(src, dst.ValidationTarget)

@@ -60,8 +60,10 @@ message SerializeStateData
 message SerializeRequestedData
 {
   
-  ActionData             Action   = 1;
-  string                 Filename = 3;
+  ActionData             Action     = 1;
+  bool                   ClearCache = 2;/**<< @brief If false, all previous requested times are kept and provided in requested file, default is true (Only the data of the engine at the time this actions is processed is in the file.) */
+  string                 Filename   = 3;
+  int32                  ID         = 4;/**<< @brief Give an ID to the segment of data, useful when writing more than one time set */
 }
 
 message OverridesData

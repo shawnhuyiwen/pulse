@@ -647,11 +647,11 @@ void PBEngine::Serialize(const SESegmentValidationTarget& src, CDM_BIND::Segment
   default: break;
   }
 }
-void PBEngine::Load(const CDM_BIND::SegmentValidationTargetSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
+void PBEngine::Load(const CDM_BIND::SegmentValidationSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
 {
   PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const CDM_BIND::SegmentValidationTargetSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
+void PBEngine::Serialize(const CDM_BIND::SegmentValidationSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
 {
   for (int i = 0; i < src.segmentvalidationtarget_size(); i++)
   {
@@ -663,7 +663,7 @@ void PBEngine::Serialize(const CDM_BIND::SegmentValidationTargetSegmentData& src
 }
 bool PBEngine::SerializeFromString(const std::string& src, std::vector<SESegmentValidationTarget*>& dst, eSerializationFormat m, Logger* logger)
 {
-  CDM_BIND::SegmentValidationTargetSegmentData data;
+  CDM_BIND::SegmentValidationSegmentData data;
   if (!PBUtils::SerializeFromString(src, data, m, logger))
     return false;
   PBEngine::Serialize(data, dst);
@@ -671,19 +671,19 @@ bool PBEngine::SerializeFromString(const std::string& src, std::vector<SESegment
 }
 bool PBEngine::SerializeFromFile(const std::string& filename, std::vector<SESegmentValidationTarget*>& dst, Logger* logger)
 {
-  CDM_BIND::SegmentValidationTargetSegmentData data;
+  CDM_BIND::SegmentValidationSegmentData data;
   if (!PBUtils::SerializeFromFile(filename, data, logger))
     return false;
   PBEngine::Load(data, dst);
   return true;
 }
-CDM_BIND::SegmentValidationTargetSegmentData* PBEngine::Unload(const std::vector<const SESegmentValidationTarget*>& src)
+CDM_BIND::SegmentValidationSegmentData* PBEngine::Unload(const std::vector<const SESegmentValidationTarget*>& src)
 {
-  CDM_BIND::SegmentValidationTargetSegmentData* dst = new CDM_BIND::SegmentValidationTargetSegmentData();
+  CDM_BIND::SegmentValidationSegmentData* dst = new CDM_BIND::SegmentValidationSegmentData();
   PBEngine::Serialize(src, *dst);
   return dst;
 }
-void PBEngine::Serialize(const std::vector<const SESegmentValidationTarget*>& src, CDM_BIND::SegmentValidationTargetSegmentData& dst)
+void PBEngine::Serialize(const std::vector<const SESegmentValidationTarget*>& src, CDM_BIND::SegmentValidationSegmentData& dst)
 {
   for (const SESegmentValidationTarget* vt : src)
   {
@@ -692,7 +692,7 @@ void PBEngine::Serialize(const std::vector<const SESegmentValidationTarget*>& sr
 }
 bool PBEngine::SerializeToString(const std::vector<const SESegmentValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
-  CDM_BIND::SegmentValidationTargetSegmentData data;
+  CDM_BIND::SegmentValidationSegmentData data;
   PBEngine::Serialize(src, data);
   if (!PBUtils::SerializeToString(data, output, m, logger))
     return false;
@@ -700,7 +700,7 @@ bool PBEngine::SerializeToString(const std::vector<const SESegmentValidationTarg
 }
 bool PBEngine::SerializeToFile(const std::vector<const SESegmentValidationTarget*>& src, const std::string& filename, Logger* logger)
 {
-  CDM_BIND::SegmentValidationTargetSegmentData data;
+  CDM_BIND::SegmentValidationSegmentData data;
   PBEngine::Serialize(src, data);
   if (!PBUtils::SerializeToFile(data, filename, logger))
     return false;
@@ -845,11 +845,12 @@ void PBEngine::Serialize(const SEDataRequested& src, CDM_BIND::DataRequestedData
   }
   for (std::string str : src.GetHeaders())
     dst.mutable_headers()->Add(std::move(str));
-  for (auto itr : src.GetAllValues())
+  for (auto& itr : src.GetSegments())
   {
     auto segment = dst.add_segment();
-    segment->set_simtime_s(itr.first);
-    for (double d : itr.second)
+    segment->set_id(itr.id);
+    segment->set_simtime_s(itr.time_s);
+    for (double d : itr.values)
       segment->add_value(d);
   }
 }

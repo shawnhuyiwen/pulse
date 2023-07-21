@@ -26,24 +26,24 @@ The airway obstruction action was validated with a scenario that applies varying
 
 #### Segment 1
 
-@insert AirwayObstructionVaried-Segment1Validation.md
+@insert ./validation/tables/AirwayObstruction/AirwayObstructionVaried/Segment1ValidationTable.md
 
 #### Segment 2
 
-@insert AirwayObstructionVaried-Segment2Validation.md
+@insert ./validation/tables/AirwayObstruction/AirwayObstructionVaried/Segment2ValidationTable.md
 
 #### Segment 3
 
-@insert AirwayObstructionVaried-Segment3Validation.md
+@insert ./validation/tables/AirwayObstruction/AirwayObstructionVaried/Segment3ValidationTable.md
 
 #### Segment 4
 
-@insert AirwayObstructionVaried-Segment4Validation.md
+@insert ./validation/tables/AirwayObstruction/AirwayObstructionVaried/Segment4ValidationTable.md
 
 #### Segment 5
 
-@insert AirwayObstructionVaried-Segment5Validation.md
+@insert ./validation/tables/AirwayObstruction/AirwayObstructionVaried/Segment5ValidationTable.md
 
 #### Segment 6
 
-@insert AirwayObstructionVaried-Segment6Validation.md
+@insert ./validation/tables/AirwayObstruction/AirwayObstructionVaried/Segment6ValidationTable.md

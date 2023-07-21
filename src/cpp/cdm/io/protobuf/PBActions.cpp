@@ -223,7 +223,9 @@ void PBAction::Load(const CDM_BIND::SerializeRequestedData& src, SESerializeRequ
 void PBAction::Serialize(const CDM_BIND::SerializeRequestedData& src, SESerializeRequested& dst)
 {
   PBAction::Serialize(src.action(), dst);
+  dst.SetClearCache(src.clearcache());
   dst.SetFilename(src.filename());
+  dst.SetID(src.id());
 }
 CDM_BIND::SerializeRequestedData* PBAction::Unload(const SESerializeRequested& src)
 {
@@ -237,6 +239,8 @@ void PBAction::Serialize(const SESerializeRequested& src, CDM_BIND::SerializeReq
 
   if (src.HasFilename())
     dst.set_filename(src.m_Filename);
+  dst.set_clearcache(src.m_ClearCache);
+  dst.set_id(src.m_ID);
 }
 
 void PBAction::Load(const CDM_BIND::SerializeStateData& src, SESerializeState& dst)

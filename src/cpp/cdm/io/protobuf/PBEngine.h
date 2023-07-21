@@ -11,7 +11,7 @@ CDM_BIND_DECL(DataRequestListData)
 CDM_BIND_DECL2(DataRequest)
 CDM_BIND_DECL2(ValidationTarget)
 CDM_BIND_DECL2(SegmentValidationTarget)
-CDM_BIND_DECL2(SegmentValidationTargetSegment)
+CDM_BIND_DECL2(SegmentValidationSegment)
 CDM_BIND_DECL2(TimeSeriesValidationTarget)
 CDM_BIND_DECL2(TimeSeriesValidationTargetList)
 CDM_BIND_DECL2(DataRequested)
@@ -103,12 +103,12 @@ public:
   static CDM_BIND::SegmentValidationTargetData* Unload(const SESegmentValidationTarget& src);
   static void Serialize(const CDM_BIND::SegmentValidationTargetData& src, SESegmentValidationTarget& dst);
   static void Serialize(const SESegmentValidationTarget& src, CDM_BIND::SegmentValidationTargetData& dst);
-  static void Load(const CDM_BIND::SegmentValidationTargetSegmentData& src, std::vector<SESegmentValidationTarget*>& dst);
-  static void Serialize(const CDM_BIND::SegmentValidationTargetSegmentData& src, std::vector<SESegmentValidationTarget*>& dst);
+  static void Load(const CDM_BIND::SegmentValidationSegmentData& src, std::vector<SESegmentValidationTarget*>& dst);
+  static void Serialize(const CDM_BIND::SegmentValidationSegmentData& src, std::vector<SESegmentValidationTarget*>& dst);
   static bool SerializeFromString(const std::string& src, std::vector<SESegmentValidationTarget*>& dst, eSerializationFormat m, Logger* logger);
   static bool SerializeFromFile(const std::string& filename, std::vector<SESegmentValidationTarget*>& dst, Logger* logger);
-  static CDM_BIND::SegmentValidationTargetSegmentData* Unload(const std::vector<const SESegmentValidationTarget*>& src);
-  static void Serialize(const std::vector<const SESegmentValidationTarget*>& src, CDM_BIND::SegmentValidationTargetSegmentData& dst);
+  static CDM_BIND::SegmentValidationSegmentData* Unload(const std::vector<const SESegmentValidationTarget*>& src);
+  static void Serialize(const std::vector<const SESegmentValidationTarget*>& src, CDM_BIND::SegmentValidationSegmentData& dst);
   static bool SerializeToString(const std::vector<const SESegmentValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger);
   static bool SerializeToFile(const std::vector<const SESegmentValidationTarget*>& src, const std::string& filename, Logger* logger);
 

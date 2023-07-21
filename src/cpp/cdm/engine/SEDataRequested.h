@@ -11,6 +11,12 @@ class CDM_DECL SEDataRequested : public LoggerForward, public SEEventHandler
 {
   friend class PBEngine;//friend the serialization class
 public:
+  struct Segment
+  {
+    int id;
+    double time_s;
+    std::vector<double> values;
+  };
   explicit SEDataRequested();
   virtual ~SEDataRequested();
 
@@ -29,10 +35,10 @@ public:
   virtual void SetIsActive(bool b);
 
   virtual void ClearDataRequested();
-  virtual void PullDataRequested(double currentTime_s, DataTrack& tracker);
+  virtual void PullDataRequested(int id, double currentTime_s, DataTrack& tracker);
 
   virtual const std::vector<std::string>& GetHeaders() const;
-  virtual const std::map<double, std::vector<double>>& GetAllValues() const;
+  virtual const std::vector<Segment>& GetSegments() const;
 
   virtual bool KeepLogMessages() const { return m_KeepLogMessages; }
   virtual void KeepLogMessages(bool b) { m_KeepLogMessages = b; }
@@ -58,6 +64,6 @@ protected:
   bool                                  m_KeepLogMessages;
   LogMessages                           m_LogMessages;
   std::vector<std::string>              m_Headers;
-  std::map<double, std::vector<double>> m_SegmentsPerSimTime_s;
+  std::vector<Segment>                  m_Segments;
   const PhysiologyEngine*               m_Engine;
 };

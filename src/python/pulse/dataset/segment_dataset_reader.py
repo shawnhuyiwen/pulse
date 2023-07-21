@@ -3,42 +3,22 @@
 
 import sys
 import json
-import shutil
 import logging
-import numpy as np
 from enum import Enum
 from pathlib import Path
-from dataclasses import dataclass, field
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from typing import Dict, Hashable, List, Tuple
+from typing import Dict, List, Tuple
 
-from pulse.cdm.engine import SESegmentValidationTarget, SESegmentValidationTargetSegment
+from pulse.cdm.engine import SESegmentValidationTarget, SESegmentValidationSegment
 from pulse.cdm.scenario import SEScenario
 from pulse.cdm.utils.file_utils import get_validation_dir
-from pulse.cdm.io.engine import serialize_segment_validation_target_segment_to_file
+from pulse.cdm.io.engine import serialize_segment_validation_segment_list_to_file
 from pulse.dataset.utils import generate_data_request
-
 
 _pulse_logger = logging.getLogger('pulse')
 
-
-def load_data(xls_file: Path) -> Tuple[str, str]:
-    # Remove and recreate directory
-    output_dir = Path("./validation/scenarios/")
-    results_dir = Path("./test_results/scenarios/")
-    xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
-    xls_basename_out = xls_basename[:-10] if xls_basename.lower().endswith("validation") else xls_basename
-    output_dir = output_dir / xls_basename_out
-    results_dir = results_dir / xls_basename_out
-    try:
-        if output_dir.is_dir():
-            shutil.rmtree(output_dir)
-        output_dir.mkdir(parents=True, exist_ok=True)
-    except OSError as e:
-        _pulse_logger.error(f"Unable to clean directories")
-        return
-
+def gen_scenarios_and_targets(xls_file: Path, output_dir: Path, results_dir: Path) -> None:
     _pulse_logger.info(f"Generating data from {xls_file}")
 
     # Iterate through each sheet in the file, generating a scenario for each
@@ -46,14 +26,12 @@ def load_data(xls_file: Path) -> Tuple[str, str]:
     for s in workbook.sheetnames:
         if s == "Notes":
             continue
-        if not read_sheet(workbook[s], output_dir, results_dir):
+        if not process_sheet(workbook[s], output_dir, results_dir):
             _pulse_logger.error(f"Unable to read {s} sheet")
-
-    return output_dir, results_dir
 
 
 # Read xlsx sheet and generate corresponding scenario file and validation target files
-def read_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path) -> bool:
+def process_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path) -> bool:
     class Stage(Enum):
         IDScenario = 0
         InitialSegment = 1
@@ -91,7 +69,7 @@ def read_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path) -> bool:
             if "patient file" in h2c and isinstance(r[h2c["patient file"]], str):
                 scenario.get_patient_configuration().set_patient_file(r[h2c["patient file"]].strip())
             if "state file" in h2c and isinstance(r[h2c["state file"]], str):
-                    scenario.set_engine_state(r[h2c["state file"]].strip())
+                scenario.set_engine_state(r[h2c["state file"]].strip())
             if "description" in h2c:
                 scenario.set_description(r[h2c["description"]] if r[h2c["description"]] is not None else "")
 
@@ -107,7 +85,7 @@ def read_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path) -> bool:
                 if "conditions" in h2c and isinstance(r[h2c["conditions"]], str):
                     conditions = r[h2c["conditions"]]
 
-            seg = SESegmentValidationTargetSegment()
+            seg = SESegmentValidationSegment()
             if "segment" in h2c:
                 seg.set_segment_id(int(r[h2c["segment"]]))
             seg.set_notes(r[h2c["notes"]] if "notes" in h2c and isinstance(r[h2c["notes"]], str) else "")
@@ -145,7 +123,7 @@ def read_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path) -> bool:
                 h2c = _gen_header_to_col_dict(r)
                 continue
 
-            seg = SESegmentValidationTargetSegment()
+            seg = SESegmentValidationSegment()
             if "segment" in h2c:
                 seg.set_segment_id(int(r[h2c["segment"]]))
             seg.set_notes(r[h2c["notes"]] if "notes" in h2c and isinstance(r[h2c["notes"]], str) else "")
@@ -218,32 +196,30 @@ def read_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path) -> bool:
         segments.append(seg)
 
     scenario.get_data_request_manager().set_data_requests(drs)
-    full_results_dir = results_dir / scenario.get_name()
-    scenario.get_data_request_manager().set_results_filename(str(full_results_dir / f"{scenario.get_name()}.csv"))
+    full_results_dir = str(results_dir) + '/'
+    full_results_filename = results_dir / (scenario.get_name() + f"Results.csv")
+    # Provide a directory to create a csv file with Results, but log files without
+    scenario.get_data_request_manager().set_results_filename(full_results_dir)
 
+    output_dir.mkdir(parents=True, exist_ok=True)
     # Write out scenario
-    full_output_dir = output_dir / scenario.get_name()
-
-    full_output_dir.mkdir(parents=True, exist_ok=True)
-    filename = full_output_dir / (scenario.get_name() + ".json")
+    filename = output_dir / (scenario.get_name() + ".json")
     _pulse_logger.info(f"Writing {filename}")
     with open(filename, "w") as f:
-        f.write(write_scenario(scenario, segments, conditions, full_results_dir))
+        f.write(write_scenario(scenario, segments, conditions, full_results_filename))
 
-    # Write out validation target files
-    for s in segments:
-        if not s.has_validation_targets():
-            continue
-        filename = full_output_dir / f"Segment{s.get_segment_id()}ValidationTargets.json"
-        _pulse_logger.info(f"Writing {filename}")
-        serialize_segment_validation_target_segment_to_file(s, filename)
+    # Write out validation target file
+    filename = output_dir / (scenario.get_name() + "-ValidationTargets.json")
+    _pulse_logger.info(f"Writing {filename}")
+    serialize_segment_validation_segment_list_to_file(segments, filename)
 
     return True
 
 
-def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationTargetSegment],
-                   conditions: str, results_dir: Path) -> str:
+def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationSegment],
+                   conditions: str, results_csv_filename: Path) -> str:
     # Load actions into dict from concatenated JSON across segments
+    segment_file_name = Path(str(results_csv_filename).replace(".csv", "-Segments.json")).as_posix()
     all_actions_str = '{"AnyAction": ['
     for idx, s in enumerate(segments):
         all_actions_str += s.get_actions()
@@ -252,8 +228,9 @@ def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationTarge
         if idx == len(segments) - 1 and all_actions_str != '{"AnyAction": [':
             all_actions_str += ','
         all_actions_str += '{"SerializeRequested": {'
-        segment_file_name = (results_dir / f"Segment{s.get_segment_id()}.json").as_posix()
-        all_actions_str += f'"Filename": "{segment_file_name}"'
+        all_actions_str += f'"ClearCache": false,'
+        all_actions_str += f'"Filename": "{segment_file_name}",'
+        all_actions_str += f'"ID": {idx} '
         all_actions_str += '}}'
         if idx != len(segments) - 1:
             all_actions_str += ','
@@ -356,4 +333,4 @@ if __name__ == "__main__":
             _pulse_logger.error("Please provide a valid xls file")
             sys.exit(1)
 
-    _ = load_data(xls_file)
+    _ = gen_scenarios_and_targets(xls_file)

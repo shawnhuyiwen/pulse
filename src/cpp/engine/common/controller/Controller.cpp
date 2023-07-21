@@ -664,8 +664,9 @@ namespace pulse
       std::string output;
       double currentSimTime_s = GetSimulationTime().GetValue(TimeUnit::s);
       GetEngineTracker().PullData(currentSimTime_s);
-      m_DataRequested->ClearDataRequested();
-      m_DataRequested->PullDataRequested(currentSimTime_s, GetDataTrack());
+      if(serializeRequested->GetClearCache())
+        m_DataRequested->ClearDataRequested();
+      m_DataRequested->PullDataRequested(serializeRequested->GetID(), currentSimTime_s, GetDataTrack());
       m_DataRequested->SerializeToString(output, eSerializationFormat::JSON);
       if (serializeRequested->HasFilename())
       {

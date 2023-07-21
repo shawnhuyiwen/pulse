@@ -25,9 +25,23 @@ from pulse.cdm.utils.file_utils import get_config_dir
 _pulse_logger = logging.getLogger('pulse')
 
 
-def create_plots(plots_file: Path, benchmark: bool = False):
-    plotters = []
-    serialize_plotter_list_from_file(plots_file, plotters)
+# def create_plots(plots_file: Path, benchmark: bool = False):
+#    plotters = []
+#    serialize_plotter_list_from_file(plots_file, plotters)
+#    create_plots(plotters)
+
+def plot_with_test_results(plotters: []):
+    for p in plotters:
+        if isinstance(p, SEMultiHeaderSeriesPlotter):
+            if p.has_plot_sources():
+                sources = p.get_plot_sources()
+                for source in sources:
+                    csv = source.get_csv_data()
+                    if "$VERIFICATION_DIR" in csv:
+                        csv = csv.replace("$VERIFICATION_DIR", "./test_results")
+                        source.set_csv_data(csv)
+
+def create_plots(plotters: [], benchmark: bool = False):
     for p in plotters:
         if isinstance(p, SEMultiHeaderSeriesPlotter):
             multi_header_series_plotter(p, benchmark)
@@ -35,7 +49,6 @@ def create_plots(plots_file: Path, benchmark: bool = False):
             compare_plotter(p, benchmark)
         else:
             _pulse_logger.error(f"Unknown plotter type: {p}")
-
 
 def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: bool = False):
     if benchmark:

@@ -29,6 +29,7 @@ set(PULSE_BIND_JAVA_FILES
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/PatientAssessments.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/PatientConditions.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/PatientNutrition.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Plots.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Physiology.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Properties.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Scenario.java

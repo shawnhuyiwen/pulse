@@ -216,7 +216,7 @@ if __name__ == "__main__":
         if len(sys.argv) == 3 or len(sys.argv) == 4:
             src_dir = Path(sys.argv[1])
             dest_dir = Path(sys.argv[2])
-            if src_dir.isrc_dir():
+            if src_dir.is_dir():
                 if len(sys.argv) == 4:
                     ref_dir = Path(sys.argv[3])
                 else:
@@ -224,14 +224,14 @@ if __name__ == "__main__":
 
                 found = list(src_dir.rglob("*.[mM][dD]"))
                 for f in found:
-                    if f.isrc_dir():
+                    if f.is_dir():
                         continue # Not currently recursively processing directories
                     process_file(f, ref_dir, dest_dir, replace_refs=True)
             else:
                 _pulse_logger.error(f"Cannot find source directory: {sys.argv[1]}")
         else:
             _pulse_logger.error(
-                "Command arguments are: <Directory of file to process> " \
+                "Command arguments are: <Directory to process> " \
                 "<Directory to place processed files> [Directory where to find references for insert tags]"
         )
     except Exception as e:

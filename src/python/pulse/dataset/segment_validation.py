@@ -8,128 +8,50 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import PyPulse
-from pulse.dataset.generate_monitors import generate_monitors
-from pulse.cdm.engine import SESegmentValidationTarget, SESegmentValidationTargetSegment
+from pulse.cdm.engine import SESegmentValidationTarget, SEDataRequested
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.math_utils import generate_percentage_span, percent_change, percent_difference
-from pulse.cdm.io.engine import serialize_segment_validation_target_segment_from_file, \
+from pulse.cdm.io.engine import serialize_segment_validation_segment_list_from_file, \
                                 serialize_data_requested_result_from_file
 
 
 _pulse_logger = logging.getLogger('pulse')
 
 
-def validate(targets_dir: Path, results_dir: Path, md_dir: Optional[Path]=None, monitors_dir: Optional[Path]=None) -> None:
-    # Get all validation targets from files
-    val_segments = {}
-    prefix = "Segment"
-    postfix = "ValidationTargets.json"
-    for filename in targets_dir.glob(f"{prefix}*{postfix}"):
-        seg_id = int(filename.name[len(prefix):-len(postfix)])
+def validate(targets_filename: Path, segments_filename: Path, table_dir: Path) -> None:
+    # Get all validation targets and segment results from files
+    targets = serialize_segment_validation_segment_list_from_file(targets_filename)
+    results = serialize_data_requested_result_from_file(segments_filename)
 
-        val_segments[seg_id] = serialize_segment_validation_target_segment_from_file(filename)
-
-    # Get all results from files
-    results = {}
-    prefix = "Segment"
-    postfix = ".json"
-    times_s = []
-    for filename in results_dir.glob(f"{prefix}*{postfix}"):
-        seg_id = int(filename.name[len(prefix):-len(postfix)])
-
-        drr = serialize_data_requested_result_from_file(filename)
-        # In this case the DRR will only have one timestep, so get values from there
-        time = list(drr.segments_per_sim_time_s.keys())[0]
-        drr_values = drr.segments_per_sim_time_s[time]
-        results[seg_id] = {
-            header: value for header, value in zip(drr.headers, drr_values)
-        }
-        if seg_id: # Skip 0th slice for monitors
-            times_s.append(time)
-
-    scenario_name = targets_dir.name
-    if md_dir is None:
-        md_dir = results_dir / "docs" / "markdown"
-    md_dir.mkdir(parents=True, exist_ok=True)
-
-    # Generate vital and ventilator monitor images if requested
-    if monitors_dir is not None:
-        generate_monitors(
-            csv_file= results_dir / f"{scenario_name}.csv",
-            times_s=sorted(times_s),
-            dest_dir=monitors_dir,
-            filename_prefix=f"{scenario_name}-"
-        )
-
-
-    # Evaluate targets and create markdown tables for each segment
     headers = ["Property Name", "Validation", "Engine Value", "Percent Error", "Percent Change", "Notes"]
     fields = list(range(len(headers)))
     align = [('<', '<')] * len(headers)
-    for seg_id in sorted(val_segments.keys()):
-        md_filename = md_dir / f"{scenario_name}-Segment{seg_id}Validation.md"
-        table_data = []
 
-        val_segment = val_segments[seg_id]
-        for tgt in val_segment.get_validation_targets():
+    for target in targets:
+        if not target.has_validation_targets():
+            continue
+        # Get the result associated with this target
+        seg_id = target.get_segment_id()
+
+
+        # Evaluate targets and create markdown tables for each segment
+        table_data = []
+        for tgt in target.get_validation_targets():
             table_data.append(evaluate(seg_id, tgt, results))
 
-        # Only write file if we have data
-        if val_segment.has_validation_targets():
-            with open(md_filename, "w") as md_file:
-                _pulse_logger.info(f"Writing {md_filename}")
-
-                if val_segment.has_notes():
-                    md_file.writelines(
-                        f"<center>\n*@tabledef {scenario_name}Segment{seg_id} {val_segment.get_notes().rstrip()}*\n</center>\n\n"
-                    )
-
-                table(
-                    md_file,
-                    table_data,
-                    fields,
-                    headers,
-                    align
-                )
-
-                # Add monitors figure
-                if monitors_dir is not None:
-                    prefix = ""
-                    rel_dir = monitors_dir
-                    if not monitors_dir.is_absolute():
-                        prefix = "./"
-                        if "plots" in monitors_dir.parts:
-                            plots_dir_idx = monitors_dir.parts.index('plots')
-                            rel_dir = monitors_dir.relative_to(*monitors_dir.parts[:plots_dir_idx])
-                        else:
-                            _pulse_logger.warning(f"plots directory not found within path ({monitors_dir}). Plot reference may not be resolved properly.")
-                    vitals_monitor = prefix + (rel_dir / f"{scenario_name}-vitals_monitor_{seg_id}.jpg").as_posix()
-                    ventilator_monitor = prefix +  (rel_dir / f"{scenario_name}-ventilator_monitor_{seg_id}.jpg").as_posix()
-                    ventilator_loops = prefix + (rel_dir / f"{scenario_name}-ventilator_loops_{seg_id}.jpg").as_posix()
-
-                    lines = []
-                    lines.append('\n@htmlonly\n')
-                    lines.append('<center>\n')
-                    lines.append('<table border="0">\n')
-                    lines.append('<tr>\n')
-                    lines.append(f'<td colspan="2"><a href="{vitals_monitor}"><img src="{vitals_monitor}" width="1100"></td>\n')
-                    lines.append('</tr>\n')
-                    lines.append('<tr>\n')
-                    lines.append(f'<td><a href="{ventilator_monitor}"><img src="{ventilator_monitor}" width="550"></td>\n')
-                    lines.append(f'<td><a href="{ventilator_loops}"><img src="{ventilator_loops}" width="550"></td>\n')
-                    lines.append('</tr>\n')
-                    lines.append('</table>\n')
-                    lines.append('<br>\n')
-                    lines.append('</center>\n')
-                    lines.append('@endhtmlonly\n')
-                    lines.append('<center>\n')
-                    lines.append(f'<i>*@figuredef {scenario_name}MonitorsSegment{seg_id} Vitals and ventilator monitors for Segment {seg_id}.*</i>\n')
-                    lines.append('</center>\n')
-                    lines.append('<br>\n')
-                    md_file.writelines(lines)
+        # Write our table
+        md_filename = table_dir / f"Segment{seg_id}ValidationTable.md"
+        with open(md_filename, "w") as md_file:
+            _pulse_logger.info(f"Writing {md_filename}")
+            if target.has_notes():
+                table_name = table_dir.as_posix()
+                table_name = table_name[table_name.rindex('/') + 1:]
+                md_file.writelines(
+                    f"<center>\n*@tabledef {table_name}Segment{seg_id} {target.get_notes().rstrip()}*\n</center>\n\n")
+            table(md_file, table_data, fields, headers, align)
 
 
-def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dict[str, float]]) -> List[str]:
+def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: SEDataRequested) -> List[str]:
     header = tgt.get_header()
     compare_type = tgt.get_comparison_type()
 
@@ -140,40 +62,23 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dic
     err_str = ""
     change_str = ""
 
-    if seg_id not in results:
-        raise Exception(f"Segment {seg_id} not found in results")
-    if header not in results[seg_id]:
-        # Check for a different unit
-        engine_val = None
-        paren_idx = header.find("(")
-        if paren_idx != -1:
-            unitless_header = header[:paren_idx]
-            val_unit = header[paren_idx+1:-1]
-            for key in results[seg_id].keys():
-                if key.startswith(unitless_header):
-                    engine_unit = key[key.find("(")+1:-1]
-                    engine_val = PyPulse.convert(results[seg_id][key], engine_unit, val_unit)
-                    break
-
-        if engine_val is None:
-            raise Exception(f'{header} not found in Segment {seg_id} results')
-    else:
-        engine_val = results[seg_id][header]
+    result = results.get_segment(seg_id)
+    if result is None:
+        raise Exception("Could not find result for segment " + str(seg_id))
+    engine_val = result.values[results.get_header_index(header)]
 
     if compare_type == SESegmentValidationTarget.eComparisonType.EqualToSegment or \
-        compare_type == SESegmentValidationTarget.eComparisonType.EqualToValue:
+       compare_type == SESegmentValidationTarget.eComparisonType.EqualToValue:
 
         if compare_type == SESegmentValidationTarget.eComparisonType.EqualToSegment:
-            if tgt.get_target_segment() not in results:
-                raise Exception(f"Segment {tgt.get_target_segment()} not found in results")
-            if header not in results[tgt.get_target_segment()]:
-                raise Exception(f'{header} not found in Segment {tgt.get_target_segment()} results')
-            expected_val = results[tgt.get_target_segment()][header]
+            tgt_result = results.get_segment(tgt.get_target_segment())
+            if tgt_result is None:
+                raise Exception("Could not find result for segment " + str(seg_id))
+            expected_val = tgt_result.values[results.get_header_index(header)]
             expected_str = f"({expected_val:.{value_precision}G})"
         else:
             expected_val = tgt.get_target()
             expected_str = f"{expected_val:.{value_precision}G}"
-
         err = percent_difference(expected_val, engine_val, epsilon)
 
         # Close enough
@@ -182,14 +87,13 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dic
 
         err_str = generate_percentage_span(err, percent_precision)
     elif compare_type == SESegmentValidationTarget.eComparisonType.GreaterThanSegment or \
-        compare_type == SESegmentValidationTarget.eComparisonType.GreaterThanValue:
+         compare_type == SESegmentValidationTarget.eComparisonType.GreaterThanValue:
 
         if compare_type == SESegmentValidationTarget.eComparisonType.GreaterThanSegment:
-            if tgt.get_target_segment() not in results:
-                raise Exception(f"Segment {tgt.get_target_segment()} not found in results")
-            if header not in results[tgt.get_target_segment()]:
-                raise Exception(f'{header} not found in Segment {tgt.get_target_segment()} results')
-            expected_val = results[tgt.get_target_segment()][header]
+            tgt_result = results.get_segment(tgt.get_target_segment())
+            if tgt_result is None:
+                raise Exception("Could not find result for segment " + str(seg_id))
+            expected_val = tgt_result.values[results.get_header_index(header)]
             expected_str = f"({expected_val:.{value_precision}G})"
         else:
             expected_val = tgt.get_target()
@@ -202,14 +106,13 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dic
             c='"success"'
         change_str = f'<span class={c}>{change:.{percent_precision}f}%</span>'
     elif compare_type == SESegmentValidationTarget.eComparisonType.LessThanSegment or \
-        compare_type == SESegmentValidationTarget.eComparisonType.LessThanValue:
+         compare_type == SESegmentValidationTarget.eComparisonType.LessThanValue:
 
         if compare_type == SESegmentValidationTarget.eComparisonType.LessThanSegment:
-            if tgt.get_target_segment() not in results:
-                raise Exception(f"Segment {tgt.get_target_segment()} not found in results")
-            if header not in results[tgt.get_target_segment()]:
-                raise Exception(f'{header} not found in Segment {tgt.get_target_segment()} results')
-            expected_val = results[tgt.get_target_segment()][header]
+            tgt_result = results.get_segment(tgt.get_target_segment())
+            if tgt_result is None:
+                raise Exception("Could not find result for segment " + str(seg_id))
+            expected_val = tgt_result.values[results.get_header_index(header)]
             expected_str = f"({expected_val:.{value_precision}G})"
         else:
             expected_val = tgt.get_target()
@@ -222,14 +125,13 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: Dict[int, Dic
             c='"success"'
         change_str = f'<span class={c}>{change:.{percent_precision}f}%</span>'
     elif compare_type == SESegmentValidationTarget.eComparisonType.TrendsToSegment or \
-        compare_type == SESegmentValidationTarget.eComparisonType.TrendsToValue:
+         compare_type == SESegmentValidationTarget.eComparisonType.TrendsToValue:
 
         if compare_type == SESegmentValidationTarget.eComparisonType.TrendsToSegment:
-            if tgt.get_target_segment() not in results:
-                raise Exception(f"Segment {tgt.get_target_segment()} not found in results")
-            if header not in results[tgt.get_target_segment()]:
-                raise Exception(f'{header} not found in Segment {tgt.get_target_segment()} results')
-            expected_val = results[tgt.get_target_segment()][header]
+            tgt_result = results.get_segment(tgt.get_target_segment())
+            if tgt_result is None:
+                raise Exception("Could not find result for segment " + str(seg_id))
+            expected_val = tgt_result.values[results.get_header_index(header)]
             expected_str = f"({expected_val:.{value_precision}G})"
         else:
             expected_val = tgt.get_target()
