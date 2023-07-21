@@ -163,33 +163,28 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-t", "--use-test-results",
-        type=bool,
-        default=False,
+        action='store_true',
         help="verify the latest test results."
     )
     run_group = parser.add_mutually_exclusive_group()
     run_group.add_argument(
         "-g", "--generate-only",
-        type=bool,
-        default=False,
+        action='store_true',
         help="only generate scenarios and validation target files"
     )
     run_group.add_argument(
         "-s", "--skip_exec",
-        type=bool,
-        default=False,
+        action='store_true',
         help="Do not run the scenarios, results are expected to be found"
     )
     run_group.add_argument(
         "-m", "--markdown",
-        type=bool,
-        default=False,
+        action='store_true',
         help="Only validate and build markdown"
     )
     run_group.add_argument(
         "-f", "--full",
-        type=bool,
-        default=True,
+        action='store_true',
         help="Run the full pipeline"
     )
 
@@ -217,4 +212,3 @@ if __name__ == "__main__":
             exec_opt=exec_opt,
             use_test_results=opts.use_test_results
     )
-
