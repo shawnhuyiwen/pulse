@@ -25,10 +25,11 @@ from pulse.cdm.utils.file_utils import get_config_dir
 _pulse_logger = logging.getLogger('pulse')
 
 
-# def create_plots(plots_file: Path, benchmark: bool = False):
-#    plotters = []
-#    serialize_plotter_list_from_file(plots_file, plotters)
-#    create_plots(plotters)
+def process_plot_file(plots_file: Path, benchmark: bool = False):
+    plotters = []
+    serialize_plotter_list_from_file(plots_file, plotters)
+    create_plots(plotters)
+
 
 def plot_with_test_results(plotters: []):
     for p in plotters:
@@ -869,7 +870,7 @@ if __name__ == "__main__":
         start = timer()
 
     if plot_file.suffix.lower().endswith(".json"):
-        create_plots(plot_file, benchmark)
+        process_plot_file(plot_file, benchmark)
     elif plot_file.suffix.lower().endswith(".csv"):
         csv_plotter(plot_file, benchmark)
     else:

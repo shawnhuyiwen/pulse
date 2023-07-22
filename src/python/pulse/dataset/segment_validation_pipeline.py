@@ -63,7 +63,6 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         use_test_results = True
         _pulse_logger.info("Running full pipeline, switching to validate test results")
     if use_test_results:
-
         results_dir = Path("./test_results/scenarios/"+xls_basename)
     elif not results_dir.is_dir():
         _pulse_logger.error(f"Results directory ({results_dir}) does not exist. Aborting")
@@ -71,6 +70,8 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
 
     if exec_opt is not eExecOpt.MarkdownOnly:
         gen_scenarios_and_targets(xls_file, output_dir, results_dir)
+        if exec_opt is eExecOpt.GenerateOnly:
+            return
 
     # plots and md files are expected to be:
     # 1. In the same directory as the xlsx file
