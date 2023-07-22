@@ -25,6 +25,7 @@ public class SETestJob extends LogListener
   public boolean               knownFailure = false;
   public SETestDriver.Executor executor = null;
   public boolean               isAssessment = false;
+  public boolean               isValidation = false;
   public boolean               plottableResults = false;
   public PlotType              plotType = PlotType.FastPlot;//Only plot every nth data point
   public double                percentDifference;
@@ -42,6 +43,7 @@ public class SETestJob extends LogListener
   {
     SETestJob copy = new SETestJob();
     copy.isAssessment = this.isAssessment;
+    copy.isValidation = this.isValidation;
     copy.useState = this.useState;
     copy.patientFile = this.patientFile;
     copy.state = this.state;

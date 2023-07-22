@@ -107,6 +107,7 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
             if not sce_exec.execute_scenario():
                 _pulse_logger.warning("Scenario {scenario} was not successfully run.")
 
+    plots = None
     if plots_file is not None:
         plots = SESegmentValidationPlots()
         serialize_segment_validation_plots_from_file(plots_file, plots)

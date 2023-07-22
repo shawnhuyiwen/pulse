@@ -13,13 +13,12 @@ from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.math_utils import generate_percentage_span, percent_change, percent_difference
 from pulse.cdm.io.engine import serialize_segment_validation_segment_list_from_file, \
                                 serialize_data_requested_result_from_file
-
-
 _pulse_logger = logging.getLogger('pulse')
 
 
 def validate(targets_filename: Path, segments_filename: Path, table_dir: Path) -> None:
     # Get all validation targets and segment results from files
+    _pulse_logger.info(f"Validating {segments_filename}")
     targets = serialize_segment_validation_segment_list_from_file(targets_filename)
     results = serialize_data_requested_result_from_file(segments_filename)
 
