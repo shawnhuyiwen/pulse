@@ -14,29 +14,32 @@ from typing import Sequence
 _pulse_logger = logging.getLogger('pulse')
 
 
-def generate_monitors(csv_file: Path, times_s: Sequence[float], dest_dir: Path=Path("."), filename_prefix: str=""):
+def generate_monitors(csv_file: Path, times_s: Sequence[float], dest_dir: Path=Path("."),
+                      filename_prefix: str="", vitals=True, ventilator=True):
     # Make sure destination dir exists
     dest_dir.mkdir(parents=True, exist_ok=True)
 
     vitals_monitor_timeframe_s = 10.
     ventilator_timeframe_s = 15.
     for idx, end_time_s in enumerate(times_s):
-        start_time_s = end_time_s - vitals_monitor_timeframe_s
-        if start_time_s < 0:
-            _pulse_logger.warning("Full vitals monitor timeframe not possible, restricting start time to 0")
-            start_time_s = 0.
-        out_file = dest_dir / f"{filename_prefix}vitals_monitor_{idx+1}.jpg"
-        create_vitals_monitor_image(csv_file, start_time_s, end_time_s, out_file)
+        if vitals:
+            start_time_s = end_time_s - vitals_monitor_timeframe_s
+            if start_time_s < 0:
+                _pulse_logger.warning("Full vitals monitor timeframe not possible, restricting start time to 0")
+                start_time_s = 0.
+            out_file = dest_dir / f"{filename_prefix}vitals_monitor_{idx+1}.jpg"
+            create_vitals_monitor_image(csv_file, start_time_s, end_time_s, out_file)
 
-        start_time_s = end_time_s - ventilator_timeframe_s
-        if start_time_s < 0:
-            _pulse_logger.warning("Full ventilator monitor timeframe not possible, restricting start time to 0")
-            start_time_s = 0.
-        out_file = dest_dir / f"{filename_prefix}ventilator_monitor_{idx+1}.jpg"
-        create_ventilator_monitor_image(csv_file, start_time_s, end_time_s, out_file)
+        if ventilator:
+            start_time_s = end_time_s - ventilator_timeframe_s
+            if start_time_s < 0:
+                _pulse_logger.warning("Full ventilator monitor timeframe not possible, restricting start time to 0")
+                start_time_s = 0.
+            out_file = dest_dir / f"{filename_prefix}ventilator_monitor_{idx+1}.jpg"
+            create_ventilator_monitor_image(csv_file, start_time_s, end_time_s, out_file)
 
-        out_file = dest_dir / f"{filename_prefix}ventilator_loops_{idx+1}.jpg"
-        create_ventilator_loops_image(csv_file, start_time_s, end_time_s, out_file)
+            out_file = dest_dir / f"{filename_prefix}ventilator_loops_{idx+1}.jpg"
+            create_ventilator_loops_image(csv_file, start_time_s, end_time_s, out_file)
 
 
 def create_vitals_monitor_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="vitals_monitor.jpg"):
@@ -381,5 +384,21 @@ if __name__ == "__main__":
         default=Path("."),
         help="where to save generated imaged (default:  %(default)s)"
     )
+    parser.add_argument(
+        "-m", "--mechanical-ventilator",
+        action="store_true",
+        help="generate ventilator monitors"
+    )
+    parser.add_argument(
+        "-v", "--vitals",
+        action="store_true",
+        help="generate vitals monitors"
+    )
     opts = parser.parse_args()
-    generate_monitors(opts.csv_file, opts.times_s, opts.destination)
+    generate_monitors(
+        opts.csv_file,
+        opts.times_s,
+        dest_dir=opts.destination,
+        vitals=opts.vitals,
+        ventilator=opts.mechanical_ventilator
+    )

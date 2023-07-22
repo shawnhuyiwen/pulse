@@ -10,7 +10,8 @@ from enum import Enum
 from pathlib import Path
 
 from pulse.cdm.engine import SESegmentValidationPlots
-from pulse.cdm.io.engine import serialize_segment_validation_plots_from_file
+from pulse.cdm.io.engine import serialize_segment_validation_plots_from_file, \
+                                serialize_data_requested_result_from_file
 from pulse.cdm.utils.markdown import process_file
 from pulse.cdm.utils.file_utils import get_root_dir, get_validation_dir
 from pulse.cdm.utils.plotter import create_plots, plot_with_test_results
@@ -119,14 +120,24 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
             continue
 
         if plots is not None:
+            # Generating monitors at the end of each segment, so need times from every segment
+            results = serialize_data_requested_result_from_file(abs_segments_filename)
+            times_s = []
+            for segment in results.get_segments():
+                if segment.id == 0:  # Don't generate monitors for segment 0
+                    continue
+                times_s.append(segment.time_s)
+
             monitors_dir = Path("./docs/html/plots/" + xls_basename)
-            # TODO call create vitals, and create ventilator separately
-            #generate_monitors(
-            #    csv_file=results_dir / f"{scenario_name}Results.csv",
-            #    times_s=sorted(times_s),
-            #    dest_dir=monitors_dir,
-            #    filename_prefix=f"{scenario_name}-"
-            #)
+            scenario_name = target_file.replace("-ValidationTargets.json", "")
+            generate_monitors(
+                csv_file=results_dir / f"{scenario_name}Results.csv",
+                times_s=sorted(times_s),
+                dest_dir=monitors_dir,
+                filename_prefix=f"{scenario_name}-",
+                vitals=plots.create_vitals_monitor_plots(),
+                ventilator=plots.create_ventilator_monitor_plots()
+            )
 
         table_dir = Path("./validation/tables/" + xls_basename + '/' + target_file.split('-')[0])
         table_dir.mkdir(parents=True, exist_ok=True)
@@ -175,12 +186,12 @@ if __name__ == "__main__":
     run_group.add_argument(
         "-s", "--skip_exec",
         action='store_true',
-        help="Do not run the scenarios, results are expected to be found"
+        help="do not run the scenarios, results are expected to be found"
     )
     run_group.add_argument(
         "-m", "--markdown",
         action='store_true',
-        help="Only validate and build markdown"
+        help="only validate and build markdown"
     )
     run_group.add_argument(
         "-f", "--full",
