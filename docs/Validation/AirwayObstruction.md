@@ -1,6 +1,6 @@
 ### Airway Obstruction
 
-The airway obstruction action was validated with a scenario that applies varying severities of 0.3, 0.6, and 1.0. Varying the severity of the obstruction simulates partial obstructions and a complete obstruction. The severity levels logarithmically increase the airway resistance. The resulting outputs from the engine are shown in Table 14 for common clinical parameters.
+The airway obstruction action was validated with a scenario that applies varying severities of 0.3, 0.6, and 1.0. Varying the severity of the obstruction simulates partial obstructions and a complete obstruction. The severity levels logarithmically increase the airway resistance. The resulting outputs from the engine are shown for each severity in the tables below for common clinical parameters.
 
 @htmlonly
 <center>
@@ -21,7 +21,7 @@ The airway obstruction action was validated with a scenario that applies varying
 </center>
 @endhtmlonly
 <center>
-<i>*@figuredef AirwayObstructionVariedOutputs Select outputs from the airway obstruction scenario.*</i>
+*@figuredef {AirwayObstructionVariedOutputs}. Select outputs from the airway obstruction scenario.*
 </center><br>
 
 #### Segment 1

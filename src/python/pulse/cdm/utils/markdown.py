@@ -94,6 +94,14 @@ def table(file, records, fields, headings, alignment = None):
     for row in zip(*columns):
         file.write(row_template.format(*row).rstrip() + '\n')
 
+def get_table_tag(word: str)->str:
+    start = word.find('{')
+    end = word.find('}')
+    if start == -1 or end == -1:
+        _pulse_logger.warning(f"References cannot contain whitespace: {line}")
+        exit(1)
+    word = word[start:end + 1]
+    return word
 
 def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=False, ancestors: Optional[Set[Path]]=None) -> None:
     """
@@ -110,6 +118,7 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=
     def _process_references(lines: List[str]) -> List[str]:
         table_refs = {}
         fig_refs = {}
+        eq_refs = {}
 
         # Build up references
         def _parse_refs(line: str, tag: str) -> List[str]:
@@ -118,24 +127,32 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=
 
             for idx, word in enumerate(words):
                 if tag in word:
-                    ref_defs.append(words[idx+1])
+                    ref_name = get_table_tag(words[idx+1])
+                    ref_defs.append(ref_name)
 
             return ref_defs
         table_num = 1
         fig_num = 1
+        eq_num = 1
         for line in lines:
-            if "*@tabledef" in line:
-                for ref_def in _parse_refs(line, "*@tabledef"):
+            if "@tabledef" in line:
+                for ref_def in _parse_refs(line, "@tabledef"):
                     if ref_def in table_refs:
                         _pulse_logger.warning(f"Redefinition of reference: {ref_def}")
                     table_refs[ref_def] = table_num
                     table_num += 1
-            if "*@figuredef" in line:
-                for ref_def in _parse_refs(line, "*@figuredef"):
+            if "@figuredef" in line:
+                for ref_def in _parse_refs(line, "@figuredef"):
                     if ref_def in fig_refs:
                         _pulse_logger.warning(f"Redefinition of reference: {ref_def}")
                     fig_refs[ref_def] = fig_num
                     fig_num += 1
+            if "@equationdef" in line:
+                for ref_def in _parse_refs(line, "@equationdef"):
+                    if ref_def in eq_refs:
+                        _pulse_logger.warning(f"Redefinition of reference: {ref_def}")
+                    eq_refs[ref_def] = eq_num
+                    eq_num += 1
 
         # Replace references
         def _replace_refs(line: str, tag: str, replacement: str, ref_defs: Dict[str, int]) -> str:
@@ -146,20 +163,26 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=
 
             for idx, word in enumerate(words):
                 if tag in word:
-                    words[idx] = word.replace(tag, f"{replacement} {ref_defs[words[idx+1]]}.")
-                    words[idx + 1] = ""
+                    ref_name = get_table_tag(words[idx + 1])
+                    words[idx] = word.replace(tag, f"{replacement}")
+                    words[idx+1] = words[idx + 1].replace(ref_name, f"{ref_defs[ref_name]}")
             words[:] = [word for word in words if word]
+            return " ".join(words)+'\n'
 
-            return " ".join(words)
         for idx, line in enumerate(lines):
             if "@tabledef" in line:
-                lines[idx] = _replace_refs(line, "@tabledef", "Table", table_refs)
+                line = _replace_refs(line, "@tabledef", "Table", table_refs)
             if "@tableref" in line:
-                lines[idx] = _replace_refs(line, "@tableref", "Table", table_refs)
+                line = _replace_refs(line, "@tableref", "Table", table_refs)
             if "@figuredef" in line:
-                lines[idx] = _replace_refs(line, "@figuredef", "Figure", fig_refs)
+                line = _replace_refs(line, "@figuredef", "Figure", fig_refs)
             if "@figureref" in line:
-                lines[idx] = _replace_refs(line, "@figureref", "Figure", fig_refs)
+                line = _replace_refs(line, "@figureref", "Figure", fig_refs)
+            if "@equationdef" in line:
+                line = _replace_refs(line, "@equationdef", "Equation", eq_refs)
+            if "@equationref" in line:
+                line = _replace_refs(line, "@equationref", "Equation", eq_refs)
+            lines[idx] = line
 
         return lines
 
