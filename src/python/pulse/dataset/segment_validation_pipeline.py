@@ -2,7 +2,6 @@
 # See accompanying NOTICE file for details.
 
 import sys
-import os.path
 import logging
 import argparse
 import matplotlib.pyplot as plt
@@ -51,7 +50,7 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
             _pulse_logger.error("Please provide a valid xls file")
             sys.exit(1)
 
-    xls_dir = Path(os.path.dirname(xls_file))
+    xls_dir = xls_file.parent
     xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
 
     # Remove and recreate directories

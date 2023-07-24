@@ -1,7 +1,5 @@
 {
-"CreateVitalsMonitorPlots" : false,
-"CreateVentilatorMonitorPlots" : false,
-"Plots" :
+  "Plots" :
   {
     "Plotter" :
     [
