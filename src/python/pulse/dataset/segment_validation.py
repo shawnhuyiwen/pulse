@@ -46,7 +46,7 @@ def validate(targets_filename: Path, segments_filename: Path, table_dir: Path) -
                 table_name = table_dir.as_posix()
                 table_name = table_name[table_name.rindex('/') + 1:]
                 md_file.writelines(
-                    f"<center>\n*@tabledef {{{table_name}Segment{seg_id}}}. {target.get_notes().rstrip()}*\n</center>\n\n")
+                    f"<center>\n<i>@tabledef {{{table_name}Segment{seg_id}}}. {target.get_notes().rstrip()}</i>\n</center>\n\n")
             table(md_file, table_data, fields, headers, align)
 
 

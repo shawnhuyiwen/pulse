@@ -98,7 +98,7 @@ def get_table_tag(word: str)->str:
     start = word.find('{')
     end = word.find('}')
     if start == -1 or end == -1:
-        _pulse_logger.warning(f"References cannot contain whitespace: {line}")
+        _pulse_logger.warning(f"References cannot contain whitespace: {word}")
         exit(1)
     word = word[start:end + 1]
     return word
