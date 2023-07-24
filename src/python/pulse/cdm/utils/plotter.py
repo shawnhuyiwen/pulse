@@ -20,6 +20,7 @@ from timeit import default_timer as timer
 from pulse.cdm.plots import *
 from pulse.cdm.io.plots import serialize_plotter_list_from_file
 from pulse.cdm.utils.file_utils import get_config_dir
+from pulse.cdm.utils.generate_monitors import generate_monitors
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -28,19 +29,30 @@ _pulse_logger = logging.getLogger('pulse')
 def process_plot_file(plots_file: Path, benchmark: bool = False):
     plotters = []
     serialize_plotter_list_from_file(plots_file, plotters)
-    create_plots(plotters)
+    create_plots(plotters, benchmark)
 
 
 def plot_with_test_results(plotters: []):
+    def _adjust_filepath(fp: str) -> str:
+        if "$VERIFICATION_DIR" in fp:
+            fp = fp.replace("$VERIFICATION_DIR", "./test_results")
+        return fp
+
     for p in plotters:
         if isinstance(p, SEMultiHeaderSeriesPlotter):
             if p.has_plot_sources():
                 sources = p.get_plot_sources()
                 for source in sources:
-                    csv = source.get_csv_data()
-                    if "$VERIFICATION_DIR" in csv:
-                        csv = csv.replace("$VERIFICATION_DIR", "./test_results")
-                        source.set_csv_data(csv)
+                    source.set_csv_data(_adjust_filepath(source.get_csv_data()))
+        elif isinstance(p, SEMonitorPlotter):
+            if p.has_plot_source():
+                source = p.get_plot_source()
+                source.set_csv_data(_adjust_filepath(source.get_csv_data()))
+            if p.has_data_requested_file():
+                p.set_data_requested_file(_adjust_filepath(p.get_data_requested_file().as_posix()))
+        else:
+            _pulse_logger.error(f"Unknown plotter type: {p}")
+
 
 def create_plots(plotters: [], benchmark: bool = False):
     for p in plotters:
@@ -48,8 +60,11 @@ def create_plots(plotters: [], benchmark: bool = False):
             multi_header_series_plotter(p, benchmark)
         elif isinstance(p, SEComparePlotter):
             compare_plotter(p, benchmark)
+        elif isinstance(p, SEMonitorPlotter):
+            generate_monitors(p, benchmark)
         else:
             _pulse_logger.error(f"Unknown plotter type: {p}")
+
 
 def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: bool = False):
     if benchmark:
@@ -564,8 +579,11 @@ def create_plot(plot_sources: [SEPlotSource],
                 x_header: str,
                 y_headers: List[str],
                 x2_header: Optional[str] = None,
-                y2_headers: Optional[List[str]] = [],
+                y2_headers: Optional[List[str]] = None,
                 validation_source: Optional[SEPlotSource] = None):
+    if y2_headers is None:
+        y2_headers = []
+
     # Slightly faster plotting, but may potentially result in a quality loss
     mplstyle.use('fast')
 

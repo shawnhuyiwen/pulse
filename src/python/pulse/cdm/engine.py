@@ -1002,27 +1002,13 @@ class SESegmentValidationSegment:
     def invalidate_actions(self) -> None:
         self._actions = ""
 
-class SESegmentValidationPlots:
-    __slots__ = ["_create_vitals_monitor_plots",
-                 "_create_ventilator_monitor_plots",
-                 "_plotters"]
+class SESegmentValidationConfig:
+    __slots__ = ["_plotters"]
     def __init__(self):
         self.clear()
 
     def clear(self) -> None:
-        self._create_vitals_monitor_plots = False
-        self._create_ventilator_monitor_plots = False
         self._plotters = []
-
-    def create_vitals_monitor_plots(self) -> bool:
-        return self._create_vitals_monitor_plots
-    def set_create_vitals_monitor_plots(self, b: bool) -> None:
-        self._create_vitals_monitor_plots = b
-
-    def create_ventilator_monitor_plots(self) -> bool:
-        return self._create_ventilator_monitor_plots
-    def set_create_ventilator_monitor_plots(self, b: bool) -> None:
-        self._create_ventilator_monitor_plots = b
 
     def get_plotters(self) -> []:
         return self._plotters

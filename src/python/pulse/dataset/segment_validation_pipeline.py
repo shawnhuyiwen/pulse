@@ -9,13 +9,12 @@ import matplotlib.pyplot as plt
 from enum import Enum
 from pathlib import Path
 
-from pulse.cdm.engine import SESegmentValidationPlots
-from pulse.cdm.io.engine import serialize_segment_validation_plots_from_file, \
+from pulse.cdm.engine import SESegmentValidationConfig
+from pulse.cdm.io.engine import serialize_segment_validation_config_from_file, \
                                 serialize_data_requested_result_from_file
 from pulse.cdm.utils.markdown import process_file
 from pulse.cdm.utils.file_utils import get_root_dir, get_validation_dir
 from pulse.cdm.utils.plotter import create_plots, plot_with_test_results
-from pulse.dataset.generate_monitors import generate_monitors
 from pulse.dataset.segment_dataset_reader import gen_scenarios_and_targets
 from pulse.dataset.segment_validation import validate
 from pulse.engine.PulseScenarioExec import PulseScenarioExec
@@ -110,8 +109,8 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
 
     plots = None
     if plots_file is not None:
-        plots = SESegmentValidationPlots()
-        serialize_segment_validation_plots_from_file(plots_file, plots)
+        plots = SESegmentValidationConfig()
+        serialize_segment_validation_config_from_file(plots_file, plots)
 
     # Carry out validation on each scenario
     for target_file in targets:
@@ -120,26 +119,6 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         if not abs_segments_filename.exists():
             _pulse_logger.error(f"Unable to locate segments for {target_file}. Continuing without validating.")
             continue
-
-        if plots is not None:
-            # Generating monitors at the end of each segment, so need times from every segment
-            results = serialize_data_requested_result_from_file(abs_segments_filename)
-            times_s = []
-            for segment in results.get_segments():
-                if segment.id == 0:  # Don't generate monitors for segment 0
-                    continue
-                times_s.append(segment.time_s)
-
-            monitors_dir = Path("./docs/html/plots/" + xls_basename)
-            scenario_name = target_file.replace("-ValidationTargets.json", "")
-            generate_monitors(
-                csv_file=results_dir / f"{scenario_name}Results.csv",
-                times_s=sorted(times_s),
-                dest_dir=monitors_dir,
-                filename_prefix=f"{scenario_name}-",
-                vitals=plots.create_vitals_monitor_plots(),
-                ventilator=plots.create_ventilator_monitor_plots()
-            )
 
         table_dir = Path("./validation/tables/" + xls_basename + '/' + target_file.split('-')[0])
         table_dir.mkdir(parents=True, exist_ok=True)
@@ -157,8 +136,6 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         dest_dir=Path("./validation/markdown"),
         replace_refs=False
     )
-
-    # TODO: Run doxygen? On/with what?
 
 
 if __name__ == "__main__":

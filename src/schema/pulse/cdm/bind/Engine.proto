@@ -50,7 +50,7 @@ message DataRequestData
     Inhaler              = 13;
     MechanicalVentilator = 14;
   }
-  
+
   DecimalFormatData                                     DecimalFormat                   = 1;/**<<@brief If writing to a file, specify the decimal formatting */
   eCategory                                             Category                        = 2;/**<<@brief A category assocated with the Name */
   string                                                ActionName                      = 3;/**<<@brief The action name the property is on */
@@ -80,7 +80,7 @@ message DataRequestedData
   bool                                                  IsActive                        = 2;
   repeated EventChangeData                              EventChange                     = 3;
   LogMessagesData                                       LogMessages                     = 4;
-  
+
   message SegmentData
   {
     int32                                               ID                              = 1;
@@ -88,9 +88,9 @@ message DataRequestedData
     repeated double                                     Value                           = 3;
   }
 
-  
+
   repeated string                                       Headers                         = 5;
-  repeated SegmentData                                  Segment                         = 6; 
+  repeated SegmentData                                  Segment                         = 6;
 }
 message DataRequestedListData
 {
@@ -107,14 +107,14 @@ message RangeData
 }
 message ValidationTargetData
 {
-  
+
   string                                                Header                          = 1;
   string                                                Reference                       = 2;
   string                                                Notes                           = 3;
 }
 message SegmentValidationTargetData
 {
-  
+
   ValidationTargetData                                  ValidationTarget                = 1;
   oneof Expected
   {
@@ -140,11 +140,9 @@ message SegmentValidationSegmentListData
 {
   repeated SegmentValidationSegmentData                 SegmentValidationSegment   = 1;
 }
-message SegmentValidationPlotsData
+message SegmentValidationConfigurationData
 {
-  bool                                                  CreateVitalsMonitorPlots        = 1;
-  bool                                                  CreateVentilatorMonitorPlots    = 2;
-  PlotterListData                                       Plots                           = 3;
+  PlotterListData                                       Plots                           = 1;
 }
 
 message TimeSeriesValidationTargetData
@@ -282,4 +280,3 @@ message LogMessagesData
   repeated string                                       ErrorMessages                   = 4;
   repeated string                                       FatalMessages                   = 5;
 }
-

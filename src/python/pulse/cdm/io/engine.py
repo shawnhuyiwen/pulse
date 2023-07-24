@@ -16,13 +16,13 @@ from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       EngineInitializationData, EngineInitializationListData, \
                                       LogMessagesData, ValidationTargetData, \
                                       SegmentValidationTargetData, SegmentValidationSegmentData,\
-                                      SegmentValidationSegmentListData, SegmentValidationPlotsData, \
+                                      SegmentValidationSegmentListData, SegmentValidationConfigurationData, \
                                       TimeSeriesValidationTargetData, TimeSeriesValidationTargetListData
 from pulse.cdm.bind.Events_pb2 import ActiveEventListData, EventChangeListData
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.equipment_actions import SEEquipmentAction
-from pulse.cdm.engine import SEEventChange, eEvent, SESegmentValidationPlots
+from pulse.cdm.engine import SEEventChange, eEvent, SESegmentValidationConfig
 
 from pulse.cdm.io.action import *
 from pulse.cdm.io.patient_actions import *
@@ -634,19 +634,17 @@ def serialize_segment_validation_segment_list_from_file(filename: str):
         string = f.read()
     return serialize_segment_validation_segment_list_from_string(string, eSerializationFormat.JSON)
 
-def serialize_segment_validation_plots_from_file(filename: str, dst: SESegmentValidationPlots):
+def serialize_segment_validation_config_from_file(filename: str, dst: SESegmentValidationConfig):
     with open(filename) as f:
         string = f.read()
-    serialize_segment_validation_plots_from_string(string, dst, eSerializationFormat.JSON)
-def serialize_segment_validation_plots_from_string(string: str, dst: SESegmentValidationPlots, fmt: eSerializationFormat):
-    src = SegmentValidationPlotsData()
+    serialize_segment_validation_config_from_string(string, dst, eSerializationFormat.JSON)
+def serialize_segment_validation_config_from_string(string: str, dst: SESegmentValidationConfig, fmt: eSerializationFormat):
+    src = SegmentValidationConfigurationData()
     json_format.Parse(string, src)
-    serialize_segment_validation_plots_from_bind(src, dst)
-def serialize_segment_validation_plots_from_bind(src: SegmentValidationPlotsData, dst: SESegmentValidationPlots):
+    serialize_segment_validation_config_from_bind(src, dst)
+def serialize_segment_validation_config_from_bind(src: SegmentValidationConfigurationData, dst: SESegmentValidationConfig):
     dst.clear()
 
-    dst.set_create_vitals_monitor_plots(src.CreateVitalsMonitorPlots)
-    dst.set_create_ventilator_monitor_plots(src.CreateVentilatorMonitorPlots)
     serialize_plotter_list_from_bind(src.Plots, dst.get_plotters())
 
 def serialize_time_series_validation_target_to_bind(src: SETimeSeriesValidationTarget, dst: TimeSeriesValidationTargetData):

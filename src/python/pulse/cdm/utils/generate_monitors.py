@@ -9,13 +9,62 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 from typing import Sequence
+from datetime import timedelta
+from timeit import default_timer as timer
+
+from pulse.cdm.plots import SEPlotConfig, SEPlotSource, SEMonitorPlotter
+from pulse.cdm.io.engine import serialize_data_requested_result_from_file
 
 
 _pulse_logger = logging.getLogger('pulse')
 
 
-def generate_monitors(csv_file: Path, times_s: Sequence[float], dest_dir: Path=Path("."),
-                      filename_prefix: str="", vitals=True, ventilator=True):
+def generate_monitors(monitor_plotter: SEMonitorPlotter, benchmark: bool=False):
+    if benchmark:
+        start = timer()
+
+    csv_file = None
+    if monitor_plotter.has_plot_source():
+        ps = monitor_plotter.get_plot_source()
+        if not ps.has_csv_data():
+            _pulse_logger.error("Plot source has no csv file. Unable to plot monitors.")
+            return
+        csv_file = ps.get_csv_data()
+    else:
+        _pulse_logger.error("Monitor plotter has no plot source. Unable to plot monitors.")
+        return
+
+    times_s = []
+    if monitor_plotter.has_times_s():
+        times_s = monitor_plotter.get_times_s()
+    elif monitor_plotter.has_data_requested_file():
+        data_requested_file = monitor_plotter.get_data_requested_file()
+        if not data_requested_file.is_file():
+            _pulse_logger.error(f"Data requested file does not exist: {data_requested_file}")
+            return
+        results = serialize_data_requested_result_from_file(monitor_plotter.get_data_requested_file())
+        for segment in results.get_segments():
+            if segment.id == 0:  # Don't generate monitors for segment 0
+                continue
+            times_s.append(segment.time_s)
+    else:
+        _pulse_logger.error("No times provided. "
+                            "To generate monitors, times must be provided directly or via a data requested file.")
+        return
+
+    dest_dir = Path(".")
+    if monitor_plotter.has_plot_config():
+        config = monitor_plotter.get_plot_config()
+        if config.has_output_path_override():
+            dest_dir = config.get_output_path_override()
+
+    filename_prefix = ""
+    if monitor_plotter.has_output_prefix():
+        filename_prefix = monitor_plotter.get_output_prefix()
+
+    vitals = monitor_plotter.get_plot_vitals()
+    ventilator = monitor_plotter.get_plot_ventilator()
+
     # Make sure destination dir exists
     dest_dir.mkdir(parents=True, exist_ok=True)
 
@@ -40,6 +89,10 @@ def generate_monitors(csv_file: Path, times_s: Sequence[float], dest_dir: Path=P
 
             out_file = dest_dir / f"{filename_prefix}ventilator_loops_{idx+1}.jpg"
             create_ventilator_loops_image(csv_file, start_time_s, end_time_s, out_file)
+
+    if benchmark:
+        end = timer()
+        _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
 def create_vitals_monitor_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="vitals_monitor.jpg"):
@@ -171,7 +224,7 @@ def create_vitals_monitor_image(csv_file: Path, start_time_s: float, end_time_s:
     fig.patch.set_facecolor("black")
 
     # Save the image
-    _pulse_logger.info(f"Saving {fig_name}")
+    _pulse_logger.info(f"Saving plot {fig_name}")
     plt.savefig(fig_name, facecolor="black", bbox_inches="tight")
     #plt.show()
 
@@ -300,7 +353,7 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
     fig.patch.set_facecolor("black")
 
     # Save the image
-    _pulse_logger.info(f"Saving {fig_name}")
+    _pulse_logger.info(f"Saving plot {fig_name}")
     plt.savefig(fig_name, facecolor="black", bbox_inches="tight")
     #plt.show()
 
@@ -356,7 +409,7 @@ def create_ventilator_loops_image(csv_file: Path, start_time_s: float, end_time_
     plt.subplots_adjust(wspace=0.25, hspace=0.25)
 
     # Save the image
-    _pulse_logger.info(f"Saving {fig_name}")
+    _pulse_logger.info(f"Saving plot {fig_name}")
     plt.savefig(fig_name, facecolor="black", bbox_inches="tight")
     #plt.show()
 
@@ -395,10 +448,16 @@ if __name__ == "__main__":
         help="generate vitals monitors"
     )
     opts = parser.parse_args()
-    generate_monitors(
-        opts.csv_file,
-        opts.times_s,
-        dest_dir=opts.destination,
-        vitals=opts.vitals,
-        ventilator=opts.mechanical_ventilator
+
+    plot_config = SEPlotConfig()
+    plot_config.set_values(output_path_override=opts.destination)
+    monitor_plotter = SEMonitorPlotter(
+        plot_config=plot_config,
+        plot_source = SEPlotSource(csv_data=opts.csv_file),
+        plot_vitals=opts.vitals,
+        plot_ventilator=opts.mechanical_ventilator,
+        times_s=opts.times_s,
+
     )
+
+    generate_monitors(monitor_plotter)

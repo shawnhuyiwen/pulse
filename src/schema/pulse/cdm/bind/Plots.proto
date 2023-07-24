@@ -10,6 +10,7 @@ message AnyPlotterData
   {
     MultiHeaderSeriesPlotterData      MultiHeaderSeriesPlotter  = 1;
     ComparePlotterData                ComparePlotter            = 2;
+    MonitorPlotterData                MonitorPlotter            = 3;
   }
 }
 
@@ -111,7 +112,6 @@ message ComparePlotterData
   repeated string                     Failures                  = 5;  /**<< @brief Headers that were deemed as failure during comparison. */
   map<string, double>                 RMSValues                 = 6;  /**<< @brief Root Mean Square (RMS) values computed during comparison. */
   ePlotType                           PlotType                  = 7;
-
 }
 
 /** @brief Data used to configure x vs y plots. */
@@ -143,6 +143,28 @@ message MultiHeaderSeriesPlotterData
     optional string                   Y2Label                   = 13; /**<< @brief Specify the secondary y-axis label for this plot. */
     optional BoundsData               Y2Bounds                  = 14; /**<< @brief Specify the desired secondary y-axis bounds. */
   }
+}
+
+/** @brief Data used to configure monitor plots. */
+message MonitorPlotterData
+{
+  message TimeData
+  {
+    repeated double                   Times_s                   = 1;
+  }
+
+  string                              Comment                   = 1;
+
+  optional PlotConfigData             PlotConfig                = 2;  /**<< @brief Provided settings take precedence over PlotConfig settings defined in plotter list. */
+  PlotSourceData                      PlotSource                = 3;
+  bool                                Vitals                    = 4;  /**<< @brief Generate vitals monitor. */
+  bool                                Ventilator                = 5;  /**<< @brief Generate ventilator monitor and loops. */
+  oneof MonitorTimes
+  {
+    TimeData                          Times                     = 6;  /**<< @brief Generate monitor for each time provided. */
+    string                            DataRequestedFile         = 7;  /**<< @brief Generate monitor for every time data was saved. */
+  }
+  optional string                     OutputPrefix              = 8;  /**<< @brief Set the desired filename prefix for the generated monitors. */
 }
 
 /** @brief Data used to specify bounds. */
