@@ -2,6 +2,8 @@
 # See accompanying NOTICE file for details.
 
 import sys
+import glob
+import shutil
 import logging
 import argparse
 import matplotlib.pyplot as plt
@@ -76,19 +78,32 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
     # 2. In the run.config root/docs/Validation directory
     # It is assumed the json and md file names are the same, just different extension
 
+    md_file = Path(xls_dir / (xls_basename + ".md"))
+    if not md_file.is_file():
+        md_file = Path(get_root_dir()) / "docs" / "Validation" / (xls_basename + ".md")
+    if not md_file.is_file():
+        _pulse_logger.error(f"Could not find md file, it should be in:")
+        _pulse_logger.error(f"The same dir as the xlsx, or in your source/docs/Validation directory")
+        sys.exit(1)
     plots_file = Path(xls_dir / (xls_basename + ".json"))
     if not plots_file.is_file():
         plots_file = Path(get_root_dir()) / "docs" / "Validation" / (xls_basename + ".json")
     if not plots_file.is_file():
         plots_file = None
-    md_file = Path(xls_dir / (xls_basename + ".md"))
-    if not md_file.is_file():
-        md_file = Path(get_root_dir()) / "docs" / "Validation" / (xls_basename + ".md")
+    # Is there a custom bib file
+    bib_file = Path(xls_dir / "Sources.bib")
+    if bib_file.is_file():
+        # Copy this file up as "Custom.bib"
+        shutil.copyfile(xls_dir/"Sources.bib", "./docs/Custom.bib")
+    # Are there any images in this directory
+    images = glob.glob(str(xls_dir/'*'))
+    for image in images:
+        ext = [".jpg", ".png"]
+        if image.endswith(tuple(ext)):
+            image_dir = Path("./docs/html/Images/"+xls_basename)
+            image_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy(image, str(image_dir))
 
-    if not md_file.is_file():
-        _pulse_logger.error(f"Could not find md file, it should be in:")
-        _pulse_logger.error(f"The same dir as the xlsx, or in your source/docs/Validation directory")
-        sys.exit(1)
 
     # Get list of all scenarios
     scenarios = [item.name for item in output_dir.glob("*")
@@ -191,7 +206,7 @@ if __name__ == "__main__":
     if opts.generate_only:
         exec_opt = eExecOpt.GenerateOnly
     elif opts.skip_exec:
-        exec_opt = eExecOpt.DontRunScenarios
+        exec_opt = eExecOpt.SkipScenarioExecution
     elif opts.markdown:
         exec_opt = eExecOpt.MarkdownOnly
 
