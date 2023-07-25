@@ -9,8 +9,9 @@ if __name__ == "__main__":
     # But for now, we are just hard coding the automated xlsx files
     xls_files = ["AirwayObstruction.xlsx"]
 
+    exec_opt = eExecOpt.GenerateOnly
     for xls_file in xls_files:
         segment_validation_pipeline(
             xls_file=Path(xls_file),
-            gen_only=True
+            exec_opt=exec_opt
         )

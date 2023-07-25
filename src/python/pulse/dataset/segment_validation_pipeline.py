@@ -57,7 +57,9 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
 
     # Remove and recreate directories
     output_dir = Path("./validation/scenarios/"+xls_basename)
-    results_dir = Path("./verification/scenarios/"+xls_basename)
+    results_dir = Path("./test_results/scenarios/"+xls_basename)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    results_dir.mkdir(parents=True, exist_ok=True)
 
     if exec_opt is eExecOpt.Full and not use_test_results:
         use_test_results = True

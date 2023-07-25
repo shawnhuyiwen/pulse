@@ -87,7 +87,7 @@ elseif(cmd STREQUAL "doxygen" OR cmd STREQUAL "validate")
     # These are run above
     execute_process(COMMAND "@Java_CMD@" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.validation.SystemValidation BASELINE)
     execute_process(COMMAND "@Java_CMD@" -classpath "${JAVA_CLASSPATH}" com.kitware.pulse.cdm.testing.validation.PatientValidation BASELINE)
-    execute_process(COMMAND "@Python_CMD@" "../python/pulse/dataset/segment_validation_pipeline.py" RESULT_VARIABLE py_result)
+    execute_process(COMMAND "@Python_CMD@" "../python/pulse/dataset/segment_validation_pipeline.py" -m RESULT_VARIABLE py_result)
     execute_process(COMMAND "@Python_CMD@" "../python/pulse/engine/validation/mechanical_ventilator_validation.py" RESULT_VARIABLE py_result)
     execute_process(COMMAND "@Python_CMD@" "../python/pulse/cdm/utils/markdown.py" ./validation/markdown ./docs/markdown RESULT_VARIABLE py_result)
     execute_process(COMMAND "@Python_CMD@" "../python/pulse/cdm/utils/markdown.py" "@CMAKE_SOURCE_DIR@/docs/Markdown" ./docs/markdown RESULT_VARIABLE py_result)
