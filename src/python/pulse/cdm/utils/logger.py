@@ -157,7 +157,7 @@ def parse_actions(log_file: str, omit: List[str] = []):
                 # Group 1: Time
                 match = re.search(r'\[(\d*\.?d*)\(.*\)\]', action_text)
                 if match is None:
-                    _pulse_logger.error("Could not parse actions")
+                    _pulse_logger.error("Could not parse actions from " + log_file)
                     return actions
                 action_time = float(match.group(1))
                 action_text = action_text[(action_idx+len(action_tag)):].lstrip()
