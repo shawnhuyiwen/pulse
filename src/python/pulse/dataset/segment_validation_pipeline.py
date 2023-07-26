@@ -55,22 +55,26 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
     xls_dir = xls_file.parent
     xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
 
-    # Remove and recreate directories
-    output_dir = Path("./validation/scenarios/"+xls_basename)
-    results_dir = Path("./verification/scenarios/"+xls_basename)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    results_dir.mkdir(parents=True, exist_ok=True)
+    # This is where we will generate scenarios
+    scenario_dir = Path("./validation/scenarios/"+xls_basename)
+    # This is where we read the csv to validate
+    validate_dir = Path("./verification/scenarios/"+xls_basename)
+    # This is where the scenario should generate results
+    test_results_dir = Path("./test_results/scenarios/" + xls_basename)
+
+    scenario_dir.mkdir(parents=True, exist_ok=True)
+    validate_dir.mkdir(parents=True, exist_ok=True)
 
     if exec_opt is eExecOpt.Full and not use_test_results:
         use_test_results = True
         _pulse_logger.info("Running full pipeline, switching to validate test results")
-    if use_test_results:
-        results_dir = Path("./test_results/scenarios/"+xls_basename)
-    elif not results_dir.is_dir():
-        _pulse_logger.error(f"Results directory ({results_dir}) does not exist. Aborting")
+    if use_test_results:  # Let's validate what we generate
+        validate_dir = test_results_dir
+    elif not validate_dir.is_dir():
+        _pulse_logger.error(f"Results directory ({validate_dir}) does not exist. Aborting")
         return
 
-    sheets = gen_scenarios_and_targets(xls_file, output_dir, results_dir, exec_opt == eExecOpt.MarkdownOnly)
+    sheets = gen_scenarios_and_targets(xls_file, scenario_dir, test_results_dir, exec_opt == eExecOpt.MarkdownOnly)
     if exec_opt is eExecOpt.GenerateOnly:
         return
 
@@ -117,10 +121,10 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
     # Run scenarios if we are running full pipeline
     if exec_opt is eExecOpt.Full:
         # Get list of all scenarios
-        scenarios = [item.name for item in output_dir.glob("*")
+        scenarios = [item.name for item in scenario_dir.glob("*")
                      if not item.is_dir() and "-ValidationTargets.json" not in item.name]
         for scenario in scenarios:
-            scenario_file = output_dir / scenario
+            scenario_file = scenario_dir / scenario
             sce_exec = PulseScenarioExec()
             sce_exec.set_scenario_filename(scenario_file.as_posix())
             if not sce_exec.execute_scenario():
@@ -132,11 +136,11 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         serialize_segment_validation_config_from_file(plots_file, plots)
 
     # Carry out validation on each scenario
-    targets = [item.name for item in output_dir.glob("*")
+    targets = [item.name for item in scenario_dir.glob("*")
                if not item.is_dir() and "-ValidationTargets.json" in item.name]
     for target_file in targets:
-        abs_targets_filename = Path(output_dir / target_file)
-        abs_segments_filename = Path(results_dir / target_file.replace("-ValidationTargets", "Results-Segments"))
+        abs_targets_filename = Path(scenario_dir / target_file)
+        abs_segments_filename = Path(validate_dir / target_file.replace("-ValidationTargets", "Results-Segments"))
         if not abs_segments_filename.exists():
             _pulse_logger.error(f"Unable to locate segments for {target_file}. Continuing without validating.")
             continue
