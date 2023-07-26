@@ -18,16 +18,19 @@ from pulse.dataset.utils import generate_data_request
 
 _pulse_logger = logging.getLogger('pulse')
 
-def gen_scenarios_and_targets(xls_file: Path, output_dir: Path, results_dir: Path) -> None:
+
+def gen_scenarios_and_targets(xls_file: Path, output_dir: Path, results_dir: Path, name_only: bool = False) -> [str]:
     _pulse_logger.info(f"Generating data from {xls_file}")
 
     # Iterate through each sheet in the file, generating a scenario for each
     workbook = load_workbook(filename=xls_file, data_only=True)
-    for s in workbook.sheetnames:
-        if s == "Notes":
-            continue
-        if not process_sheet(workbook[s], output_dir, results_dir):
-            _pulse_logger.error(f"Unable to read {s} sheet")
+    if not name_only:
+        for s in workbook.sheetnames:
+            if s == "Notes":
+                continue
+            if not process_sheet(workbook[s], output_dir, results_dir):
+                _pulse_logger.error(f"Unable to read {s} sheet")
+    return workbook.sheetnames
 
 
 # Read xlsx sheet and generate corresponding scenario file and validation target files

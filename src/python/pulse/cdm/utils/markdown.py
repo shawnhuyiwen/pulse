@@ -230,6 +230,7 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=
 
     with open(out_fname, 'w') as out_file:
         out_file.writelines(out_lines)
+    _pulse_logger.info("Writing processed file as: "+ str(out_fname))
 
 
 if __name__ == "__main__":

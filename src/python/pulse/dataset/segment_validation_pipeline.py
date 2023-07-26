@@ -70,21 +70,29 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         _pulse_logger.error(f"Results directory ({results_dir}) does not exist. Aborting")
         return
 
-    if exec_opt is not eExecOpt.MarkdownOnly:
-        gen_scenarios_and_targets(xls_file, output_dir, results_dir)
-        if exec_opt is eExecOpt.GenerateOnly:
-            return
+    sheets = gen_scenarios_and_targets(xls_file, output_dir, results_dir, exec_opt == eExecOpt.MarkdownOnly)
+    if exec_opt is eExecOpt.GenerateOnly:
+        return
 
     # plots and md files are expected to be:
     # 1. In the same directory as the xlsx file
     # 2. In the run.config root/docs/Validation directory
     # It is assumed the json and md file names are the same, just different extension
 
-    md_file = Path(xls_dir / (xls_basename + ".md"))
-    if not md_file.is_file():
-        md_file = Path(get_root_dir()) / "docs" / "Validation" / (xls_basename + ".md")
-    if not md_file.is_file():
-        _pulse_logger.error(f"Could not find md file, it should be in:")
+    md_files = []
+    sheets.insert(0, xls_basename)
+    for sheet in sheets:
+        md_file = Path(xls_dir / (xls_basename + "-" + sheet + ".md"))
+        if not md_file.is_file():
+            md_file = Path(get_root_dir()) / "docs" / "Validation" / (sheet + ".md")
+            if not md_file.is_file():
+                md_file = None
+        if md_file is not None:
+            md_files.append(md_file)
+
+
+    if len(md_files) == 0:
+        _pulse_logger.error(f"Could not find md files, at least one should be in:")
         _pulse_logger.error(f"The same dir as the xlsx, or in your source/docs/Validation directory")
         sys.exit(1)
     plots_file = Path(xls_dir / (xls_basename + ".json"))
@@ -143,12 +151,13 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         create_plots(plots.get_plotters())
 
     # Run doxygen preprocessor
-    process_file(
-        fpath=md_file,
-        ref_dir=Path("./validation/tables"),
-        dest_dir=Path("./validation/markdown"),
-        replace_refs=False
-    )
+    for md_file in md_files:
+        process_file(
+            fpath=md_file,
+            ref_dir=Path("./validation/tables"),
+            dest_dir=Path("./validation/markdown"),
+            replace_refs=False
+        )
 
 
 if __name__ == "__main__":
