@@ -1600,7 +1600,7 @@
         "Series":
         [
           { "OutputFilename": "HemothoraxVaried_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "HemothoraxVaried_RightLungVolume", "YHeader": [ "RightLungPulmonary-Volume(mL)" ] },
+          { "OutputFilename": "HemothoraxVaried_LeftLungVolume",  "YHeader": [ "LeftLungPulmonary-Volume(mL)" ] },
           { "OutputFilename": "HemothoraxVaried_BloodVolume",     "YHeader": [ "BloodVolume(L)" ] },
           { "OutputFilename": "HemothoraxVaried_O2Sat",           "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "HemothoraxVariedLegend",

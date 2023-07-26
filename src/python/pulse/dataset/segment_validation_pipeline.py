@@ -57,7 +57,7 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
 
     # Remove and recreate directories
     output_dir = Path("./validation/scenarios/"+xls_basename)
-    results_dir = Path("./test_results/scenarios/"+xls_basename)
+    results_dir = Path("./verification/scenarios/"+xls_basename)
     output_dir.mkdir(parents=True, exist_ok=True)
     results_dir.mkdir(parents=True, exist_ok=True)
 
@@ -97,25 +97,20 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
     if bib_file.is_file():
         # Copy this file up as "Custom.bib"
         shutil.copyfile(xls_dir/"Sources.bib", "./docs/Custom.bib")
-    # Are there any images in this directory
-    images = glob.glob(str(xls_dir/'*'))
-    for image in images:
-        ext = [".jpg", ".png"]
-        if image.endswith(tuple(ext)):
-            image_dir = Path("./docs/html/Images/"+xls_basename)
-            image_dir.mkdir(parents=True, exist_ok=True)
-            shutil.copy(image, str(image_dir))
-
-
-    # Get list of all scenarios
-    scenarios = [item.name for item in output_dir.glob("*")
-                 if not item.is_dir() and "-ValidationTargets.json" not in item.name]
-    targets = []
-    for scenario in scenarios:
-        targets.append(scenario.replace(".json", "-ValidationTargets.json"))
+        # Are there any images in this directory
+        images = glob.glob(str(xls_dir/'*'))
+        for image in images:
+            ext = [".jpg", ".png"]
+            if image.endswith(tuple(ext)):
+                image_dir = Path("./docs/html/Images/"+xls_basename)
+                image_dir.mkdir(parents=True, exist_ok=True)
+                shutil.copy(image, str(image_dir))
 
     # Run scenarios if we are running full pipeline
     if exec_opt is eExecOpt.Full:
+        # Get list of all scenarios
+        scenarios = [item.name for item in output_dir.glob("*")
+                     if not item.is_dir() and "-ValidationTargets.json" not in item.name]
         for scenario in scenarios:
             scenario_file = output_dir / scenario
             sce_exec = PulseScenarioExec()
@@ -129,6 +124,8 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         serialize_segment_validation_config_from_file(plots_file, plots)
 
     # Carry out validation on each scenario
+    targets = [item.name for item in output_dir.glob("*")
+               if not item.is_dir() and "-ValidationTargets.json" in item.name]
     for target_file in targets:
         abs_targets_filename = Path(output_dir / target_file)
         abs_segments_filename = Path(results_dir / target_file.replace("-ValidationTargets", "Results-Segments"))

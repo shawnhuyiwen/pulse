@@ -18,7 +18,7 @@ _pulse_logger = logging.getLogger('pulse')
 
 def validate(targets_filename: Path, segments_filename: Path, table_dir: Path) -> None:
     # Get all validation targets and segment results from files
-    _pulse_logger.info(f"Validating {segments_filename}")
+    _pulse_logger.info(f"Validating {segments_filename} against {targets_filename}")
     targets = serialize_segment_validation_segment_list_from_file(targets_filename)
     results = serialize_data_requested_result_from_file(segments_filename)
 
