@@ -9,7 +9,7 @@ def read_csv_into_df(csv_filename: Path, replace_slashes: bool=False, **kwargs):
     df = pd.read_csv(csv_filename, **kwargs)
     for column in df.columns[1:]:
         # Convert any strings to NaN
-        df[column] = pd.to_numeric(df[column], errors='coerce')
+        df[column] = pd.to_numeric(df[column], downcast='float', errors='coerce')
         # Replace slashes in units string
         if replace_slashes:
             df.rename(columns={column: column.replace("/", "_Per_")}, inplace=True)
