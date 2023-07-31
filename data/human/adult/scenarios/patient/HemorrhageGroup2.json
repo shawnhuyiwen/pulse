@@ -7,7 +7,6 @@
   ],
   "DataRequestManager":
   {
-    "SamplesPerSecond": 1.0,
     "DataRequest":
     [
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "SubstanceName": "Oxygen", "PropertyName": "PartialPressure", "Unit": "mmHg" },
