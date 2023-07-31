@@ -97,6 +97,8 @@ namespace Pulse.CDM
           break;
         case eDataRequest_Category.Substance:
           str = GetSubstanceName()+"-";
+          if (HasCompartmentName())
+            str += GetCompartmentName() + "-";
           break;
       }
       str += PropertyName;

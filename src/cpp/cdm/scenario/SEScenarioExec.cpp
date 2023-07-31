@@ -295,7 +295,7 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   double sampleTime_s = sce.GetDataRequestManager().GetSamplesPerSecond();
   if (sampleTime_s != 0)
     sampleTime_s = 1 / sampleTime_s;
-  double currentSampleTime_s = sampleTime_s;//Sample the first step
+  double currentSampleTime_s = 0;
 
   TimingProfile profiler;
   profiler.Start("Total");

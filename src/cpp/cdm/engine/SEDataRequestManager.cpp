@@ -593,6 +593,19 @@ SEDataRequest& SEDataRequestManager::CreateTissueCompartmentDataRequest(const st
   dr->SetUnit(unit);
   return *dr;
 }
+SEDataRequest& SEDataRequestManager::CreateTissueCompartmentDataRequest(const std::string& cmptName, const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+{
+  SEDataRequest* dr = FindTissueCompartmentDataRequest(cmptName, property);
+  if (dr != nullptr)
+    return *dr;
+  dr = new SEDataRequest(eDataRequest_Category::TissueCompartment, dfault);
+  m_Requests.push_back(dr);
+  dr->SetCompartmentName(cmptName);
+  dr->SetSubstanceName(substance);
+  dr->SetPropertyName(property);
+  dr->SetUnit(unit);
+  return *dr;
+}
 SEDataRequest* SEDataRequestManager::FindTissueCompartmentDataRequest(const std::string& cmptName, const std::string& property)
 {
   for (SEDataRequest* dr : m_Requests)
@@ -624,6 +637,19 @@ SEDataRequest& SEDataRequestManager::CreateSubstanceDataRequest(const std::strin
   dr = new SEDataRequest(eDataRequest_Category::Substance, dfault);
   m_Requests.push_back(dr);
   dr->SetSubstanceName(substance);
+  dr->SetPropertyName(property);
+  dr->SetUnit(unit);
+  return *dr;
+}
+SEDataRequest& SEDataRequestManager::CreateSubstanceDataRequest(const std::string& substance, const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+{
+  SEDataRequest* dr = FindSubstanceDataRequest(substance, property);
+  if (dr != nullptr)
+    return *dr;
+  dr = new SEDataRequest(eDataRequest_Category::Substance, dfault);
+  m_Requests.push_back(dr);
+  dr->SetSubstanceName(substance);
+  dr->SetCompartmentName(cmptName);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
   return *dr;

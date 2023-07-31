@@ -184,6 +184,8 @@ public class SEDataRequest implements Serializable
       break;
     case Substance:
       str += getSubstanceName()+"-";
+      if (hasCompartmentName())
+        str += getCompartmentName()+"-";
       break;
       default:
         break;

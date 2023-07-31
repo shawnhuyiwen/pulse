@@ -505,6 +505,8 @@ class SEDataRequest(SEDecimalFormat):
                 out_string += "{}-".format(self._substance_name)
         elif self._category == eDataRequest_category.Substance:
             out_string = self._substance_name+"-"
+            if self.has_compartment_name():
+                out_string += "{}-".format(self._compartment_name)
         out_string += self._property_name
         if self.has_unit():
             out_string += "({})".format(self.get_unit())

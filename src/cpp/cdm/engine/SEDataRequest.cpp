@@ -271,6 +271,8 @@ std::string SEDataRequest::ToString() const
     break;
   case eDataRequest_Category::Substance:
     str = GetSubstanceName()+"-";
+    if (HasCompartmentName())
+      str += GetCompartmentName() + "-";
     break;
   }
   str += m_PropertyName;

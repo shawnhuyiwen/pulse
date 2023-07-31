@@ -83,9 +83,11 @@ public:
 
   SEDataRequest& CreateTissueCompartmentDataRequest(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreateTissueCompartmentDataRequest(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateTissueCompartmentDataRequest(const std::string& cmptName, const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
   SEDataRequest& CreateSubstanceDataRequest(const std::string& substance, const std::string& property, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreateSubstanceDataRequest(const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEDataRequest& CreateSubstanceDataRequest(const std::string& substance, const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
   SEDataRequest& CreateAnesthesiaMachineDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreateAnesthesiaMachineDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
