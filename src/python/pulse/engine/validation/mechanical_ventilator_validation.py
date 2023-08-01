@@ -19,6 +19,7 @@ def write_patient_table(patient_map):
 
         f = open("./test_results/tables/MechanicalVentilator-" + patient + "-Patient-Settings"+".md", "w")
         table(f, data, fields, headings, align)
+        f.close()
 
 def write_ventilator_settings_table(settings_map):
     for mode, values in settings_map.items():
@@ -34,6 +35,8 @@ def write_ventilator_settings_table(settings_map):
 
         f = open("./test_results/tables/MechanicalVentilator-" + mode + "-Ventilator-Settings" + ".md", "w")
         table(f, data, fields, headings, align)
+        f.close()
+
 
 def write_validation_table(validation_map):
     for key, values in validation_map.items():
@@ -55,6 +58,7 @@ def write_validation_table(validation_map):
 
         f = open("./test_results/tables/MechanicalVentilator-" + key + "-Validation" + ".md", "w")
         table(f, data, fields, headings, align)
+        f.close()
 
 def data():
     return \

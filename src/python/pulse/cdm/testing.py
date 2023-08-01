@@ -2,9 +2,9 @@
 # See accompanying NOTICE file for details.
 
 import logging
-import os
-from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Dict, List, Optional
+from dataclasses import dataclass, field
 
 from pulse.cdm.scalars import SEScalarTime, TimeUnit
 
@@ -161,22 +161,19 @@ class SETestReport():
     def clear(self):
         self.name = ""
         self.file_name = ""
-        self.report_dir = ""
+        self.report_dir = Path(".")
         self.test_suites = []
         self.known_failing_suites = []
 
-    def set_full_report_path(self, path: str):
-        path = path.replace("\\\\", "/")
-        dir = path[:path.rfind("/")+1]
-        self.set_report_directory(dir)
-        file = path[path.rfind("/")+1:]
-        self.set_file_name(file)
+    def set_full_report_path(self, path: Path):
+        self.set_report_directory(path.parent)
+        self.set_file_name(path.name)
 
-    def set_report_directory(self, dir: str):
-        if not os.path.exists(dir):
-            os.makedirs(dir)
+    def set_report_directory(self, dir: Path):
+        if not dir.is_dir():
+            dir.mkdir(parents=True)
 
-        self.report_dir = dir + "/"
+        self.report_dir = dir
 
     def get_name(self):
         return self.name

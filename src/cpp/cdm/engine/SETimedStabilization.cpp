@@ -74,6 +74,7 @@ bool SETimedStabilization::Stabilize(Controller& engine, const SEScalarTime& tim
   double statusTime_s = 0;// Current time of this status cycle
   double statusStep_s = 50;//How long did it take to simulate this much time
   double dT_s = engine.GetTimeStep(TimeUnit::s);
+  double currentTime_s=0;
   int count = (int)(sTime_s / dT_s);
   int ProgressStep = (int)(count*.1);
   int Progress = ProgressStep;
@@ -88,19 +89,17 @@ bool SETimedStabilization::Stabilize(Controller& engine, const SEScalarTime& tim
     // and it will advance time, AND check to see if it is at a Resting state or not
     // if it is we can break our loop. This will allow us to record our stabilization data
     engine.AdvanceTime();
+    currentTime_s = engine.GetSimulationTime(TimeUnit::s);
 
-    m_currentTime_s += dT_s;
-    if (m_currentTime_s == 0)
-      tracker->SetupRequests();
     if (track == eSwitch::On)
-      tracker->TrackData(m_currentTime_s);
+      tracker->TrackData(currentTime_s);
     if (m_LogProgress)
     {
       statusTime_s += dT_s;
       if (statusTime_s>statusStep_s)
       {
         statusTime_s = 0;
-        ss << "Current Time is " << m_currentTime_s << "s, it took "
+        ss << "Current Time is " << currentTime_s << "s, it took "
           << profiler.GetElapsedTime_s("Status") << "s to simulate the past "
           << statusStep_s << "s" << std::flush;
         profiler.Reset("Status");
@@ -120,7 +119,7 @@ bool SETimedStabilization::Stabilize(Controller& engine, const SEScalarTime& tim
     Info(ss);
   }
   // Save off how long it took us to stabilize
-  GetStabilizationDuration().SetValue(m_currentTime_s, TimeUnit::s);
+  GetStabilizationDuration().SetValue(currentTime_s, TimeUnit::s);
   return true;
 }
 

@@ -57,7 +57,7 @@ void HowToArrythmia()
 
   AdvanceAndTrackTime_s(.5, *pe);
   pe->GetLogger()->Info("The patient is nice and healthy");
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
   
   // Create an SEArrythmia object
   SEArrhythmia arrhythmia;
@@ -68,7 +68,7 @@ void HowToArrythmia()
   //// Advance time to see how the injury affects the patient
   //AdvanceAndTrackTime_s(10, *pe);
   //pe->GetLogger()->Info(std::stringstream() << "The patient has had stable ventricular tachycardia for 10s, not doing well...");
-  //pe->GetEngineTracker()->LogRequestedValues(false);
+  //pe->GetEngineTracker()->LogRequestedValues();
   //
   //// You can go back to normal sinus.
   //arrhythmia.SetRhythm(eHeartRhythm::NormalSinus);
@@ -76,7 +76,7 @@ void HowToArrythmia()
   //pe->GetLogger()->Info("Removing the arrythmia.");
   //AdvanceAndTrackTime_s(30, *pe);
   //pe->GetLogger()->Info(std::stringstream() << "The patient's arrythmia has been removed for 30s; patient is much better");
-  //pe->GetEngineTracker()->LogRequestedValues(false);
+  //pe->GetEngineTracker()->LogRequestedValues();
 
   arrhythmia.SetRhythm(eHeartRhythm::FineVentricularFibrillation);
   pe->ProcessAction(arrhythmia);
@@ -88,7 +88,7 @@ void HowToArrythmia()
 
   AdvanceAndTrackTime_s(17, *pe);
   pe->GetLogger()->Info(std::stringstream() << "The patient has had coarse ventricular fibrillation for 90 s");
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
 
   pe->GetLogger()->Info("Heart is in " + eHeartRhythm_Name(pe->GetCardiovascularSystem()->GetHeartRhythm()));
 

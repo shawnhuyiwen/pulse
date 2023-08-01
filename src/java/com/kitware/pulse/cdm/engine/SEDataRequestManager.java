@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-package com.kitware.pulse.cdm.datarequests;
+package com.kitware.pulse.cdm.engine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,6 @@ public class SEDataRequestManager
   // TODO Decimal Formatting Data
   protected double                        samplesPerSecond;
   protected List<SEDataRequest>           dataRequests = new ArrayList<>();
-  protected List<SEValidationTarget>      validationTargets = new ArrayList<>();
   
   public SEDataRequestManager()
   {
@@ -33,7 +32,6 @@ public class SEDataRequestManager
     this.resultsFilename = "";
     this.samplesPerSecond = 0;
     dataRequests.clear();
-    validationTargets.clear();
   }
   
   public void readFile(String fileName) throws InvalidProtocolBufferException
@@ -59,12 +57,6 @@ public class SEDataRequestManager
       SEDataRequest.load(drData,dr);
       dst.dataRequests.add(dr);
     }
-    for (ValidationTargetData vtData : src.getValidationTargetList())
-    {
-      SEValidationTarget vt = new SEValidationTarget(vtData.getDataRequest().getCategory());
-      SEValidationTarget.load(vtData,vt);
-      dst.validationTargets.add(vt);
-    }
   }
   
   public static DataRequestManagerData unload(SEDataRequestManager src)
@@ -81,8 +73,6 @@ public class SEDataRequestManager
       dst.setSamplesPerSecond(src.samplesPerSecond);
     for(SEDataRequest dr : src.dataRequests)
       dst.addDataRequest(SEDataRequest.unload(dr));
-    for(SEValidationTarget vt : src.validationTargets)
-      dst.addValidationTarget(SEValidationTarget.unload(vt));
   }
   
   public boolean hasResultsFilename(){ return this.resultsFilename!=null&&!this.resultsFilename.isEmpty(); }
@@ -93,8 +83,6 @@ public class SEDataRequestManager
   public double getSamplesPerSecond(){ return this.samplesPerSecond; }
   
   public List<SEDataRequest> getRequestedData(){ return dataRequests; }
-
-  public List<SEValidationTarget> getValidationTargets(){ return validationTargets; }
   
   public void writeData(List<Double> data)
   {
@@ -367,43 +355,6 @@ public class SEDataRequestManager
     dr.unit = unit;
     dataRequests.add(dr);
     return dr;
-  }
-
-  public SEValidationTarget createLiquidCompartmentValidationTarget(String compartment, String property)
-  {
-    SEValidationTarget vt = new SEValidationTarget(eCategory.LiquidCompartment);
-    vt.propertyName = property;
-    vt.compartmentName = compartment;
-    validationTargets.add(vt);
-    return vt;
-  }
-  public SEValidationTarget createLiquidCompartmentValidationTarget(String compartment, String property, Unit unit)
-  {
-    SEValidationTarget vt = new SEValidationTarget(eCategory.LiquidCompartment);
-    vt.propertyName = property;
-    vt.compartmentName = compartment;
-    vt.unit = unit;
-    validationTargets.add(vt);
-    return vt;
-  }
-  public SEValidationTarget createLiquidCompartmentValidationTarget(String compartment, String substance, String property)
-  {
-    SEValidationTarget vt = new SEValidationTarget(eCategory.LiquidCompartment);
-    vt.propertyName = property;
-    vt.compartmentName = compartment;
-    vt.substanceName = substance;
-    validationTargets.add(vt);
-    return vt;
-  }
-  public SEValidationTarget createLiquidCompartmentValidationTarget(String compartment, String substance, String property, Unit unit)
-  {
-    SEValidationTarget vt = new SEValidationTarget(eCategory.LiquidCompartment);
-    vt.propertyName = property;
-    vt.compartmentName = compartment;
-    vt.substanceName = substance;
-    vt.unit = unit;
-    validationTargets.add(vt);
-    return vt;
   }
 
 }

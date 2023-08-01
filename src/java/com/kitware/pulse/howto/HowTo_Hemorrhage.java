@@ -4,19 +4,15 @@ package com.kitware.pulse.howto;
 
 import java.util.List;
 
-import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
-import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData.eCompartment;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData.eType;
-import com.kitware.pulse.cdm.datarequests.SEDataRequest;
-import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
+import com.kitware.pulse.cdm.engine.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEEventHandler;
 import com.kitware.pulse.cdm.patient.actions.SEHemorrhage;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.MassUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.PressureUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.TemperatureUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumePerTimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
 import com.kitware.pulse.engine.PulseEngine;

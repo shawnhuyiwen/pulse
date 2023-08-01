@@ -342,7 +342,7 @@ bool PhysiologyEngineThunk::AdvanceTimeStep()
 double* PhysiologyEngineThunk::PullDataPtr()
 {
   double currentTime_s = m_engine->GetSimulationTime(TimeUnit::s);
-  m_engine->GetEngineTracker()->PullData();
+  m_engine->GetEngineTracker()->PullData(currentTime_s);
   if (m_requestedData == nullptr)
   {
     // +1 for the sim time

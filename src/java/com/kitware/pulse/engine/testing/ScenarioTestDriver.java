@@ -48,8 +48,11 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       }
     }
     // Since we are passing the scenario inline via the ScenarioContent string,
-    // The runner is going to the scenario name in naming output artifacts (logs, csv, etc)
-    String scenarioName = "./test_results/scenarios/"+job.name.substring(0,job.name.length()-5);
+    // The runner is going to use the scenario name in naming output artifacts (logs, csv, etc)
+    // Only if this scenario does not already have a results file name
+    String scenarioName = builder.getName();
+    if (builder.getDataRequestManager().getResultsFilename().isEmpty())
+      scenarioName = "./test_results/scenarios/"+job.name.substring(0,job.name.length()-5);
 
     if(job.patientFile!=null)
     {

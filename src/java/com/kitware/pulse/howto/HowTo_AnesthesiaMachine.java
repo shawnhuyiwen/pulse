@@ -4,7 +4,7 @@ package com.kitware.pulse.howto;
 
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
-import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
+import com.kitware.pulse.cdm.engine.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEPatientConfiguration;
 import com.kitware.pulse.cdm.patient.SEPatient;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;

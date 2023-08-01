@@ -29,6 +29,7 @@
 
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEConditionManager.h"
+#include "cdm/engine/SEDataRequested.h"
 #include "cdm/patient/SEPatient.h"
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
@@ -63,20 +64,11 @@ namespace pulse { namespace human_adult_whole_body
 
   void Controller::Allocate()
   {
+    pulse::Controller::Allocate();
+
     m_Stabilizer = new pulse::StabilizationController(*this);
 
-    m_Substances = new SubstanceManager(*this);
-
-    m_InitialPatient = new SEPatient(GetLogger());
-    m_CurrentPatient = new SEPatient(GetLogger());
-
-    m_Config = new PulseConfiguration(GetLogger());
-    m_Config->Initialize("");//Setup defaults that don't need files on disk
-
     m_SaturationCalculator = new pulse::SaturationCalculator(*this);
-
-    m_Actions = new SEActionManager(*m_Substances);
-    m_Conditions = new SEConditionManager(GetLogger());
 
     m_BloodChemistryModel = new BloodChemistryModel(*this);
     m_CardiovascularModel = new CardiovascularModel(*this);
@@ -119,17 +111,7 @@ namespace pulse { namespace human_adult_whole_body
     m_Models.push_back(m_ElectroCardioGramModel);
     m_Models.push_back(m_ECMOModel);
 
-
-    m_EventManager = new SEEventManager(GetLogger());
-
-    m_Compartments = new CompartmentManager(*this);
-    m_BlackBoxes = new BlackBoxManager(*this);
-
-    m_Circuits = new CircuitManager(*this);
-
-    m_LogForward = new pulse::FatalListner(*m_EventManager, m_CurrentTime);
-    m_Logger->AddForward(m_LogForward);
-
+    // Call this after models are setup
     SetupTracker();
   }
 

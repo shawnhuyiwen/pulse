@@ -61,6 +61,7 @@ add_library_ex(CommonDataModel
     engine/SEActionManager.h
     engine/SEAdvanceHandler.h
     engine/SEAdvanceTime.h
+    engine/SEAdvanceUntilStable.h
     engine/SECondition.h
     engine/SEConditionManager.h
     engine/SEDataRequest.h
@@ -81,6 +82,7 @@ add_library_ex(CommonDataModel
     engine/SEOverrides.h
     engine/SEPatientActionCollection.h
     engine/SEPatientConfiguration.h
+    engine/SESerializeRequested.h
     engine/SESerializeState.h
     engine/SETimedStabilization.h
     engine/SEValidationTarget.h
@@ -420,6 +422,7 @@ add_library_ex(CommonDataModel
     engine/SEAction.cpp
     engine/SEActionManager.cpp
     engine/SEAdvanceTime.cpp
+    engine/SEAdvanceUntilStable.cpp
     engine/SECondition.cpp
     engine/SEConditionManager.cpp
     engine/SEDataRequest.cpp
@@ -439,6 +442,7 @@ add_library_ex(CommonDataModel
     engine/SEOverrides.cpp
     engine/SEPatientActionCollection.cpp
     engine/SEPatientConfiguration.cpp
+    engine/SESerializeRequested.cpp
     engine/SESerializeState.cpp
     engine/SETimedStabilization.cpp
     engine/SEValidationTarget.cpp

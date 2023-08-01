@@ -19,6 +19,12 @@ double convert(double val, const std::string& from, const std::string& to)
   return d;
 }
 
+bool execute_scenario(const std::string& exec_str, eSerializationFormat fmt)
+{
+  Logger logger;
+  return PulseEngineThunk::ExecuteScenario(exec_str, fmt, &logger);
+}
+
 PYBIND11_MODULE(PyPulse, m)
 {
    m.doc() = R"pbdoc(
@@ -47,6 +53,8 @@ PYBIND11_MODULE(PyPulse, m)
   PulseEngineBind(m);
   PulseEnginePoolBind(m);
   MultiplexVentilationEngineBind(m);
+
+  m.def("execute_scenario", &execute_scenario, "Executes a scenario file");
 
   m.attr("__version__") = PulseBuildInformation::Version();
   m.attr("__hash__") = PulseBuildInformation::Hash();

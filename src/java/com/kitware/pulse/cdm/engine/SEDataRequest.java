@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-package com.kitware.pulse.cdm.datarequests;
+package com.kitware.pulse.cdm.engine;
 
 import java.io.Serializable;
 
@@ -14,7 +14,7 @@ import com.kitware.pulse.cdm.properties.CommonUnits.Unit;
 public class SEDataRequest implements Serializable
 {
   private static final long serialVersionUID = -6340908837323396480L;
-  
+
   protected String                  propertyName;
   protected Unit                    unit;
   protected eCategory               category;
@@ -23,13 +23,13 @@ public class SEDataRequest implements Serializable
   protected String                  substanceName;
   protected Integer                 precision;
   protected eType                   format;
-  
-  public SEDataRequest(eCategory c) 
+
+  public SEDataRequest(eCategory c)
   {
     clear();
     category = c;
   }
-  
+
   public void clear()
   {
     propertyName    = "";
@@ -40,7 +40,7 @@ public class SEDataRequest implements Serializable
     precision       = null;
     format          = null;
   }
-  
+
   public static void load(DataRequestData src, SEDataRequest dst)
   {
     dst.clear();
@@ -53,7 +53,7 @@ public class SEDataRequest implements Serializable
     dst.substanceName = src.getSubstanceName();
     if(src.hasDecimalFormat())
     {
-      dst.format = src.getDecimalFormat().getType();      
+      dst.format = src.getDecimalFormat().getType();
       dst.precision = src.getDecimalFormat().getPrecision();
     }
   }
@@ -82,7 +82,7 @@ public class SEDataRequest implements Serializable
     if(src.hasPrecision())
       dst.getDecimalFormatBuilder().setPrecision(src.precision);
   }
-  
+
   @Override
   public int hashCode()
   {
@@ -102,81 +102,99 @@ public class SEDataRequest implements Serializable
     if(precision!=null)
       c = 31 * c + (int)(precision ^ (precision >>> 32));
     if(format!=null)
-      c = 31 * c + format.hashCode();    
+      c = 31 * c + format.hashCode();
     return c;
   }
-  
+
   public String getPropertyName(){ return propertyName; }
   public void setPropertyName(String name){ this.propertyName = name; }
   public boolean hasPropertyName() { return propertyName==null||propertyName.isEmpty() ? false : true; }
-  
+
   public Unit getUnit(){ return unit; }
   public void setUnit(Unit unit){ this.unit = unit; }
   public boolean hasUnit(){ return unit==null ? false : true; }
-  
+
   public eCategory getCategory(){ return category; }
   //public void setCategory(eCategory c){ this.category = c; }
   public boolean hasCategory(){ return category==null||category==eCategory.UNRECOGNIZED ? false : true; }
-  
+
   public String getActionName(){ return actionName; }
   public void setActionName(String a){ this.actionName = a; }
   public boolean hasActionName(){ return actionName==null||actionName.isEmpty() ? false : true; }
-  
+
   public String getCompartmentName(){ return compartmentName; }
   public void setCompartmentName(String c){ this.compartmentName = c; }
   public void setCompartmentName(Enum<?> c){ this.compartmentName = c.name(); }
   public boolean hasCompartmentName(){ return compartmentName==null||compartmentName.isEmpty() ? false : true; }
-  
+
   public String getSubstanceName(){ return substanceName; }
   public void setSubstanceName(String s){ this.substanceName = s; }
   public boolean hasSubstanceName(){ return substanceName==null||substanceName.isEmpty() ? false : true; }
-  
+
   public eType getFormat(){ return format; }
   public void setFormat(eType f){ this.format = f; }
   public boolean hasFormat(){ return format==null||format==eType.UNRECOGNIZED ? false : true; }
-  
+
   public Integer getPrecision(){ return precision; }
   public void setPrecision(Integer p){ this.precision = p; }
   public boolean hasPrecision(){ return precision==null ? false : true; }
-  
+
   public String toString()
   {
-    String str = "";
-    switch(this.category)
+    // This needs to match C++ SEDataRequest::ToString
+    // We use this string for csv headers and we need to be consistent across all languages
+    String str="";
+    switch (this.category)
     {
-      case Action:
-        str = getActionName()+"-";
-        break;
-      case Patient:
-        str = "Patient-";
-        break;
-      case AnesthesiaMachine:
-        str = "AnesthesiaMachine-";
-        break;
-      case BagValveMask:
-        str = "BagValveMask-";
-        break;
-      case ECG:
-        str = "ECG-";
-        break;
-      case ECMO:
-        str = "ECMO-";
-        break;
-      case Inhaler:
-        str = "Inhaler-";
-        break;
-      case MechanicalVentilator:
-        str = "MechanicalVentilator-";
+    case Action:
+      str = getActionName()+"-";
+      if (hasCompartmentName())
+        str += getCompartmentName()+"-";
+      else if (hasSubstanceName())
+        str += getSubstanceName()+"-";
+      break;
+    case Patient:
+      str = "Patient-";
+      break;
+    case AnesthesiaMachine:
+      str = "AnesthesiaMachine-";
+      break;
+    case BagValveMask:
+      str = "BagValveMask-";
+      break;
+    case ECG:
+      str = "ECG-";
+      break;
+    case ECMO:
+      str = "ECMO-";
+      break;
+    case Inhaler:
+      str = "Inhaler-";
+      break;
+    case MechanicalVentilator:
+      str = "MechanicalVentilator-";
+      break;
+    case GasCompartment:
+    case LiquidCompartment:
+    case ThermalCompartment:
+    case TissueCompartment:
+      str += getCompartmentName()+"-";
+      if (hasSubstanceName())
+        str += getSubstanceName()+"-";
+      break;
+    case Substance:
+      str += getSubstanceName()+"-";
+      if (hasCompartmentName())
+        str += getCompartmentName()+"-";
+      break;
+      default:
         break;
     }
-    if(hasCompartmentName())
-      str += " - "+getCompartmentName();
-    if(hasSubstanceName())
-      str += " - "+getSubstanceName();
-    str += propertyName;
+    str += this.propertyName;
     if (unit != null)
-     str += " (" + unit.toString() + ")";
+     str += "(" + unit.toString() + ")";
+    str=str.replaceAll(" ", "_");
     return str;
   }
-  
+
 }

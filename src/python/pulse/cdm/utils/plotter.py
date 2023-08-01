@@ -1,38 +1,67 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import re
+import sys
+import shutil
 import logging
 import numpy as np
-import os
-import re
-import shutil
-import sys
 import matplotlib.pyplot as plt
 import matplotlib.style as mplstyle
 import matplotlib.ticker as mplticker
-from matplotlib import colors as mcolors
+from pathlib import Path
 from cycler import cycler
-from timeit import default_timer as timer
 from datetime import timedelta
-from typing import List, Optional
 from textwrap import TextWrapper
+from typing import List, Optional
+from matplotlib import colors as mcolors
+from timeit import default_timer as timer
 
 from pulse.cdm.plots import *
 from pulse.cdm.io.plots import serialize_plotter_list_from_file
 from pulse.cdm.utils.file_utils import get_config_dir
+from pulse.cdm.utils.generate_monitors import generate_monitors
 
 
 _pulse_logger = logging.getLogger('pulse')
 
 
-def create_plots(plots_file: str, benchmark: bool = False):
+def process_plot_file(plots_file: Path, benchmark: bool = False):
     plotters = []
     serialize_plotter_list_from_file(plots_file, plotters)
+    create_plots(plotters, benchmark)
+
+
+def plot_with_test_results(plotters: []):
+    def _adjust_filepath(fp: str) -> str:
+        if "$VERIFICATION_DIR" in fp:
+            fp = fp.replace("$VERIFICATION_DIR", "./test_results")
+        return fp
+
+    for p in plotters:
+        if isinstance(p, SEMultiHeaderSeriesPlotter):
+            if p.has_plot_sources():
+                sources = p.get_plot_sources()
+                for source in sources:
+                    source.set_csv_data(_adjust_filepath(source.get_csv_data()))
+        elif isinstance(p, SEMonitorPlotter):
+            if p.has_plot_source():
+                source = p.get_plot_source()
+                source.set_csv_data(_adjust_filepath(source.get_csv_data()))
+            if p.has_data_requested_file():
+                p.set_data_requested_file(_adjust_filepath(p.get_data_requested_file().as_posix()))
+        else:
+            _pulse_logger.error(f"Unknown plotter type: {p}")
+
+
+def create_plots(plotters: [], benchmark: bool = False):
     for p in plotters:
         if isinstance(p, SEMultiHeaderSeriesPlotter):
             multi_header_series_plotter(p, benchmark)
         elif isinstance(p, SEComparePlotter):
             compare_plotter(p, benchmark)
+        elif isinstance(p, SEMonitorPlotter):
+            generate_monitors(p, benchmark)
         else:
             _pulse_logger.error(f"Unknown plotter type: {p}")
 
@@ -48,11 +77,11 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
     validation_source = plotter.get_validation_source()
 
     # Create output directory if it does not exist
-    output_path = "./"
+    output_path = Path("./")
     if plotter.get_plot_config().has_output_path_override():
         output_path = plotter.get_plot_config().get_output_path_override()
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
+    if not output_path.is_dir():
+        output_path.mkdir(parents=True)
 
     for series in plotter.get_series():
         if benchmark:
@@ -128,11 +157,11 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
                     continue
             config.set_output_filename(generate_filename(title))
 
-        output_filename = config.get_output_filename()
+        output_filename = Path(config.get_output_filename())
         # Add file extension if needed
-        if not os.path.splitext(output_filename)[1]:
-            output_filename += config.get_image_properties().get_file_format()
-        output_filepath = os.path.join(output_path, output_filename)
+        if not output_filename.suffix:
+            output_filename = output_filename.with_suffix(config.get_image_properties().get_file_format())
+        output_filepath = output_path / output_filename
 
         if create_plot(
             sources,
@@ -157,25 +186,25 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
         _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
-def csv_plotter(csv: str, benchmark: bool = False):
+def csv_plotter(csv: Path, benchmark: bool = False):
     if benchmark:
         start = timer()
 
-    if not os.path.isfile(csv):
+    if not csv.is_file():
         _pulse_logger.error(f"CSV does not exist {csv}")
 
-    output_dir = f"{csv[:-4]}_plots"
+    output_dir = csv.parent / f"{csv.stem}_plots"
 
     # Remove and recreate directory
     try:
-        if os.path.exists(output_dir):
+        if output_dir.is_dir():
             shutil.rmtree(output_dir)
     except OSError as e:
         _pulse_logger.warning(f"Could not remove old report directory: {output_dir}")
-    os.makedirs(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Create plot source so we can open csv just once
-    ps = SEPlotSource(csv_data=csv, line_format="-k")
+    ps = SEPlotSource(csv_data=str(csv), line_format="-k")
     df = ps.get_data_frame()
 
     # Need to compare against time
@@ -210,7 +239,7 @@ def csv_plotter(csv: str, benchmark: bool = False):
             if ae:
                 config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
                 output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
-                output_filepath = os.path.join(output_dir, output_filename)
+                output_filepath = output_dir / output_filename
                 if create_plot(
                     [ps],
                     config,
@@ -243,10 +272,10 @@ def csv_plotter(csv: str, benchmark: bool = False):
         config.set_output_filename(generate_filename(config.get_title()))
         config.set_legend_mode(eLegendMode.HideActionEventLegend)
 
-        output_filename = config.get_output_filename()
-        if not os.path.splitext(output_filename)[1]:
-            output_filename += config.get_image_properties().get_file_format()
-        output_filepath = os.path.join(output_dir, output_filename)
+        output_filename = Path(config.get_output_filename())
+        if not output_filename.suffix:
+            output_filename = output_filename.with_suffix(config.get_image_properties().get_file_format())
+        output_filepath = output_dir / output_filename
 
         x_label = " ".join(
             [f"{s.get_label() if s.has_label() else y_header} is NaN"
@@ -316,11 +345,11 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         return
 
     # Create output directory if it does not exist
-    output_path = "./"
+    output_path = Path("./")
     if plotter.get_plot_config().has_output_path_override():
         output_path = plotter.get_plot_config().get_output_path_override()
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
+    if not output_path.is_dir():
+        output_path.mkdir(parents=True)
 
     # Need to compare against time
     x_header = None
@@ -356,7 +385,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
 
                 config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
                 output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
-                output_filepath = os.path.join(output_path, output_filename)
+                output_filepath = output_path / output_filename
                 if create_plot(
                     [computed_source],
                     config,
@@ -392,10 +421,10 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         config.set_output_filename(generate_filename(config.get_title()).replace("_vs_", "vs"))
         config.set_legend_mode(eLegendMode.HideActionEventLegend)
 
-        output_filename = config.get_output_filename()
-        if not os.path.splitext(output_filename)[1]:
-            output_filename += config.get_image_properties().get_file_format()
-        output_filepath = os.path.join(output_path, output_filename)
+        output_filename = Path(config.get_output_filename())
+        if not output_filename.suffix:
+            output_filename = output_filename.with_suffix(config.get_image_properties().get_file_format())
+        output_filepath = output_path / output_filename
 
         x_label = " ".join(
             [f"{s.get_label() if s.has_label() else s.get_csv_data()} is NaN"
@@ -550,8 +579,11 @@ def create_plot(plot_sources: [SEPlotSource],
                 x_header: str,
                 y_headers: List[str],
                 x2_header: Optional[str] = None,
-                y2_headers: Optional[List[str]] = [],
+                y2_headers: Optional[List[str]] = None,
                 validation_source: Optional[SEPlotSource] = None):
+    if y2_headers is None:
+        y2_headers = []
+
     # Slightly faster plotting, but may potentially result in a quality loss
     mplstyle.use('fast')
 
@@ -773,7 +805,8 @@ def create_plot(plot_sources: [SEPlotSource],
     # approximation will also likely need to be updated.
 
     # Legend and gridline settings
-    ax1.xaxis.set_major_locator(mplticker.MaxNLocator(nbins=(plot_config.get_image_properties().get_width_inch() / .55)))
+    if plot_config.get_image_properties().get_width_inch() is not None:
+        ax1.xaxis.set_major_locator(mplticker.MaxNLocator(nbins=(plot_config.get_image_properties().get_width_inch() / .55)))
     if plot_config.get_gridlines():
         ax1.grid(linestyle='dotted')
     if plot_config.get_legend_mode() != eLegendMode.NoLegends and len(lns) > 0:
@@ -794,7 +827,10 @@ def create_plot(plot_sources: [SEPlotSource],
     if plot_config.get_legend_mode() != eLegendMode.NoLegends and \
        plot_config.get_legend_mode() != eLegendMode.HideActionEventLegend and ax3 is not None and ax3.lines:
         text_wrapper = DocumentWrapper(width=45)
-        max_ncols = int(plot_config.get_image_properties().get_width_inch() / 5.35) # Approximate width of each column for large labels
+        if plot_config.get_image_properties().get_width_inch() is not None:
+            max_ncols = int(plot_config.get_image_properties().get_width_inch() / 5.35) # Approximate width of each column for large labels
+        else:
+            max_ncols = 3
 
         box = ax1.get_position()
         ax3.set_position([box.x0, box.y0 + box.height * 0.1,
@@ -812,7 +848,7 @@ def create_plot(plot_sources: [SEPlotSource],
     return True
 
 
-def save_current_plot(filename: str, image_props: SEImageProperties, facecolor: Optional[str] = None):
+def save_current_plot(filename: Path, image_props: SEImageProperties, facecolor: Optional[str] = None):
     _pulse_logger.info(f"Saving plot {filename}")
     figure = plt.gcf()
     if image_props.get_width_inch() is not None:
@@ -832,28 +868,28 @@ def clear_current_plot():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+    logging.getLogger('PIL').setLevel(logging.INFO)
+    plt.set_loglevel("info")
 
     benchmark = False
     plot_file = None
 
     if len(sys.argv) > 1:
-        if os.path.isfile(sys.argv[1]):
-          plot_file = sys.argv[1]
-        elif os.path.isfile(get_config_dir()+sys.argv[1]):
-          plot_file = get_config_dir()+sys.argv[1]
+        plot_file = Path(sys.argv[1])
+        if not plot_file.is_file():
+            plot_file = Path(get_config_dir()+sys.argv[1])
+            if not plot_file.is_file():
+                _pulse_logger.error("Please provide a valid plot file (JSON or CSV)")
+                sys.exit(1)
     if len(sys.argv) > 2 and (sys.argv[2] == '--benchmark' or sys.argv[2] == '-b'):
         benchmark = True
-
-    if plot_file is None:
-        _pulse_logger.error("Please provide a valid plot file (JSON or CSV)")
-        sys.exit(1)
 
     if benchmark:
         start = timer()
 
-    if plot_file.lower().endswith(".json"):
-        create_plots(plot_file, benchmark)
-    elif plot_file.lower().endswith(".csv"):
+    if plot_file.suffix.lower().endswith(".json"):
+        process_plot_file(plot_file, benchmark)
+    elif plot_file.suffix.lower().endswith(".csv"):
         csv_plotter(plot_file, benchmark)
     else:
         _pulse_logger.error("Unknown plot file type. Please provide a JSON plot configuration or a CSV data file.")

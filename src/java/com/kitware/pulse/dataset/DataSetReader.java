@@ -26,7 +26,7 @@ import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceData.eState;
 import com.kitware.pulse.cdm.bind.Substance.SubstancePhysicochemicalsData.eBindingProtein;
 import com.kitware.pulse.cdm.bind.Substance.SubstancePhysicochemicalsData.eIonicState;
-import com.kitware.pulse.cdm.datarequests.SEDataRequest;
+import com.kitware.pulse.cdm.engine.SEDataRequest;
 import com.kitware.pulse.cdm.engine.SEDynamicStabilization;
 import com.kitware.pulse.cdm.engine.SEDynamicStabilizationEngineConvergence;
 import com.kitware.pulse.cdm.engine.SETimedStabilization;

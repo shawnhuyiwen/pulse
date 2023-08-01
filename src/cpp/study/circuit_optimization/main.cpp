@@ -19,15 +19,18 @@ int main(int argc, char* argv[])
     Logger log;
     log.SetLogFile("./test_results/circuit_optimization.log");
     log.LogToConsole(true);
-    std::string targetFilename = "./optimizer/HemodynamicsTargets.json";
+
+    std::string dataRequestsFilename = "./validation/requests/CardiovascularCompartments.json";
+    std::string targetFilename = "./validation/targets/CardiovascularCompartments.json";
     std::string startModifierSet = ""; // default set or from previous run "./test_results/modifier_set_xxxx_xx_x.json";
 
-    SEDataRequestManager drMgr(&log);
-    if (!drMgr.SerializeFromFile(targetFilename))
-    {
-      log.Error("Unable to read file " + targetFilename);
-      return 1;
-    }
+    SEDataRequestManager mgr(&log);
+    mgr.SerializeDataRequestsFromFile(dataRequestsFilename);
+    std::string str = mgr.GetDataRequests()[0]->ToString();
+    std::string hdr = mgr.GetDataRequests()[0]->GetHeaderName();
+
+    std::vector<SETimeSeriesValidationTarget*> targets;
+    SETimeSeriesValidationTarget::SerializeFromFile(targetFilename, targets, &log);
 
     // Optimization parameters
     double stepRatio = 0.1;
@@ -57,7 +60,7 @@ int main(int argc, char* argv[])
     // modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToSpleen1);
 
     CircuitOptimizer opt(&log);
-    if(!opt.ConvergeToHemodynamicsTargets(maxLoops, stepRatio, startModifierSet, drMgr.GetValidationTargets(), modifiers))
+    if(!opt.ConvergeToHemodynamicsTargets(maxLoops, stepRatio, startModifierSet, dataRequestsFilename, targets, modifiers))
       log.Error("Unable to converge to optimum circuit");
   }
   catch (std::exception ex)

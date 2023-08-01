@@ -108,10 +108,11 @@ void HowToPulseEnginePool()
   {
     ss << "Engine " << dr->GetID() << " is " << (dr->IsActive() ? "active" : "not active");
     pool.Info(ss);
+    // TODO!!
     // Index 0 is ALWAYS Current Sim Time in seconds
-    pool.Info("Current time of engine is :"+std::to_string(dr->GetValues()[0])+"s");
+    //pool.Info("Current time of engine is :"+std::to_string(dr->GetValues()[0])+"s");
     // Data is indexed from 1 in the order the data requests were created
-    pool.Info("Current Blood Volume(mL) :" + std::to_string(dr->GetValues()[12])+"mL");
+    //pool.Info("Current Blood Volume(mL) :" + std::to_string(dr->GetValues()[12])+"mL");
     ss << dr->GetLogMessages();
     pool.Info(ss);
     pool.Info("");

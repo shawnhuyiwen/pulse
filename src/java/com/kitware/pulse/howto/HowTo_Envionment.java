@@ -2,9 +2,7 @@ package com.kitware.pulse.howto;
 
 import java.util.List;
 
-import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
-import com.kitware.pulse.cdm.datarequests.SEDataRequest;
-import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
+import com.kitware.pulse.cdm.engine.SEDataRequestManager;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.cdm.system.environment.actions.SEChangeEnvironmentalConditions;
 import com.kitware.pulse.engine.PulseEngine;

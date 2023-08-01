@@ -39,8 +39,16 @@ def serialize_plotter_list_from_bind(src: PlotterListData, dst: [SEPlotter]):
                 base_config
             )
             dst.append(plot)
+        elif any_plotter_data.HasField("MonitorPlotter"):
+            plot = SEMonitorPlotter()
+            serialize_monitor_plotter_from_bind(
+                any_plotter_data.MonitorPlotter,
+                plot,
+                base_config
+            )
+            dst.append(plot)
         else:
-            raise Exception("No valid plotter in serialize_plot_list_from_bind")
+            raise Exception("Invalid plotter in serialize_plot_list_from_bind")
 
 def serialize_image_properties_to_bind(src: SEImageProperties, dst: ImagePropertyData):
     dst.DimensionMode = src.get_dimension_mode().value
@@ -335,3 +343,47 @@ def serialize_compare_plotter_from_bind(
         dst.add_rms_value(header, src.RMSValues[header])
 
     dst.set_plot_type(ePlotType(src.PlotType))
+
+
+def serialize_monitor_plotter_to_bind(src: SEMonitorPlotter, dst: MonitorPlotterData):
+    if src.has_plot_config():
+        serialize_plot_config_to_bind(src.get_plot_config(), dst.PlotConfig)
+
+    if src.has_plot_source():
+        serialize_plot_source_to_bind(src.get_plot_source(), dst.PlotSource)
+
+    dst.Vitals = src.get_plot_vitals()
+    dst.Ventilator = src.get_plot_ventilator()
+
+    if src.has_times_s():
+        dst.Times_s.extend(src.get_times_s())
+    elif src.has_data_requested_file():
+        dst.DataRequestedFile = src.get_data_requested_file()
+
+    if src.has_output_prefix():
+        dst.OutputPrefix = src.get_output_prefix()
+
+def serialize_monitor_plotter_from_bind(
+    src: MonitorPlotterData,
+    dst: SEMonitorPlotter,
+    base_config: SEPlotConfig
+):
+    if src.HasField("PlotConfig"):
+        serialize_plot_config_from_bind(src.PlotConfig, dst.get_plot_config(), base_config)
+    else:
+        dst.set_plot_config(base_config)
+
+    plot_source = SEPlotSource()
+    serialize_plot_source_from_bind(src.PlotSource, plot_source)
+    dst.set_plot_source(plot_source)
+
+    dst.set_plot_vitals(src.Vitals)
+    dst.set_plot_ventilator(src.Ventilator)
+
+    if src.HasField("Times"):
+       dst.set_times_s(src.Times.Times_s)
+    elif src.HasField("DataRequestedFile"):
+        dst.set_data_requested_file(src.DataRequestedFile)
+
+    if src.HasField("OutputPrefix"):
+        dst.set_output_prefix(src.OutputPrefix)

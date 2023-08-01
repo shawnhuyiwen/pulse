@@ -542,7 +542,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::AtSteadyState()
   {
-    //Experimentally determined  
+    //Experimentally determined
     double tidalVolumeBaseline_L = GetTidalVolume(VolumeUnit::L);
     //Calculated
     double totalLungCapacity_L = m_data.GetCurrentPatient().GetTotalLungCapacity(VolumeUnit::L);

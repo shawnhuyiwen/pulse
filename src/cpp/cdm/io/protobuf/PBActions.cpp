@@ -16,6 +16,8 @@ POP_PROTO_WARNINGS
 #include "cdm/system/environment/actions/SEEnvironmentAction.h"
 #include "cdm/system/equipment/SEEquipmentAction.h"
 #include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SEAdvanceUntilStable.h"
+#include "cdm/engine/SESerializeRequested.h"
 #include "cdm/engine/SESerializeState.h"
 #include "cdm/engine/SEOverrides.h"
 #include "cdm/substance/SESubstanceManager.h"
@@ -41,16 +43,28 @@ SEAction* PBAction::Load(const CDM_BIND::AnyActionData& action, const SESubstanc
     return PBEnvironmentAction::Load(action.environmentaction(), subMgr);
   case CDM_BIND::AnyActionData::kEquipmentAction:
     return PBEquipmentAction::Load(action.equipmentaction(), subMgr);
+  case CDM_BIND::AnyActionData::kAdvanceUntilStable:
+  {
+    SEAdvanceUntilStable* a = new SEAdvanceUntilStable();
+    PBAction::Load(action.advanceuntilstable(), *a);
+    return a;
+  }
   case CDM_BIND::AnyActionData::kAdvanceTime:
   {
     SEAdvanceTime* a = new SEAdvanceTime();
     PBAction::Load(action.advancetime(), *a);
     return a;
   }
-  case CDM_BIND::AnyActionData::kSerialize:
+  case CDM_BIND::AnyActionData::kSerializeRequested:
+  {
+    SESerializeRequested* a = new SESerializeRequested();
+    PBAction::Load(action.serializerequested(), *a);
+    return a;
+  }
+  case CDM_BIND::AnyActionData::kSerializeState:
   {
     SESerializeState* a = new SESerializeState();
-    PBAction::Load(action.serialize(), *a);
+    PBAction::Load(action.serializestate(), *a);
     return a;
   }
   case CDM_BIND::AnyActionData::kOverrides:
@@ -78,10 +92,22 @@ CDM_BIND::AnyActionData* PBAction::Unload(const SEAction& action)
     any->set_allocated_advancetime(PBAction::Unload(*adv));
     return any;
   }
+  const SEAdvanceUntilStable* stable = dynamic_cast<const SEAdvanceUntilStable*>(&action);
+  if (stable != nullptr)
+  {
+    any->set_allocated_advanceuntilstable(PBAction::Unload(*stable));
+    return any;
+  }
+  const SESerializeRequested* sr = dynamic_cast<const SESerializeRequested*>(&action);
+  if (sr != nullptr)
+  {
+    any->set_allocated_serializerequested(PBAction::Unload(*sr));
+    return any;
+  }
   const SESerializeState* ss = dynamic_cast<const SESerializeState*>(&action);
   if (ss != nullptr)
   {
-    any->set_allocated_serialize(PBAction::Unload(*ss));
+    any->set_allocated_serializestate(PBAction::Unload(*ss));
     return any;
   }
   const SEOverrides* o = dynamic_cast<const SEOverrides*>(&action);
@@ -165,6 +191,56 @@ void PBAction::Serialize(const SEAdvanceTime& src, CDM_BIND::AdvanceTimeData& ds
   PBAction::Serialize(src, *dst.mutable_action());
   if (src.HasTime())
     dst.set_allocated_time(PBProperty::Unload(*src.m_Time));
+}
+
+void PBAction::Load(const CDM_BIND::AdvanceUntilStableData& src, SEAdvanceUntilStable& dst)
+{
+  dst.Clear();
+  PBAction::Serialize(src, dst);
+}
+void PBAction::Serialize(const CDM_BIND::AdvanceUntilStableData& src, SEAdvanceUntilStable& dst)
+{
+  PBAction::Serialize(src.action(), dst);
+  dst.SetCriteria(src.criteria());
+}
+CDM_BIND::AdvanceUntilStableData* PBAction::Unload(const SEAdvanceUntilStable& src)
+{
+  CDM_BIND::AdvanceUntilStableData* dst = new CDM_BIND::AdvanceUntilStableData();
+  PBAction::Serialize(src, *dst);
+  return dst;
+}
+void PBAction::Serialize(const SEAdvanceUntilStable& src, CDM_BIND::AdvanceUntilStableData& dst)
+{
+  PBAction::Serialize(src, *dst.mutable_action());
+  dst.set_criteria(src.GetCriteria());
+}
+
+void PBAction::Load(const CDM_BIND::SerializeRequestedData& src, SESerializeRequested& dst)
+{
+  dst.Clear();
+  PBAction::Serialize(src, dst);
+}
+void PBAction::Serialize(const CDM_BIND::SerializeRequestedData& src, SESerializeRequested& dst)
+{
+  PBAction::Serialize(src.action(), dst);
+  dst.SetClearCache(src.clearcache());
+  dst.SetFilename(src.filename());
+  dst.SetID(src.id());
+}
+CDM_BIND::SerializeRequestedData* PBAction::Unload(const SESerializeRequested& src)
+{
+  CDM_BIND::SerializeRequestedData* dst = new CDM_BIND::SerializeRequestedData();
+  PBAction::Serialize(src, *dst);
+  return dst;
+}
+void PBAction::Serialize(const SESerializeRequested& src, CDM_BIND::SerializeRequestedData& dst)
+{
+  PBAction::Serialize(src, *dst.mutable_action());
+
+  if (src.HasFilename())
+    dst.set_filename(src.m_Filename);
+  dst.set_clearcache(src.m_ClearCache);
+  dst.set_id(src.m_ID);
 }
 
 void PBAction::Load(const CDM_BIND::SerializeStateData& src, SESerializeState& dst)

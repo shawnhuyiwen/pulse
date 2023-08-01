@@ -1514,29 +1514,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "Comment": "Respiratory Methodology Report - Validation - AirwayObstructionVaried",
-        "PlotConfig":
-        {
-          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
-        },
-        "PlotSource":
-        [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/AirwayObstructionVariedResults.csv" }
-        ],
-        "Series":
-        [
-          { "OutputFilename": "AirwayObstruction_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "AirwayObstruction_O2Sat", "YHeader": [ "OxygenSaturation" ] },
-          { "OutputFilename": "AirwayObstruction_MAP", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
-          { "OutputFilename": "AirwayObstruction_CO2PP", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
-          { "OutputFilename": "AirwayObstructionLegend",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
         "Comment": "Respiratory Methodology Report - Validation - Mainstem Intubation",
         "PlotConfig":
         {
@@ -1603,6 +1580,30 @@
           { "OutputFilename": "TensionPneumothoraxClosedVaried_MAP", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
           { "OutputFilename": "TensionPneumothoraxClosedVaried_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "TensionPneumothoraxClosedVariedLegend",
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                "ImageProperties": { "DimensionMode": "Legend" } } }
+        ]
+      }
+    },
+    {
+      "MultiHeaderSeriesPlotter":
+      {
+        "Comment": "Respiratory Methodology Report - Validation - Hemothorax Varied",
+        "PlotConfig":
+        {
+          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Respiratory/", "PlotActions": true
+        },
+        "PlotSource":
+        [
+          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemothoraxVariedResults.csv" }
+        ],
+        "Series":
+        [
+          { "OutputFilename": "HemothoraxVaried_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+          { "OutputFilename": "HemothoraxVaried_LeftLungVolume",  "YHeader": [ "LeftLungPulmonary-Volume(mL)" ] },
+          { "OutputFilename": "HemothoraxVaried_BloodVolume",     "YHeader": [ "BloodVolume(L)" ] },
+          { "OutputFilename": "HemothoraxVaried_O2Sat",           "YHeader": [ "OxygenSaturation" ] },
+          { "OutputFilename": "HemothoraxVariedLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
                 "ImageProperties": { "DimensionMode": "Legend" } } }
         ]

@@ -8,13 +8,15 @@ import java.util.*;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.kitware.pulse.cdm.bind.Engine.ValidationTargetData.eType;
-import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
-import com.kitware.pulse.cdm.datarequests.SEValidationTarget;
+import com.kitware.pulse.cdm.bind.Engine.TimeSeriesValidationTargetData.eType;
+import com.kitware.pulse.cdm.engine.SEDataRequest;
+import com.kitware.pulse.cdm.engine.SEDataRequestManager;
+import com.kitware.pulse.cdm.engine.SETimeSeriesValidationTarget;
 import com.kitware.pulse.cdm.properties.CommonUnits;
 import com.kitware.pulse.utilities.DoubleUtils;
 import com.kitware.pulse.utilities.FileUtils;
@@ -38,9 +40,11 @@ public class ValidationDataSetReader
     try
     {
       // Delete current dir contents
-      FileUtils.delete(new File("./optimizer/"));
+      FileUtils.delete(new File("./validation/targets/"));
+      FileUtils.delete(new File("./validation/requests/"));
       // Ok, let's make them again
-      FileUtils.createDirectory("./optimizer/");
+      FileUtils.createDirectory("./validation/targets/");
+      FileUtils.createDirectory("./validation/requests/");
     }
     catch(Exception ex)
     {
@@ -60,9 +64,11 @@ public class ValidationDataSetReader
       FileInputStream xlFile = new FileInputStream(xlsFile);
       try(XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile))
       {
+        FormulaEvaluator evaluator  = xlWBook.getCreationHelper().createFormulaEvaluator();
+        
         String system = "Cardiovascular";
         // TODO loop all the system/circuits we can optimize
-        if(!readSheet(xlWBook.getSheet(system)))
+        if(!readSheet(xlWBook.getSheet(system), evaluator))
         {
           Log.error("Unable to read "+system+" sheet");
         }
@@ -78,13 +84,15 @@ public class ValidationDataSetReader
     Log.info("Data Generation Complete");
   }
 
-  protected static boolean readSheet(XSSFSheet xlSheet)
+  protected static boolean readSheet(XSSFSheet xlSheet, FormulaEvaluator evaluator)
   {
     List<Double> values = new ArrayList<Double>();
-    Map<String, SEDataRequestManager> targets = new HashMap<String, SEDataRequestManager>();
+    Map<String, SEDataRequestManager> drMgrMap = new HashMap<String, SEDataRequestManager>();
+    Map<String, List<SETimeSeriesValidationTarget>> targetMap = new HashMap<String, List<SETimeSeriesValidationTarget>>();
 
     try
     {
+      String targetCategory;
       int rows = xlSheet.getPhysicalNumberOfRows();
       for (int r = 0; r < rows; r++) 
       {
@@ -99,20 +107,41 @@ public class ValidationDataSetReader
         String unit      = row.getCell(1).getStringCellValue().trim();
         String type      = row.getCell(2).getStringCellValue().trim();
         Cell   vCell     = row.getCell(5);
-        String optimizer = row.getCell(15).getStringCellValue().trim();
-        if(optimizer==null||optimizer.isEmpty()||optimizer.equals("OptimizerTargets"))
+        targetCategory   = row.getCell(15).getStringCellValue().trim();
+        if(targetCategory==null||targetCategory.isEmpty()||targetCategory.equals("ValidationTargetFile"))
           continue;
         
-        if(!targets.containsKey(optimizer))
-          targets.put(optimizer, new SEDataRequestManager());
-        SEDataRequestManager drMgr = targets.get(optimizer);
+        targetCategory = xlSheet.getSheetName()+targetCategory;
+        if(!drMgrMap.containsKey(targetCategory))
+          drMgrMap.put(targetCategory, new SEDataRequestManager());
+        if(!targetMap.containsKey(targetCategory))
+          targetMap.put(targetCategory, new ArrayList<SETimeSeriesValidationTarget>());
+
+        eType targetType;
+        if(type.equals("Mean"))
+          targetType = eType.Mean;
+        else if(type.equals("Min"))
+          targetType = eType.Minimum;
+        else if(type.equals("Max"))
+          targetType = eType.Maximum;
+        else
+        {
+          Log.error("Unknown target type: "+type);
+          return false;
+        }
         
+
+        SEDataRequestManager drMgr = drMgrMap.get(targetCategory);
         String[] propertySplit = property.split("-");
-        SEValidationTarget tgt =
-            drMgr.createLiquidCompartmentValidationTarget(propertySplit[0].trim(), propertySplit[1].trim(), CommonUnits.getUnit(unit));
-        tgt.type = eType.valueOf(type);
+        SEDataRequest dr = drMgr.createLiquidCompartmentDataRequest(propertySplit[0].trim(), propertySplit[1].trim(), CommonUnits.getUnit(unit));
         
-        if(vCell.getCellType() == CellType.STRING)
+        List<SETimeSeriesValidationTarget> targets = targetMap.get(targetCategory);
+        SETimeSeriesValidationTarget tgt = new SETimeSeriesValidationTarget();
+        targets.add(tgt);
+        tgt.setHeader(dr.toString());
+        
+        CellType ct = vCell.getCellType();
+        if(ct == CellType.STRING)
         {
           values.clear();
           String sValues = vCell.getStringCellValue().trim();
@@ -121,23 +150,45 @@ public class ValidationDataSetReader
           String[] split= sValues.split(",");
           for(String s : split)
             values.add(Double.parseDouble(s.trim()));
-          tgt.rangeMax = DoubleUtils.getMax(values);
-          tgt.rangeMin = DoubleUtils.getMin(values);
+          tgt.setRange(
+              DoubleUtils.getMin(values),
+              DoubleUtils.getMax(values),
+              targetType);
         }
-        else if(vCell.getCellType() == CellType.NUMERIC)
+        else if(ct == CellType.NUMERIC)
         {
-          tgt.rangeMax = vCell.getNumericCellValue();
-          tgt.rangeMin = vCell.getNumericCellValue();
+          tgt.setRange(
+              vCell.getNumericCellValue(),
+              vCell.getNumericCellValue(),
+              targetType);
+        }
+        else if(ct == CellType.FORMULA)
+        {
+          double cellValue = Double.NaN;
+          switch(evaluator.evaluateFormulaCell(vCell))
+          {
+            case NUMERIC:
+              cellValue = vCell.getNumericCellValue();
+              break;
+            default: // do nothing
+          }
+          tgt.setRange(
+              cellValue,
+              cellValue,
+              targetType);
         }
         
         //System.out.println("Row "+r+": "+tgt);
       }
       
-      for(String optimizer : targets.keySet())
+      for(String key : targetMap.keySet())
       {
-        String fileName = "./optimizer/"+optimizer+".json";
-        Log.info("Writing : "+fileName);
-        targets.get(optimizer).writeFile(fileName);
+        String drFileName =  "./validation/requests/"+key+".json";
+        String tgtFileName = "./validation/targets/"+key+".json";
+        Log.info("Writing : "+drFileName);
+        drMgrMap.get(key).writeFile(drFileName);
+        Log.info("Writing : "+tgtFileName);
+        SETimeSeriesValidationTarget.writeFile(targetMap.get(key),tgtFileName);
       }
     }
     catch(Exception ex)

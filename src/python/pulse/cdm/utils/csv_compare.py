@@ -1,12 +1,12 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-import logging
-import os
-import shutil
 import sys
+import shutil
+import logging
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from typing import Optional
 
 from pulse.cdm.utils.csv_utils import read_csv_into_df
@@ -39,26 +39,26 @@ class CSVComparison(SETestReport):
         self.plot_type = plot_type
         self.report_differences = report_differences
 
-    def compare(self, expected_file_path: str, computed_file_path):
+    def compare(self, expected_file_path: Path, computed_file_path: Path):
         expected_exists = True
-        if not os.path.isfile(expected_file_path):
+        if not expected_file_path.is_file():
             expected_exists = False
             _pulse_logger.error(f"Expected file does not exist {expected_csv}")
             # TODO: check for zip file
-        if not os.path.isfile(computed_file_path):
+        if not computed_file_path.is_file():
             _pulse_logger.error(f"Computed file does not exist {computed_file_path}")
             return
 
-        report = f"{computed_file_path[:-4]}/{os.path.basename(computed_file_path)[:-4]}Report.json"
+        report = computed_file_path.parent / computed_file_path.stem / f"{computed_file_path.stem}Report.json"
         self.set_full_report_path(report)
 
         # Remove and recreate directory
         try:
-            if os.path.exists(self.report_dir):
+            if self.report_dir.is_dir():
                 shutil.rmtree(self.report_dir)
         except OSError as e:
             _pulse_logger.warning(f"Could not remove old report directory: {self.report_dir}")
-        os.makedirs(self.report_dir)
+        self.report_dir.mkdir(parents=True, exist_ok=True)
 
         # Create the test case
         total_errors = 0
@@ -77,14 +77,14 @@ class CSVComparison(SETestReport):
                 self.plot_type == ePlotType.MemoryFastPlot):
             row_skip = 5
         expected = SEPlotSource(
-            csv_data=expected_file_path,
+            csv_data=str(expected_file_path),
             line_format="-k",
             line_width=4.0,
             label="Expected",
             row_skip=row_skip
         )
         expected_df = expected.get_data_frame() if expected_exists else pd.DataFrame()
-        computed = SEPlotSource(csv_data=computed_file_path, line_format="-r", label="Computed", row_skip=row_skip)
+        computed = SEPlotSource(csv_data=str(computed_file_path), line_format="-r", label="Computed", row_skip=row_skip)
         computed_df = computed.get_data_frame()
 
         # Check for header differences
@@ -163,7 +163,7 @@ class CSVComparison(SETestReport):
 
         # Write out results
         suite.end_case()
-        serialize_test_report_to_file(self, self.report_dir + self.file_name)
+        serialize_test_report_to_file(self, self.report_dir / self.file_name)
 
         # Create plots
         if self.plot_type != ePlotType.NoPlot:
@@ -288,8 +288,8 @@ if __name__ == "__main__":
         _pulse_logger.error("Expected inputs : <expected results file path> <computed results file path> [error limit] [plot type] [plot actions] [plot events] [report differences]")
         sys.exit(1)
 
-    expected_csv = sys.argv[1]
-    computed_csv = sys.argv[2]
+    expected_csv = Path(sys.argv[1])
+    computed_csv = Path(sys.argv[2])
 
     if len(sys.argv) > 3:
         error_limit = float(sys.argv[3])
