@@ -15,6 +15,7 @@ import com.kitware.pulse.cdm.system.SESystem;
 
 public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESystem
 {
+  protected SEScalarAmountPerVolume        baseExcess;
   protected SEScalarMassPerVolume          bloodDensity;
   protected SEScalar                       bloodPH;
   protected SEScalarHeatCapacitancePerMass bloodSpecificHeat;
@@ -46,6 +47,7 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
 
   public SEBloodChemistrySystem()
   {
+    baseExcess = null;
     bloodDensity = null;
     bloodPH = null;
     bloodSpecificHeat = null;
@@ -79,6 +81,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   @Override
   public void clear()
   {
+    if (baseExcess != null)
+      baseExcess.invalidate();
     if (bloodDensity != null)
       bloodDensity.invalidate();
     if (bloodPH != null)
@@ -138,6 +142,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
 
   public static void load(BloodChemistrySystemData src, SEBloodChemistrySystem dst)
   {
+    if (src.hasBaseExcess())
+      SEScalarAmountPerVolume.load(src.getBaseExcess(),dst.getBaseExcess());
     if (src.hasBloodDensity())
       SEScalarMassPerVolume.load(src.getBloodDensity(),dst.getBloodDensity());
     if (src.hasBloodPH())
@@ -204,6 +210,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
 
   protected static void unload(SEBloodChemistrySystem src, BloodChemistrySystemData.Builder dst)
   {
+    if (src.hasBaseExcess())
+      dst.setBaseExcess(SEScalarAmountPerVolume.unload(src.getBaseExcess()));
     if (src.hasBloodDensity())
       dst.setBloodDensity(SEScalarMassPerVolume.unload(src.getBloodDensity()));
     if (src.hasBloodPH())
@@ -261,6 +269,17 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       dst.setVenousCarbonDioxidePressure(SEScalarPressure.unload(src.getVenousCarbonDioxidePressure()));
   }
 
+  public boolean hasBaseExcess()
+  {
+    return baseExcess == null ? false : baseExcess.isValid();
+  }
+  public SEScalarAmountPerVolume getBaseExcess()
+  {
+    if (baseExcess == null)
+      baseExcess = new SEScalarAmountPerVolume();
+    return baseExcess;
+  }
+  
   public boolean hasBloodDensity()
   {
     return bloodDensity == null ? false : bloodDensity.isValid();

@@ -13,8 +13,8 @@
 
 SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger)
 {
+  m_BaseExcess = nullptr;
   m_BloodDensity = nullptr;
-  
   m_BloodPH = nullptr;
   m_BloodSpecificHeat = nullptr;
   m_BloodUreaNitrogenConcentration = nullptr;
@@ -46,6 +46,7 @@ SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger
 
 SEBloodChemistrySystem::~SEBloodChemistrySystem()
 {
+  SAFE_DELETE(m_BaseExcess);
   SAFE_DELETE(m_BloodDensity);
   SAFE_DELETE(m_BloodPH);
   SAFE_DELETE(m_BloodSpecificHeat);
@@ -78,6 +79,7 @@ SEBloodChemistrySystem::~SEBloodChemistrySystem()
 
 void SEBloodChemistrySystem::Clear()
 {
+  INVALIDATE_PROPERTY(m_BaseExcess);
   INVALIDATE_PROPERTY(m_BloodDensity);
   INVALIDATE_PROPERTY(m_BloodPH);
   INVALIDATE_PROPERTY(m_BloodSpecificHeat);
@@ -110,6 +112,8 @@ void SEBloodChemistrySystem::Clear()
 
 const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
 {
+  if (name.compare("BaseExcess") == 0)
+    return &GetBaseExcess();
   if (name.compare("BloodDensity") == 0)
     return &GetBloodDensity();
   if (name.compare("BloodPH") == 0)
@@ -166,6 +170,23 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
     return &GetVenousOxygenPressure();
 
   return nullptr;
+}
+
+bool SEBloodChemistrySystem::HasBaseExcess() const
+{
+  return m_BaseExcess == nullptr ? false : m_BaseExcess->IsValid();
+}
+SEScalarAmountPerVolume& SEBloodChemistrySystem::GetBaseExcess()
+{
+  if (m_BaseExcess == nullptr)
+    m_BaseExcess = new SEScalarAmountPerVolume();
+  return *m_BaseExcess;
+}
+double SEBloodChemistrySystem::GetBaseExcess(const AmountPerVolumeUnit& unit) const
+{
+  if (m_BaseExcess == nullptr)
+    return SEScalar::dNaN();
+  return m_BaseExcess->GetValue(unit);
 }
 
 bool SEBloodChemistrySystem::HasBloodDensity() const

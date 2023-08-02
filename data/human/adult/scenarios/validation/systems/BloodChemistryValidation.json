@@ -7,6 +7,7 @@
     {
       "DataRequest": 
       [
+        { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BaseExcess",                              "Unit": "mEq/L" },
         { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "BloodDensity",                            "Unit": "kg/m^3" },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BloodPH"                                                   },
         { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "BloodSpecificHeat",                       "Unit": "J/K kg" },

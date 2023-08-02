@@ -23,10 +23,20 @@ public:
   virtual SEScalarMassPerVolume& GetBloodDensity();                                                   /**< @copydoc DOXY_CDM_GET */
   virtual double GetBloodDensity(const MassPerVolumeUnit& unit) const;                                /**< @copydoc DOXY_CDM_GET_VALUE *///@}
 
-    /** @name BloodPH
-    *  @brief @copybrief Physiology_BloodChemistrySystemData_BloodPH
-    *  @{*/
-    /// %Test if member has been allocated
+  /** @name BaseExcess
+  *  @brief @copybrief Physiology_BloodChemistrySystemData_BaseExcess
+  *  @{*/
+  /// %Test if member has been allocated
+  virtual bool HasBaseExcess() const;
+  /// Get member class, allocate if nullptr
+  virtual SEScalarAmountPerVolume& GetBaseExcess();
+  virtual double GetBaseExcess(const AmountPerVolumeUnit& unit) const;
+  //@}
+
+  /** @name BloodPH
+  *  @brief @copybrief Physiology_BloodChemistrySystemData_BloodPH
+  *  @{*/
+  /// %Test if member has been allocated
   virtual bool HasBloodPH() const;
   /// Get member class, allocate if nullptr
   virtual SEScalar& GetBloodPH();
@@ -284,7 +294,7 @@ public:
 
 
 protected:
-
+  SEScalarAmountPerVolume*        m_BaseExcess;
   SEScalarMassPerVolume*          m_BloodDensity;
   SEScalar*                       m_BloodPH;
   SEScalarHeatCapacitancePerMass* m_BloodSpecificHeat;

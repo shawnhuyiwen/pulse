@@ -62,6 +62,7 @@ namespace pulse
     SELiquidCompartment*       m_Aorta;
     SELiquidSubstanceQuantity* m_AortaO2;
     SELiquidSubstanceQuantity* m_AortaCO2;
+    SELiquidSubstanceQuantity* m_AortaHCO3;
     SELiquidSubstanceQuantity* m_BrainO2;
     SELiquidSubstanceQuantity* m_MyocardiumO2;
     SELiquidSubstanceQuantity* m_PulmonaryArteriesO2;
