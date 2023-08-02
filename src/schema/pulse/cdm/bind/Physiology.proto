@@ -40,34 +40,35 @@ message PupillaryResponseData
     and will be improved in future releases to include more substances that can provide clinician level details and assessments, such as a CBC and blood panel.*/
 message BloodChemistrySystemData
 {
-  ScalarMassPerVolumeData             BloodDensity                                   = 1; /**<< @brief Mass per unit volume of the blood. */
-  ScalarData                          BloodPH                                        = 2; /**<< @brief Measure of acidity or basicity of the blood. */
-  ScalarHeatCapacitancePerMassData    BloodSpecificHeat                              = 3; /**<< @brief The amount of energy required to raise one kilogram of blood by one degree Celsius. */
-  ScalarMassPerVolumeData             BloodUreaNitrogenConcentration                 = 4; /**<< @brief The BUN concentration in the blood.*/  
-  Scalar0To1Data                      CarbonDioxideSaturation                        = 5; /**<< @brief The fraction of hemoglobin that is carbon dioxide bound.*/          
-  Scalar0To1Data                      CarbonMonoxideSaturation                       = 6; /**<< @brief The fraction of hemoglobin that is carbon monoxide bound.*/  
-  Scalar0To1Data                      Hematocrit                                     = 7; /**<< @brief Volume percentage of red blood cells in the blood.*/
-  ScalarMassData                      HemoglobinContent                              = 8; /**<< @brief The total amount of hemoglobin in the blood.*/
-  Scalar0To1Data                      OxygenSaturation                               = 9; /**<< @brief The fraction of hemoglobin that is oxygen bound.*/
-  ScalarAmountPerVolumeData           Phosphate                                      = 10;/**<< @brief Sum of all inorganic phosphate in the blood.*/
-  ScalarVolumeData                    PlasmaVolume                                   = 11;/**<< @brief Volume of the plasma.*/
-  Scalar0To1Data                      PulseOximetry                                  = 12;/**<< @brief The fraction of hemoglobin with bound oxygen as measured optically, which can include Carbon Monoxide.*/
-  ScalarAmountPerVolumeData           RedBloodCellCount                              = 13;/**<< @brief Total number of red blood cells in the blood.*/
-  Scalar0To1Data                      ShuntFraction                                  = 14;/**<< @brief Fraction of the blood flow that bypasses the alveoli; therefore, does not engage is gas exchange.*/
-  ScalarAmountPerVolumeData           StrongIonDifference                            = 15;/**<< @brief Difference between the positive and negative strong ion concentrations in the blood.*/
-  ScalarMassPerVolumeData             TotalProteinConcentration                      = 16;/**<< @brief The concentration of urea in the blood.*/
-  Scalar0To1Data                      VolumeFractionNeutralLipidInPlasma             = 17;/**<< @brief Fraction of the plasma that is made up of neutral lipids.*/
-  Scalar0To1Data                      VolumeFractionNeutralPhospholipidInPlasma      = 18;/**<< @brief Fraction of the plasma that is made up of neutral phospholipids.*/
-  ScalarAmountPerVolumeData           WhiteBloodCellCount                            = 19;/**<< @brief Total number of white blood cells in the blood.*/
+  ScalarAmountPerVolumeData           BaseExcess                                     = 1;/**<< @brief Excess or deficit, respectively, in the amount of base present in the blood. */
+  ScalarMassPerVolumeData             BloodDensity                                   = 2; /**<< @brief Mass per unit volume of the blood. */
+  ScalarData                          BloodPH                                        = 3; /**<< @brief Measure of acidity or basicity of the blood. */
+  ScalarHeatCapacitancePerMassData    BloodSpecificHeat                              = 4; /**<< @brief The amount of energy required to raise one kilogram of blood by one degree Celsius. */
+  ScalarMassPerVolumeData             BloodUreaNitrogenConcentration                 = 5; /**<< @brief The BUN concentration in the blood.*/  
+  Scalar0To1Data                      CarbonDioxideSaturation                        = 6; /**<< @brief The fraction of hemoglobin that is carbon dioxide bound.*/          
+  Scalar0To1Data                      CarbonMonoxideSaturation                       = 7; /**<< @brief The fraction of hemoglobin that is carbon monoxide bound.*/  
+  Scalar0To1Data                      Hematocrit                                     = 8; /**<< @brief Volume percentage of red blood cells in the blood.*/
+  ScalarMassData                      HemoglobinContent                              = 9; /**<< @brief The total amount of hemoglobin in the blood.*/
+  Scalar0To1Data                      OxygenSaturation                               = 10; /**<< @brief The fraction of hemoglobin that is oxygen bound.*/
+  ScalarAmountPerVolumeData           Phosphate                                      = 11;/**<< @brief Sum of all inorganic phosphate in the blood.*/
+  ScalarVolumeData                    PlasmaVolume                                   = 12;/**<< @brief Volume of the plasma.*/
+  Scalar0To1Data                      PulseOximetry                                  = 13;/**<< @brief The fraction of hemoglobin with bound oxygen as measured optically, which can include Carbon Monoxide.*/
+  ScalarAmountPerVolumeData           RedBloodCellCount                              = 14;/**<< @brief Total number of red blood cells in the blood.*/
+  Scalar0To1Data                      ShuntFraction                                  = 15;/**<< @brief Fraction of the blood flow that bypasses the alveoli; therefore, does not engage is gas exchange.*/
+  ScalarAmountPerVolumeData           StrongIonDifference                            = 16;/**<< @brief Difference between the positive and negative strong ion concentrations in the blood.*/
+  ScalarMassPerVolumeData             TotalProteinConcentration                      = 17;/**<< @brief The concentration of urea in the blood.*/
+  Scalar0To1Data                      VolumeFractionNeutralLipidInPlasma             = 18;/**<< @brief Fraction of the plasma that is made up of neutral lipids.*/
+  Scalar0To1Data                      VolumeFractionNeutralPhospholipidInPlasma      = 19;/**<< @brief Fraction of the plasma that is made up of neutral phospholipids.*/
+  ScalarAmountPerVolumeData           WhiteBloodCellCount                            = 20;/**<< @brief Total number of white blood cells in the blood.*/
   /** Substance Pressures */
-  ScalarPressureData                  ArterialCarbonDioxidePressure                  = 20;/**<< @brief Partial pressure of carbon dioxide in the aorta.*/
-  ScalarPressureData                  ArterialOxygenPressure                         = 21;/**<< @brief Partial pressure of oxygen in the aorta.*/
-  ScalarPressureData                  PulmonaryArterialCarbonDioxidePressure         = 22;/**<< @brief Partial pressure of carbon dioxide in the pulmonary arteries.*/
-  ScalarPressureData                  PulmonaryArterialOxygenPressure                = 23;/**<< @brief Partial pressure of oxygen in the pulmonary arteries.*/
-  ScalarPressureData                  PulmonaryVenousCarbonDioxidePressure           = 24;/**<< @brief Partial pressure of carbon dioxide in the pulmonary veins.*/
-  ScalarPressureData                  PulmonaryVenousOxygenPressure                  = 25;/**<< @brief Partial pressure of oxygen in the pulmonary veins.*/
-  ScalarPressureData                  VenousCarbonDioxidePressure                    = 26;/**<< @brief Partial pressure of carbon dioxide in the vena cava.*/        
-  ScalarPressureData                  VenousOxygenPressure                           = 27;/**<< @brief Partial pressure of oxygen in the vena cava.*/  
+  ScalarPressureData                  ArterialCarbonDioxidePressure                  = 21;/**<< @brief Partial pressure of carbon dioxide in the aorta.*/
+  ScalarPressureData                  ArterialOxygenPressure                         = 22;/**<< @brief Partial pressure of oxygen in the aorta.*/
+  ScalarPressureData                  PulmonaryArterialCarbonDioxidePressure         = 23;/**<< @brief Partial pressure of carbon dioxide in the pulmonary arteries.*/
+  ScalarPressureData                  PulmonaryArterialOxygenPressure                = 24;/**<< @brief Partial pressure of oxygen in the pulmonary arteries.*/
+  ScalarPressureData                  PulmonaryVenousCarbonDioxidePressure           = 25;/**<< @brief Partial pressure of carbon dioxide in the pulmonary veins.*/
+  ScalarPressureData                  PulmonaryVenousOxygenPressure                  = 26;/**<< @brief Partial pressure of oxygen in the pulmonary veins.*/
+  ScalarPressureData                  VenousCarbonDioxidePressure                    = 27;/**<< @brief Partial pressure of carbon dioxide in the vena cava.*/        
+  ScalarPressureData                  VenousOxygenPressure                           = 28;/**<< @brief Partial pressure of oxygen in the vena cava.*/  
 }
 
 /** @brief Provides a representation of the human vasculature.

@@ -30,6 +30,8 @@ void PBPhysiology::Load(const CDM_BIND::BloodChemistrySystemData& src, SEBloodCh
 }
 void PBPhysiology::Serialize(const CDM_BIND::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {
+  if (src.has_baseexcess())
+    PBProperty::Load(src.baseexcess(), dst.GetBaseExcess());
   if (src.has_blooddensity())
     PBProperty::Load(src.blooddensity(), dst.GetBloodDensity());
   if (src.has_bloodph())
@@ -95,6 +97,8 @@ CDM_BIND::BloodChemistrySystemData* PBPhysiology::Unload(const SEBloodChemistryS
 }
 void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodChemistrySystemData& dst)
 {
+  if (src.HasBaseExcess())
+    dst.set_allocated_baseexcess(PBProperty::Unload(*src.m_BaseExcess));
   if (src.HasBloodDensity())
     dst.set_allocated_blooddensity(PBProperty::Unload(*src.m_BloodDensity));
   if (src.HasBloodPH())
