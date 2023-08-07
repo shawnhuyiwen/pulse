@@ -79,7 +79,7 @@ def serialize_bag_valve_mask_squeeze_to_bind(src: SEBagValveMaskSqueeze, dst: Ba
     if src.has_expiratory_period():
         serialize_scalar_time_to_bind(src.get_expiratory_period(), dst.ExpiratoryPeriod)
     if src.has_inspiratory_period():
-        serialize_scalar_time_to_bind(src.get_inspiratory_period(), dst.InspriatoryPeriod)
+        serialize_scalar_time_to_bind(src.get_inspiratory_period(), dst.InspiratoryPeriod)
 
 def serialize_bag_valve_mask_squeeze_from_bind(src: BagValveMaskSqueezeData, dst: SEBagValveMaskSqueeze):
     serialize_bag_valve_mask_action_from_bind(src.BagValveMaskAction, dst)

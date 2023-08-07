@@ -29,6 +29,7 @@ from pulse.cdm.io.patient_actions import *
 from pulse.cdm.io.patient_conditions import *
 from pulse.cdm.io.environment_actions import *
 from pulse.cdm.io.environment_conditions import *
+from pulse.cdm.io.bag_valve_mask_actions import *
 from pulse.cdm.io.ecmo_actions import *
 from pulse.cdm.io.mechanical_ventilator_actions import *
 from pulse.cdm.io.plots import *
@@ -325,6 +326,7 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 dst.AnyAction.append(any_action)
                 continue
             print("Uknown Patient Action")
+
         if isinstance(action, SEEnvironmentAction):
             if isinstance(action, SEChangeEnvironmentalConditions):
                 serialize_change_environmental_conditions_to_bind(action, any_action.EnvironmentAction.ChangeEnvironmentalConditions)
@@ -334,25 +336,38 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_thermal_application_to_bind(action, any_action.EnvironmentAction.ThermalApplication)
                 dst.AnyAction.append(any_action)
                 continue
+            print("Uknown Environment Action")
+
         if isinstance(action, SEEquipmentAction):
+            if isinstance(action, SEBagValveMaskConfiguration):
+                serialize_bag_valve_mask_configuration_to_bind(action, any_action.EquipmentAction.BagValveMaskConfiguration)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEBagValveMaskAutomated):
+                serialize_bag_valve_mask_automated_to_bind(action, any_action.EquipmentAction.BagValveMaskAutomated)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEBagValveMaskInstantaneous):
+                serialize_bag_valve_mask_instantaneous_to_bind(action, any_action.EquipmentAction.BagValveMaskInstantaneous)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEBagValveMaskSqueeze):
+                serialize_bag_valve_mask_squeeze_to_bind(action, any_action.EquipmentAction.BagValveMaskSqueeze)
+                dst.AnyAction.append(any_action)
+                continue
+
+            if isinstance(action, SEECMOConfiguration):
+                serialize_ecmo_configuration_to_bind(action, any_action.EquipmentAction.ECMOConfiguration)
+                dst.AnyAction.append(any_action)
+                continue
+
+#            if isinstance(action, SEInhalerConfiguration):
+#                serialize_inhaler_configuration_to_bind(action, any_action.EquipmentAction.InhalerConfiguration)
+#                dst.AnyAction.append(any_action)
+#                continue
+
             if isinstance(action, SEMechanicalVentilatorConfiguration):
                 serialize_mechanical_ventilator_configuration_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorConfiguration)
-                dst.AnyAction.append(any_action)
-                continue
-            # if isinstance(action, SEMechanicalVentilatorMode):
-            #     serialize_mechanical_ventilator_mode_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorMode)
-            #     dst.AnyAction.append(any_action)
-            #     continue
-            if isinstance(action, SEMechanicalVentilatorContinuousPositiveAirwayPressure):
-                serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorContinuousPositiveAirwayPressure)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEMechanicalVentilatorPressureControl):
-                serialize_mechanical_ventilator_pressure_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorPressureControl)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEMechanicalVentilatorVolumeControl):
-                serialize_mechanical_ventilator_volume_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorVolumeControl)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEMechanicalVentilatorHold):
@@ -363,8 +378,16 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_mechanical_ventilator_leak_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorLeak)
                 dst.AnyAction.append(any_action)
                 continue
-            if isinstance(action, SEECMOConfiguration):
-                serialize_ecmo_configuration_to_bind(action, any_action.EquipmentAction.ECMOConfiguration)
+            if isinstance(action, SEMechanicalVentilatorContinuousPositiveAirwayPressure):
+                serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorContinuousPositiveAirwayPressure)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEMechanicalVentilatorPressureControl):
+                serialize_mechanical_ventilator_pressure_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorPressureControl)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEMechanicalVentilatorVolumeControl):
+                serialize_mechanical_ventilator_volume_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorVolumeControl)
                 dst.AnyAction.append(any_action)
                 continue
             print("Unknown Equipment Action")
