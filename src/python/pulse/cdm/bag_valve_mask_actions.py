@@ -83,7 +83,7 @@ class SEBagValveMaskAutomated(SEBagValveMaskAction):
         return self._breath_frequency
 
     def has_inspiratory_expiratory_ratio(self):
-        return self._flow is not None
+        return self._inspiratory_expiratory_ratio is not None
     def get_inspiratory_expiratory_ratio(self):
         if self._inspiratory_expiratory_ratio is None:
             self._inspiratory_expiratory_ratio = SEScalar()
@@ -96,7 +96,7 @@ class SEBagValveMaskAutomated(SEBagValveMaskAction):
             self._squeeze_pressure = SEScalarPressure()
         return self._squeeze_pressure
 
-    def has_volume(self):
+    def has_squeeze_volume(self):
         return self._squeeze_volume is not None
     def get_squeeze_volume(self):
         if self._squeeze_volume is None:
