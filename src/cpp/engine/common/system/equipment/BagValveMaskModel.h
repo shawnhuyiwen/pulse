@@ -11,6 +11,7 @@ class SELiquidCompartment;
 class SEGasSubstanceQuantity;
 class SEFluidCircuitNode;
 class SEFluidCircuitPath;
+class SEBagValveMaskAction;
 
 namespace pulse
 {
@@ -43,7 +44,7 @@ namespace pulse
     void PostProcess(bool solve_and_transport = true) override;
 
   protected:
-
+    void CheckLastAction(SEBagValveMaskAction* a);
     void ComputeExposedModelParameters() override;
 
     void UpdateAirwayMode();
@@ -69,6 +70,7 @@ namespace pulse
     SEScalarVolume* m_SqueezeVolume;
     SEScalarTime* m_ExpiratoryPeriod;
     SEScalarTime* m_InspiratoryPeriod;
+    SEBagValveMaskAction* m_LastAction;
 
     SEGasCompartment* m_Environment;
     SEGasCompartment* m_Reservoir;
