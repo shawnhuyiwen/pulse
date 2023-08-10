@@ -169,9 +169,9 @@ namespace pulse::study::multiplex_ventilation
           auto* multiVentilation = comparison.mutable_multiplexventilation();
 
           pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + std::to_string(p) + ".log");
-          if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.pbb"))
+          if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.json"))
           {
-            Error("Unable to load file : StandardMale@0s.pbb");
+            Error("Unable to load file : StandardMale@0s.json");
             return false;
           }
           pc->GetLogger()->LogToConsole(GetLogger()->IsLoggingToConsole());
