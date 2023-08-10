@@ -262,11 +262,6 @@ namespace pulse
     GetLogger()->AddForward(m_DataRequested);
     m_EventManager->ForwardEvents(m_DataRequested);
 
-    // Create our derived objects
-    m_BlackBoxes = new pulse::BlackBoxManager(*this);
-    m_Compartments = new CompartmentManager(*this);
-    m_Circuits = new pulse::CircuitManager(*this);
-
     m_LogForward = new pulse::FatalListner(*m_EventManager, m_CurrentTime);
     m_Logger->AddForward(m_LogForward);
   }

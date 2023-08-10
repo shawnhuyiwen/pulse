@@ -63,6 +63,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
   {
     pulse::Controller::Allocate();
 
+    // Create our derived objects
+    m_Compartments = new CompartmentManager(*this);
+    m_Circuits = new pulse::CircuitManager(*this);
+
     m_EnvironmentModel = new pulse::EnvironmentModel(*this);
 
     m_RespiratoryModel = new pulse::RespiratoryModel(*this);

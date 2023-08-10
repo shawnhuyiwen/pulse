@@ -65,6 +65,11 @@ namespace pulse { namespace human_adult_hemodynamics
   {
     pulse::Controller::Allocate();
 
+    // Create our derived objects
+    m_BlackBoxes = new pulse::BlackBoxManager(*this);
+    m_Compartments = new CompartmentManager(*this);
+    m_Circuits = new pulse::CircuitManager(*this);
+
     m_CardiovascularModel = new pulse::CardiovascularModel(*this);
     m_Models.push_back(m_CardiovascularModel);
 

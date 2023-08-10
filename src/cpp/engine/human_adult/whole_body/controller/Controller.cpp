@@ -66,6 +66,11 @@ namespace pulse { namespace human_adult_whole_body
   {
     pulse::Controller::Allocate();
 
+    // Create our derived objects
+    m_BlackBoxes = new pulse::BlackBoxManager(*this);
+    m_Compartments = new CompartmentManager(*this);
+    m_Circuits = new pulse::CircuitManager(*this);
+
     m_Stabilizer = new pulse::StabilizationController(*this);
 
     m_SaturationCalculator = new pulse::SaturationCalculator(*this);
