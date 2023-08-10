@@ -418,14 +418,15 @@ namespace pulse
     PBProperty::Load(src.bloodphrunningaverage(), *dst.m_BloodPHRunningAverage);
     PBProperty::Load(src.meanairwaypressure_cmh2o(), *dst.m_MeanAirwayPressure_cmH2O);
 
-    for(int i=0; i<src.lefttopbreathacinarzonevolumes_l_size(); i++)
-      dst.m_LeftTopBreathAcinarZoneVolumes_L.push_back(src.lefttopbreathacinarzonevolumes_l()[i]);
-    for (int i=0; i<src.righttopbreathacinarzonevolumes_l_size(); i++)
-      dst.m_RightTopBreathAcinarZoneVolumes_L.push_back(src.righttopbreathacinarzonevolumes_l()[i]);
-    for (int i=0; i<src.leftbottombreathacinarzonevolumes_l_size(); i++)
-      dst.m_LeftBottomBreathAcinarZoneVolumes_L.push_back(src.leftbottombreathacinarzonevolumes_l()[i]);
-    for (int i=0; i<src.rightbottombreathacinarzonevolumes_l_size(); i++)
-      dst.m_RightBottomBreathAcinarZoneVolumes_L.push_back(src.rightbottombreathacinarzonevolumes_l()[i]);
+    //Aaron - Fix
+    //for(int i=0; i<src.lefttopbreathacinarzonevolumes_l_size(); i++)
+    //  dst.m_LeftTopBreathAcinarZoneVolumes_L.push_back(src.lefttopbreathacinarzonevolumes_l()[i]);
+    //for (int i=0; i<src.righttopbreathacinarzonevolumes_l_size(); i++)
+    //  dst.m_RightTopBreathAcinarZoneVolumes_L.push_back(src.righttopbreathacinarzonevolumes_l()[i]);
+    //for (int i=0; i<src.leftbottombreathacinarzonevolumes_l_size(); i++)
+    //  dst.m_LeftBottomBreathAcinarZoneVolumes_L.push_back(src.leftbottombreathacinarzonevolumes_l()[i]);
+    //for (int i=0; i<src.rightbottombreathacinarzonevolumes_l_size(); i++)
+    //  dst.m_RightBottomBreathAcinarZoneVolumes_L.push_back(src.rightbottombreathacinarzonevolumes_l()[i]);
     dst.m_PreviousPleuralVolume_L = src.previouspleuralvolume_l();
 
     dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
@@ -485,14 +486,15 @@ namespace pulse
     dst.set_allocated_bloodphrunningaverage(PBProperty::Unload(*src.m_BloodPHRunningAverage));
     dst.set_allocated_meanairwaypressure_cmh2o(PBProperty::Unload(*src.m_MeanAirwayPressure_cmH2O));
 
-    for(double d : src.m_LeftTopBreathAcinarZoneVolumes_L)
-      dst.mutable_lefttopbreathacinarzonevolumes_l()->Add(d);
-    for (double d : src.m_RightTopBreathAcinarZoneVolumes_L)
-      dst.mutable_righttopbreathacinarzonevolumes_l()->Add(d);
-    for (double d : src.m_LeftBottomBreathAcinarZoneVolumes_L)
-      dst.mutable_leftbottombreathacinarzonevolumes_l()->Add(d);
-    for (double d : src.m_RightBottomBreathAcinarZoneVolumes_L)
-      dst.mutable_rightbottombreathacinarzonevolumes_l()->Add(d);
+    //Aaron - Fix
+    //for(double d : src.m_LeftTopBreathAcinarZoneVolumes_L)
+    //  dst.mutable_lefttopbreathacinarzonevolumes_l()->Add(d);
+    //for (double d : src.m_RightTopBreathAcinarZoneVolumes_L)
+    //  dst.mutable_righttopbreathacinarzonevolumes_l()->Add(d);
+    //for (double d : src.m_LeftBottomBreathAcinarZoneVolumes_L)
+    //  dst.mutable_leftbottombreathacinarzonevolumes_l()->Add(d);
+    //for (double d : src.m_RightBottomBreathAcinarZoneVolumes_L)
+    //  dst.mutable_rightbottombreathacinarzonevolumes_l()->Add(d);
     dst.set_previouspleuralvolume_l(src.m_PreviousPleuralVolume_L);
 
     dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);

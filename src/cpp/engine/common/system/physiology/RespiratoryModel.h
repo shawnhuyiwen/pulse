@@ -116,10 +116,8 @@ namespace pulse
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
 
     //Needed for expanded pulmonary methodology
-    std::vector<double> m_LeftTopBreathAcinarZoneVolumes_L;
-    std::vector<double> m_RightTopBreathAcinarZoneVolumes_L;
-    std::vector<double> m_LeftBottomBreathAcinarZoneVolumes_L;
-    std::vector<double> m_RightBottomBreathAcinarZoneVolumes_L;
+    std::vector<double> m_TopBreathAcinarZoneVolumes_L; //Aaron - serialize (replaces left vs right)
+    std::vector<double> m_BottomBreathAcinarZoneVolumes_L; //Aaron - serialize (replaces left vs right)
     double m_PreviousPleuralVolume_L;
     std::vector<double> m_AlveoliVolumeIncrement_L; //Aaron - serialize
 
@@ -226,12 +224,14 @@ namespace pulse
     // These are the components we will iterate on for actions
     struct LungComponent
     {
-      eSide               Side;
-      SEFluidCircuitNode* AlveoliNode;
-      SEFluidCircuitNode* DeadSpaceNode;
-      SEFluidCircuitPath* CompliancePath;
-      SEFluidCircuitPath* ShuntPath;
-      SEGasCompartment*   AlveoliCompartment; //Aaron - serialize
+      eSide                Side;
+      SEFluidCircuitNode*  AlveoliNode;
+      SEFluidCircuitNode*  DeadSpaceNode;
+      SEFluidCircuitPath*  CompliancePath;
+      SEFluidCircuitPath*  ShuntPath;
+      SEFluidCircuitPath*  CapillaryPath; //Aaron - serialize
+      SEGasCompartment*    AlveoliCompartment; //Aaron - serialize
+      SELiquidCompartment* CapillaryCompartment; //Aaron - serialize
     };
     std::map<eLungCompartment, LungComponent> m_LungComponents;
     // Nodes
