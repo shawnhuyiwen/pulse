@@ -121,6 +121,7 @@ namespace pulse
     std::vector<double> m_LeftBottomBreathAcinarZoneVolumes_L;
     std::vector<double> m_RightBottomBreathAcinarZoneVolumes_L;
     double m_PreviousPleuralVolume_L;
+    std::vector<double> m_AlveoliVolumeIncrement_L; //Aaron - serialize
 
     // Respiratory Driver
     double m_ArterialO2PartialPressure_mmHg;
@@ -226,10 +227,11 @@ namespace pulse
     struct LungComponent
     {
       eSide               Side;
-      SEFluidCircuitNode* AlveolarNode;
+      SEFluidCircuitNode* AlveoliNode;
       SEFluidCircuitNode* DeadSpaceNode;
       SEFluidCircuitPath* CompliancePath;
       SEFluidCircuitPath* ShuntPath;
+      SEGasCompartment*   AlveoliCompartment; //Aaron - serialize
     };
     std::map<eLungCompartment, LungComponent> m_LungComponents;
     // Nodes
@@ -269,6 +271,11 @@ namespace pulse
     SEFluidCircuitPath* m_RightCardiovascularLeak;
     SEFluidCircuitPath* m_LeftRespirtoryLeak;
     SEFluidCircuitPath* m_RightRespirtoryLeak;
+
+    SEFluidCircuitPath* m_LeftAlveoliToLeftPleuralConnection; //jbw - Replace?
+    SEFluidCircuitPath* m_RightAlveoliToRightPleuralConnection; //jbw - Replace?
+    SEFluidCircuitPath* m_LeftPulmonaryArteriesToVeins; //jbw - Replace?
+    SEFluidCircuitPath* m_RightPulmonaryArteriesToVeins; //jbw - Replace?
 
     SEFluidCircuitCalculator* m_Calculator;
     SEGasTransporter* m_GasTransporter;
