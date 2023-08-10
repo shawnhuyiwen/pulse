@@ -115,11 +115,11 @@ namespace pulse
     SERunningAverage* m_BloodPHRunningAverage;
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
 
-    //Needed for expanded pulmonary methodology
-    std::vector<double> m_TopBreathAcinarZoneVolumes_L; //Aaron - serialize (replaces left vs right)
-    std::vector<double> m_BottomBreathAcinarZoneVolumes_L; //Aaron - serialize (replaces left vs right)
+    // Expanded pulmonary methodology
+    std::vector<double> m_AlveoliVolumeIncrement_L;
+    std::vector<double> m_TopBreathAcinarZoneVolumes_L;
+    std::vector<double> m_BottomBreathAcinarZoneVolumes_L;
     double m_PreviousPleuralVolume_L;
-    std::vector<double> m_AlveoliVolumeIncrement_L; //Aaron - serialize
 
     // Respiratory Driver
     double m_ArterialO2PartialPressure_mmHg;
@@ -229,9 +229,9 @@ namespace pulse
       SEFluidCircuitNode*  DeadSpaceNode;
       SEFluidCircuitPath*  CompliancePath;
       SEFluidCircuitPath*  ShuntPath;
-      SEFluidCircuitPath*  CapillaryPath; //Aaron - serialize
-      SEGasCompartment*    AlveoliCompartment; //Aaron - serialize
-      SELiquidCompartment* CapillaryCompartment; //Aaron - serialize
+      SEFluidCircuitPath*  CapillaryPath;
+      SEGasCompartment*    AlveoliCompartment;
+      SELiquidCompartment* CapillaryCompartment;
     };
     std::map<eLungCompartment, LungComponent> m_LungComponents;
     // Nodes

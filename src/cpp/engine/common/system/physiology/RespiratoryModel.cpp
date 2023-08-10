@@ -214,7 +214,6 @@ namespace pulse
     m_AlveoliVolumeIncrement_L.clear();
     m_TopBreathAcinarZoneVolumes_L.clear();
     m_BottomBreathAcinarZoneVolumes_L.clear();
-    m_AlveoliVolumeIncrement_L.clear();
 
     //Running Averages
     m_BloodPHRunningAverage->Invalidate();
