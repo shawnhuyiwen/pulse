@@ -1,25 +1,14 @@
 {
-  "Name": "LobarPneumoniaSevereLeftLobe",
-  "Description": "Severe Lobar Pneumonia in one lobe in the left lung.",
+  "Name": "PneumoniaSevereLeftLobe",
+  "Description": "Severe Lobar Pneumonia in one lobe in the left lung. Left Lung Severity = 0.9 (severe) * 0.5 (1 of 2 left lobes) = 0.45.",
   "PatientConfiguration": {
     "PatientFile": "StandardMale.json",
     "Conditions": { "AnyCondition": [{
       "PatientCondition": {
-        "LobarPneumonia": {
-          "Severity": {
-            "Scalar0To1": {
-              "Value": 0.9
-            }
-          },
-          "LeftLungAffected": {
-            "Scalar0To1": {
-              "Value": 0.5
-            }
-          },
-          "RightLungAffected": {
-            "Scalar0To1": {
-            }
-          }
+        "Pneumonia": {
+          "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.45 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}}]
         }
       }
     }]}

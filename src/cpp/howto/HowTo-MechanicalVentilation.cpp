@@ -114,7 +114,7 @@ void HowToMechanicalVentilation()
       COPD.GetEmphysemaSeverity(eLungCompartment::LeftLung).SetValue(0.7);
       COPD.GetEmphysemaSeverity(eLungCompartment::RightLung).SetValue(0.7);
     }
-    if (false) //LobarPneumonia
+    if (false) //Pneumonia
     {      
       SEPneumonia& Pneumonia = pc.GetConditions().GetPneumonia();
       Pneumonia.GetSeverity(eLungCompartment::LeftLung).SetValue(1.0);

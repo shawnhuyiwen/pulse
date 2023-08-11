@@ -33,45 +33,49 @@
     { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation":
       {
         "BronchitisSeverity": { "Scalar0To1": { "Value": 0.6 }},
-        "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.6 }}
+        "EmphysemaSeverity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}}]
       }}
     },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
     { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation":
       {
         "BronchitisSeverity": { "Scalar0To1": { "Value": 0.0 }},
-        "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.0 }}
+        "EmphysemaSeverity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}}]
       }}
     },
-    { "PatientAction": { "LobarPneumoniaExacerbation":
+    { "PatientAction": { "PneumoniaExacerbation":
       {
-        "Severity": { "Scalar0To1": { "Value": 0.3 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
-      }}
-    },
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
-    { "PatientAction": { "LobarPneumoniaExacerbation":
-      {
-        "Severity": { "Scalar0To1": { "Value": 0.6 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
+        "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.3 }}}]
       }}
     },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
-    { "PatientAction": { "LobarPneumoniaExacerbation":
+    { "PatientAction": { "PneumoniaExacerbation":
       {
-        "Severity": { "Scalar0To1": { "Value": 0.9 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
+        "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}}]
       }}
     },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
-    { "PatientAction": { "LobarPneumoniaExacerbation":
+    { "PatientAction": { "PneumoniaExacerbation":
       {
-        "Severity": { "Scalar0To1": { "Value": 0.0 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 0.0 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 0.0 }}
+        "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.9 }}}]
+      }}
+    },
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" }}}},
+    { "PatientAction": { "PneumoniaExacerbation":
+      {
+        "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}}]
       }}
     },
     { "PatientAction": { "Intubation": { "Type": "Off" } } },

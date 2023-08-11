@@ -5,42 +5,18 @@
       "PatientFile": "StandardMale.json",
       "Conditions": { "AnyCondition": [{
         "PatientCondition": {
-          "LobarPneumonia": {
-            "Severity": {
-              "Scalar0To1": {
-                "Value": 0.05
-              }
-            },
-            "LeftLungAffected": {
-              "Scalar0To1": {
-                "Value": 1.0
-              }
-            },
-            "RightLungAffected": {
-              "Scalar0To1": {
-                "Value": 1.0
-              }
-            }
+          "Pneumonia": {
+             "Severity": [ 
+             { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.05 }}},
+             { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.05 }}}]
           }
         }
       }, {
         "PatientCondition": {
           "AcuteRespiratoryDistressSyndrome": {
-            "Severity": {
-              "Scalar0To1": {
-                "Value": 0.03
-              }
-            },
-            "LeftLungAffected": {
-              "Scalar0To1": {
-                "Value": 0.4
-              }
-            },
-            "RightLungAffected": {
-              "Scalar0To1": {
-                "Value": 0.7
-              }
-            }
+            "Severity": [ 
+            { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.2 }}},
+            { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.35 }}}]
           }
         }
       }, {
@@ -61,11 +37,9 @@
                 "Value": 0.1
               }
             },
-            "EmphysemaSeverity": {
-              "Scalar0To1": {
-                "Value": 0.1
-              }
-            }
+            "EmphysemaSeverity": [ 
+            { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.12 }}},
+            { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.14 }}}]
           }
         }
       }, {
@@ -172,13 +146,13 @@
       }
     }
   },
-  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
+    { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
       {
-        "Severity": { "Scalar0To1": { "Value": 0.1 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 0.9 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 0.4 }}
+        "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.13 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.02 }}}]
       }}
-  },
+    },
   {
     "EnvironmentAction": {
       "ThermalApplication": {
@@ -939,17 +913,19 @@
       }
     }
   },
-    { "PatientAction": { "LobarPneumoniaExacerbation":
-      {
-        "Severity": { "Scalar0To1": { "Value": 0.45 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 0.22 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 0.77 }}
+  { "PatientAction": { "PneumoniaExacerbation":
+    {
+        "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.22 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.77 }}}]
       }}
-    },
+  },
     { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation":
       {
-        "BronchitisSeverity": { "Scalar0To1": { "Value": 0.215 }},
-        "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.333 }}
+        "BronchitisSeverity": { "Scalar0To1": { "Value": 0.123 }},
+        "EmphysemaSeverity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.215 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.333 }}}]
       }}
     },
   {

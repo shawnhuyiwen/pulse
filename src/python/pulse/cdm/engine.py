@@ -234,7 +234,7 @@ from pulse.cdm.patient_conditions import *
 
 class SEConditionManager():
     __slots__ = ["_ards", "_anemia", "_copd", "_cvsd", "_impaired_alveolar_exchange",
-                 "_pericardial_effusion", "_lobar_pneumonia",
+                 "_pericardial_effusion", "_pneumonia",
                  "_pulmonary_fibrosis", "_pulmonary_shunt", "_renal_stenosis", "_sepsis",
                  "_initial_environmental_conditions"]
 
@@ -248,7 +248,7 @@ class SEConditionManager():
         self._cvsd = None
         self._impaired_alveolar_exchange = None
         self._pericardial_effusion = None
-        self._lobar_pneumonia = None
+        self._pneumonia = None
         self._pulmonary_fibrosis = None
         self._pulmonary_shunt = None
         self._renal_stenosis = None
@@ -270,7 +270,7 @@ class SEConditionManager():
             return False
         if self.has_impaired_alveolar_exchange():
             return False
-        if self.has_lobar_pneumonia():
+        if self.has_pneumonia():
             return False
         if self.has_pulmonary_fibrosis():
             return False
@@ -346,14 +346,14 @@ class SEConditionManager():
     def remove_impaired_alveolar_exchange(self):
         self._impaired_alveolar_exchange = None
 
-    def has_lobar_pneumonia(self):
-        return False if self._lobar_pneumonia is None else self._lobar_pneumonia.is_valid()
-    def get_lobar_pneumonia(self):
-        if self._lobar_pneumonia is None:
-            self._lobar_pneumonia = SELobarPneumonia()
-        return self._lobar_pneumonia
-    def remove_lobar_pneumonia(self):
-        self._lobar_pneumonia = None
+    def has_pneumonia(self):
+        return False if self._pneumonia is None else self._pneumonia.is_valid()
+    def get_pneumonia(self):
+        if self._pneumonia is None:
+            self._pneumonia = SEPneumonia()
+        return self._pneumonia
+    def remove_pneumonia(self):
+        self._pneumonia = None
 
     def has_pulmonary_fibrosis(self):
         return False if self._pulmonary_fibrosis is None else self._pulmonary_fibrosis.is_valid()

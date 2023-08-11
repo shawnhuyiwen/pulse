@@ -121,6 +121,7 @@ void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
   // Patient Actions //
   /////////////////////
 
+  //Aaron - Update this
   SEAcuteRespiratoryDistressSyndromeExacerbation ards;
   ards.GetSeverity(eLungCompartment::LeftLung).SetValue(0.3);
   ards.GetSeverity(eLungCompartment::RightLung).SetValue(0.2);
@@ -251,6 +252,7 @@ void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
   intub.SetType(eIntubation_Type::Esophageal);
   TestAction<SEIntubation>(testSuite.CreateTestCase(), subMgr, intub, "-Severity-AirwayResistance-Type");
 
+  //Aaron -update this
   SEPneumoniaExacerbation lpe;
   lpe.GetSeverity(eLungCompartment::LeftLung).SetValue(0.3);
   lpe.GetSeverity(eLungCompartment::LeftLung).SetValue(0.3);

@@ -1,25 +1,14 @@
 {
-  "Name": "LobarPneumoniaSevereRightLung",
-  "Description": "Severe Lobar Pneumonia in the entire right lungs.",
+  "Name": "PneumoniaSevereRightLung",
+  "Description": "Severe Pneumonia in the entire right lungs.",
   "PatientConfiguration": {
     "PatientFile": "StandardMale.json",
     "Conditions": { "AnyCondition": [{
       "PatientCondition": {
-        "LobarPneumonia": {
-          "Severity": {
-            "Scalar0To1": {
-              "Value": 0.9
-            }
-          },
-          "LeftLungAffected": {
-            "Scalar0To1": {
-            }
-          },
-          "RightLungAffected": {
-            "Scalar0To1": {
-              "Value": 1.0
-            }
-          }
+        "Pneumonia": {
+          "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.9 }}}]
         }
       }
     }]}

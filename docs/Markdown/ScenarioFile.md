@@ -115,23 +115,12 @@ The following are links to the Condition class specification along with XML exam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
-  "AcuteRespiratoryDistressSyndrome": {
-    "Severity": {
-      "Scalar0To1": {
-        "Value": 0.03
-      }
-    },
-    "LeftLungAffected": {
-      "Scalar0To1": {
-        "Value": 0.4
-      }
-    },
-    "RightLungAffected": {
-      "Scalar0To1": {
-        "Value": 0.7
-      }
+    "AcuteRespiratoryDistressSyndrome": {
+      "Severity": [ 
+      { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+      { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}}]
     }
-  }}
+  }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -293,16 +282,15 @@ or
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-##### Lobar Pneumonia
-@copybrief LobarPneumoniaData
+##### Pneumonia
+@copybrief PneumoniaData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
-    "LobarPneumonia": {
-      "Severity": { "Scalar0To1":  "Value": 0.2 } },
-      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0  },
-      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }
-      }
+    "Pneumonia": {
+      "Severity": [ 
+      { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.8 }}},
+      { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.8 }}}]
     }
   }
 }]
@@ -543,9 +531,9 @@ The following are links to the Action class specification along with XML example
 "AnyAction": [{
   "PatientAction": {
     "AcuteRespiratoryDistressSyndromeExacerbation": {
-      "Severity": { "Scalar0To1": { "Value":0.3 } },
-      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0  },
-      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }
+      "Severity": [ 
+        { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+        { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}}]
     }
   }
 }]
@@ -1045,15 +1033,15 @@ Types : Off, Esophageal, LeftMainstem, RightMainstem, Tracheal, Oropharyngeal, N
 
 - - -
 
-##### Lobar Pneumonia Exacerbation
-@copybrief LobarPneumoniaExacerbationData <br>
+##### Pneumonia Exacerbation
+@copybrief PneumoniaExacerbationData <br>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "PatientAction": {
-    "LobarPneumoniaExacerbation": {
-      "Severity": { "Scalar0To1": { "Value": 0.2 }},
-      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
+    "PneumoniaExacerbation": {
+      "Severity": [ 
+        { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.8 }}},
+        { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.8 }}}]
     }
   }
 }]

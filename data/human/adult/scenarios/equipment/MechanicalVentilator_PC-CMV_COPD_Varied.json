@@ -11,11 +11,9 @@
               "Value": 0.3
             }
           },
-          "EmphysemaSeverity": {
-            "Scalar0To1": {
-              "Value": 0.3
-            }
-          }
+          "EmphysemaSeverity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.3 }}}]
         }
       }
     }]}
@@ -69,10 +67,12 @@
 
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
 
-  { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation":
+    { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation":
       {
         "BronchitisSeverity": { "Scalar0To1": { "Value": 0.6 }},
-        "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.6 }}
+        "EmphysemaSeverity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}}]
       }}
     },
 
@@ -100,10 +100,12 @@
 
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
 
-  { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation":
+    { "PatientAction": { "ChronicObstructivePulmonaryDiseaseExacerbation":
       {
         "BronchitisSeverity": { "Scalar0To1": { "Value": 0.9 }},
-        "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.9 }}
+        "EmphysemaSeverity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.9 }}}]
       }}
     },
 

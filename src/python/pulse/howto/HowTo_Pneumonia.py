@@ -2,20 +2,19 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cdm.patient_actions import SELobarPneumoniaExacerbation
+from pulse.cdm.patient_actions import SEPneumoniaExacerbation
 from pulse.engine.PulseEngine import PulseEngine
 
-def HowTo_LobarPneumonia():
+def HowTo_Pneumonia():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/howto/HowTo_LobarPneumonia.py.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_Pneumonia.py.log")
     pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")
-    pneumonia = pc.get_conditions().get_lobar_pneumonia()
-    pneumonia.get_left_lung_affected().set_value(0.1)
-    pneumonia.get_right_lung_affected().set_value(0.1)
-    pneumonia.get_severity().set_value(0.3)
+    pneumonia = pc.get_conditions().get_pneumonia()
+    pneumonia.get_severity(eLungCompartment.LeftLung).set_value(0.4)
+    pneumonia.get_severity(eLungCompartment.RightLung).set_value(0.2)
 
     # Initialize the engine with our configuration
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
@@ -28,11 +27,10 @@ def HowTo_LobarPneumonia():
     pulse.print_results()
 
     # Perform an action to exacerbate the initial condition state
-    exacerbation = SELobarPneumoniaExacerbation()
-    exacerbation.set_comment("Patient's Lobar Pneumonia is exacerbated")
-    exacerbation.get_severity().set_value(0.4)
-    exacerbation.get_right_lung_affected().set_value(.4)
-    exacerbation.get_left_lung_affected().set_value(.2)
+    exacerbation = SEPneumoniaExacerbation()
+    exacerbation.set_comment("Patient's Pneumonia is exacerbated")
+    exacerbation.get_severity(eLungCompartment.LeftLung).set_value(0.4)
+    exacerbation.get_severity(eLungCompartment.RightLung).set_value(0.2)
     pulse.process_action(exacerbation)
 
     # Advance some time and print out the vitals
@@ -40,5 +38,5 @@ def HowTo_LobarPneumonia():
     results = pulse.pull_data()
     pulse.print_results()
 
-HowTo_LobarPneumonia()
+HowTo_Pneumonia()
 

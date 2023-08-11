@@ -31,7 +31,7 @@ void HowToExercise();
 void HowToExpandedVasculature();
 void HowToHemorrhage();
 void HowToHemothorax();
-void HowToLobarPneumonia();
+void HowToPneumonia();
 void HowToMechanicalVentilation();
 void HowToMechanicalVentilator();
 void HowToPulmonaryFibrosis();
