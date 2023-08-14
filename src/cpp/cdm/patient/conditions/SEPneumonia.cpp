@@ -84,10 +84,10 @@ SEScalar0To1& SEPneumonia::GetSeverity(eLungCompartment cmpt)
   }
   return *s;
 }
-const SEScalar0To1* SEPneumonia::GetSeverity(eLungCompartment cmpt) const
+double SEPneumonia::GetSeverity(eLungCompartment cmpt) const
 {
   auto s = m_Severities.find(cmpt);
   if (s == m_Severities.end())
-    return nullptr;
-  return s->second;
+    return SEScalar::dNaN();
+  return s->second->GetValue();
 }

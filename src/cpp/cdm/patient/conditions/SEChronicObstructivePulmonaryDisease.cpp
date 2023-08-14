@@ -100,11 +100,11 @@ SEScalar0To1& SEChronicObstructivePulmonaryDisease::GetEmphysemaSeverity(eLungCo
   }
   return *s;
 }
-const SEScalar0To1* SEChronicObstructivePulmonaryDisease::GetEmphysemaSeverity(eLungCompartment cmpt) const
+double SEChronicObstructivePulmonaryDisease::GetEmphysemaSeverity(eLungCompartment cmpt) const
 {
   auto s = m_EmphysemaSeverities.find(cmpt);
   if (s == m_EmphysemaSeverities.end())
-    return nullptr;
-  return s->second;
+    return SEScalar::dNaN();
+  return s->second->GetValue();
 }
 

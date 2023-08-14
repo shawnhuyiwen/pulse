@@ -32,7 +32,7 @@ public:
   virtual const LungImpairmentMap& GetEmphysemaSeverities() const;
   virtual bool HasEmphysemaSeverity(eLungCompartment cmpt) const;
   virtual SEScalar0To1& GetEmphysemaSeverity(eLungCompartment cmpt);
-  virtual const SEScalar0To1* GetEmphysemaSeverity(eLungCompartment cmpt) const;
+  virtual double GetEmphysemaSeverity(eLungCompartment cmpt) const;
 
 protected:
   SEScalar0To1*     m_BronchitisSeverity;

@@ -31,7 +31,7 @@ public:
   virtual const LungImpairmentMap& GetSeverities() const;
   virtual bool HasSeverity(eLungCompartment cmpt) const;
   virtual SEScalar0To1& GetSeverity(eLungCompartment cmpt);
-  virtual const SEScalar0To1* GetSeverity(eLungCompartment cmpt) const;
+  virtual double GetSeverity(eLungCompartment cmpt) const;
 
 protected:
   LungImpairmentMap m_Severities;

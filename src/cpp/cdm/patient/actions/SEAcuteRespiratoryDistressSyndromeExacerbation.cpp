@@ -96,10 +96,10 @@ SEScalar0To1& SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverity(eLungC
   }
   return *s;
 }
-const SEScalar0To1* SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverity(eLungCompartment cmpt) const
+double SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverity(eLungCompartment cmpt) const
 {
   auto s = m_Severities.find(cmpt);
   if (s == m_Severities.end())
-    return nullptr;
-  return s->second;
+    return SEScalar::dNaN();
+  return s->second->GetValue();
 }
