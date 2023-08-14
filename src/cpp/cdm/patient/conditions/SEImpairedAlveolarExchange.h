@@ -12,13 +12,13 @@ public:
   virtual ~SEImpairedAlveolarExchange();
 
   static constexpr char const* Name = "Impaired Alveolar Exchange";
-  virtual std::string GetName() const { return Name; }
-  
-  virtual void Clear();
-  virtual void Copy(const SEImpairedAlveolarExchange& src);
+  std::string GetName() const override { return Name; }
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  void Clear() override;
+  void Copy(const SEImpairedAlveolarExchange& src);
+
+  bool IsValid() const override;
+  bool IsActive() const override;
 
   virtual bool HasImpairedSurfaceArea() const;
   virtual SEScalarArea& GetImpairedSurfaceArea();

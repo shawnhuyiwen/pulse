@@ -9,20 +9,21 @@
 SEChronicObstructivePulmonaryDiseaseExacerbation::SEChronicObstructivePulmonaryDiseaseExacerbation(Logger* logger) : SEPatientAction(logger)
 {
   m_BronchitisSeverity = nullptr;
-  m_EmphysemaSeverity = nullptr;
 }
 
 SEChronicObstructivePulmonaryDiseaseExacerbation::~SEChronicObstructivePulmonaryDiseaseExacerbation()
 {
   SAFE_DELETE(m_BronchitisSeverity);
-  SAFE_DELETE(m_EmphysemaSeverity);
+  DELETE_MAP_SECOND(m_EmphysemaSeverities);
 }
 
 void SEChronicObstructivePulmonaryDiseaseExacerbation::Clear()
 {
   SEPatientAction::Clear();
   INVALIDATE_PROPERTY(m_BronchitisSeverity);
-  INVALIDATE_PROPERTY(m_EmphysemaSeverity);
+  for (auto itr : m_EmphysemaSeverities)
+    if (itr.second != nullptr)
+      itr.second->Invalidate();
 }
 
 void SEChronicObstructivePulmonaryDiseaseExacerbation::Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, bool /*preserveState*/)
@@ -41,7 +42,12 @@ bool SEChronicObstructivePulmonaryDiseaseExacerbation::IsActive() const
 {
   if (!SEPatientAction::IsActive())
     return false;
-  return GetBronchitisSeverity() > 0 || GetEmphysemaSeverity() > 0;
+  return GetBronchitisSeverity() > 0 || HasEmphysemaSeverity();
+}
+void SEChronicObstructivePulmonaryDiseaseExacerbation::Activate()
+{
+  SEPatientAction::Activate();
+  SERespiratorySystem::FillLungImpairmentMap(m_EmphysemaSeverities);
 }
 void SEChronicObstructivePulmonaryDiseaseExacerbation::Deactivate()
 {
@@ -53,8 +59,6 @@ const SEScalar* SEChronicObstructivePulmonaryDiseaseExacerbation::GetScalar(cons
 {
   if (name.compare("BronchitisSeverity") == 0)
     return &GetBronchitisSeverity();
-  if (name.compare("EmphysemaSeverity") == 0)
-    return &GetEmphysemaSeverity();
   return nullptr;
 }
 
@@ -77,17 +81,43 @@ double SEChronicObstructivePulmonaryDiseaseExacerbation::GetBronchitisSeverity()
 
 bool SEChronicObstructivePulmonaryDiseaseExacerbation::HasEmphysemaSeverity() const
 {
-  return m_EmphysemaSeverity == nullptr ? false : m_EmphysemaSeverity->IsValid();
+  for (auto itr : m_EmphysemaSeverities)
+    if (itr.second != nullptr && itr.second->IsValid())
+      return true;
+  return false;
 }
-SEScalar0To1& SEChronicObstructivePulmonaryDiseaseExacerbation::GetEmphysemaSeverity()
+LungImpairmentMap& SEChronicObstructivePulmonaryDiseaseExacerbation::GetEmphysemaSeverities()
 {
-  if (m_EmphysemaSeverity == nullptr)
-    m_EmphysemaSeverity = new SEScalar0To1();
-  return *m_EmphysemaSeverity;
+  return m_EmphysemaSeverities;
 }
-double SEChronicObstructivePulmonaryDiseaseExacerbation::GetEmphysemaSeverity() const
+const LungImpairmentMap& SEChronicObstructivePulmonaryDiseaseExacerbation::GetEmphysemaSeverities() const
 {
-  if (m_EmphysemaSeverity == nullptr)
-    return SEScalar::dNaN();
-  return m_EmphysemaSeverity->GetValue();
+  return m_EmphysemaSeverities;
+}
+
+bool SEChronicObstructivePulmonaryDiseaseExacerbation::HasEmphysemaSeverity(eLungCompartment cmpt) const
+{
+  auto s = m_EmphysemaSeverities.find(cmpt);
+  if (s == m_EmphysemaSeverities.end())
+    return false;
+  if (s->second == nullptr)
+    return false;
+  return s->second->IsValid();
+}
+SEScalar0To1& SEChronicObstructivePulmonaryDiseaseExacerbation::GetEmphysemaSeverity(eLungCompartment cmpt)
+{
+  SEScalar0To1* s = m_EmphysemaSeverities[cmpt];
+  if (s == nullptr)
+  {
+    s = new SEScalar0To1();
+    m_EmphysemaSeverities[cmpt] = s;
+  }
+  return *s;
+}
+const SEScalar0To1* SEChronicObstructivePulmonaryDiseaseExacerbation::GetEmphysemaSeverity(eLungCompartment cmpt) const
+{
+  auto s = m_EmphysemaSeverities.find(cmpt);
+  if (s == m_EmphysemaSeverities.end())
+    return nullptr;
+  return s->second;
 }

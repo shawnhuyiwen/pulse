@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.engine import SECondition
+from pulse.cdm.physiology import eLungCompartment
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarVolume
 
 class SEPatientCondition(SECondition):
@@ -19,52 +20,41 @@ class SEPatientCondition(SECondition):
         return self.__repr__()
 
 class SEAcuteRespiratoryDistressSyndrome(SEPatientCondition):
-    __slots__ = ["_severity", "_left_lung_affected", "_right_lung_affected"]
+    __slots__ = ["_severities"]
 
     def __init__(self):
         super().__init__()
-        self._severity = None
-        self._left_lung_affected = None
-        self._right_lung_affected = None
+        self._severities = {}
 
     def clear(self):
-        if self._severity is not None:
-            self._severity.invalidate()
-        if self._left_lung_affected is not None:
-            self._left_lung_affected.invalidate()
-        if self._right_lung_affected is not None:
-            self._right_lung_affected.invalidate()
+        for s in self._severities.values():
+            if s is not None:
+                s.invalidate()
 
     def is_valid(self):
-        return self.has_severity() and self.has_left_lung_affected() and self.has_right_lung_affected()
+        return self.has_severity()
 
-    def has_severity(self):
-        return self._severity is not None
+    def has_severity(self, cmpt: eLungCompartment = None):
+        if cmpt is None:
+            for s in self._severities.values():
+                if s is not None and s.is_valid():
+                    return True
+            return False
+        if cmpt not in self._severities:
+            return False
+        return self._severities.get(cmpt).is_valid()
+    def get_severity(self, cmpt: eLungCompartment):
+        s = self._severities.get(cmpt)
+        if s is None:
+            s = SEScalar0To1()
+            self._severities[cmpt] = s
+        return s
 
-    def get_severity(self):
-        if self._severity is None:
-            self._severity = SEScalar0To1()
-        return self._severity
-    def get_left_lung_affected(self):
-        if not self._left_lung_affected:
-            self._left_lung_affected = SEScalar0To1()
-        return self._left_lung_affected
-
-    def has_left_lung_affected(self):
-        return self._left_lung_affected is not None
-
-    def get_right_lung_affected(self):
-        if not self._right_lung_affected:
-            self._right_lung_affected = SEScalar0To1()
-        return self._right_lung_affected
-
-    def has_right_lung_affected(self):
-        return self._right_lung_affected is not None
     def __repr__(self):
-        return ("Acute Respiratory Distress Syndrome\n"
-                "  Severity: {}\n"
-                "  Right Lung Affected: {}\n"
-                "  Left Lung Affected: {}").format(self._severity, self._right_lung_affected, self._left_lung_affected)
+        out = "Acute Respiratory Distress Syndrome\n";
+        for c, s in self._severities.items():
+            out += ("\t{}  Severity: {}\n").format(c, s)
+        return out
 
 class SEChronicAnemia(SEPatientCondition):
     __slots__ = ['_reduction_factor']
@@ -100,36 +90,50 @@ class SEChronicHeartFailure(SEPatientCondition):
         pass
 
 class SEChronicObstructivePulmonaryDisease(SEPatientCondition):
-    __slots__ = ["_bronchitis_severity", "_emphysema_severity"]
+    __slots__ = ["_bronchitis_severity", "_emphysema_severities"]
 
     def __init__(self):
         super().__init__()
         self._bronchitis_severity = None
-        self._emphysema_severity = None
+        self._emphysema_severities = {}
     def clear(self):
         super().clear()
         if self._bronchitis_severity is not None:
             self._bronchitis_severity.invalidate()
-        if self._emphysema_severity is not None:
-            self._emphysema_severity.invalidate()
+        for s in self._emphysema_severities.values():
+            if s is not None:
+                s.invalidate()
     def is_valid(self):
         return self.has_emphysema_severity() and self.has_bronchitis_severity()
+
     def has_bronchitis_severity(self):
         return self._bronchitis_severity is not None
     def get_bronchitis_severity(self):
         if self._bronchitis_severity is None:
             self._bronchitis_severity = SEScalar0To1()
         return self._bronchitis_severity
-    def has_emphysema_severity(self):
-        return self._emphysema_severity is not None
-    def get_emphysema_severity(self):
-        if self._emphysema_severity is None:
-            self._emphysema_severity = SEScalar0To1()
-        return self._emphysema_severity
+
+    def has_emphysema_severity(self, cmpt: eLungCompartment = None):
+        if cmpt is None:
+            for s in self._emphysema_severities.values():
+                if s is not None and s.is_valid():
+                    return True
+            return False
+        if cmpt not in self._emphysema_severities:
+            return False
+        return self._emphysema_severities.get(cmpt).is_valid()
+    def get_emphysema_severity(self, cmpt: eLungCompartment):
+        s = self._emphysema_severities.get(cmpt)
+        if s is None:
+            s = SEScalar0To1()
+            self._emphysema_severities[cmpt] = s
+        return s
+
     def __repr__(self):
-        return ("COPD\n"
-                "  Emphysema Severity: {}]\n"
-                "  Bronchitis Severity: {}").format(self._emphysema_severity, self._bronchitis_severity)
+        out = "COPD\n";
+        out += ("  Bronchitis Severity: {}]\n").format(self._bronchitis_severity)
+        for c, s in self._severities.items():
+            out += ("\t{} Emphysema Severity: {}\n").format(c, s)
 
 class SEChronicPericardialEffusion(SEPatientCondition):
     __slots__ = ["_accumulated_volume"]
@@ -239,46 +243,39 @@ class SEImpairedAlveolarExchange(SEPatientCondition):
                 "  Impaired Surface Area: {}\n"
                 "  Severity: {}").format(self._impaired_fraction, self._impaired_surface_area, self._severity)
 
-class SELobarPneumonia(SEPatientCondition):
-    __slots__ = ["_severity", "_left_lung_affected", "_right_lung_affected"]
+class SEPneumonia(SEPatientCondition):
+    __slots__ = ["_severities"]
 
     def __init__(self):
         super().__init__()
-        self._severity = None
-        self._left_lung_affected = None
-        self._right_lung_affected = None
+        self._severities = {}
     def clear(self):
-        if self._severity is not None:
-            self._severity.invalidate()
-        if self._left_lung_affected is not None:
-            self._left_lung_affected.invalidate()
-        if self._right_lung_affected is not None:
-            self._right_lung_affected.invalidate()
+        for s in self._severities.values():
+            if s is not None:
+                s.invalidate()
     def is_valid(self):
-        return self.has_severity() and self.has_left_lung_affected() and self.has_right_lung_affected()
-    def has_severity(self):
-        return self._severity is not None
-    def get_severity(self):
-        if self._severity is None:
-            self._severity = SEScalar0To1()
-        return self._severity
-    def get_left_lung_affected(self):
-        if not self._left_lung_affected:
-            self._left_lung_affected = SEScalar0To1()
-        return self._left_lung_affected
-    def has_left_lung_affected(self):
-        return self._left_lung_affected is not None
-    def get_right_lung_affected(self):
-        if not self._right_lung_affected:
-            self._right_lung_affected = SEScalar0To1()
-        return self._right_lung_affected
-    def has_right_lung_affected(self):
-        return self._right_lung_affected is not None
+        return self.has_severity()
+
+    def has_severity(self, cmpt: eLungCompartment = None):
+        if cmpt is None:
+            for s in self._severities.values():
+                if s is not None and s.is_valid():
+                    return True
+            return False
+        if cmpt not in self._severities:
+            return False
+        return self._severities.get(cmpt).is_valid()
+    def get_severity(self, cmpt: eLungCompartment):
+        s = self._severities.get(cmpt)
+        if s is None:
+            s = SEScalar0To1()
+            self._severities[cmpt] = s
+        return s
     def __repr__(self):
-        return ("Lobar Pneumonia\n"
-                "  Severity: {}\n"
-                "  Right Lung Affected: {}\n"
-                "  Left Lung Affected: {}").format(self._severity, self._right_lung_affected, self._left_lung_affected)
+        out = "Pneumonia\n";
+        for c, s in self._severities.items():
+            out += ("\t{}  Severity: {}\n").format(c, s)
+        return out
 
 class SEPulmonaryFibrosis(SEPatientCondition):
     __slots__ = ["_severity"]

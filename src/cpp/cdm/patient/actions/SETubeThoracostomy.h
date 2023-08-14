@@ -13,14 +13,16 @@ public:
   virtual ~SETubeThoracostomy();
 
   static constexpr char const* Name = "Needle Decompression";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SETubeThoracostomy& src, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SETubeThoracostomy& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual eSide GetSide() const;
   virtual void SetSide(eSide LeftOrRight);
@@ -30,8 +32,6 @@ public:
   virtual bool HasFlowRate() const;
   virtual SEScalarVolumePerTime& GetFlowRate();
   virtual double GetFlowRate(const VolumePerTimeUnit& unit) const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   eSide                   m_Side;

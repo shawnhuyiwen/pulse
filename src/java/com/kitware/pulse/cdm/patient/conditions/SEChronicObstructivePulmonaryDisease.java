@@ -3,7 +3,12 @@
 
 package com.kitware.pulse.cdm.patient.conditions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.kitware.pulse.cdm.bind.PatientConditions.ChronicObstructivePulmonaryDiseaseData;
+import com.kitware.pulse.cdm.bind.Physiology.LungImpairmentData;
+import com.kitware.pulse.cdm.bind.Physiology.eLungCompartment;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 
 public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
@@ -11,12 +16,12 @@ public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
 
   private static final long serialVersionUID = 143498768711182994L;
   protected SEScalar0To1 bronchitisSeverity;
-  protected SEScalar0To1 emphysemaSeverity;
+  protected Map<eLungCompartment,SEScalar0To1> emphysemaSeverities;
   
   public SEChronicObstructivePulmonaryDisease()
   {
     bronchitisSeverity = null;
-    emphysemaSeverity = null;
+    emphysemaSeverities = new HashMap<eLungCompartment,SEScalar0To1>();
   }
   
   @Override
@@ -25,8 +30,8 @@ public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
     super.clear();
     if (bronchitisSeverity != null)
       bronchitisSeverity.invalidate();
-    if (emphysemaSeverity != null)
-      emphysemaSeverity.invalidate();
+    for(SEScalar0To1 s : emphysemaSeverities.values())
+      s.invalidate();
   }
   
   public void copy(SEChronicObstructivePulmonaryDisease other)
@@ -36,8 +41,8 @@ public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
     super.copy(other);
     if (other.bronchitisSeverity != null)
       getBronchitisSeverity().set(other.getBronchitisSeverity());
-    if (other.emphysemaSeverity != null)
-      getEmphysemaSeverity().set(other.getEmphysemaSeverity());
+    for (Map.Entry<eLungCompartment, SEScalar0To1> entry : other.emphysemaSeverities.entrySet())
+      getEmphysemaSeverity(entry.getKey()).set(entry.getValue());
   }
   
   public static void load(ChronicObstructivePulmonaryDiseaseData src, SEChronicObstructivePulmonaryDisease dst) 
@@ -45,8 +50,8 @@ public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
     SEPatientCondition.load(src.getPatientCondition(), dst);
     if(src.hasBronchitisSeverity())
       SEScalar0To1.load(src.getBronchitisSeverity(),dst.getBronchitisSeverity());
-    if(src.hasEmphysemaSeverity())
-      SEScalar0To1.load(src.getEmphysemaSeverity(),dst.getEmphysemaSeverity());
+    for (LungImpairmentData d : src.getEmphysemaSeverityList())
+      SEScalar0To1.load(d.getSeverity(), dst.getEmphysemaSeverity(d.getCompartment()));
   }
   
   public static ChronicObstructivePulmonaryDiseaseData unload(SEChronicObstructivePulmonaryDisease src)
@@ -61,8 +66,13 @@ public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
     SEPatientCondition.unload(src, dst.getPatientConditionBuilder());
     if (src.hasBronchitisSeverity())
       dst.setBronchitisSeverity(SEScalar0To1.unload(src.bronchitisSeverity));
-    if (src.hasEmphysemaSeverity())
-      dst.setEmphysemaSeverity(SEScalar0To1.unload(src.emphysemaSeverity));
+    for (Map.Entry<eLungCompartment, SEScalar0To1> entry : src.emphysemaSeverities.entrySet())
+    {
+      LungImpairmentData.Builder builder = LungImpairmentData.newBuilder();
+      builder.setCompartment(entry.getKey());
+      builder.setSeverity(SEScalar0To1.unload(entry.getValue()));
+      dst.addEmphysemaSeverity(builder);
+    }
   }
   
   public boolean hasBronchitisSeverity()
@@ -75,23 +85,39 @@ public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
       bronchitisSeverity = new SEScalar0To1();
     return bronchitisSeverity;
   }
-  
+
   public boolean hasEmphysemaSeverity()
   {
-    return emphysemaSeverity == null ? false : emphysemaSeverity.isValid();
+    for(SEScalar0To1 s : emphysemaSeverities.values())
+      if(s.isValid())
+        return true;
+    return false;
   }
-  public SEScalar0To1 getEmphysemaSeverity()
+  public boolean hasEmphysemaSeverity(eLungCompartment c)
   {
-    if (emphysemaSeverity == null)
-      emphysemaSeverity = new SEScalar0To1();
-    return emphysemaSeverity;
+    SEScalar0To1 s = emphysemaSeverities.get(c);
+    if(s!=null)
+      return s.isValid();
+    return false;
+  }
+  public SEScalar0To1 getEmphysemaSeverity(eLungCompartment c)
+  {
+    SEScalar0To1 s = emphysemaSeverities.get(c);
+    if(s==null)
+    {
+      s = new SEScalar0To1();
+      emphysemaSeverities.put(c, s);
+    }
+    return s;
   }
   
   @Override
   public String toString()
   {
-    return "COPD" 
-        + "\n\tBronchitis Severity: " + getBronchitisSeverity()
-        + "\n\tEmphysema Severity: " + getEmphysemaSeverity();
+    String out = "COPD";
+    out += "\n\tBronchitis Severity: " + getBronchitisSeverity();
+    for (Map.Entry<eLungCompartment, SEScalar0To1> entry : emphysemaSeverities.entrySet())
+      out += "\n\t"+ entry.getKey().toString()+" Emphysema Severity: " + getEmphysemaSeverity(entry.getKey());
+    return out;
   }
 }

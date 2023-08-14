@@ -26,11 +26,11 @@ CDM_BIND_DECL2(Hemorrhage)
 CDM_BIND_DECL2(Hemothorax)
 CDM_BIND_DECL2(ImpairedAlveolarExchangeExacerbation)
 CDM_BIND_DECL2(Intubation)
-CDM_BIND_DECL2(LobarPneumoniaExacerbation)
 CDM_BIND_DECL2(MechanicalVentilation)
 CDM_BIND_DECL2(NeedleDecompression)
 CDM_BIND_DECL2(PatientAssessmentRequest)
 CDM_BIND_DECL2(PericardialEffusion)
+CDM_BIND_DECL2(PneumoniaExacerbation)
 CDM_BIND_DECL2(PulmonaryShuntExacerbation)
 CDM_BIND_DECL2(RespiratoryFatigue)
 CDM_BIND_DECL2(RespiratoryMechanicsConfiguration)
@@ -194,12 +194,6 @@ public:
   static void Serialize(const SEIntubation& src, CDM_BIND::IntubationData& dst);
   static void Copy(const SEIntubation& src, SEIntubation& dst);
 
-  static void Load(const CDM_BIND::LobarPneumoniaExacerbationData& src, SELobarPneumoniaExacerbation& dst);
-  static CDM_BIND::LobarPneumoniaExacerbationData* Unload(const SELobarPneumoniaExacerbation& src);
-  static void Serialize(const CDM_BIND::LobarPneumoniaExacerbationData& src, SELobarPneumoniaExacerbation& dst);
-  static void Serialize(const SELobarPneumoniaExacerbation& src, CDM_BIND::LobarPneumoniaExacerbationData& dst);
-  static void Copy(const SELobarPneumoniaExacerbation& src, SELobarPneumoniaExacerbation& dst);
-
   static void Load(const CDM_BIND::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr);
   static CDM_BIND::MechanicalVentilationData* Unload(const SEMechanicalVentilation& src);
   static void Serialize(const CDM_BIND::MechanicalVentilationData& src, SEMechanicalVentilation& dst, const SESubstanceManager& subMgr);
@@ -223,6 +217,12 @@ public:
   static void Serialize(const CDM_BIND::PericardialEffusionData& src, SEPericardialEffusion& dst);
   static void Serialize(const SEPericardialEffusion& src, CDM_BIND::PericardialEffusionData& dst);
   static void Copy(const SEPericardialEffusion& src, SEPericardialEffusion& dst);
+
+  static void Load(const CDM_BIND::PneumoniaExacerbationData& src, SEPneumoniaExacerbation& dst);
+  static CDM_BIND::PneumoniaExacerbationData* Unload(const SEPneumoniaExacerbation& src);
+  static void Serialize(const CDM_BIND::PneumoniaExacerbationData& src, SEPneumoniaExacerbation& dst);
+  static void Serialize(const SEPneumoniaExacerbation& src, CDM_BIND::PneumoniaExacerbationData& dst);
+  static void Copy(const SEPneumoniaExacerbation& src, SEPneumoniaExacerbation& dst);
 
   static void Load(const CDM_BIND::PulmonaryShuntExacerbationData& src, SEPulmonaryShuntExacerbation& dst);
   static CDM_BIND::PulmonaryShuntExacerbationData* Unload(const SEPulmonaryShuntExacerbation& src);

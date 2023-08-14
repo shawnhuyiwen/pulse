@@ -29,8 +29,9 @@ def HowTo_COPD():
     # Perform an action to exacerbate the initial condition state
     exacerbation = SEChronicObstructivePulmonaryDiseaseExacerbation()
     exacerbation.set_comment("Patient's COPD is exacerbated")
-    exacerbation.get_bronchitis_severity().set_value(0.4)
-    exacerbation.get_emphysema_severity().set_value(0.4)
+    exacerbation.get_bronchitis_severity().set_value(0.5)
+    exacerbation.get_emphysema_severity(eLungCompartment.LeftLung).set_value(0.4)
+    exacerbation.get_emphysema_severity(eLungCompartment.RightLung).set_value(0.2)
     pulse.process_action(exacerbation)
 
     # Advance some time and print out the vitals

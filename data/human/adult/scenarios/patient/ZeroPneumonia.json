@@ -1,26 +1,14 @@
 {
-  "Name": "ZeroLobarPneumonia",
+  "Name": "ZeroPneumonia",
   "Description": "Ensure a 0 severity has no impact on the patient",
   "PatientConfiguration": {
     "PatientFile": "StandardMale.json",
     "Conditions": { "AnyCondition": [{
       "PatientCondition": {
-        "LobarPneumonia": {
-          "Severity": {
-            "Scalar0To1": {
-              "Value": 0.0
-            }
-          },
-          "LeftLungAffected": {
-            "Scalar0To1": {
-              "Value": 1.0
-            }
-          },
-          "RightLungAffected": {
-            "Scalar0To1": {
-              "Value": 1.0
-            }
-          }
+        "Pneumonia": {
+          "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}}]
         }
       }
     }]}

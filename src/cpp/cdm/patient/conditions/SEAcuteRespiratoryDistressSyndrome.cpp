@@ -8,24 +8,21 @@
 
 SEAcuteRespiratoryDistressSyndrome::SEAcuteRespiratoryDistressSyndrome(Logger* logger) : SEPatientCondition(logger)
 {
-  m_Severity=nullptr;
-  m_LeftLungAffected = nullptr;
-  m_RightLungAffected = nullptr;
+
 }
 
 SEAcuteRespiratoryDistressSyndrome::~SEAcuteRespiratoryDistressSyndrome()
 {
-  SAFE_DELETE(m_Severity);
-  SAFE_DELETE(m_LeftLungAffected);
-  SAFE_DELETE(m_RightLungAffected);
+  Clear();
+  DELETE_MAP_SECOND(m_Severities);
 }
 
 void SEAcuteRespiratoryDistressSyndrome::Clear()
 {
   SEPatientCondition::Clear();
-  INVALIDATE_PROPERTY(m_Severity);
-  INVALIDATE_PROPERTY(m_LeftLungAffected);
-  INVALIDATE_PROPERTY(m_RightLungAffected);
+  for (auto itr : m_Severities)
+    if (itr.second != nullptr)
+      itr.second->Invalidate();
 }
 
 void SEAcuteRespiratoryDistressSyndrome::Copy(const SEAcuteRespiratoryDistressSyndrome& src)
@@ -35,67 +32,61 @@ void SEAcuteRespiratoryDistressSyndrome::Copy(const SEAcuteRespiratoryDistressSy
 
 bool SEAcuteRespiratoryDistressSyndrome::IsValid() const
 {
-  return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
+  return HasSeverity();
 }
 bool SEAcuteRespiratoryDistressSyndrome::IsActive() const
 {
   if (!IsValid())
     return false;
-  if (GetSeverity() <= 0)
-    return false;
-  if (GetLeftLungAffected() <= 0 && GetRightLungAffected() <= 0)
+  if (!HasSeverity())
     return false;
   return true;
+}
+void SEAcuteRespiratoryDistressSyndrome::Activate()
+{
+  SEPatientCondition::Activate();
+  SERespiratorySystem::FillLungImpairmentMap(m_Severities);
 }
 
 bool SEAcuteRespiratoryDistressSyndrome::HasSeverity() const
 {
-  return m_Severity==nullptr?false:m_Severity->IsValid();
+  for (auto itr : m_Severities)
+    if (itr.second != nullptr && itr.second->IsValid())
+      return true;
+  return false;
+}
+LungImpairmentMap& SEAcuteRespiratoryDistressSyndrome::GetSeverities()
+{
+  return m_Severities;
+}
+const LungImpairmentMap& SEAcuteRespiratoryDistressSyndrome::GetSeverities() const
+{
+  return m_Severities;
 }
 
-SEScalar0To1& SEAcuteRespiratoryDistressSyndrome::GetSeverity()
+bool SEAcuteRespiratoryDistressSyndrome::HasSeverity(eLungCompartment cmpt) const
 {
-  if(m_Severity==nullptr)
-    m_Severity=new SEScalar0To1();
-  return *m_Severity;
+  auto s = m_Severities.find(cmpt);
+  if (s == m_Severities.end())
+    return false;
+  if (s->second == nullptr)
+    return false;
+  return s->second->IsValid();
 }
-double SEAcuteRespiratoryDistressSyndrome::GetSeverity() const
+SEScalar0To1& SEAcuteRespiratoryDistressSyndrome::GetSeverity(eLungCompartment cmpt)
 {
-  if (m_Severity == nullptr)
-    return SEScalar::dNaN();
-  return m_Severity->GetValue();
+  SEScalar0To1* s = m_Severities[cmpt];
+  if (s == nullptr)
+  {
+    s = new SEScalar0To1();
+    m_Severities[cmpt] = s;
+  }
+  return *s;
 }
-
-bool SEAcuteRespiratoryDistressSyndrome::HasLeftLungAffected() const
+const SEScalar0To1* SEAcuteRespiratoryDistressSyndrome::GetSeverity(eLungCompartment cmpt) const
 {
-  return m_LeftLungAffected == nullptr ? false : m_LeftLungAffected->IsValid();
-}
-SEScalar0To1& SEAcuteRespiratoryDistressSyndrome::GetLeftLungAffected()
-{
-  if (m_LeftLungAffected == nullptr)
-    m_LeftLungAffected = new SEScalar0To1();
-  return *m_LeftLungAffected;
-}
-double SEAcuteRespiratoryDistressSyndrome::GetLeftLungAffected() const
-{
-  if (m_LeftLungAffected == nullptr)
-    return SEScalar::dNaN();
-  return m_LeftLungAffected->GetValue();
-}
-
-bool SEAcuteRespiratoryDistressSyndrome::HasRightLungAffected() const
-{
-  return m_RightLungAffected == nullptr ? false : m_RightLungAffected->IsValid();
-}
-SEScalar0To1& SEAcuteRespiratoryDistressSyndrome::GetRightLungAffected()
-{
-  if (m_RightLungAffected == nullptr)
-    m_RightLungAffected = new SEScalar0To1();
-  return *m_RightLungAffected;
-}
-double SEAcuteRespiratoryDistressSyndrome::GetRightLungAffected() const
-{
-  if (m_RightLungAffected == nullptr)
-    return SEScalar::dNaN();
-  return m_RightLungAffected->GetValue();
+  auto s = m_Severities.find(cmpt);
+  if (s == m_Severities.end())
+    return nullptr;
+  return s->second;
 }

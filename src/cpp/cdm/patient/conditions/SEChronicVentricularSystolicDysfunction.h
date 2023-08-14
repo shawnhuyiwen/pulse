@@ -13,13 +13,13 @@ public:
   virtual ~SEChronicVentricularSystolicDysfunction();
 
   static constexpr char const* Name = "Chronic Ventricular Systolic Dysfunction";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEChronicVentricularSystolicDysfunction& src);
+  void Clear() override;
+  void Copy(const SEChronicVentricularSystolicDysfunction& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  bool IsValid() const override;
+  bool IsActive() const override;
 
 protected:
 };

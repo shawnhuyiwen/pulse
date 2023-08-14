@@ -3,6 +3,7 @@
 
 #pragma once
 #include "cdm/patient/conditions/SEPatientCondition.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
 
 class CDM_DECL SEAcuteRespiratoryDistressSyndrome : public SEPatientCondition
 {
@@ -13,28 +14,22 @@ public:
   virtual ~SEAcuteRespiratoryDistressSyndrome();
 
   static constexpr char const* Name = "Acute Respiratory Distress Syndrome";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEAcuteRespiratoryDistressSyndrome& src);
+  void Clear() override;
+  void Copy(const SEAcuteRespiratoryDistressSyndrome& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Activate() override;
 
   virtual bool HasSeverity() const;
-  virtual SEScalar0To1& GetSeverity();
-  virtual double GetSeverity() const;
-
-  virtual bool HasLeftLungAffected() const;
-  virtual SEScalar0To1& GetLeftLungAffected();
-  virtual double GetLeftLungAffected() const;
-
-  virtual bool HasRightLungAffected() const;
-  virtual SEScalar0To1& GetRightLungAffected();
-  virtual double GetRightLungAffected() const;
+  virtual LungImpairmentMap& GetSeverities();
+  virtual const LungImpairmentMap& GetSeverities() const;
+  virtual bool HasSeverity(eLungCompartment cmpt) const;
+  virtual SEScalar0To1& GetSeverity(eLungCompartment cmpt);
+  virtual const SEScalar0To1* GetSeverity(eLungCompartment cmpt) const;
 
 protected:
-  SEScalar0To1* m_Severity;
-  SEScalar0To1* m_LeftLungAffected;
-  SEScalar0To1* m_RightLungAffected;
+  LungImpairmentMap m_Severities;
 };

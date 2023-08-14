@@ -142,12 +142,12 @@ add_library_ex(CommonDataModel
     patient/actions/SEHemothorax.h
     patient/actions/SEImpairedAlveolarExchangeExacerbation.h
     patient/actions/SEIntubation.h
-    patient/actions/SELobarPneumoniaExacerbation.h
     patient/actions/SEMechanicalVentilation.h
     patient/actions/SENeedleDecompression.h
     patient/actions/SEPatientAction.h
     patient/actions/SEPatientAssessmentRequest.h
     patient/actions/SEPericardialEffusion.h
+    patient/actions/SEPneumoniaExacerbation.h
     patient/actions/SEPulmonaryShuntExacerbation.h
     patient/actions/SERespiratoryFatigue.h
     patient/actions/SERespiratoryMechanicsConfiguration.h
@@ -174,8 +174,8 @@ add_library_ex(CommonDataModel
     patient/conditions/SEChronicVentricularSystolicDysfunction.h
     patient/conditions/SEConsumeMeal.h
     patient/conditions/SEImpairedAlveolarExchange.h
-    patient/conditions/SELobarPneumonia.h
     patient/conditions/SEPatientCondition.h
+    patient/conditions/SEPneumonia.h
     patient/conditions/SEPulmonaryFibrosis.h
     patient/conditions/SEPulmonaryShunt.h
     patient/conditions/SESepsis.h
@@ -516,12 +516,12 @@ add_library_ex(CommonDataModel
     patient/actions/SEHemothorax.cpp
     patient/actions/SEImpairedAlveolarExchangeExacerbation.cpp
     patient/actions/SEIntubation.cpp
-    patient/actions/SELobarPneumoniaExacerbation.cpp
     patient/actions/SEMechanicalVentilation.cpp
     patient/actions/SENeedleDecompression.cpp
     patient/actions/SEPatientAction.cpp
     patient/actions/SEPatientAssessmentRequest.cpp
     patient/actions/SEPericardialEffusion.cpp
+    patient/actions/SEPneumoniaExacerbation.cpp
     patient/actions/SEPulmonaryShuntExacerbation.cpp
     patient/actions/SERespiratoryFatigue.cpp
     patient/actions/SERespiratoryMechanicsConfiguration.cpp
@@ -548,8 +548,8 @@ add_library_ex(CommonDataModel
     patient/conditions/SEChronicVentricularSystolicDysfunction.cpp
     patient/conditions/SEConsumeMeal.cpp
     patient/conditions/SEImpairedAlveolarExchange.cpp
-    patient/conditions/SELobarPneumonia.cpp
     patient/conditions/SEPatientCondition.cpp
+    patient/conditions/SEPneumonia.cpp
     patient/conditions/SEPulmonaryFibrosis.cpp
     patient/conditions/SEPulmonaryShunt.cpp
     patient/conditions/SESepsis.cpp

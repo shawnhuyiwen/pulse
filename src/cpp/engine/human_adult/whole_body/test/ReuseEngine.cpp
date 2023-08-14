@@ -6,7 +6,7 @@
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/SEPatient.h"
-#include "cdm/patient/conditions/SELobarPneumonia.h"
+#include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
@@ -49,9 +49,8 @@ namespace pulse { namespace human_adult_whole_body
     patient.GetRespirationRateBaseline().SetValue(16, FrequencyUnit::Per_min);
     patient.GetSystolicArterialPressureBaseline().SetValue(114, PressureUnit::mmHg);
     // Add a condition
-    pc.GetConditions().GetLobarPneumonia().GetSeverity().SetValue(0.2);
-    pc.GetConditions().GetLobarPneumonia().GetLeftLungAffected().SetValue(0.2);
-    pc.GetConditions().GetLobarPneumonia().GetRightLungAffected().SetValue(0.2);
+    pc.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::LeftLung).SetValue(0.2);
+    pc.GetConditions().GetPneumonia().GetSeverity(eLungCompartment::RightLung).SetValue(0.2);
 
     m_Logger->Info("First Stabilization...");
     //if (!pe.SerializeFromFile("./states/StandardMale@0s.pbb"))

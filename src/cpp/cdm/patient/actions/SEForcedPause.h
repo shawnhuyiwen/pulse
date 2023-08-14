@@ -14,13 +14,13 @@ public:
   virtual ~SEForcedPause();
 
   static constexpr char const* Name = "Forced Pause";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEForcedPause& src);
+  void Clear() override;
+  void Copy(const SEForcedPause& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  bool IsValid() const override;
+  bool IsActive() const override;
 
   virtual bool HasPeriod() const;
   virtual SEScalarTime& GetPeriod();

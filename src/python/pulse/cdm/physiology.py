@@ -11,6 +11,16 @@ class eDefaultType(Enum):
     Model = 0
     Zero = 1
 
+class eLungCompartment(Enum):
+    LeftLung = 0
+    RightLung = 1
+    # Lobes
+    LeftSuperiorLobe = 2
+    LeftInferiorLobe = 3
+    RightSuperiorLobe = 4
+    RightMiddleLobe = 5
+    RightInferiorLobe = 6
+
 class SERespiratoryMechanics():
     __slots__ = ["_active",
                  "_default_type",

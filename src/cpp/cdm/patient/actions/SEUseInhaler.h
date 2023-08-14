@@ -14,11 +14,11 @@ public:
   virtual ~SEUseInhaler();
 
   static constexpr char const* Name = "Use Inhaler";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
+  void Clear() override;
   virtual void Copy(const SEUseInhaler& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  bool IsValid() const override;
+  bool IsActive() const override;
 };

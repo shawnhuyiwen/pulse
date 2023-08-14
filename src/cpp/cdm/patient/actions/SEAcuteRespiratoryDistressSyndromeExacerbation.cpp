@@ -8,24 +8,20 @@
 
 SEAcuteRespiratoryDistressSyndromeExacerbation::SEAcuteRespiratoryDistressSyndromeExacerbation(Logger* logger) : SEPatientAction(logger)
 {
-  m_Severity=nullptr;
-  m_LeftLungAffected = nullptr;
-  m_RightLungAffected = nullptr;
+
 }
 
 SEAcuteRespiratoryDistressSyndromeExacerbation::~SEAcuteRespiratoryDistressSyndromeExacerbation()
 {
-  SAFE_DELETE(m_Severity);
-  SAFE_DELETE(m_LeftLungAffected);
-  SAFE_DELETE(m_RightLungAffected);
+  DELETE_MAP_SECOND(m_Severities);
 }
 
 void SEAcuteRespiratoryDistressSyndromeExacerbation::Clear()
 {
   SEPatientAction::Clear();
-  INVALIDATE_PROPERTY(m_Severity);
-  INVALIDATE_PROPERTY(m_LeftLungAffected);
-  INVALIDATE_PROPERTY(m_RightLungAffected);
+  for (auto itr : m_Severities)
+    if (itr.second != nullptr)
+      itr.second->Invalidate();
 }
 
 void SEAcuteRespiratoryDistressSyndromeExacerbation::Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, bool /*preserveState*/)
@@ -39,17 +35,20 @@ bool SEAcuteRespiratoryDistressSyndromeExacerbation::IsValid() const
 {
   if (!SEPatientAction::IsValid())
     return false;
-  return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
+  return HasSeverity();
 }
 bool SEAcuteRespiratoryDistressSyndromeExacerbation::IsActive() const
 {
   if (!SEPatientAction::IsActive())
     return false;
-  if (GetSeverity() <= 0)
-    return false;
-  if (GetLeftLungAffected() <= 0 && GetRightLungAffected() <= 0)
+  if (!HasSeverity())
     return false;
   return true;
+}
+void SEAcuteRespiratoryDistressSyndromeExacerbation::Activate()
+{
+  SEPatientAction::Activate();
+  SERespiratorySystem::FillLungImpairmentMap(m_Severities);
 }
 void SEAcuteRespiratoryDistressSyndromeExacerbation::Deactivate()
 {
@@ -59,63 +58,48 @@ void SEAcuteRespiratoryDistressSyndromeExacerbation::Deactivate()
 
 const SEScalar* SEAcuteRespiratoryDistressSyndromeExacerbation::GetScalar(const std::string& name)
 {
-  if (name.compare("Severity") == 0)
-    return &GetSeverity();
-  if (name.compare("LeftLungAffected") == 0)
-    return &GetLeftLungAffected();
-  if (name.compare("RightLungAffected") == 0)
-    return &GetRightLungAffected();
   return nullptr;
 }
 
 bool SEAcuteRespiratoryDistressSyndromeExacerbation::HasSeverity() const
 {
-  return m_Severity == nullptr ? false : m_Severity->IsValid();
+  for (auto itr : m_Severities)
+    if (itr.second != nullptr && itr.second->IsValid())
+      return true;
+  return false;
+}
+LungImpairmentMap& SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverities()
+{
+  return m_Severities;
+}
+const LungImpairmentMap& SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverities() const
+{
+  return m_Severities;
 }
 
-SEScalar0To1& SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverity()
+bool SEAcuteRespiratoryDistressSyndromeExacerbation::HasSeverity(eLungCompartment cmpt) const
 {
-  if(m_Severity==nullptr)
-    m_Severity=new SEScalar0To1();
-  return *m_Severity;
+  auto s = m_Severities.find(cmpt);
+  if (s == m_Severities.end())
+    return false;
+  if (s->second == nullptr)
+    return false;
+  return s->second->IsValid();
 }
-double SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverity() const
+SEScalar0To1& SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverity(eLungCompartment cmpt)
 {
-  if (m_Severity == nullptr)
-    return SEScalar::dNaN();
-  return m_Severity->GetValue();
+  SEScalar0To1* s = m_Severities[cmpt];
+  if (s == nullptr)
+  {
+    s = new SEScalar0To1();
+    m_Severities[cmpt] = s;
+  }
+  return *s;
 }
-
-bool SEAcuteRespiratoryDistressSyndromeExacerbation::HasLeftLungAffected() const
+const SEScalar0To1* SEAcuteRespiratoryDistressSyndromeExacerbation::GetSeverity(eLungCompartment cmpt) const
 {
-  return m_LeftLungAffected == nullptr ? false : m_LeftLungAffected->IsValid();
-}
-SEScalar0To1& SEAcuteRespiratoryDistressSyndromeExacerbation::GetLeftLungAffected()
-{
-  if (m_LeftLungAffected == nullptr)
-    m_LeftLungAffected = new SEScalar0To1();
-  return *m_LeftLungAffected;
-}
-double SEAcuteRespiratoryDistressSyndromeExacerbation::GetLeftLungAffected() const
-{
-  if (m_LeftLungAffected == nullptr)
-    return SEScalar::dNaN();
-  return m_LeftLungAffected->GetValue();
-}
-
-bool SEAcuteRespiratoryDistressSyndromeExacerbation::HasRightLungAffected() const
-{
-  return m_RightLungAffected == nullptr ? false : m_RightLungAffected->IsValid();
-}
-SEScalar0To1& SEAcuteRespiratoryDistressSyndromeExacerbation::GetRightLungAffected()
-{
-  if (m_RightLungAffected == nullptr)
-    m_RightLungAffected = new SEScalar0To1();
-  return *m_RightLungAffected;
-}
-double SEAcuteRespiratoryDistressSyndromeExacerbation::GetRightLungAffected() const
-{
-  if (m_RightLungAffected == nullptr)
-    return SEScalar::dNaN();
-  return m_RightLungAffected->GetValue();
+  auto s = m_Severities.find(cmpt);
+  if (s == m_Severities.end())
+    return nullptr;
+  return s->second;
 }

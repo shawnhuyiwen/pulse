@@ -38,7 +38,7 @@ void CreateState()
   pe->GetLogger()->Info("HowTo_CombatMultitrauma_CreateState");
 
   // Load the Soldier patient
-  // You can alternatively define your own patient (see HowTo-CreateAPatient) and apply conditions (see HowTo-LobarPneumonia) 
+  // You can alternatively define your own patient (see HowTo-CreateAPatient) and apply conditions (see HowTo-Pneumonia) 
   // This would require runnning stabilization rather than loading an existing state
   if (!pe->SerializeFromFile("./states/Soldier@0s.json"))
   {

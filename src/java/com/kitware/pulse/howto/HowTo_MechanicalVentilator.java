@@ -7,8 +7,11 @@ import java.util.List;
 import com.kitware.pulse.cdm.bind.Enums.eDriverWaveform;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.*;
+import com.kitware.pulse.cdm.bind.Physiology.eLungCompartment;
 import com.kitware.pulse.cdm.engine.SEDataRequestManager;
+import com.kitware.pulse.cdm.patient.actions.SEAcuteRespiratoryDistressSyndromeExacerbation;
 import com.kitware.pulse.cdm.patient.actions.SEDyspnea;
+import com.kitware.pulse.cdm.patient.conditions.SEAcuteRespiratoryDistressSyndrome;
 import com.kitware.pulse.cdm.properties.CommonUnits.*;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.cdm.substance.SESubstanceFraction;
@@ -80,6 +83,11 @@ public class HowTo_MechanicalVentilator
     dataRequests.createMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_s);
     
     pulse.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
+    
+    SEAcuteRespiratoryDistressSyndromeExacerbation ards = new SEAcuteRespiratoryDistressSyndromeExacerbation();
+    ards.getSeverity(eLungCompartment.LeftLung).setValue(0.5);
+    ards.getSeverity(eLungCompartment.RightLung).setValue(0.5);
+    pulse.processAction(ards);
     
     SEDyspnea dyspnea = new SEDyspnea();
     dyspnea.getSeverity().setValue(1.0);

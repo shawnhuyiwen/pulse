@@ -15,8 +15,8 @@ public:
   static constexpr char const* ConditionType = "Patient";
   virtual std::string GetConditionType() const { return ConditionType; }
 
-  virtual void Clear(); //clear memory
+  void Clear() override;
 
-  virtual bool IsValid() const = 0;
-  virtual bool IsActive() const = 0;
+  bool IsValid() const override = 0;
+  bool IsActive() const override = 0;
 };

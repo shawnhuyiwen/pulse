@@ -23,6 +23,7 @@ public:
 
   virtual bool IsValid() const = 0;
   virtual bool IsActive() const = 0;
+  virtual void Activate() { }
 
   virtual std::string GetComment() const;
   virtual void SetComment(const std::string& comment);

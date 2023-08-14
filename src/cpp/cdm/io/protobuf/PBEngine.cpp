@@ -32,8 +32,8 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.h"
 #include "cdm/patient/conditions/SEConsumeMeal.h"
 #include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
+#include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/patient/conditions/SEPulmonaryShunt.h"
-#include "cdm/patient/conditions/SELobarPneumonia.h"
 #include "cdm/patient/conditions/SEPulmonaryFibrosis.h"
 #include "cdm/patient/conditions/SESepsis.h"
 #include "cdm/engine/SEAction.h"
@@ -88,10 +88,10 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEHemothorax.h"
 #include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "cdm/patient/actions/SEIntubation.h"
-#include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
 #include "cdm/patient/actions/SEMechanicalVentilation.h"
 #include "cdm/patient/actions/SENeedleDecompression.h"
 #include "cdm/patient/actions/SEPericardialEffusion.h"
+#include "cdm/patient/actions/SEPneumoniaExacerbation.h"
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
 #include "cdm/patient/actions/SESupplementalOxygen.h"
@@ -197,12 +197,12 @@ void PBEngine::Serialize(const SEConditionManager& src, CDM_BIND::ConditionListD
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_ImpairedAlveolarExchange));
   if (src.HasChronicPericardialEffusion())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PericardialEffusion));
+  if (src.HasPneumonia())
+    dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_Pneumonia));
   if (src.HasPulmonaryFibrosis())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PulmonaryFibrosis));
   if (src.HasPulmonaryShunt())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PulmonaryShunt));
-  if (src.HasLobarPneumonia())
-    dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_LobarPneumonia));
   if (src.HasChronicRenalStenosis())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_RenalStenosis));
   if (src.HasSepsis())
@@ -341,8 +341,6 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ImpairedAlveolarExchangeExacerbation));
   if (src.HasIntubation())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Intubation));
-  if (src.HasLobarPneumoniaExacerbation())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LobarPneumoniaExacerbation));
   if (src.HasMechanicalVentilation())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilation));
   if (src.HasLeftNeedleDecompression())
@@ -351,6 +349,8 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightNeedleDecompression));
   if (src.HasPericardialEffusion())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_PericardialEffusion));
+  if (src.HasPneumoniaExacerbation())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_PneumoniaExacerbation));
   if (src.HasPulmonaryShuntExacerbation())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_PulmonaryShuntExacerbation));
   if (src.HasRespiratoryFatigue())

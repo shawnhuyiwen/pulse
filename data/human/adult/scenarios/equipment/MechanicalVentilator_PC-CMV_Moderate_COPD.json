@@ -11,11 +11,9 @@
               "Value": 0.6
             }
           },
-          "EmphysemaSeverity": {
-            "Scalar0To1": {
-              "Value": 0.6
-            }
-          }
+          "EmphysemaSeverity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}}]
         }
       }
     }]}

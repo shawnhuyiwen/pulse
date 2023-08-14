@@ -24,10 +24,10 @@
 #include "cdm/patient/actions/SEHemothorax.h"
 #include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "cdm/patient/actions/SEIntubation.h"
-#include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
 #include "cdm/patient/actions/SEMechanicalVentilation.h"
 #include "cdm/patient/actions/SENeedleDecompression.h"
 #include "cdm/patient/actions/SEPericardialEffusion.h"
+#include "cdm/patient/actions/SEPneumoniaExacerbation.h"
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
 #include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
@@ -70,13 +70,13 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_RightHemothorax = nullptr;
   m_ImpairedAlveolarExchangeExacerbation = nullptr;
   m_Intubation = nullptr;
-  m_LobarPneumoniaExacerbation = nullptr;
   m_MechanicalVentilation = nullptr;
   m_LeftNeedleDecompression = nullptr;
   m_RightNeedleDecompression = nullptr;
   m_RespiratoryFatigue = nullptr;
   m_RespiratoryMechanicsConfiguration = nullptr;
   m_PericardialEffusion = nullptr;
+  m_PneumoniaExacerbation = nullptr;
   m_PulmonaryShuntExacerbation = nullptr;
   m_SupplementalOxygen = nullptr;
   m_LeftOpenTensionPneumothorax = nullptr;
@@ -111,11 +111,11 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_RightHemothorax);
   SAFE_DELETE(m_Intubation);
   SAFE_DELETE(m_ImpairedAlveolarExchangeExacerbation);
-  SAFE_DELETE(m_LobarPneumoniaExacerbation);
   SAFE_DELETE(m_MechanicalVentilation);
   SAFE_DELETE(m_LeftNeedleDecompression);
   SAFE_DELETE(m_RightNeedleDecompression);
   SAFE_DELETE(m_PericardialEffusion);
+  SAFE_DELETE(m_PneumoniaExacerbation);
   SAFE_DELETE(m_PulmonaryShuntExacerbation);
   SAFE_DELETE(m_RespiratoryFatigue);
   SAFE_DELETE(m_RespiratoryMechanicsConfiguration);
@@ -156,11 +156,11 @@ void SEPatientActionCollection::Clear()
   RemoveRightHemothorax();
   RemoveImpairedAlveolarExchangeExacerbation();
   RemoveIntubation();
-  RemoveLobarPneumoniaExacerbation();
   RemoveMechanicalVentilation();
   RemoveLeftNeedleDecompression();
   RemoveRightNeedleDecompression();
   RemovePericardialEffusion();
+  RemovePneumoniaExacerbation();
   RemovePulmonaryShuntExacerbation();
   RemoveRespiratoryFatigue();
   RemoveRespiratoryMechanicsConfiguration();
@@ -470,16 +470,6 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     return true;
   }
 
-  const SELobarPneumoniaExacerbation* lp = dynamic_cast<const SELobarPneumoniaExacerbation*>(&action);
-  if (lp != nullptr)
-  {
-    GetLobarPneumoniaExacerbation().Copy(*lp, true);
-    m_LobarPneumoniaExacerbation->Activate();
-    if (!m_LobarPneumoniaExacerbation->IsActive())
-      RemoveLobarPneumoniaExacerbation();
-    return true;
-  }
-
   const SEMechanicalVentilation* mvData = dynamic_cast<const SEMechanicalVentilation*>(&action);
   if (mvData != nullptr)
   {
@@ -520,6 +510,16 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_PericardialEffusion->Activate();
     if (!m_PericardialEffusion->IsActive())
       RemovePericardialEffusion();
+    return true;
+  }
+
+  const SEPneumoniaExacerbation* lp = dynamic_cast<const SEPneumoniaExacerbation*>(&action);
+  if (lp != nullptr)
+  {
+    GetPneumoniaExacerbation().Copy(*lp, true);
+    m_PneumoniaExacerbation->Activate();
+    if (!m_PneumoniaExacerbation->IsActive())
+      RemovePneumoniaExacerbation();
     return true;
   }
 
@@ -1182,26 +1182,6 @@ void SEPatientActionCollection::RemoveIntubation()
     m_Intubation->Deactivate();
 }
 
-bool SEPatientActionCollection::HasLobarPneumoniaExacerbation() const
-{
-  return m_LobarPneumoniaExacerbation == nullptr ? false : m_LobarPneumoniaExacerbation->IsActive();
-}
-SELobarPneumoniaExacerbation& SEPatientActionCollection::GetLobarPneumoniaExacerbation()
-{
-  if (m_LobarPneumoniaExacerbation == nullptr)
-    m_LobarPneumoniaExacerbation = new SELobarPneumoniaExacerbation(GetLogger());
-  return *m_LobarPneumoniaExacerbation;
-}
-const SELobarPneumoniaExacerbation* SEPatientActionCollection::GetLobarPneumoniaExacerbation() const
-{
-  return m_LobarPneumoniaExacerbation;
-}
-void SEPatientActionCollection::RemoveLobarPneumoniaExacerbation()
-{
-  if (m_LobarPneumoniaExacerbation)
-    m_LobarPneumoniaExacerbation->Deactivate();
-}
-
 bool SEPatientActionCollection::HasMechanicalVentilation() const
 {
   return m_MechanicalVentilation == nullptr ? false : m_MechanicalVentilation->IsActive();
@@ -1283,6 +1263,26 @@ void SEPatientActionCollection::RemovePericardialEffusion()
 {
   if (m_PericardialEffusion)
     m_PericardialEffusion->Deactivate();
+}
+
+bool SEPatientActionCollection::HasPneumoniaExacerbation() const
+{
+  return m_PneumoniaExacerbation == nullptr ? false : m_PneumoniaExacerbation->IsActive();
+}
+SEPneumoniaExacerbation& SEPatientActionCollection::GetPneumoniaExacerbation()
+{
+  if (m_PneumoniaExacerbation == nullptr)
+    m_PneumoniaExacerbation = new SEPneumoniaExacerbation(GetLogger());
+  return *m_PneumoniaExacerbation;
+}
+const SEPneumoniaExacerbation* SEPatientActionCollection::GetPneumoniaExacerbation() const
+{
+  return m_PneumoniaExacerbation;
+}
+void SEPatientActionCollection::RemovePneumoniaExacerbation()
+{
+  if (m_PneumoniaExacerbation)
+    m_PneumoniaExacerbation->Deactivate();
 }
 
 bool SEPatientActionCollection::HasPulmonaryShuntExacerbation() const
@@ -1701,8 +1701,6 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetImpairedAlveolarExchangeExacerbation());
   if (HasIntubation())
     actions.push_back(GetIntubation());
-  if (HasLobarPneumoniaExacerbation())
-    actions.push_back(GetLobarPneumoniaExacerbation());
   if (HasMechanicalVentilation())
     actions.push_back(GetMechanicalVentilation());
   if (HasLeftNeedleDecompression())
@@ -1711,6 +1709,8 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetRightNeedleDecompression());
   if (HasPericardialEffusion())
     actions.push_back(GetPericardialEffusion());
+  if (HasPneumoniaExacerbation())
+    actions.push_back(GetPneumoniaExacerbation());
   if (HasPulmonaryShuntExacerbation())
     actions.push_back(GetPulmonaryShuntExacerbation());
   if (HasRespiratoryFatigue())
@@ -1800,8 +1800,6 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetImpairedAlveolarExchangeExacerbation().GetScalar(property);
   if (actionName == "Intubation")
     return GetIntubation().GetScalar(property);
-  if (actionName == "LobarPneumoniaExacerbation")
-    return GetLobarPneumoniaExacerbation().GetScalar(property);
   if (actionName == "MechanicalVentilation")
     return GetMechanicalVentilation().GetScalar(property);
   if (actionName == "LeftNeedleDecompression")
@@ -1810,6 +1808,8 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetRightNeedleDecompression().GetScalar(property);
   if (actionName == "PericardialEffusion")
     return GetPericardialEffusion().GetScalar(property);
+  if (actionName == "PneumoniaExacerbation")
+    return GetPneumoniaExacerbation().GetScalar(property);
   if (actionName == "PulmonaryShuntExacerbation")
     return GetPulmonaryShuntExacerbation().GetScalar(property);
   if (actionName == "RespiratoryFatigue")

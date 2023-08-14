@@ -13,20 +13,20 @@ public:
   virtual ~SEExercise();
 
   static constexpr char const* Name = "Exercise";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEExercise& src, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SEExercise& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasIntensity() const;
   virtual SEScalar0To1& GetIntensity();
   virtual double GetIntensity() const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalar0To1* m_Intensity;

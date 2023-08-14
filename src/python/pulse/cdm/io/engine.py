@@ -134,10 +134,10 @@ def serialize_condition_manager_to_bind(condition_manager: SEConditionManager, d
         serialize_impaired_alveolar_exchange_to_bind(condition_manager.get_impaired_alveolar_exchange(),
                                                      any_condition.PatientCondition.ImpairedAlveolarExchange)
         dst.AnyCondition.append(any_condition)
-    if condition_manager.has_lobar_pneumonia():
+    if condition_manager.has_pneumonia():
         any_condition = AnyConditionData()
-        serialize_lobar_pneumonia_to_bind(condition_manager.get_lobar_pneumonia(),
-                                          any_condition.PatientCondition.LobarPneumonia)
+        serialize_pneumonia_to_bind(condition_manager.get_pneumonia(),
+                                          any_condition.PatientCondition.Pneumonia)
         dst.AnyCondition.append(any_condition)
     if condition_manager.has_pulmonary_fibrosis():
         any_condition = AnyConditionData()
@@ -269,8 +269,8 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_intubation_to_bind(action, any_action.PatientAction.Intubation)
                 dst.AnyAction.append(any_action)
                 continue
-            if isinstance(action, SELobarPneumoniaExacerbation):
-                serialize_lobar_pneumonia_exacerbation_to_bind(action, any_action.PatientAction.LobarPneumoniaExacerbation)
+            if isinstance(action, SEPneumoniaExacerbation):
+                serialize_pneumonia_exacerbation_to_bind(action, any_action.PatientAction.PneumoniaExacerbation)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEMechanicalVentilation):

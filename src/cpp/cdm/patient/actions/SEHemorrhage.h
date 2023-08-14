@@ -39,9 +39,9 @@ public:
   virtual ~SEHemorrhage();
 
   static constexpr char const* Name = "Hemorrhage";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
+  void Clear() override;
   virtual void Copy(const SEHemorrhage& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;

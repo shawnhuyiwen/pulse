@@ -13,7 +13,7 @@ class SEChronicRenalStenosis;
 class SEChronicVentricularSystolicDysfunction;
 class SEConsumeMeal;
 class SEImpairedAlveolarExchange;
-class SELobarPneumonia;
+class SEPneumonia;
 class SEPulmonaryFibrosis;
 class SEPulmonaryShunt;
 class SESepsis;
@@ -78,9 +78,9 @@ public:
   SEImpairedAlveolarExchange& GetImpairedAlveolarExchange();
   const SEImpairedAlveolarExchange* GetImpairedAlveolarExchange() const;
 
-  bool HasLobarPneumonia() const;
-  SELobarPneumonia& GetLobarPneumonia();
-  const SELobarPneumonia* GetLobarPneumonia() const;
+  bool HasPneumonia() const;
+  SEPneumonia& GetPneumonia();
+  const SEPneumonia* GetPneumonia() const;
 
   bool HasPulmonaryFibrosis() const;
   SEPulmonaryFibrosis& GetPulmonaryFibrosis();
@@ -111,8 +111,8 @@ protected:
   SEChronicObstructivePulmonaryDisease*    m_COPD;
   SEChronicVentricularSystolicDysfunction* m_ChronicVentricularSystolicDysfunction;
   SEImpairedAlveolarExchange*              m_ImpairedAlveolarExchange;
+  SEPneumonia*                             m_Pneumonia;
   SEChronicPericardialEffusion*            m_PericardialEffusion;
-  SELobarPneumonia*                        m_LobarPneumonia;
   SEChronicRenalStenosis*                  m_RenalStenosis;
   SEPulmonaryFibrosis*                     m_PulmonaryFibrosis;
   SEPulmonaryShunt*                        m_PulmonaryShunt;

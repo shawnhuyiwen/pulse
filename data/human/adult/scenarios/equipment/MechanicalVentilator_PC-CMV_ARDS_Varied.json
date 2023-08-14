@@ -3,12 +3,14 @@
   "Description": "Apply a PM-CMV mode ventilator to treat a patient with ARDS.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json",
     "Conditions": { "AnyCondition": [ {
-          "PatientCondition": {
-            "AcuteRespiratoryDistressSyndrome": {
-              "Severity": { "Scalar0To1": { "Value": 0.3 } },
-              "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 } },
-              "RightLungAffected": { "Scalar0To1": { "Value": 1.0 } } } } }
-      ] }
+      "PatientCondition": {
+        "AcuteRespiratoryDistressSyndrome": {
+          "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.3 }}}]
+        }
+      }
+    }]}
   },
   "DataRequestFile": [
     "StandardDataRequests.json",
@@ -60,12 +62,12 @@
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
 
   { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
-      {
-        "Severity": { "Scalar0To1": { "Value": 0.6 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
-      }}
-    },
+    {
+      "Severity": [ 
+        { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+        { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}}]
+    }}
+  },
 
   {
     "EquipmentAction": {
@@ -92,12 +94,12 @@
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
 
   { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
-      {
-        "Severity": { "Scalar0To1": { "Value": 0.9 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
-      }}
-    },
+    {
+      "Severity": [ 
+        { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+        { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.9 }}}]
+    }}
+  },
 
   {
       "EquipmentAction": {

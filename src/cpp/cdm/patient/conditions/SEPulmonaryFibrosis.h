@@ -13,13 +13,13 @@ public:
   virtual ~SEPulmonaryFibrosis();
 
   static constexpr char const* Name = "Pulmonary Fibrosis";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEPulmonaryFibrosis& src);
+  void Clear() override;
+  void Copy(const SEPulmonaryFibrosis& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  bool IsValid() const override;
+  bool IsActive() const override;
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();

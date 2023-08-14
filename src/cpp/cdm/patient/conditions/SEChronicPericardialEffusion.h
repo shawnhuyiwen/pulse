@@ -13,13 +13,13 @@ public:
   virtual ~SEChronicPericardialEffusion();
 
   static constexpr char const* Name = "Chronic Pericardial Effusion";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear();
-  virtual void Copy(const SEChronicPericardialEffusion& src);
+  void Clear() override;
+  void Copy(const SEChronicPericardialEffusion& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  bool IsValid() const override;
+  bool IsActive() const override;
 
   virtual bool HasAccumulatedVolume() const;
   virtual SEScalarVolume& GetAccumulatedVolume();
