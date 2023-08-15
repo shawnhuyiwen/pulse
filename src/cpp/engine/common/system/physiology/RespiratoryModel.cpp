@@ -204,8 +204,6 @@ namespace pulse
     m_RightAlveoliToRightPleuralConnection = nullptr;
     m_LeftPulmonaryCapillary = nullptr;
     m_RightPulmonaryCapillary = nullptr;
-    m_LeftPulmonaryArteriesToVeins = nullptr;
-    m_RightPulmonaryArteriesToVeins = nullptr;
     m_ConnectionToAirway = nullptr;
     m_GroundToConnection = nullptr;
     // Substance
@@ -538,8 +536,6 @@ namespace pulse
       m_RightPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryCapillaries1ToRightPulmonaryVeins1);
       m_LeftPulmonaryCapillary = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillaries1ToLeftPulmonaryVeins1);
       //Pulmonary Shunt
-      m_LeftPulmonaryArteriesToVeins = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryVeins1);
-      m_RightPulmonaryArteriesToVeins = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryVeins1);
 
       m_LeftPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries);
       m_RightPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries);
@@ -2212,7 +2208,6 @@ namespace pulse
 
     double previousTransalveolarPressure_cmH2O = GetTransalveolarPressure(PressureUnit::cmH2O);
     double previousTransplueralPressure_cmH2O = GetTransChestWallPressure(PressureUnit::cmH2O) - GetTransMusclePressure(PressureUnit::cmH2O);
-    double previousTransdriverPressure_cmH2O = GetTransrespiratoryPressure(PressureUnit::cmH2O) - GetTransMusclePressure(PressureUnit::cmH2O);
     double previousTranscompliancePressure_cmH2O = GetTransthoracicPressure(PressureUnit::cmH2O) - GetTransMusclePressure(PressureUnit::cmH2O);
 
     GetAirwayPressure().SetValue(airwayOpeningPressure_cmH2O, PressureUnit::cmH2O);
@@ -3432,7 +3427,6 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::UpdateAlveolarCompliances()
   {
-    unsigned int iter = 0;
     for (auto& itr : m_LungComponents)
     {
       eLungCompartment cmpt = itr.first;
@@ -4113,7 +4107,7 @@ namespace pulse
       unsigned int numComponents = cpt.Side == eSide::Right ? numRightComponents : numLeftComponents;
       if (numComponents > 1)
       {
-        scalingFactor = segmentedLeftCalibratedValue + (numComponents - double(numLeftComponents)) / (double(numRightComponents) - double(numLeftComponents)) * (segmentedRightCalibratedValue - segmentedLeftCalibratedValue);
+        scalingFactor *= segmentedLeftCalibratedValue + (numComponents - double(numLeftComponents)) / (double(numRightComponents) - double(numLeftComponents)) * (segmentedRightCalibratedValue - segmentedLeftCalibratedValue);
       }
 
       double previousShuntResistance_mmHg_s_Per_mL = shuntPath->GetResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -4575,10 +4569,5 @@ namespace pulse
     double leftPulmonaryCapillaryResistance_mmHg_s_Per_mL = m_LeftPulmonaryCapillary->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     double averagePulmonaryCapillaryResistance_mmHg_s_Per_mL = (rightPulmonaryCapillaryResistance_mmHg_s_Per_mL + leftPulmonaryCapillaryResistance_mmHg_s_Per_mL) / 2.0;
     m_data.GetDataTrack().Probe("averagePulmonaryCapillaryResistance_mmHg_s_Per_mL", averagePulmonaryCapillaryResistance_mmHg_s_Per_mL);
-
-    double rightShuntResistance_mmHg_s_Per_mL = m_RightPulmonaryArteriesToVeins->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double leftShuntResistance_mmHg_s_Per_mL = m_LeftPulmonaryArteriesToVeins->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    double averageShuntResistance_mmHg_s_Per_mL = (rightShuntResistance_mmHg_s_Per_mL + leftShuntResistance_mmHg_s_Per_mL) / 2.0;
-    m_data.GetDataTrack().Probe("averageShuntResistance_mmHg_s_Per_mL", averageShuntResistance_mmHg_s_Per_mL);
   }
 END_NAMESPACE
