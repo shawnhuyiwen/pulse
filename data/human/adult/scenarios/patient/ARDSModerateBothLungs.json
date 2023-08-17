@@ -22,7 +22,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 5.0,
+          "Value": 2.0,
           "Unit": "min"
         }
       }
