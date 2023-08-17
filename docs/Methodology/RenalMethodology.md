@@ -601,21 +601,17 @@ Validation - Actions and Conditions
 
 <center>
 <i>
-Table 8. There are seven scenarios that test renal capabilities, saline ingestion, water ingestion, unilateral
-and bilateral stenosis, Two severities of hemorrhage, and high altitude environment change. Each scenario is designed to test the mechanical functionality of the renal system, its feedback mechanisms that control filtration and re-absorption, or the system's substance handling. We have a total of 35 green, 6 yellow, and 0 red parameters among the 3
-scenarios indicating a very good agreement with the validation data.
+Table 8. There are several scenarios that test renal capabilities. Each scenario is designed to test the mechanical functionality of the renal system, its feedback mechanisms that control filtration and re-absorption, or the system's substance handling.
 </i>
 </center>
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
-|	RenalStenosisModerateUnilateral	|	60% occlusion of left kidney	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
-|	RenalStenosisSevereBilateral	|	90 % occlusion of both kidneys	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
+|	RenalStenosisModerateUnilateral	|	60% occlusion of left kidney	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
+|	RenalStenosisSevereBilateral	|	90 % occlusion of both kidneys	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
 |	HemorrhageClass2NoFluid	|	140 mL/min hemorrhage for 10 minutes	|<span class="success">	8	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	HemorrhageClass3NoFluid	|	250 mL/min hemorrhage for 10 minutes	|<span class="success">	8	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	HighAltitudeEnvironmentChange	|	High altitude environment change	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	SalineIngestion	|	Patient ingests 1L of hypertonic saline	|<span class="success">	1	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
-|	WaterIngestion	|	Patient ingests 1 L of water	|<span class="success">	1	</span>|<span class="warning">	3	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	35	</span>|<span class="warning">	6	</span>|<span class="danger">	0	</span>|
+|		|	Total	|<span class="success">	33	</span>|<span class="warning">	0	</span>|<span class="danger">	2	</span>|
 
 ### Hemorrhage - Action
 
@@ -710,6 +706,7 @@ as shown in the top left figure. The top right and bottom left figures show the 
 </i>
 </center><br>
 
+<!-- We will probably want to add these back in some form in the future
 ### Salt Ingestion - Action
 
 The salt ingestion scenario simulates the patient drinking 1 L of seawater. Since the osmolarity of seawater exceeds the concentrating capacity of the
@@ -740,9 +737,6 @@ Table 13. Urine production rate and plasma sodium concentrations behave as expec
 |	Action	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Urine Production Rate (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Plasma Sodium Concentration (mg/L)	|	Bladder sodium concentration (mg/L)	|
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
 |	After stabilization patient given 1L of water	|		|	0	|	3600	|<span class="success">	Increase @cite baldes1934effect	</span>|<span class="success">	No Change @cite baldes1934effect	</span>|<span class="success">	Decrease @cite baldes1934effect	</span>|<span class="success">	Decrease Then Slight increase @cite baldes1934effect	</span>|
-
-
-<!-- We will probably want to add these back in some form in the future
 
 ### Dehydration
 The engine does not currently support this functionality, although scenarios can be made and run for days at a time without fluid intake, simulating dehydration.
@@ -796,9 +790,9 @@ The %Renal Stenosis condition is validated against two different scenarios, test
 Table 16. Direct affects of blood flow and glomerular filtration are seen in the stenosis condition. All cardiovascular effects meet validation except that blood volume decreases caused by release of aldesterone and angiotensin 2.
 </i>
 </center>
-|	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Blood Volume (mL)	|	Systemic Vascular Resistance (mmHg/mL/s)	|	Cardiac Output (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Renal Blood Flow (mL/min)	|	GFR (mL/min)	|
+|	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Blood Volume (mL)	|	Systemic Vascular Resistance (mmHg/mL/s)	|	Cardiac Output (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	%Renal Blood Flow (mL/min)	|	GFR (mL/min)	|
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Renal Stenosis 	|	60% unilarteral occlusion of kidneys 	|	120	|<span class="warning">	Increase @cite klabunde2011cardiovascular	</span>|<span class="success">	Increase @cite klabunde2011cardiovascular	</span>|<span class="success">	Mild decrease @cite anderson1990development	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Decrease @cite textor2011atherosclerotic	</span>|<span class="success">	Decrease @cite textor2011atherosclerotic	</span>|
+|	%Renal Stenosis 	|	60% unilateral occlusion of kidneys 	|	120	|<span class="danger">	Increase @cite klabunde2011cardiovascular	</span>|<span class="success">	Increase @cite klabunde2011cardiovascular	</span>|<span class="success">	Mild decrease @cite anderson1990development	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Decrease @cite textor2011atherosclerotic	</span>|<span class="success">	Decrease @cite textor2011atherosclerotic	</span>|
 
 
 The severe bilateral stenosis condition tests the effects of kidney function due to a 90 percent increase in renal artery resistance on both kidneys. Like the unilateral condition, the kidney and cardiovascular function meet validation. A more pronounced decrease in renal blood flow and glomerular filtration rate can be seen due to the increased severity of the stenosis.
@@ -810,9 +804,9 @@ to meet validation. The blood volume is unaffected. The systemic vascular resist
 decrease in cardiac output. The renal blood flow and GFR each decrease as expected.
 </i>
 </center>
-|	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Blood Volume (mL)	|	Systemic Vascular Resistance (mmHg/mL/s)	|	Cardiac Output (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Renal Blood Flow (mL/min)	|	GFR (mL/min)	|
+|	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Blood Volume (mL)	|	Systemic Vascular Resistance (mmHg/mL/s)	|	Cardiac Output (mL/min)	|	Mean Arterial Pressure (mmHg)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	%Renal Blood Flow (mL/min)	|	GFR (mL/min)	|
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Renal Stenosis 	|	90% bilateral occlusion of kidneys 	|	120	|<span class="warning">	Increase @cite klabunde2011cardiovascular	</span>|<span class="success">	Increase @cite klabunde2011cardiovascular	</span>|<span class="success">	Mild decrease @cite anderson1990development	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Decrease @cite textor2011atherosclerotic	</span>|<span class="success">	Decrease @cite textor2011atherosclerotic</span>	|
+|	%Renal Stenosis 	|	90% bilateral occlusion of kidneys 	|	120	|<span class="danger">	Increase @cite klabunde2011cardiovascular	</span>|<span class="success">	Increase @cite klabunde2011cardiovascular	</span>|<span class="success">	Mild decrease @cite anderson1990development	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Increase @cite debrunye2006assessment	</span>|<span class="success">	Decrease @cite textor2011atherosclerotic	</span>|<span class="success">	Decrease @cite textor2011atherosclerotic</span>	|
 
 @anchor renal-conclusions
 Conclusions
