@@ -2250,43 +2250,54 @@ namespace pulse
       }
     }
 
-    //Static Compliances based on simulated values
+    //Compliances based on simulated values
     double lungVolumeChange_L = totalLungVolume_L - previousLungVolume_L;
 
     double currentPleuralVolume_L = m_PleuralCavity->GetVolume(VolumeUnit::L);
     double pleuralVolumeChange_L = currentPleuralVolume_L - m_PreviousPleuralVolume_L;
     m_PreviousPleuralVolume_L = currentPleuralVolume_L;
+    double flowVolumeChange_L = tracheaFlow_L_Per_s * m_data.GetTimeStep_s();
 
     double transplueralPressure_cmH2O = transChestWallPressure_cmH2O - transMusclePressure_cmH2O;
     double transcompliancePressure_cmH2O = transthoracicPressure_cmH2O - transMusclePressure_cmH2O;
-
     double transalveolarPressureChange_cmH2O = transalveolarPressure_cmH2O - previousTransalveolarPressure_cmH2O;
+    double transplueralPressureChange_cmH2O = transplueralPressure_cmH2O - previousTransplueralPressure_cmH2O;
+    double transcompliancePressureChange_cmH2O = transcompliancePressure_cmH2O - previousTranscompliancePressure_cmH2O;
+
+    double dampenFraction_perSec = 0.01 * 50.0;
+
     if (abs(transalveolarPressureChange_cmH2O) > ZERO_APPROX)
     {
       double lungCompliance_L_Per_cmH2O = lungVolumeChange_L / transalveolarPressureChange_cmH2O;
       if (lungCompliance_L_Per_cmH2O > ZERO_APPROX)
       {
+        //Dampen the change to prevent potential craziness
+        double previousLungCompliance_L_Per_cmH2O = GetLungCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+        lungCompliance_L_Per_cmH2O = GeneralMath::Damper(lungCompliance_L_Per_cmH2O, previousLungCompliance_L_Per_cmH2O, dampenFraction_perSec, m_data.GetTimeStep_s());
         GetLungCompliance().SetValue(lungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
       }
     }
 
-    double transplueralPressureChange_cmH2O = transplueralPressure_cmH2O - previousTransplueralPressure_cmH2O;
     if (abs(transplueralPressureChange_cmH2O) > ZERO_APPROX)
     {
       double chestWallCompliance_L_Per_cmH2O = pleuralVolumeChange_L / transplueralPressureChange_cmH2O;
       if (chestWallCompliance_L_Per_cmH2O > ZERO_APPROX)
       {
+        //Dampen the change to prevent potential craziness
+        double previousChestWallCompliance_L_Per_cmH2O = GetChestWallCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+        chestWallCompliance_L_Per_cmH2O = GeneralMath::Damper(chestWallCompliance_L_Per_cmH2O, previousChestWallCompliance_L_Per_cmH2O, dampenFraction_perSec, m_data.GetTimeStep_s());
         GetChestWallCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
       }
     }
 
-    double transcompliancePressureChange_cmH2O = transcompliancePressure_cmH2O - previousTranscompliancePressure_cmH2O;
-    double flowVolumeChange_L = tracheaFlow_L_Per_s * m_data.GetTimeStep_s();
     if (abs(transcompliancePressureChange_cmH2O) > ZERO_APPROX)
     {
       double pulmonaryCompliance_L_Per_cmH2O = flowVolumeChange_L / transcompliancePressureChange_cmH2O;
       if (pulmonaryCompliance_L_Per_cmH2O > ZERO_APPROX)
       {
+        //Dampen the change to prevent potential craziness
+        double previousPulmonaryCompliance_L_Per_cmH2O = GetPulmonaryCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+        pulmonaryCompliance_L_Per_cmH2O = GeneralMath::Damper(pulmonaryCompliance_L_Per_cmH2O, previousPulmonaryCompliance_L_Per_cmH2O, dampenFraction_perSec, m_data.GetTimeStep_s());
         GetPulmonaryCompliance().SetValue(pulmonaryCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
         GetPulmonaryElastance().SetValue(1.0 / pulmonaryCompliance_L_Per_cmH2O, PressurePerVolumeUnit::cmH2O_Per_L);
       }
@@ -3292,17 +3303,18 @@ namespace pulse
     //Airway obstruction
     if (m_PatientActions->HasAirwayObstruction())
     {
-      double Severity = m_PatientActions->GetAirwayObstruction().GetSeverity().GetValue();
-      tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(20.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, Severity);
+      double severity = m_PatientActions->GetAirwayObstruction().GetSeverity().GetValue();
+      tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(5.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
+      tracheaResistance_cmH2O_s_Per_L = MIN(tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
     }
 
     //------------------------------------------------------------------------------------------------------
     //Broncho constriction
     if (m_PatientActions->HasBronchoconstriction())
     {
-      double dSeverity = m_PatientActions->GetBronchoconstriction().GetSeverity().GetValue();
-      leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(70.0, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, dSeverity);
-      rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(70.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, dSeverity);
+      double severity = m_PatientActions->GetBronchoconstriction().GetSeverity().GetValue();
+      leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
+      rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
       leftBronchiResistance_cmH2O_s_Per_L = MIN(leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
       rightBronchiResistance_cmH2O_s_Per_L = MIN(rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
     }
