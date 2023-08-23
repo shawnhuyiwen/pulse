@@ -66,6 +66,18 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: SEDataRequest
         raise Exception("Could not find result for segment " + str(seg_id))
     engine_val = result.values[results.get_header_index(header)]
 
+    # Convert to validation unit if needed
+    paren_idx = header.find("(")
+    if paren_idx != -1:
+        val_unit = header[paren_idx+1:-1].replace("_", " ")
+        engine_full_header = results.get_headers()[results.get_header_index(header)]
+        engine_paren_idx = engine_full_header.find("(")
+        if engine_paren_idx == -1:
+            raise ValueError(f"Cannot convert between {val_unit} and unitless for {header}")
+        engine_unit = engine_full_header[engine_paren_idx+1:-1].replace("_", " ")
+        if engine_unit != val_unit:
+            engine_val = PyPulse.convert(engine_val, engine_unit, val_unit)
+
     if compare_type == SESegmentValidationTarget.eComparisonType.EqualToSegment or \
        compare_type == SESegmentValidationTarget.eComparisonType.EqualToValue:
 
