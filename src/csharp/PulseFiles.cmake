@@ -50,6 +50,7 @@ set(PULSE_CSHARP_BIND_FILES
 )
 
 set(PULSE_CSHARP_HOWTO_FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_CreateState.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_DeathState.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_EngineUse.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Environment.cs
