@@ -3304,8 +3304,19 @@ namespace pulse
     if (m_PatientActions->HasAirwayObstruction())
     {
       double severity = m_PatientActions->GetAirwayObstruction().GetSeverity().GetValue();
-      tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(5.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
-      tracheaResistance_cmH2O_s_Per_L = MIN(tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+      //Piecewise to ensure fully blocked at a severity of 1.0;
+      double startSeverity = 0.9;
+      if (severity > startSeverity)
+      {
+        double minResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(5.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, startSeverity);
+        double maxResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+
+        tracheaResistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.6, 1.0, minResistance_cmH2O_s_Per_L, maxResistance_cmH2O_s_Per_L, severity);
+      }
+      else
+      {
+        tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(5.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
+      }
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -3315,8 +3326,6 @@ namespace pulse
       double severity = m_PatientActions->GetBronchoconstriction().GetSeverity().GetValue();
       leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
       rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
-      leftBronchiResistance_cmH2O_s_Per_L = MIN(leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
-      rightBronchiResistance_cmH2O_s_Per_L = MIN(rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
     }
 
     if (m_data.HasDrugs())
@@ -3358,7 +3367,7 @@ namespace pulse
     if (m_PatientActions->HasAsthmaAttack())
     {
       double severity = m_PatientActions->GetAsthmaAttack().GetSeverity().GetValue();
-      obstructiveResistanceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 60.0, severity);
+      obstructiveResistanceScalingFactor = GeneralMath::ExponentialGrowthFunction(8.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
     }
 
     //------------------------------------------------------------------------------------------------------

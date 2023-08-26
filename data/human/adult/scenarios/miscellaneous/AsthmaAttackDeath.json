@@ -27,31 +27,12 @@
     }
   }, {
     "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 20.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Dyspnea": {
-        "Severity": {
-          "Scalar0To1": {
-            "Value": 0.5
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
       "Action": {
         "Comment": "Death Events: Exceeded the maximum target pulmonary ventilation" },
       "Time": {
         "ScalarTime": {
-          "Value": 500,
-          "Unit": "s"
+          "Value": 10,
+          "Unit": "min"
         }
       }
     }

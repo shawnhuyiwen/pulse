@@ -1,6 +1,6 @@
 {
-  "Name": "AsthmaAttackSevereAcute",
-  "Description": "Patient is afflicted with an severe acute asthma attack.",
+  "Name": "BronchoconstrictionDeath",
+  "Description": "Bronchoconstriction with no interventions.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
     "StandardDataRequests.json",
@@ -17,38 +17,22 @@
     }
   }, {
     "PatientAction": {
-      "AsthmaAttack": {
+      "Bronchoconstriction": {
         "Severity": {
           "Scalar0To1": {
-            "Value": 0.75
+            "Value": 1.0
           }
         }
       }
     }
   }, {
     "AdvanceTime": {
+      "Action": {
+        "Comment": "Death Events: Low O2 in Brain/Heart with hypocapnia" },
       "Time": {
         "ScalarTime": {
-          "Value": 550.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AsthmaAttack": {
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 200.0,
-          "Unit": "s"
+          "Value": 10,
+          "Unit": "min"
         }
       }
     }
