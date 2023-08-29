@@ -57,8 +57,6 @@ def serialize_image_properties_to_bind(src: SEImageProperties, dst: ImagePropert
     dst.Width_inch = src.get_width_inch()
     dst.DPI = src.get_dpi()
 def serialize_image_properties_from_bind(src: ImagePropertyData, dst: SEImageProperties):
-    if src.HasField("DimensionMode"):
-        dst.set_dimension_mode(eDimensionMode(src.DimensionMode))
     if src.HasField("FileFormat"):
         dst.set_file_format(src.FileFormat)
     if src.HasField("Height_inch"):
@@ -67,6 +65,9 @@ def serialize_image_properties_from_bind(src: ImagePropertyData, dst: SEImagePro
         dst.set_width_inch(src.Width_inch)
     if src.HasField("DPI"):
         dst.set_dpi(src.DPI)
+    # Set dimension mode after height and width so unbound can dominate if needed
+    if src.HasField("DimensionMode"):
+        dst.set_dimension_mode(eDimensionMode(src.DimensionMode))
 
 def serialize_bounds_to_bind(src: SEBounds, dst: BoundsData):
     if src.has_lower_bound():

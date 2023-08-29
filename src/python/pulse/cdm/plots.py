@@ -46,6 +46,9 @@ class SEImageProperties():
         return self._dimension_mode
     def set_dimension_mode(self, mode: eDimensionMode) -> None:
         self._dimension_mode = mode
+        if mode == eDimensionMode.Unbound:
+            self._height_inch = None
+            self._width_inch = None
 
     def get_file_format(self) -> str:
         return self._file_format

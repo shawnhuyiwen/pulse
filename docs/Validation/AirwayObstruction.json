@@ -22,7 +22,7 @@
             { "OutputFilename": "AirwayObstruction_MAP", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
             { "OutputFilename": "AirwayObstruction_CO2PP", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
             { "OutputFilename": "AirwayObstructionLegend",
-                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Legend" } } }
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
           ]
         }
       }

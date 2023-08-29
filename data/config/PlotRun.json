@@ -19,7 +19,7 @@
           { "Title": "Volume", "YHeader": [ "BloodVolume(L)" ] },
           { "Title": "Hemoglobin", "YHeader": [ "HemoglobinContent(g)" ] },
           { "OutputFilename": "BloodChemistryLegend",
-              "PlotConfig": { "ImageProperties": { "Height_inch": 3 }, "LegendMode": "OnlyActionEventLegend",
+              "PlotConfig": { "ImageProperties": { "DimensionMode": "Unbound" }, "LegendMode": "OnlyActionEventLegend",
                 "PlotEvents": false } }
         ]
       }
@@ -305,7 +305,7 @@
           { "OutputFilename": "Class2Blood_Diastolic", "Title": "", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
           { "OutputFilename": "Class2Blood_Legend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 2.2, "Width_inch": 22 }, "PlotEvents": false } }
+                 "ImageProperties": { "DimensionMode": "Unbound" }, "PlotEvents": false } }
         ]
       }
     },
@@ -328,7 +328,7 @@
           { "OutputFilename": "Class2Saline_Hb", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
           { "OutputFilename": "Class2Saline_Legend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 2.2, "Width_inch": 22 }, "PlotEvents": false } }
+                 "ImageProperties": { "DimensionMode": "Unbound" }, "PlotEvents": false } }
         ]
       }
     },
@@ -351,7 +351,7 @@
           { "OutputFilename": "Class4NoFluid_Hb", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
           { "OutputFilename": "Class4NoFluid_Legend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 1.5, "Width_inch": 22 }, "PlotEvents": false } }
+                 "ImageProperties": { "DimensionMode": "Unbound" }, "PlotEvents": false } }
         ]
       }
     },
@@ -796,7 +796,7 @@
               "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "SuccinylcholineLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 3, "Width_inch": 22 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -826,7 +826,7 @@
               "YHeader": [ "Chloride-Clearance-RenalExcretionRate(g/day)" ] },
           { "OutputFilename": "FurosemideLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 2, "Width_inch": 22 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -854,7 +854,7 @@
               "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
           { "OutputFilename": "AcuteStressLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false,
-                "ImageProperties": { "DimensionMode": "Legend" } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -900,7 +900,7 @@
               "YHeader": [ "SkinTemperature(degC)" ] },
           { "OutputFilename": "ColdWaterSubmersionLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false,
-                "ImageProperties": { "Height_inch": 4.8 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -926,7 +926,7 @@
               "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
           { "OutputFilename": "HighAltitudeLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "PlotEvents": false,
-                "ImageProperties": { "Height_inch": 4.8, "Width_inch": 22 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1079,7 +1079,7 @@
           { "Title": "Systemic Vascular Resistance", "OutputFilename": "Baroreceptors_VascularResistance",
               "YHeader": [ "SystemicVascularResistance(mmHg_s/mL)" ] },
           { "OutputFilename": "BaroreceptorsLegend",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 1.5 } } }
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1109,7 +1109,7 @@
               "YHeader": [ "MeanArterialPressure(mmHg)" ] },
           { "OutputFilename": "TBILegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 4.5, "Width_inch": 18 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1139,7 +1139,7 @@
           { "Title": "ICP(mmHg)", "OutputFilename": "TBI_PupilICP", "YHeader": [ "IntracranialPressure(mmHg)" ],
               "YLabel": "" },
           { "OutputFilename": "PupilLegend",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "Height_inch": 2.5 } } }
+              "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1165,7 +1165,7 @@
               "YHeader": [ "RightAfferentArterioleResistance(mmHg_min/mL)" ] },
           { "OutputFilename": "HemorrhageClass3NoFluidLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 2, "Width_inch": 16 }, "PlotEvents": false } }
+                "ImageProperties": { "DimensionMode": "Unbound" }, "PlotEvents": false } }
         ]
       }
     },
@@ -1191,7 +1191,7 @@
               "YHeader": [ "RightAfferentArterioleResistance(mmHg_min/mL)" ] },
           { "OutputFilename": "HighAltitudeEnvironmentChangeLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "Height_inch": 5, "Width_inch": 16 }, "PlotActions": true,
+                "ImageProperties": { "DimensionMode": "Unbound" }, "PlotActions": true,
                 "PlotEvents": false } }
         ]
       }
@@ -1531,7 +1531,7 @@
           { "OutputFilename": "MainstemIntubation_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "MainstemIntubationLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                  "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.8 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1556,7 +1556,7 @@
           { "OutputFilename": "TensionPneumothoraxOpenVaried_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "TensionPneumothoraxOpenVariedLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 2.5 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1581,7 +1581,7 @@
           { "OutputFilename": "TensionPneumothoraxClosedVaried_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "TensionPneumothoraxClosedVariedLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend" } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1605,7 +1605,7 @@
           { "OutputFilename": "HemothoraxVaried_O2Sat",           "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "HemothoraxVariedLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend" } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1629,7 +1629,7 @@
           { "OutputFilename": "EsophagealIntubation_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "EsophagealIntubationLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1654,7 +1654,7 @@
           { "OutputFilename": "BronchoConstrictionVaried_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "BronchoConstrictionVariedLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend" } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1678,7 +1678,7 @@
           { "OutputFilename": "AsthmaAttackModerateAcute_RR", "YHeader": [ "RespirationRate(1/min)" ] },
           { "OutputFilename": "AsthmaAttackModerateAcuteLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend" } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1702,7 +1702,7 @@
           { "OutputFilename": "AsthmaAttackSevereAcute_RR", "YHeader": [ "RespirationRate(1/min)" ] },
           { "OutputFilename": "AsthmaAttackSevereAcuteLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend" } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1727,7 +1727,7 @@
           { "OutputFilename": "AsthmaAttackLifeThreateningAcute_RR", "YHeader": [ "RespirationRate(1/min)" ] },
           { "OutputFilename": "AsthmaAttackLifeThreateningAcuteLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend" } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1807,7 +1807,7 @@
           { "OutputFilename": "AnesthesiaMachineVariedConfiguration_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
           { "OutputFilename": "AMVariedLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.6 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1831,7 +1831,7 @@
           { "OutputFilename": "MaskLeakVaried_CO2PP", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "MaskLeakLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1857,7 +1857,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "ExpiratoryValveLeakLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1884,7 +1884,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "InspiratoryValveLeakLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1914,7 +1914,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "ExpiratoryValveObstructionLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-              "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1944,7 +1944,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "InspiratoryValveObstructionLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -1973,7 +1973,7 @@
             "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "VentilatorPressureLossLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2001,7 +2001,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "SodaLimeFailureLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.2 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2023,7 +2023,7 @@
               "YHeader": [ "Desflurane-PlasmaConcentration(ug/L)" ], "PlotConfig": { "LogAxis": true } },
           { "OutputFilename": "VaporizerFailureLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2049,7 +2049,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "OxygenWallPressureLossLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2075,7 +2075,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "OxygenTankPressureLossLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.1 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2190,7 +2190,7 @@
               "YHeader": [ "InspiratoryExpiratoryRatio" ] },
           { "OutputFilename": "MechanicalVentilatorPressureControlledVariedLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 6 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2219,7 +2219,7 @@
               "YHeader": [ "InspiratoryExpiratoryRatio" ] },
           { "OutputFilename": "MechanicalVentilatorVolumeControlledARDSLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 6 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2523,7 +2523,7 @@
               "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
           { "OutputFilename": "BagValveMaskApnea_TotalLungVolume_Legend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2547,7 +2547,7 @@
           { "OutputFilename": "Cynthia_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "CynthiaLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2571,7 +2571,7 @@
           { "OutputFilename": "Gus_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "GusLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2595,7 +2595,7 @@
           { "OutputFilename": "Hassan_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "HassanLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2619,7 +2619,7 @@
           { "OutputFilename": "Joel_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "JoelLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2643,7 +2643,7 @@
           { "OutputFilename": "Nathan_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "NathanLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 5.5 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2667,7 +2667,7 @@
           { "OutputFilename": "CombatMultitrauma_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "CombatMultitraumaLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 3.5 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2691,7 +2691,7 @@
           { "OutputFilename": "AsthmaAttack_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "AsthmaAttackLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 4 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2715,7 +2715,7 @@
           { "OutputFilename": "HeatStroke_RR", "YHeader": [ "RespirationRate(1/min)" ] },
           { "OutputFilename": "HeatStrokeLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 7 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },
@@ -2739,7 +2739,7 @@
           { "OutputFilename": "EnvironmentExposure_RR", "YHeader": [ "RespirationRate(1/min)" ] },
           { "OutputFilename": "EnvironmentExposureLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Legend", "Height_inch": 3.6 } } }
+                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     }
