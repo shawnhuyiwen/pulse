@@ -141,6 +141,10 @@ else()
   message(STATUS "!!! You will need to get these required data files from another build/source !!!")
 endif()
 
+if (NOT ${PROJECT_NAME}_PYTHON_API)
+  message(STATUS "!!! Without Python Utils, this build will not generate files and utilities needed for Pulse testing and development !!!")
+endif()
+
 if(${PROJECT_NAME}_DOWNLOAD_BASELINES)
   message(STATUS "Pulling the latest Pulse Baselines!")
   add_custom_command(TARGET PulseData POST_BUILD

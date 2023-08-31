@@ -40,10 +40,28 @@ Ensure that cmake bin is on your PATH and available in your cmd/bash shell.
 
 If you are on a Debian/Ubuntu system, please install the latest cmake on your system by <a href="https://apt.kitware.com/">following thes instructions</a>.
 
+### Python Dependency
+
+By default, the Pulse_PYTHON_API CMake option is enabled.
+Some of our test suite and data generate tools used are written in Python.
+While there is no dependency on Python when integrating with your application, it is strongly recommended enable Pulse_PYTHON_API when building Pulse to develop/contribute to the code base.
+If you are building Pulse strictly to generate native binaries, you can disable this CMake option.
+
+Simply <a href="https://www.python.org/downloads/">download and install python</a> and ensure that it is available on your path.
+
+Next, install the required python packages via our requirements.txt file at the root of the code base
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# Install python packages used by Pulse
+$ pip3 install -r <path/to/pulse/source/>requirements.txt
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ### Java JDK
 
-The test suite and data generate tools used are written in Java.
-While there is no dependency on Java when integrating with your application, it is currently required to build/develop/contribute to the code base.
+By default, the Pulse_JAVA_API CMake option is enabled.
+Some of our test suite and data generate tools used are written in Java.
+While there is no dependency on Java when integrating with your application, it is strongly recommended enable Pulse_JAVA_API when building Pulse to develop/contribute to the code base.
+If you are building Pulse strictly to generate native binaries, you can disable this CMake option.
 
 A JAVA_HOME environment variable needs to exist pointing to the Java installation.<br>
 There are many ways to do this.

@@ -63,8 +63,8 @@ set(${PROJECT_NAME}_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 option(${PROJECT_NAME}_LIBS_ONLY "Only build libraries" OFF)
 option(${PROJECT_NAME}_DOWNLOAD_BASELINES "Download all V&V Scenarios and their baseline result files" OFF)
 option(${PROJECT_NAME}_CSHARP_API "Build C# API" OFF)
-option(${PROJECT_NAME}_JAVA_API "Build Java utils for data generation and testing" ON)
-option(${PROJECT_NAME}_PYTHON_API "Build Python API" OFF)
+option(${PROJECT_NAME}_JAVA_API "Build Java API and utils for data generation and testing" ON)
+option(${PROJECT_NAME}_PYTHON_API "Build Python API and utils for data generation and testing" ON)
 option(${PROJECT_NAME}_DEPENDENT_BUILD "Pulse is being built as part of a different superbuild" OFF)
 # This dir inteded for use during cross compiling, provide the directory to the generated bindings from a native pulse build
 # This will be in a <build>/Innerbuild/src/schema
