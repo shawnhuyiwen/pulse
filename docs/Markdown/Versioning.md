@@ -12,7 +12,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ---
 
-## Pulse v4.2.0 (August 2023)
+## Pulse v4.2.0 (September 2023)
 
 - Software Architecture Improvements
   - iOS build support
@@ -44,6 +44,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Added shunting and labored breathing effects to collapsing lung functionality
     - Improved lung collapse (e.g., tension pneumothorax and hemothorax) responses
     - Updated restrictive and obstructive conditions/actions with severity mapping to compartments
+    - Updated airway obstruction, bronchoconstriction, and asthma resistance severity mapping to better match expected outcomes
   - Intubation
     - Added a severity to control flow
     - Esophageal intubation can provide air to lungs via a severity

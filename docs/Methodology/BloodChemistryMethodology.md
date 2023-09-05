@@ -407,39 +407,39 @@ Acronyms and Symbols
 *Table 7. List of acronyms and symbols.*
 | Symbol or Acronym | Description |
 | :---------------- | :---------- |
-| *A<sup>-</sup>* | The sum of all weak anions that are the conjugate base of all non-volatile weak acids |
-| *Alb* | Albumin |
+| <i>A<sup>-</sup></i> | The sum of all weak anions that are the conjugate base of all non-volatile weak acids |
+| <i>Alb</i> | Albumin |
 | ALP | Alkaline Phosphatase |
 | ALT | Alanine Aminotransferase |
 | AST | Aspartate Aminotransferase |
-| *Ca<sup>2+</sup>* | Calcium (strong cation) |
+| <i>Ca<sup>2+</sup></i> | Calcium (strong cation) |
 | CBC | Complete Blood Count |
-| *Cl<sup>-</sup>* | Chloride (strong anion) |
-| *CO<sub>2</sub>* | Carbon dioxide gas |
-| *HCO<sub>3</sub><sup>-</sup>* | Bicarbonate  |
-| *Hct* | Hematocrit  |
-| *Hgb* | Hemoglobin  |
-| *I<sup>n+</sup>* | Represents a lumped set of unnamed cations (e.g. Mg*^{2+}* + Cu*^{2+}* + Fe*^{3+}* + ... ) |
-| *I^<sup>n-</sup>* | Represents a lumped set of unnamed anions (e.g. sulfate + beta-hydroxybutyrate + ... )  |
-| *K<sup>+</sup>* | Potassium (strong cation)  |
-| *Ket<sup>-</sup>* | Ketone body (i.e. acetoacetate, beta-hydroxybutyrate, and acetone)  |
-| *La<sup>-</sup>* | Lactate (strong anion)  |
+| <i>Cl<sup>-</sup></i> | Chloride (strong anion) |
+| <i>CO<sub>2</sub></i> | Carbon dioxide gas |
+| <i>HCO<sub>3</sub><sup>-</sup></i> | Bicarbonate  |
+| <i>Hct</i> | Hematocrit  |
+| <i>Hgb</i> | Hemoglobin  |
+| <i>I<sup>n+</sup></i> | Represents a lumped set of unnamed cations (e.g. Mg*^{2+}* + Cu*^{2+}* + Fe*^{3+}* + ... ) |
+| <i>I^<sup>n-</sup></i> | Represents a lumped set of unnamed anions (e.g. sulfate + beta-hydroxybutyrate + ... )  |
+| <i>K<sup>+</sup></i> | Potassium (strong cation)  |
+| <i>Ket<sup>-</sup></i> | Ketone body (i.e. acetoacetate, beta-hydroxybutyrate, and acetone)  |
+| <i>La<sup>-</sup></i> | Lactate (strong anion)  |
 | mmHg | Millimeters Mercury |
-| *Na<sup>+</sup>* | Sodium (string cation)  |
-| *O<sub>2</sub>* | Oxygen gas  |
-| *OH<sup>-</sup>* | Hydroxide ion  |
-| *P<sub>i</sub>* | Phosphate  |
-| *P<sub>CO<sub>2</sub></sub>* | Partial pressure of carbon dioxide  |
-| *P<sub>O<sub>2</sub></sub>* | Partial pressure of oxygen  |
-| *pH* | Negative log of the hydrogen ion concentration  |
-| *S<sub>CO<sub>2</sub></sub>* | Fraction of hemoglobin binding sites with a bound carbon dioxide molecule  |
-| *S<sub>O<sub>2</sub></sub>* | Fraction of hemoglobin binding sites with a bound oxygen molecule  |
-| *SID* | Strong Ion Difference,  defined as [SID] = [strong cations] - [strong anions]  |
-| *T* | Temperature  |
-| *T<sub>CO<sub>2</sub></sub>* | Total carbon dioxide  |
-| *T<sub>O<sub>2</sub></sub>* | Total oxygen  |
-| <i>&alpha;<sub>CO<sub>2</sub></sub></i> | The plasma *CO_2* solubility coefficient  |
-| <i>&alpha;<sub>O<sub>2</sub></sub></i> | The plasma *O_2* solubility coefficient  |
+| <i>Na<sup>+</sup></i> | Sodium (string cation)  |
+| <i>O<sub>2</sub></i> | Oxygen gas  |
+| <i>OH<sup>-</sup></i> | Hydroxide ion  |
+| <i>P<sub>i</sub></i> | Phosphate  |
+| <i>P<sub>CO<sub>2</sub></sub></i> | Partial pressure of carbon dioxide  |
+| <i>P<sub>O<sub>2</sub></sub></i> | Partial pressure of oxygen  |
+| <i>pH</i> | Negative log of the hydrogen ion concentration  |
+| <i>S<sub>CO<sub>2</sub></sub></i> | Fraction of hemoglobin binding sites with a bound carbon dioxide molecule  |
+| <i>S<sub>O<sub>2</sub></sub></i> | Fraction of hemoglobin binding sites with a bound oxygen molecule  |
+| <i>SID</i> | Strong Ion Difference,  defined as [SID] = [strong cations] - [strong anions]  |
+| <i>T</i> | Temperature  |
+| <i>T<sub>CO<sub>2</sub></sub></i> | Total carbon dioxide  |
+| <i>T<sub>O<sub>2</sub></sub></i> | Total oxygen  |
+| <i>&alpha;<sub>CO<sub>2</sub></sub></i> | The plasma <i>CO_2</i> solubility coefficient  |
+| <i>&alpha;<sub>O<sub>2</sub></sub></i> | The plasma <i>O_2</i> solubility coefficient  |
 </center>
 
 Data Model Implementation

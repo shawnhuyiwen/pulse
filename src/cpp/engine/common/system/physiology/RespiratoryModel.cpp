@@ -2324,7 +2324,7 @@ namespace pulse
     // Temporal tolerance to avoid accidental entry in the the inhalation and exhalation code blocks 
     m_ElapsedBreathingCycleTime_min += m_data.GetTimeStep_s() / 60.0;
 
-    if (m_BreathingCycle) //Exhalingm_AcinarZoneCapillaryCompartments
+    if (m_BreathingCycle) //Exhaling
     {
       if (totalLungVolume_L <= m_BottomBreathTotalVolume_L)
       {
@@ -2498,7 +2498,6 @@ namespace pulse
 
     // Zero out if not breathing with out any assistance
     if ((m_data.GetAirwayMode() == eAirwayMode::Free && m_NotBreathing) || m_ElapsedBreathingCycleTime_min > 0.25)
-    //if (m_data.GetAirwayMode() == eAirwayMode::Free && (m_NotBreathing || m_ElapsedBreathingCycleTime_min > 0.25))
     {
       GetRespirationRate().SetValue(0.0, FrequencyUnit::Per_min);
       GetTidalVolume().SetValue(0.0, VolumeUnit::L);

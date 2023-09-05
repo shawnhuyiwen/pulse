@@ -244,6 +244,26 @@ No resting state physiology validation was completed, because the baroreceptors 
 
 Validation - Actions and Conditions
 --------------------
+
+Actions and conditions with responses specific to the Nervous System were validated. A summary of this validation is shown in Table 2. More details on each individual scenario's validation can be found below.
+
+<center>
+*Table 2. Cumulative validation results for Nervous specific conditions and actions scenarios.*
+</center>
+
+|	Key	|
+|	---	|
+|<span class="success">	Good agreement: correct trends or <10% deviation from expected	</span>|
+|<span class="warning"> 	Some deviation: correct trend and/or <30% deviation from expected	</span>|
+|<span class="danger">	Poor agreement: incorrect trends or >30% deviation from expected	</span>|
+
+|	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
+|	---	|	---	|	---	|	---	|	---	|
+|	Baroreceptors		Patient has 10% blood loss in 30s. View response in heart rate, contractility, systemic vascular resistance, and venous compliance.	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Brain Injury (TBI)		Patient has three brain injuries of increasing severity with recovery in between. View response in intracranial pressure, cerebral blood flow, and cerebral perfusion pressure.	|<span class="success">	23	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
+|		|	Total	|<span class="success">	26	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
+
+
 ### Baroreceptor Reflex
 The baroreceptor reflex is validated through simulation of an acute hemorrhage scenario. This scenario begins with the healthy male patient. An hemorrhage is initiated and proceeds through hemorrhagic shock to patient death. The cardiac output and the MAP are shown in Figure 5 for both the Pulse model and the experimental data in @cite guyton2006medical. This scenario and validation shows the baroreceptor activation and the effectiveness changes throughout the range of MAP changes important in hemorrhage. More details can be found in the @CardiovascularMethodology.
 
@@ -263,6 +283,13 @@ The baroreceptor reflex is validated through simulation of an acute hemorrhage s
 <center>
 <i>Figure 5. Normalized mean arterial pressure and cardiac output as blood loss increases for the Pulse model (left) and the validation data @cite guyton2006medical (right).</i>
 </center><br>
+<i>Table 3. The baroreceptor reflex validation data for the hemorrhage scenario shows good agreement with expected results.</i>
+</center>
+
+|	Action	|	Notes	|	Sampled Scenario Time (s)	|	Heart Rate (beats/min)	|	Cardiac Output (mL/min)	|	Systemic Vascular Resistance (mmHg s/mL)	|
+|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Hemorrhage	|	10% blood loss in 30 s	|	200	|<span class="success">	Increase ~30% @cite Hosomi1979effect @cite Ottesen2004applied	</span>|<span class="success">	Decrease ~15-20% @cite Hosomi1979effect @cite Ottesen2004applied	</span>|<span class="success">	Increase 10-15% @cite Hosomi1979effect @cite Ottesen2004applied	</span>|
+
 
 ### Brain Injury
 The Brain Injury action is validated through repeated application and removal of increasing severities of TBI. The scenario begins with a healthy male patient. After a short time, a mild brain injury (Severity = 0.2, Type = Diffuse) is applied, and the patient is allowed to stabilize before the injury state is removed (only one TBI action can be in effect at a time, so adding a Diffuse Severity 0 TBI removes all TBI effects). This process is repeated for a more severe injury (Severity = 0.75, Type = Left Focal) and severe (Severity = 1, Type = Right Focal) brain injury. We expect to see increases in ICP, with the most severe injury resulting in an ICP greater than 25 mmHg, and decreases in CBF, with the most severe case approaching 8 mL per 100 grams of brain per minute, which, for the validated patient, equates to 108 mL per minute @cite bergeronSME @cite steiner2006monitoring. The scenario shows good agreement for these values. We expect CPP to either increase above its maximum normal value or decrease below its minimum normal value, but, though we see a drop, it isn't quite as pronounced as expected @cite steiner2006monitoring. We can also see that for the low severity injury, ICP doesn't quite reach the threshold to strongly affect the pupils. For the Left Focal injury, only the left pupil is affected, and for the Right Focal injury, only the right pupil is affected.
@@ -303,14 +330,14 @@ The Brain Injury action is validated through repeated application and removal of
 <center>
 <i>Figure 7. Pupillary response to the same TBI scenario as shown in Figure 4 where increasing severities are applied first as Diffuse, then as Left Focal, then as Right Focal.</i>
 <br>
-<i>Table 2. The validation data for the TBI scenario shows good agreement with expected results.</i>
+<i>Table 4. The validation data for the TBI scenario shows good agreement with expected results.</i>
 </center>
 
 |	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Intracranial Pressure (mmHg)	|	Cerebral Blood Flow (mL/min)	|	Cerebral Perfusion Pressure (mmHg)	|	Heart Rate (1/min)	|	Respiration Rate (1/min)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Brain Injury	|	Severity 0.2, CPP=MAP-ICP, StandardMale brain mass=1450g	|	20	|	600	|<span class="success">	10% Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite steiner2006monitoring	</span>|<span class="success">	Decrease @cite balestreri2006impact	</span>|<span class="warning">	0-10% Decrease @cite bergeronSME	</span>|<span class="warning">	0-10% Decrease @cite bergeronSME	</span>|
+|	Brain Injury	|	Severity 0.2, CPP=MAP-ICP, StandardMale brain mass=1450g	|	20	|	600	|<span class="success">	10% Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite steiner2006monitoring	</span>|<span class="success">	Decrease @cite balestreri2006impact	</span>|<span class="success">	0-10% Decrease @cite bergeronSME	</span>|<span class="success">	0-10% Decrease @cite bergeronSME	</span>|
 |	Brain Injury	|	Severity 0	|	620	|	900	|<span class="success">	7-15 mmHg @cite steiner2006monitoring	</span>|<span class="success">	50-65 mL/100g/min @cite guyton2006medical	</span>|<span class="success">	60-98 mmHg	</span>|<span class="success">	72 @cite guyton2006medical	</span>|<span class="success">	[12.0, 20.0], [13.0, 19.0] @cite silverthorn2013human @cite mantoni2007reduced	</span>|
-|	Brain Injury	|	Severity 0.75	|	920	|	1700	|<span class="success">	Increase @cite steiner2006monitoring	</span>|<span class="success">	Decrease @cite steiner2006monitoring	</span>|<span class="success">	Decrease @cite balestreri2006impact	</span>|<span class="warning">	0-15% Decrease @cite bergeronSME	</span>|<span class="warning">	0-20% Decrease @cite bergeronSME	</span>|
+|	Brain Injury	|	Severity 0.75	|	920	|	1700	|<span class="success">	Increase @cite steiner2006monitoring	</span>|<span class="success">	Decrease @cite steiner2006monitoring	</span>|<span class="success">	Decrease @cite balestreri2006impact	</span>|<span class="success">	0-15% Decrease @cite bergeronSME	</span>|<span class="success">	0-20% Decrease @cite bergeronSME	</span>|
 |	Brain Injury	|	Severity 0	|	1720	|	2000	|<span class="success">	7-15 mmHg @cite steiner2006monitoring	</span>|<span class="success">	50-65 mL/100g/min @cite guyton2006medical	</span>|<span class="success">	60-98 mmHg	</span>|<span class="success">	72 @cite guyton2006medical	</span>|<span class="success">	[12.0, 20.0], [13.0, 19.0] @cite silverthorn2013human @cite mantoni2007reduced	</span>|
 |	Brain Injury	|	Severity 1	|	2020	|	3220	|<span class="success">	>25 mmHg @cite steiner2006monitoring	</span>|<span class="success">	<8 mL/100g/min @cite steiner2006monitoring	</span>|<span class="success">	Decrease @cite balestreri2006impact	</span>|<span class="warning">	Decrease @cite bergeronSME	</span>|<span class="warning">	Decrease @cite bergeronSME	</span>|
 
