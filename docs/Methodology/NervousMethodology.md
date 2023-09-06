@@ -259,8 +259,8 @@ Actions and conditions with responses specific to the Nervous System were valida
 
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
-|	Baroreceptors		Patient has 10% blood loss in 30s. View response in heart rate, contractility, systemic vascular resistance, and venous compliance.	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Brain Injury (TBI)		Patient has three brain injuries of increasing severity with recovery in between. View response in intracranial pressure, cerebral blood flow, and cerebral perfusion pressure.	|<span class="success">	23	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
+|	Baroreceptors	|	Patient has 10% blood loss in 30s. View response in heart rate, contractility, systemic vascular resistance, and venous compliance.	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Brain Injury (TBI)	|	Patient has three brain injuries of increasing severity with recovery in between. View response in intracranial pressure, cerebral blood flow, and cerebral perfusion pressure.	|<span class="success">	23	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
 |		|	Total	|<span class="success">	26	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
 
 

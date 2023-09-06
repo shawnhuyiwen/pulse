@@ -682,11 +682,10 @@ Several additional scenarios test going to asystole and returning to each of the
 *Table 3. Validation matrix for going from normal sinus, to asystole, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	"18 +/- 11 @cite paradis1992aortic
-Significant drop @cite Babbs1983relationship 
-33 +/- 10 @cite kim2008direction "	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
 
 #### Sinus Bradycardia
 
@@ -694,19 +693,18 @@ Significant drop @cite Babbs1983relationship
 *Table 4. Validation matrix for going from nornal sinus, to sinus bradycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To SinusBradycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Sinus Bradycardia	|		|	30	|	130	|<span class="success">	Between 40 and 60 @ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	N/A	</span>|<span class="success">	Normal Sinus@cite ACLS2021Bradycardia	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Sinus Bradycardia	|		|	30	|	130	|<span class="success">	Between 40 and 60 @cite ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	N/A	</span>|<span class="success">	Normal Sinus@cite ACLS2021Bradycardia	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
 <br><center>
 *Table 5. Validation matrix form nornal sinus, to asystole, to sinus bradycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To SinusBradycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	"18 +/- 11 @cite paradis1992aortic
-Significant drop @cite Babbs1983relationship 
-33 +/- 10 @cite kim2008direction "	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
 |	Sinus Bradycardia	|		|	30	|	130	|<span class="success">	Between 40 and 60 @ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	N/A	</span>|<span class="success">	Normal Sinus@cite ACLS2021Bradycardia	</span>|
+
 
 #### Sinus Tachycardia
 
@@ -714,30 +712,29 @@ Significant drop @cite Babbs1983relationship
 *Table 6. Validation matrix for going from nornal sinus, to sinus tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To SinusTachycardia	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Sinus Tachycardia	|		|	30	|	130	|<span class="success">	>100 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Increase @cite sohn2007hemodynamic	</span>|<span class="success">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Normal Sinus@cite ACLS2021Tachy	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
 
 <br><center>
 *Table 7. Validation matrix for going from nornal sinus, to asystole, to sinus tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To SinusTachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	"18 +/- 11 @cite paradis1992aortic
-Significant drop @cite Babbs1983relationship 
-33 +/- 10 @cite kim2008direction "	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
 |	Sinus Tachycardia	|		|	30	|	130	|<span class="success">	>100 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Increase @cite sohn2007hemodynamic	</span>|<span class="success">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Normal Sinus@cite ACLS2021Tachy	</span>|
+
 
 #### Sinus Pulseless Electrical Activity
 <br><center>
 *Table 8. Validation matrix for Sinus Pulseless Electrical Activity. The table shows the engine output compared to key hemodynamic and respiratory parameters*
 </center>
 |	Sinus Pulseless Electrical Activity To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	SinusPulselessElectricalActivity	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	"18 +/- 11 @cite paradis1992aortic
-Significant drop @cite Babbs1983relationship 
-33 +/- 10 @cite kim2008direction "	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Sinus w/ Reduced Amplitude @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	SinusPulselessElectricalActivity	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Sinus w/ Reduced Amplitude @cite ACLS2021asystole	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
 
 #### Ventricular Fibrillation
 
@@ -748,21 +745,18 @@ Physiology is modelled identically for both.
 *Table 9. Validation matrix for going from normal sinus, to coarse Ventricular Fibrillation, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Coarse Ventricular Fibrillation To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	CoarseVentricularFibrillation	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	"18 +/- 11 @cite paradis1992aortic
-Significant drop @cite Babbs1983relationship 
-33 +/- 10 @cite kim2008direction "	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Coarse Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	CoarseVentricularFibrillation	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Coarse Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
 <br><center>
 *Table 10. Validation matrix for going from normal sinus, to fine Ventricular Fibrillation, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Fine Ventricular Fibrillation To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	FineVentricularFibrillation	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	"18 +/- 11 @cite paradis1992aortic
-Significant drop @cite Babbs1983relationship 
-33 +/- 10 @cite kim2008direction "	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Fine Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	FineVentricularFibrillation	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Fine Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
 
 #### Ventricular Tachycardia
 
@@ -770,7 +764,7 @@ Significant drop @cite Babbs1983relationship
 *Table 11. Validation matrix for going from normal sinus, to stable Ventricular Tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To Stable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Stable Ventricular Tachycardia	|		|	30	|	130	|<span class="success">	100-150 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Increase @cite sohn2007hemodynamic	</span>|<span class="success">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Ventricular Tachycardia@cite ACLS2021Tachy	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
@@ -778,17 +772,15 @@ Significant drop @cite Babbs1983relationship
 *Table 12. Validation matrix for going from normal sinus, to asystole, to stable Ventricular Tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To Stable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	"18 +/- 11 @cite paradis1992aortic
-Significant drop @cite Babbs1983relationship 
-33 +/- 10 @cite kim2008direction "	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
 |	Stable Ventricular Tachycardia	|		|	30	|	130	|<span class="success">	100-150 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Increase @cite sohn2007hemodynamic	</span>|<span class="success">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Ventricular Tachycardia@cite ACLS2021Tachy	</span>|
 
 <br><center>
 *Table 13. Validation matrix for going from normal sinus, to unstable Ventricular Tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To Unstable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Untable Ventricular Tachycardia	|		|	30	|	130	</span>|<span class="success">	>  150 @cite ACLS2021Tachy	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease with reduced hemodynamic stability	</span>|<span class="danger">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Ventricular Tachycardia w/ reduced amplitude @cite ACLS2021Tachy	</span>|
 |	Normal Sinus	|		|	210	|	300	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
@@ -796,21 +788,18 @@ Significant drop @cite Babbs1983relationship
 *Table 14. Validation matrix for going from normal sinus, to asystole, to unstable Ventricular Tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To Unstable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	"18 +/- 11 @cite paradis1992aortic
-Significant drop @cite Babbs1983relationship 
-33 +/- 10 @cite kim2008direction "	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
 |	Untable Ventricular Tachycardia	|		|	30	|	130	</span>|<span class="success">	>  150 @cite ACLS2021Tachy	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease with reduced hemodynamic stability	</span>|<span class="danger">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Ventricular Tachycardia w/ reduced amplitude @cite ACLS2021Tachy	</span>|
+
 
 #### Pulseless Ventricular Tachycardia
 <br><center>
 *Table 15. Validation matrix for Pulseless Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Pulseless Ventricular Tachycardia To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	PulselessVentricularTachycardia	|		|	30	|	180	|<span class="success">	undetectable @cite ACLS2021Pulseless	</span>|<span class="success">	"18 +/- 11 @cite paradis1992aortic
-Significant drop @cite Babbs1983relationship 
-33 +/- 10 @cite kim2008direction "	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Ventricular Tachycardia w/ Reduced Amplitude @cite ACLS2021Pulseless	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	PulselessVentricularTachycardia	|		|	30	|	180	|<span class="success">	undetectable @cite ACLS2021Pulseless	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Ventricular Tachycardia w/ Reduced Amplitude @cite ACLS2021Pulseless	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
 
