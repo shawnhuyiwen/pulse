@@ -21,8 +21,7 @@ double convert(double val, const std::string& from, const std::string& to)
 
 bool execute_scenario(const std::string& exec_str, eSerializationFormat fmt)
 {
-  Logger logger;
-  return PulseEngineThunk::ExecuteScenario(exec_str, fmt, &logger);
+  return PulseEngineThunk::ExecuteScenario(exec_str, fmt, nullptr);
 }
 
 PYBIND11_MODULE(PyPulse, m)

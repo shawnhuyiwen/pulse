@@ -22,14 +22,10 @@ PulseEngineThunk::~PulseEngineThunk()
 bool PulseEngineThunk::ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format, Logger* logger)
 {
   PulseScenarioExec opts(logger);
-  if (logger == nullptr)
-  {
-    opts.GetLogger()->LogToConsole(false);
-    opts.GetLogger()->LogToConsole(opts.LogToConsole() == eSwitch::On);
-    opts.GetLogger()->SetLogFile(opts.GetOutputRootDirectory() + "/PulseScenarioExec.log");
-  }
   if (!opts.SerializeFromString(sceExecOpts, format))
     return false;
+  if (logger == nullptr)// No logger provided, so log per the opts
+    opts.GetLogger()->LogToConsole(opts.LogToConsole() == eSwitch::On);
   return opts.Execute();
 }
 
