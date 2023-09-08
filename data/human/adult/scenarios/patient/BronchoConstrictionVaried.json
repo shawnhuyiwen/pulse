@@ -94,7 +94,7 @@
       "Bronchoconstriction": {
         "Severity": {
           "Scalar0To1": {
-            "Value": 1.0
+            "Value": 0.9
           }
         }
       }

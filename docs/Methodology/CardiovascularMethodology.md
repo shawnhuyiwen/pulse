@@ -645,23 +645,22 @@ All actions in the CV System were validated. A summary of this validation is sho
 
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
-|	Anemia - 30%	|	Hemoglobin content reduced by 30  percent. - NOT VALIDATED	|<span class="success">	0	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - Asystole To NormalSinus	|	Asystole for 3 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - NormalSinus To SinusBradycardia	|	Bradycardia for 2 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - Asystole To SinusBradycardia	|	Asystole for 2 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - NormalSinus To SinusTachycardia	|	Tachycardia for 2 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - Asystole To SinusTachycardia	|	Asystole for 2 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - Sinus Pulseless Electrical Activity To NormalSinus	|	PEA for 3 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - Coarse Ventricular Fibrillation To NormalSinus	|	Coarse VFIB for 3 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - Fine Ventricular Fibrillation To NormalSinus	|	Fine VFIB for 3 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - NormalSinus To Stable Ventricular Tachycardia	|	Stable VTACH for 2 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - Asystole To Stable Ventricular Tachycardia	|	Asystole for 2 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrhythmia - NormalSinus To Unstable Ventricular Tachycardia	|	Unstable VTACH for 2 min|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
-|	Arrhythmia - Asystole To Unstable Ventricular Tachycardia	|	Asystole for 2 min|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
-|	Arrhythmia - Pulseless Ventricular Tachycardia To NormalSinus	|	Pulseless VTACH for 3 min|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	CPR 	|	Cardiac arrest is initiated, and CPR is performed.	|<span class="success">	22	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Asystole To NormalSinus	|	Asystole for 3 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - NormalSinus To SinusBradycardia	|	Bradycardia for 2 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Asystole To SinusBradycardia	|	Asystole for 2 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - NormalSinus To SinusTachycardia	|	Tachycardia for 2 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Asystole To SinusTachycardia	|	Asystole for 2 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Sinus Pulseless Electrical Activity To NormalSinus	|	PEA for 3 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Coarse Ventricular Fibrillation To NormalSinus	|	Coarse VFIB for 3 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Fine Ventricular Fibrillation To NormalSinus	|	Fine VFIB for 3 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - NormalSinus To Stable Ventricular Tachycardia	|	Stable VTACH for 2 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Asystole To Stable Ventricular Tachycardia	|	Asystole for 2 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - NormalSinus To Unstable Ventricular Tachycardia	|	Unstable VTACH for 2 min	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
+|	Arrhythmia - Asystole To Unstable Ventricular Tachycardia	|	Asystole for 2 min	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
+|	Arrhythmia - Pulseless Ventricular Tachycardia To NormalSinus	|	Pulseless VTACH for 3 min	|<span class="success">	7	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	CPR	|	Cardiac arrest is initiated, and CPR is performed.	|<span class="success">	12	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
 |	Hemorrhage Class 1 - Femoral	|	15% hemorrhage from femoral artery	|<span class="success">	13	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
-|	Hemorrhage Class 2 - Brachial	|	25% hemorrhage from right arm	|<span class="success">	12	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
+|	Hemorrhage Class 2 - Brachial	|	25% hemorrhage from right arm	|<span class="success">	12	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
 |	Hemorrhage Class 2 - Blood	|	25% hemorrhage then intravenous whole blood administration	|<span class="success">	14	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Hemorrhage Class 2 - Spleen	|	25% hemorrhage from spleen - internal hemorrhage	|<span class="success">	14	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Hemorrhage Class 2 - Saline	|	25% hemorrhage then intravenous saline administration	|<span class="success">	21	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
@@ -669,9 +668,8 @@ All actions in the CV System were validated. A summary of this validation is sho
 |	Hemorrhage Class 3 - RBC	|	30% hemorrhage then packed red blood cell administration	|<span class="success">	19	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
 |	Hemorrhage to Shock	|	Hemorrhage until death	|<span class="success">	13	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
 |	Pericardial Effusion - Chronic	|	Patient has an effused pericardium with an accumulated volume of 500 ml.	|<span class="success">	9	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Pericardial Effusion - Acute	|	Pericardium volume starts at 500mL and increases at 6 mL/min.	|<span class="success">	16	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Ventricular Systolic Failure	|	Chronic heart failure is initiated. - NOT VALIDATED	|<span class="success">	0	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	278	</span>|<span class="warning">	11	</span>|<span class="danger">	6	</span>|
+|	Pericardial Effusion - Acute	|	Pericardium volume starts at 500mL and increases at 6 mL/min.	|<span class="success">	17	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
+|		|	Total	|<span class="success">	246	</span>|<span class="warning">	6	</span>|<span class="danger">	6	</span>|
 
 ### Arrhythmia
 There are 13 scenarios for arrhythmia validation.
@@ -684,9 +682,10 @@ Several additional scenarios test going to asystole and returning to each of the
 *Table 3. Validation matrix for going from normal sinus, to asystole, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic <br> Significant drop @cite Babbs1983relationship <br> 33 +/- 10 @cite kim2008direction	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
 
 #### Sinus Bradycardia
 
@@ -694,17 +693,18 @@ Several additional scenarios test going to asystole and returning to each of the
 *Table 4. Validation matrix for going from nornal sinus, to sinus bradycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To SinusBradycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Sinus Bradycardia	|		|	30	|	130	|<span class="success">	Between 40 and 60 @ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="danger">	NA	</span>|<span class="success">	Normal Sinus@cite ACLS2021Bradycardia	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Sinus Bradycardia	|		|	30	|	130	|<span class="success">	Between 40 and 60 @cite ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	N/A	</span>|<span class="success">	Normal Sinus@cite ACLS2021Bradycardia	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
 <br><center>
 *Table 5. Validation matrix form nornal sinus, to asystole, to sinus bradycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To SinusBradycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic Significant drop @cite Babbs1983relationship 33 +/- 10 @cite kim2008direction	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
-|	Sinus Bradycardia	|		|	30	|	130	|<span class="success">	Between 40 and 60 @ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="danger">	NA	</span>|<span class="success">	Normal Sinus@cite ACLS2021Bradycardia	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	Sinus Bradycardia	|		|	30	|	130	|<span class="success">	Between 40 and 60 @ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	N/A	</span>|<span class="success">	Normal Sinus@cite ACLS2021Bradycardia	</span>|
+
 
 #### Sinus Tachycardia
 
@@ -712,26 +712,29 @@ Several additional scenarios test going to asystole and returning to each of the
 *Table 6. Validation matrix for going from nornal sinus, to sinus tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To SinusTachycardia	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Sinus Tachycardia	|		|	30	|	130	|<span class="success">	>100 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Increase @cite sohn2007hemodynamic	</span>|<span class="success">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Normal Sinus@cite ACLS2021Tachy	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
 
 <br><center>
 *Table 7. Validation matrix for going from nornal sinus, to asystole, to sinus tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To SinusTachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic Significant drop @cite Babbs1983relationship 33 +/- 10 @cite kim2008direction	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
 |	Sinus Tachycardia	|		|	30	|	130	|<span class="success">	>100 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Increase @cite sohn2007hemodynamic	</span>|<span class="success">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Normal Sinus@cite ACLS2021Tachy	</span>|
+
 
 #### Sinus Pulseless Electrical Activity
 <br><center>
 *Table 8. Validation matrix for Sinus Pulseless Electrical Activity. The table shows the engine output compared to key hemodynamic and respiratory parameters*
 </center>
 |	Sinus Pulseless Electrical Activity To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	SinusPulselessElectricalActivity	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic Significant drop @cite Babbs1983relationship 33 +/- 10 @cite kim2008direction </span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Sinus w/ Reduced Amplitude @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	SinusPulselessElectricalActivity	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Sinus w/ Reduced Amplitude @cite ACLS2021asystole	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
 
 #### Ventricular Fibrillation
 
@@ -742,17 +745,18 @@ Physiology is modelled identically for both.
 *Table 9. Validation matrix for going from normal sinus, to coarse Ventricular Fibrillation, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Coarse Ventricular Fibrillation To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	CoarseVentricularFibrillation	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic Significant drop @cite Babbs1983relationship 33 +/- 10 @cite kim2008direction	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Coarse Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	CoarseVentricularFibrillation	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Coarse Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
 <br><center>
 *Table 10. Validation matrix for going from normal sinus, to fine Ventricular Fibrillation, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Fine Ventricular Fibrillation To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	FineVentricularFibrillation	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic Significant drop @cite Babbs1983relationship 33 +/- 10 @cite kim2008direction	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Fine Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	FineVentricularFibrillation	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Fine Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
 
 #### Ventricular Tachycardia
 
@@ -760,7 +764,7 @@ Physiology is modelled identically for both.
 *Table 11. Validation matrix for going from normal sinus, to stable Ventricular Tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To Stable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Stable Ventricular Tachycardia	|		|	30	|	130	|<span class="success">	100-150 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Increase @cite sohn2007hemodynamic	</span>|<span class="success">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Ventricular Tachycardia@cite ACLS2021Tachy	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
@@ -768,15 +772,15 @@ Physiology is modelled identically for both.
 *Table 12. Validation matrix for going from normal sinus, to asystole, to stable Ventricular Tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To Stable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aorticSignificant drop @cite Babbs1983relationship 33 +/- 10 @cite kim2008direction	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
 |	Stable Ventricular Tachycardia	|		|	30	|	130	|<span class="success">	100-150 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Increase @cite sohn2007hemodynamic	</span>|<span class="success">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Ventricular Tachycardia@cite ACLS2021Tachy	</span>|
 
 <br><center>
 *Table 13. Validation matrix for going from normal sinus, to unstable Ventricular Tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To Unstable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Untable Ventricular Tachycardia	|		|	30	|	130	</span>|<span class="success">	>  150 @cite ACLS2021Tachy	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease with reduced hemodynamic stability	</span>|<span class="danger">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Ventricular Tachycardia w/ reduced amplitude @cite ACLS2021Tachy	</span>|
 |	Normal Sinus	|		|	210	|	300	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
@@ -784,19 +788,19 @@ Physiology is modelled identically for both.
 *Table 14. Validation matrix for going from normal sinus, to asystole, to unstable Ventricular Tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To Unstable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic Significant drop @cite Babbs1983relationship 33 +/- 10 @cite kim2008direction	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Asystole	|		|	30	|	180	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
 |	Untable Ventricular Tachycardia	|		|	30	|	130	</span>|<span class="success">	>  150 @cite ACLS2021Tachy	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease with reduced hemodynamic stability	</span>|<span class="danger">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Ventricular Tachycardia w/ reduced amplitude @cite ACLS2021Tachy	</span>|
+
 
 #### Pulseless Ventricular Tachycardia
 <br><center>
 *Table 15. Validation matrix for Pulseless Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Pulseless Ventricular Tachycardia To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	PulselessVentricularTachycardia	|		|	30	|	180	|<span class="success">	undetectable @cite ACLS2021Pulseless	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic Significant drop @cite Babbs1983relationship 33 +/- 10 @cite kim2008direction	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Ventricular Tachycardia w/ Reduced Amplitude @cite ACLS2021Pulseless	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	PulselessVentricularTachycardia	|		|	30	|	180	|<span class="success">	undetectable @cite ACLS2021Pulseless	</span>|<span class="success">	18 +/- 11 @cite paradis1992aortic, Significant drop @cite Babbs1983relationship, 33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	13.4 +/- 8.5 @cite paradis1990coronary 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Ventricular Tachycardia w/ Reduced Amplitude @cite ACLS2021Pulseless	</span>|
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
-
 
 
 ### Cardiopulmonary Resuscitation (CPR)
@@ -851,8 +855,8 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 90 ml/min Hemorrhage	|				|	30	|	580	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	NC @cite guyton2006medical	</span>|<span class="success">	4675	</span>|<span class="warning">	NC @guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	700	</span>|<span class="success">	NC @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	580	|	980	|<span class="success">	NC	</span>|<span class="success">	NC	</span>|<span class="danger">	NC	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|
+|	Initiate 90 ml/min Hemorrhage	|				|	30	|	580	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change @cite guyton2006medical	</span>|<span class="success">	4675	</span>|<span class="warning">	No Change @guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	700	</span>|<span class="success">	No Change @cite guyton2006medical	</span>|
+|	Stop Hemorrhage	|				|	580	|	980	|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
 
 
 <br><center>
@@ -860,8 +864,8 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 60 ml/min Hemorrhage from Right Arm	|				|	30	|	1405	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="warning">	~80% normal @cite guyton2006medical	</span>|<span class="success">	4125	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	620	</span>|<span class="warning">	NC @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	1405	|	1800	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="danger">	NC	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|
+|	Initiate 60 ml/min Hemorrhage from Right Arm	|				|	30	|	1405	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="warning">	~80% normal @cite guyton2006medical	</span>|<span class="success">	4125	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	620	</span>|<span class="warning">	No Change @cite guyton2006medical	</span>|
+|	Stop Hemorrhage	|				|	1405	|	1800	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
 
 
 <br><center>
@@ -869,8 +873,8 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 140 ml/min Hemorrhage 	|				|	30	|	590	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~80% normal @cite guyton2006medical	</span>|<span class="success">	4190	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	630	</span>|<span class="success">	NC @cite guyton2006medical	</span>|
-|	Start IV Fluids: Blood at 100 mL/min with a 500 mL bag	|				|	590	|	1090	|<span class="success">	Decrease @cite metoyer2016SME	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	4590	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	690	</span>|<span class="success">	NC	</span>|
+|	Initiate 140 ml/min Hemorrhage 	|				|	30	|	590	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~80% normal @cite guyton2006medical	</span>|<span class="success">	4190	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	630	</span>|<span class="success">	No Change @cite guyton2006medical	</span>|
+|	Start IV Fluids: Blood at 100 mL/min with a 500 mL bag	|				|	590	|	1090	|<span class="success">	Decrease @cite metoyer2016SME	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	4590	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	690	</span>|<span class="success">	No Change	</span>|
 
 
 <br><center>
@@ -878,9 +882,9 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 140 ml/min Hemorrhage 	|				|	30	|	590	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~80% normal @cite guyton2006medical	</span>|<span class="success">	4190	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	630	</span>|<span class="success">	NC @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	1405	|	1800	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	NC	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|
-|	Start IV Fluids: Saline at 100 mL/min with a 500 mL bag	|				|	590	|	1090	|<span class="success">	Decrease @cite metoyer2016SME	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	4590	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|
+|	Initiate 140 ml/min Hemorrhage 	|				|	30	|	590	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~80% normal @cite guyton2006medical	</span>|<span class="success">	4190	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	630	</span>|<span class="success">	No Change @cite guyton2006medical	</span>|
+|	Stop Hemorrhage	|				|	1405	|	1800	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
+|	Start IV Fluids: Saline at 100 mL/min with a 500 mL bag	|				|	590	|	1090	|<span class="success">	Decrease @cite metoyer2016SME	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	4590	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
 
 
 <br><center>
@@ -888,8 +892,8 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 60 ml/min Hemorrhage from Spleen	|				|	30	|	1230	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~80% - NC bc internal pressure normal @cite guyton2006medical	</span>|<span class="success">	4300	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	630	</span>|<span class="danger">	NC @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	1230	|	1500	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="danger">	NC	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|
+|	Initiate 60 ml/min Hemorrhage from Spleen	|				|	30	|	1230	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~80% - No Change bc internal pressure normal @cite guyton2006medical	</span>|<span class="success">	4300	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	630	</span>|<span class="danger">	No Change @cite guyton2006medical	</span>|
+|	Stop Hemorrhage	|				|	1230	|	1500	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
 
 
 <br><center>
@@ -898,15 +902,16 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
 |	Initiate 200 ml/min Hemorrhage from leg and vena cava	|				|	30	|	575	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~50% normal @cite guyton2006medical	</span>|<span class="success">	3600	</span>|<span class="success">	Decrease ~50% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	575	</span>|<span class="danger">	Increase @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	605	|	1000	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="danger">	NC	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|
+|	Stop Hemorrhage	|				|	605	|	1000	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
+
 
 *Table 20. Validation matrix for a class III hemorrhage followed by intravenous administration of packed red blood cells. The table engine shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
 |	Initiate 250 ml/min Hemorrhage from leg and vena cava	|				|	30	|	400	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~60% normal @cite guyton2006medical	</span>|<span class="success">	3800	</span>|<span class="success">	Decrease ~50% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	575	</span>|<span class="danger">	Increase @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	430	|	550	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="danger">	NC	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|
-|	Start IV Fluids: Packed RBCs at 5 mL/min with a 250 mL bag	|				|	550	|	2000	|<span class="success">	NC	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="danger">	NC	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase 	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|
+|	Stop Hemorrhage	|				|	430	|	550	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
+|	Start IV Fluids: Packed RBCs at 5 mL/min with a 250 mL bag	|				|	550	|	2000	</span>|<span class="warning">	No Change	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase 	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|
 
 
 *Table 21. Validation matrix for a class IV hemorrhage. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
@@ -914,7 +919,7 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
 |	Initiate 200 ml/min Hemorrhage from leg and vena cava	|				|	30	|	650	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~60% normal @cite guyton2006medical	</span>|<span class="success">	3400	</span>|<span class="success">	Decrease ~50% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	500	</span>|<span class="danger">	Increase @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	680	|	750	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Decrease  @cite guyton2006medical	</span>|<span class="danger">	NC	</span>|<span class="success">	Decrease  @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|
+|	Stop Hemorrhage	|				|	680	|	750	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Decrease  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Decrease  @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
 
 
 ### Pericardial Effusion
@@ -923,18 +928,19 @@ The pericardial effusion scenario has a chronic effusion applied to the patient 
 <br><center>
 *Table 22. Validation matrix for a chronic case of pericardial effusion. The table shows the engine output compared to key hemodynamic parameters.*
 </center>
-|	Segment	|	Notes		|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Pericardium Pressure (mmHg)	|	Pericardium Volume (mL)	|	Pulmonary Capillaries Wedge Pressure (mmHg)	|	Oxygen Saturation	|	
-|	------------------------	|	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	
-|	Pericardial Effusion Condition	|	Volume accumulation on pericardium is set at 500 ml.		|	120	|<span class="danger">	Slight increase or no change @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="warning">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Increase @cite spodick1998tamp	</span>|<span class="success">	Increase @cite spodick1998tamp	</span>|<span class="success">	Slight increase @cite spodick1998tamp	</span>|<span class="success">	NC 	</span>|	
+|	Segment	|	Notes		|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Pericardium Pressure (mmHg)	|	Pericardium Volume (mL)	|	Pulmonary Capillaries Wedge Pressure (mmHg)	|	Oxygen Saturation	|
+|	------------------------	|	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Pericardial Effusion Condition	|	Volume accumulation on pericardium is set at 500 ml.		|	120	|<span class="success">	Slight increase or no change @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Increase @cite spodick1998tamp	</span>|<span class="success">	Increase @cite spodick1998tamp	</span>|<span class="success">	Slight increase @cite spodick1998tamp	</span>|<span class="success">	No Change 	</span>|
 
 
 <br><center>
 *Table 23. Validation matrix for a chronic case of pericardial effusion combined with an acute worsening of the pericardial effusion. The table shows the engine output compared to key hemodynamic parameters.*
 </center>
-|	Segment	|	Notes		|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Pericardium Pressure (mmHg)	|	Pericardium Volume (mL)	|	Pulmonary Capillaries Wedge Pressure (mmHg)	|	Oxygen Saturation	|	
-|	------------------------	|	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	
-|	Pericardial Effusion Condition	|	Volume accumulation on pericardium is set at 500 ml.		|	30	|<span class="warning">	Slight increase or no change @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="danger">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="danger">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Slight increase @cite spodick1998tamp	</span>|<span class="success">	NC 	</span>|	
-|	Pericardial Effusion Acute	|	Flow into pericardium set to 6 mL/min.		|	150	|<span class="warning">	Slight increase or no change @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="danger">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="danger">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Slight increase @cite spodick1998tamp	</span>|<span class="success">	NC 	</span>|	
+|	Segment	|	Notes		|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Pericardium Pressure (mmHg)	|	Pericardium Volume (mL)	|	Pulmonary Capillaries Wedge Pressure (mmHg)	|	Oxygen Saturation	|
+|	------------------------	|	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Pericardial Effusion Condition	|	Volume accumulation on pericardium is set at 500 ml.		|	30	|<span class="success">	Slight increase or no change @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Increase @cite spodick1998tamp	</span>|<span class="success">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Slight increase @cite spodick1998tamp	</span>|<span class="success">	No Change 	</span>|
+|	Pericardial Effusion Acute	|	Flow into pericardium set to 6 mL/min.		|	150	|<span class="success">	Slight increase or no change @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Increase @cite spodick1998tamp	</span>|<span class="success">	Increase @cite spodick1998tamp	</span>|<span class="warning">	Slight increase @cite spodick1998tamp	</span>|<span class="success">	No Change 	</span>|
+
 
 @anchor cardiovascular-conclusions
 Conclusions
@@ -987,66 +993,3 @@ Data Model Implementation
 @ref ElectroCardioGramTable "ElectroCardioGram"
 
 @ref TissueSystemTable "Tissue"
-
-@anchor cardiovascular-compartments
-Compartments
-------------
-- Aorta
-- Heart
- - Myocardium
- - LeftHeart
- - RightHeart
- - Pericardium
-- VenaCava
-
-- PulmonaryArteries
-- PulmonaryCapillaries
-- PulmonaryVeins
-- Lungs
- - LeftLung
-  - LeftPulmonaryArteries
-  - LeftPulmonaryCapillaries
-  - LeftPulmonaryVeins
- - RightLung
-  - RightPulmonaryArteries
-  - RightPulmonaryCapillaries
-  - RightPulmonaryVeins
-
-- Kidneys
- - LeftKidney
-  - LeftRenalArtery
-  - LeftNephron
-   - LeftAfferentArteriole
-   - LeftGlomerularCapillaries
-   - LeftEfferentArteriole
-   - LeftPeritubularCapillaries
-   - LeftBowmansCapsules
-   - LeftTubules
-  - LeftRenalVein
- - RightKidney
-  - RightRenalArtery
-  - RightNephron
-   - RightAfferentArteriole
-   - RightGlomerularCapillaries
-   - RightEfferentArteriole
-   - RightPeritubularCapillaries
-   - RightBowmansCapsules
-   - RightTubules
-  - RightRenalVein
-
-- Bone
-- Brain
-- Fat
-- Gut
- - Splanchnic
- - SmallIntestine
- - LargeIntestine
-- Liver
-- Spleen
-- Skin
-- Muscle
-- LeftArm
-- LeftLeg
-- RightArm
-- RightLeg
-- Ground

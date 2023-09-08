@@ -272,10 +272,8 @@ namespace pulse
     SEFluidCircuitPath* m_LeftRespirtoryLeak;
     SEFluidCircuitPath* m_RightRespirtoryLeak;
 
-    SEFluidCircuitPath* m_LeftAlveoliToLeftPleuralConnection; //jbw - Replace?
-    SEFluidCircuitPath* m_RightAlveoliToRightPleuralConnection; //jbw - Replace?
-    SEFluidCircuitPath* m_LeftPulmonaryArteriesToVeins; //jbw - Replace?
-    SEFluidCircuitPath* m_RightPulmonaryArteriesToVeins; //jbw - Replace?
+    SEFluidCircuitPath* m_LeftAlveoliToLeftPleuralConnection;
+    SEFluidCircuitPath* m_RightAlveoliToRightPleuralConnection;
 
     SEFluidCircuitCalculator* m_Calculator;
     SEGasTransporter* m_GasTransporter;

@@ -843,7 +843,7 @@ def create_plot(plot_sources: [SEPlotSource],
             if plot_config.get_image_properties().get_width_inch() is not None:
                 legend_fig.set_size_inches(plot_config.get_image_properties().get_width_inch(), plot_config.get_image_properties().get_height_inch())
             legend_ax.axis(False)
-            legend_ax.legend(ax3.lines, lbls, loc='center', ncol = min(max_ncols, len(lbls)), fontsize=plot_config.get_legend_font_size())
+            legend_ax.legend(ax3.lines, lbls, loc='center', ncol = min(max_ncols, len(lbls)), fontsize=int(plot_config.get_legend_font_size()/2))
 
     return True
 
