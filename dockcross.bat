@@ -57,7 +57,7 @@ call wsl chmod +x ./%container%
 :: Run CMake
 :: -B is the relative path to my build directory
 :: -H is the relative path to my Pulse source directory
-call wsl ./%container% cmake -DPulse_JAVA_API:BOOL=OFF -B%nixBuildDir% -H%nixPulseDir% -GNinja
+call wsl ./%container% cmake -DPulse_JAVA_API:BOOL=OFF -DPulse_PYTHON_API:BOOL=OFF -B%nixBuildDir% -H%nixPulseDir% -GNinja
 :: Use ninja to build (provided in the docker)
 call wsl ./%container% ninja -C%nixBuildDir%
 :: The PulseC.so for the target platform will be in the %buildDir%/install/bin directory
