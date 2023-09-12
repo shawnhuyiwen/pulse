@@ -220,6 +220,25 @@ $ ./armv8a ninja -C./Builds/pulse-engine-armv8a
 # The PulseC.so for the target platform will be in the pulse-engine-armv8a/install/bin directory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+#### Dockcross compile scripts
+
+To make cross compiling with dockcross easier, we have provided batch script file for both windows and *nix operating systems.
+
+This script will create a `dockcross-builds` directory one level up from your Pulse source directory.
+A build directory for each platform will be created within this directory.
+Platforms are specified in the xcompile.bat and xcompile.sh scripts.
+We currently use these scripts to build a linux distribution independent and android arm7 and arm8 based PulseC.so binaries.
+You can modify these files to build the desired platform.
+These scripts encapsulate the commands descibed above.
+To start these builds simply open a terminal in the Pulse source directory and start the script
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# Build various platform targets
+$ ./xcompile.sh
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+PulseC binaries are located in each platform/install/bin directory
+
 #### iOS
 
 iOS can only link to static iOS arm64 C++ Pulse libraries. 
