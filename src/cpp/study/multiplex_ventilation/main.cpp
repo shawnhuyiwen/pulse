@@ -520,7 +520,7 @@ int main(int argc, char* argv[])
       plots.close();
     }
   }
-  catch (std::exception ex)
+  catch (std::exception& ex)
   {
     std::cerr << ex.what() << std::endl;
     return 1;

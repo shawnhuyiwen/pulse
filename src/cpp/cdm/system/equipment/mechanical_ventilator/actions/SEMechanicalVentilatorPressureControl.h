@@ -16,7 +16,7 @@ public:
   virtual ~SEMechanicalVentilatorPressureControl();
 
   static constexpr char const* Name = "Pressure Control";
-  virtual std::string GetName() const { return Name; }
+  virtual std::string GetName() const override { return Name; }
 
   void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorPressureControl& src, bool /*preserveState*/ = false);

@@ -13,7 +13,7 @@ public:
   virtual ~SEPatientCondition();
 
   static constexpr char const* ConditionType = "Patient";
-  virtual std::string GetConditionType() const { return ConditionType; }
+  virtual std::string GetConditionType() const override { return ConditionType; }
 
   void Clear() override;
 

@@ -27,9 +27,9 @@ public:
   SERespiratorySystem(Logger* logger);
   virtual ~SERespiratorySystem();
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual bool HasAirwayPressure() const;
   virtual SEScalarPressure& GetAirwayPressure();

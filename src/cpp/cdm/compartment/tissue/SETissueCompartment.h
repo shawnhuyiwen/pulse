@@ -16,12 +16,12 @@ protected:
 public:
   virtual ~SETissueCompartment();
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
   // Children on tissue is not supported at this time
-  virtual bool HasChildren() const { return false; }
+  bool HasChildren() const override { return false; }
   virtual const std::vector<SETissueCompartment*>& GetChildren() = delete;
   virtual const std::vector<SETissueCompartment*>& GetLeaves() = delete;
 
@@ -30,7 +30,7 @@ public:
   virtual SELiquidCompartment& GetIntracellular() { return m_Intracellular; }
   virtual const SELiquidCompartment& GetIntracellular() const { return m_Intracellular; }
 
-  virtual void StateChange();
+  virtual void StateChange() override;
 
   virtual bool HasAcidicPhospohlipidConcentration() const;
   virtual SEScalarMassPerMass& GetAcidicPhospohlipidConcentration();

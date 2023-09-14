@@ -13,9 +13,9 @@ public:
   SEGastrointestinalSystem(Logger* logger);
   virtual ~SEGastrointestinalSystem();
 
-  virtual void Clear();// Deletes all members
+  void Clear() override;// Deletes all members
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual bool HasWaterAbsorptionRate() const;
   virtual SEScalarVolumePerTime& GetWaterAbsorptionRate();

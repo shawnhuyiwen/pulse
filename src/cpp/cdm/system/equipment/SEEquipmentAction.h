@@ -11,7 +11,7 @@ public:
   SEEquipmentAction(Logger* logger);
   virtual ~SEEquipmentAction();
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual bool IsValid() const;
+  bool IsValid() const override;
 };  

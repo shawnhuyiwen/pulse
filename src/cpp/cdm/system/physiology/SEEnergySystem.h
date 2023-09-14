@@ -12,9 +12,9 @@ public:
   SEEnergySystem(Logger* logger);
   virtual ~SEEnergySystem();
 
-  virtual void Clear();// Deletes all members
+  void Clear() override;// Deletes all members
   
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual bool HasAchievedExerciseLevel() const;
   virtual SEScalar0To1& GetAchievedExerciseLevel();

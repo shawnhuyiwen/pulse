@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
     if(!opt.ConvergeToHemodynamicsTargets(maxLoops, stepRatio, startModifierSet, dataRequestsFilename, targets, modifiers))
       log.Error("Unable to converge to optimum circuit");
   }
-  catch (std::exception ex)
+  catch (std::exception& ex)
   {
     std::cerr << ex.what() << std::endl;
     return 1;

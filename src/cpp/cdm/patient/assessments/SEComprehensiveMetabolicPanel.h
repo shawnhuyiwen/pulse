@@ -12,10 +12,10 @@ public:
   SEComprehensiveMetabolicPanel(Logger* logger);
   virtual ~SEComprehensiveMetabolicPanel();
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
-  bool SerializeToString(std::string& output, eSerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const override;
+  bool SerializeToFile(const std::string& filename) const override;
 
   bool HasAlbumin() const;
   SEScalarMassPerVolume& GetAlbumin();

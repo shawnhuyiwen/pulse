@@ -12,7 +12,7 @@ public:
   SEMeal(Logger* logger);
   virtual ~SEMeal();
 
-  virtual void Clear();
+  void Clear() override;
 
   bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;

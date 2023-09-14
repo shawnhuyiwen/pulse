@@ -41,10 +41,10 @@ public:
   SEUrinalysis(Logger* logger);
   virtual ~SEUrinalysis();
 
-  virtual void Clear();
+  void Clear() override;
 
-  bool SerializeToString(std::string& output, eSerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const override;
+  bool SerializeToFile(const std::string& filename) const override;
 
   virtual bool HasColor() const;
   virtual eUrinalysis_UrineColor GetColor() const;

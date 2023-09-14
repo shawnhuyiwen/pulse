@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
     }
     std::cerr << "Unsupported mode : " << mode << std::endl;
   }
-  catch (std::exception ex)
+  catch (std::exception& ex)
   {
     std::cerr << ex.what() << std::endl;
   }

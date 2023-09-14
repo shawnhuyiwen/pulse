@@ -4461,7 +4461,7 @@ namespace pulse
     return nullptr;
   }
 
-  const std::string& RespiratoryModel::GetCompartmentName(eLungCompartment m)
+  std::string RespiratoryModel::GetCompartmentName(eLungCompartment m)
   {
     switch (m)
     {
@@ -4471,7 +4471,7 @@ namespace pulse
       return pulse::PulmonaryCompartment::RightLung;
 
     //case eLungCompartment::LeftInferiorLobe:
-    //  return pulse::ExpandedPulmonaryCompartment::LeftLeftInferiorLobeLung;
+    //  return pulse::ExpandedPulmonaryCompartment::LeftInferiorLobeLung;
     //case eLungCompartment::LeftSuperiorLobe:
     //  return pulse::ExpandedPulmonaryCompartment::LeftSuperiorLobe;
     //case eLungCompartment::RightInferiorLobe:
@@ -4480,11 +4480,14 @@ namespace pulse
     //  return pulse::ExpandedPulmonaryCompartment::RightMiddleLobe;
     //case eLungCompartment::RightSuperiorLobe:
     //  return pulse::ExpandedPulmonaryCompartment::RightSuperiorLobe;
+
+    default:
+      Warning("Unsupported eLungCompartment");
     }
     return "";
   }
 
-  eLungCompartment RespiratoryModel::GeteLungCompartment(const std::string& cmpt)
+  eLungCompartment RespiratoryModel::GetLungCompartment(const std::string& cmpt)
   {
     if (cmpt == pulse::PulmonaryCompartment::LeftLung)
       return eLungCompartment::LeftLung;

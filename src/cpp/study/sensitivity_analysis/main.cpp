@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
       sar.Run(argv[2], eSerializationFormat::JSON);
     }
   }
-  catch (std::exception ex)
+  catch (std::exception& ex)
   {
     std::cerr << ex.what() << std::endl;
     return 1;

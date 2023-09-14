@@ -19,11 +19,11 @@ protected:
 public:
   virtual ~SELiquidCompartment();
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
-  virtual void StateChange();
+  void StateChange() override;
 
   virtual void Balance(BalanceLiquidBy e);// Balance all substances based on a specific property
 

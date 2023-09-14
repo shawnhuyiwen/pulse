@@ -485,7 +485,6 @@ namespace pulse { namespace human_adult_whole_body
     Engine pe;
     Controller& pc = (Controller&)pe.GetController();
     TissueModel& tsu = (TissueModel&)pc.GetTissue();
-    double timestep_s = 1.0 / 90;
     pc.GetSubstances().LoadSubstanceDirectory();
     SESubstance* o2 = pc.GetSubstances().GetSubstance("Oxygen");
     pc.GetSubstances().AddActiveSubstance(*o2);

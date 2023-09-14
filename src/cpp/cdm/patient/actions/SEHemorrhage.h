@@ -44,9 +44,9 @@ public:
   void Clear() override;
   virtual void Copy(const SEHemorrhage& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual eHemorrhage_Type GetType() const { return m_Type; }
   virtual void SetType(eHemorrhage_Type t) { m_Type = t; }
@@ -68,7 +68,7 @@ public:
   virtual SEScalarVolume& GetTotalBloodLost();
   virtual double GetTotalBloodLost(const VolumeUnit& unit) const;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
   eHemorrhage_Type        m_Type;

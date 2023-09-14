@@ -15,8 +15,8 @@ public:
   virtual void Clear(); //clear memory
   void Copy(const SEHistogram& s);
 
-  virtual bool                          IsValid() const;
-  virtual void                          Invalidate();
+  bool                          IsValid() const override;
+  void                          Invalidate() override;
 
   virtual size_t                        NumberOfBins() const;
   virtual size_t                        NumberOfBoundaries() const;

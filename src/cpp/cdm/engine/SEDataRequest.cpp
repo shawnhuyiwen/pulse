@@ -274,6 +274,8 @@ std::string SEDataRequest::ToString() const
     if (HasCompartmentName())
       str += GetCompartmentName() + "-";
     break;
+  default: // Do nothing
+    break;
   }
   str += m_PropertyName;
   if (HasRequestedUnit())

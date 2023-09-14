@@ -15,7 +15,7 @@ protected:
 public:
   virtual ~SEGasBlackBox();
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
   // Graph Elements
   virtual bool HasCompartment() const { return m_Compartment != nullptr; }

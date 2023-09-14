@@ -56,8 +56,8 @@ namespace pulse
 
   protected:
     void ComputeExposedModelParameters() override;
-    eLungCompartment GeteLungCompartment(const std::string& cmpt);
-    const std::string& GetCompartmentName(eLungCompartment m);
+    eLungCompartment GetLungCompartment(const std::string& cmpt);
+    std::string GetCompartmentName(eLungCompartment m);
 
     //Tuning
     void TuneCircuit();

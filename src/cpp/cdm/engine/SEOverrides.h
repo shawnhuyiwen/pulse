@@ -13,18 +13,18 @@ public:
   virtual ~SEOverrides();
 
   static constexpr char const* Name = "Overrides";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override{ return Name; }
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
   virtual void Copy(const SEOverrides& src);
 
-  virtual bool IsValid() const;
+  bool IsValid() const override;
 
   virtual bool HasScalarProperties() const;
   virtual SEScalarProperties& GetScalarProperties();
   virtual const SEScalarProperties& GetScalarProperties() const;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
   SEScalarProperties m_ScalarProperties;

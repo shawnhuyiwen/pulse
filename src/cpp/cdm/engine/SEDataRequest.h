@@ -27,7 +27,7 @@ public:
 
   virtual ~SEDataRequest();
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
   virtual bool IsValid();
   virtual void Copy(const SEDataRequest& src);
 

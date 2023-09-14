@@ -13,18 +13,18 @@ public:
   virtual ~SEAdvanceUntilStable();
 
   static constexpr char const* Name = "Advance Until Stable";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
-  virtual bool IsValid() const;
+  bool IsValid() const override;
 
   virtual bool HasCriteria() const;
   virtual std::string GetCriteria() const;
   virtual void SetCriteria(const std::string& c);
   virtual void InvalidateCriteria();
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
   std::string m_Criteria;

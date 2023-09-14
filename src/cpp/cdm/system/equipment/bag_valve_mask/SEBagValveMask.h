@@ -20,7 +20,7 @@ public:
   SEBagValveMask(Logger* logger);
   virtual ~SEBagValveMask();
 
-  virtual void Clear();
+  void Clear() override;
 
   bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
@@ -40,7 +40,7 @@ protected:
 
 public:
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual eBreathState GetBreathState() const;
   virtual void SetBreathState(eBreathState c);

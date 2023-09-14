@@ -54,7 +54,7 @@ class MechVentHandler : public Loggable, public SEEventHandler
 {
 public:
   MechVentHandler(Logger *logger) : Loggable(logger), SEEventHandler() { }
-  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) 
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override
   {
     switch (type)
     {     

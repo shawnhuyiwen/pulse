@@ -14,9 +14,9 @@ public:
   SEBloodChemistrySystem(Logger* logger);
   virtual ~SEBloodChemistrySystem();
 
-  virtual void Clear();                                                                               /**< @copydoc DOXY_CDM_CLEAR */
+  void Clear() override;                                                                      /**< @copydoc DOXY_CDM_CLEAR */
 
-  virtual const SEScalar* GetScalar(const std::string& name);                                         /**< @copydoc DOXY_CDM_GET_SCALAR */
+  const SEScalar* GetScalar(const std::string& name) override;                                /**< @copydoc DOXY_CDM_GET_SCALAR */
 
   /**  @name BloodDensity *///@{ @copybrief Physiology_BloodChemistrySystemData_BloodDensity
   virtual bool HasBloodDensity() const;                                                               /**< @copydoc DOXY_CDM_HAS */

@@ -17,11 +17,11 @@ public:
   virtual ~SESerializeState();
 
   static constexpr char const* Name = "Serialize State";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
-  virtual bool IsValid() const;
+  bool IsValid() const override;
 
   virtual eSerialization_Type GetType() const;
   virtual void SetType(eSerialization_Type t);
@@ -31,7 +31,7 @@ public:
   virtual void SetFilename(const std::string& filename);
   virtual void InvalidateFilename();
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
 

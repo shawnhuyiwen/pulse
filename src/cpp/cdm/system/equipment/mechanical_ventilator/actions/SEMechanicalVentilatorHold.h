@@ -14,14 +14,14 @@ public:
   virtual ~SEMechanicalVentilatorHold();
 
   static constexpr char const* Name = "Hold";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear();
+  void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorHold& src, bool /*preserveState*/ = false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual eSwitch GetState() const;
   virtual void SetState(eSwitch name);
@@ -29,7 +29,7 @@ public:
   virtual eAppliedRespiratoryCycle GetAppliedRespiratoryCycle() const;
   virtual void SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle c);
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
   eAppliedRespiratoryCycle m_AppliedRespiratoryCycle;

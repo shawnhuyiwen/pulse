@@ -12,16 +12,16 @@ public:
   SEDynamicStabilization(Logger* logger);
   virtual ~SEDynamicStabilization();
 
-  virtual void Clear();
+  void Clear() override;
 
-  bool SerializeToString(std::string& output, eSerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, eSerializationFormat m);
-  bool SerializeFromFile(const std::string& filename);
+  bool SerializeToString(std::string& output, eSerializationFormat m) const override;
+  bool SerializeToFile(const std::string& filename) const override;
+  bool SerializeFromString(const std::string& src, eSerializationFormat m) override;
+  bool SerializeFromFile(const std::string& filename) override;
 
-  virtual bool StabilizeRestingState(Controller& engine);
-  virtual bool StabilizeFeedbackState(Controller& engine);
-  virtual bool StabilizeConditions(Controller& engine, const SEConditionManager& conditions);
+  virtual bool StabilizeRestingState(Controller& engine) override;
+  virtual bool StabilizeFeedbackState(Controller& engine) override;
+  virtual bool StabilizeConditions(Controller& engine, const SEConditionManager& conditions) override;
 
   virtual SEDynamicStabilizationEngineConvergence& GetRestingConvergence();
   virtual const SEDynamicStabilizationEngineConvergence& GetRestingConvergence() const;

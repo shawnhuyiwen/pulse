@@ -12,10 +12,10 @@ public:
   SEArterialBloodGasTest(Logger* logger);
   virtual ~SEArterialBloodGasTest();
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
-  bool SerializeToString(std::string& output, eSerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const override;
+  bool SerializeToFile(const std::string& filename) const override;
 
   virtual bool HasBloodPH() const;
   virtual SEScalar& GetBloodPH();

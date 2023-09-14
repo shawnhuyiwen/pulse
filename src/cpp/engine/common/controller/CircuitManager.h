@@ -21,10 +21,10 @@ namespace pulse
     CircuitManager(Data& data);
     virtual ~CircuitManager();
 
-    virtual void Clear();
-    virtual void StateChange();
+    void Clear() override;
+    void StateChange() override;
 
-    virtual void SetReadOnlyFluid(bool b);
+    void SetReadOnlyFluid(bool b) override;
 
     // Active methods return the circuit configuration to be calculated
     virtual SEFluidCircuit& GetActiveCardiovascularCircuit();

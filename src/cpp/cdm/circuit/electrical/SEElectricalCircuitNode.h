@@ -15,7 +15,7 @@ protected:
 public:
   virtual ~SEElectricalCircuitNode();
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
 public:
   virtual bool HasVoltage() const;

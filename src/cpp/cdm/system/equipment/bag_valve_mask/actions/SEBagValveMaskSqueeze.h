@@ -14,14 +14,14 @@ public:
   virtual ~SEBagValveMaskSqueeze();
 
   static constexpr char const* Name = "Squeeze";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear();
+  void Clear() override;
   virtual void Copy(const SEBagValveMaskSqueeze& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasSqueezePressure() const;
   virtual SEScalarPressure& GetSqueezePressure();
@@ -39,7 +39,7 @@ public:
   virtual SEScalarTime& GetInspiratoryPeriod();
   virtual double GetInspiratoryPeriod(const TimeUnit& unit) const;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
 

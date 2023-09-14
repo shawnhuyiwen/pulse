@@ -19,5 +19,5 @@ public:
   void AddGraph(SEGasCompartmentGraph& graph);
 
 protected:
-  void BalanceByIntensive();
+  void BalanceByIntensive() override;
 };

@@ -14,7 +14,7 @@ public:
   SEMechanicalVentilator(Logger* logger);
   virtual ~SEMechanicalVentilator();
 
-  virtual void Clear();
+  void Clear() override;
   virtual void TurnOff();
 
 protected:
@@ -27,7 +27,7 @@ protected:
 
 public:
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual bool HasAirwayPressure() const;
   virtual SEScalarPressure& GetAirwayPressure();

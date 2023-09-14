@@ -14,18 +14,18 @@ public:
   SECompartmentTransportGraph(const std::string& name, Logger* logger);
   virtual ~SECompartmentTransportGraph();
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual std::string GetName() const { return this->m_Name; }
+  std::string GetName() const override{ return this->m_Name; }
 
   virtual void StateChange();
 
 protected:
-  virtual void BalanceByIntensive()=0;
-  virtual int GetVertexIndex(const GraphVertexType& v) const;
-  virtual const std::vector<GraphVertexType*>& GetVerticies() const;
-  virtual const std::vector<GraphEdgeType*>* GetSourceEdges(const GraphVertexType& v) const;
-  virtual const std::vector<GraphEdgeType*>* GetTargetEdges(const GraphVertexType& v) const;
+  void BalanceByIntensive() override = 0;
+  int GetVertexIndex(const GraphVertexType& v) const override;
+  const std::vector<GraphVertexType*>& GetVerticies() const override;
+  const std::vector<GraphEdgeType*>* GetSourceEdges(const GraphVertexType& v) const override;
+  const std::vector<GraphEdgeType*>* GetTargetEdges(const GraphVertexType& v) const override;
 
   std::vector<GraphVertexType*>                                  m_Verticies;
   std::map<const GraphVertexType*, int>                          m_VertexIndicies;

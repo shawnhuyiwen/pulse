@@ -12,10 +12,10 @@ public:
   SECompleteBloodCount(Logger* logger);
   virtual ~SECompleteBloodCount();
 
-  virtual void Clear(); //clear memory
+  virtual void Clear() override; //clear memory
 
-  bool SerializeToString(std::string& output, eSerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const override;
+  bool SerializeToFile(const std::string& filename) const override;
 
   virtual bool HasHematocrit() const;
   virtual SEScalar0To1& GetHematocrit(); 

@@ -14,14 +14,14 @@ public:
   virtual ~SEBagValveMaskAutomated();
 
   static constexpr char const* Name = "Automated";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear();
+  void Clear() override;
   virtual void Copy(const SEBagValveMaskAutomated& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasBreathFrequency() const;
   virtual SEScalarFrequency& GetBreathFrequency();
@@ -39,7 +39,7 @@ public:
   virtual SEScalarVolume& GetSqueezeVolume();
   virtual double GetSqueezeVolume(const VolumeUnit& unit) const;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
 

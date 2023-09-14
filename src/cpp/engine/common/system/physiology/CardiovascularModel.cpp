@@ -392,8 +392,8 @@ namespace pulse
     m_GndToAbdominalCavity = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::GroundToAbdominalCavity1);
     m_AbdominalCavityToGnd = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::AbdominalCavity1ToGround);
 
-    m_LeftPulmonaryVeinsLeak = m_RightPulmonaryVeinsLeak = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak1ToGround);
-    m_RightPulmonaryVeinsLeak = m_RightPulmonaryVeinsLeak = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak1ToGround);
+    m_LeftPulmonaryVeinsLeak =  m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsLeak1ToGround);
+    m_RightPulmonaryVeinsLeak =  m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsLeak1ToGround);
 
     m_LeftRenalArteryPath = m_CirculatoryCircuit->GetPath(pulse::RenalPath::LeftRenalArteryToAfferentArteriole);
     m_RightRenalArteryPath = m_CirculatoryCircuit->GetPath(pulse::RenalPath::RightRenalArteryToAfferentArteriole);
@@ -1317,8 +1317,8 @@ namespace pulse
 
     double heartRate_Per_s = GetHeartRate(FrequencyUnit::Per_s);
     double totalPulmonaryPerfusion_mL_Per_s = 0.0;
-    unsigned int leftPulmonaryCapillariesSize = 1;
-    unsigned int rightPulmonaryCapillariesSize = 1;
+    size_t leftPulmonaryCapillariesSize = 1;
+    size_t rightPulmonaryCapillariesSize = 1;
 
     if (m_LeftPulmonaryCapillaries->HasChildren())
     {

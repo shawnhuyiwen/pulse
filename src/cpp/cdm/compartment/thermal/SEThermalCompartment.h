@@ -18,11 +18,11 @@ protected:
 public:
   virtual ~SEThermalCompartment();
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
-  virtual bool HasChildren() const { return !m_Children.empty(); }
+  bool HasChildren() const override { return !m_Children.empty(); }
   virtual const std::vector<SEThermalCompartment*>& GetChildren() { return m_Children; }
   virtual const std::vector<SEThermalCompartment*>& GetLeaves() { return m_Leaves; }
 
@@ -30,7 +30,7 @@ public:
   virtual  SECompartmentNodes<THERMAL_COMPARTMENT_NODE>& GetNodeMapping() { return m_Nodes; }
   virtual void MapNode(SEThermalCircuitNode& node);
 
-  virtual void StateChange();
+  virtual void StateChange() override;
 
   virtual bool HasHeatTransferRateIn() const;
   virtual const SEScalarPower& GetHeatTransferRateIn() const;

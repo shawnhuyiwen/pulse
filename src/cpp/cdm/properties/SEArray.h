@@ -14,8 +14,8 @@ public:
   virtual void Clear();
   void Copy(const SEArray& src);
 
-  virtual bool                          IsValid() const;
-  virtual void                          Invalidate();
+  bool                          IsValid() const override;
+  void                          Invalidate() override;
 
   std::vector<double>&                  GetData();
 

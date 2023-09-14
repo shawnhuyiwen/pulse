@@ -13,8 +13,8 @@ public:
   SEProperty();
   virtual ~SEProperty();
 
-  virtual void Invalidate()=0;
-  virtual bool IsValid() const=0;
+  virtual void Invalidate() = 0;
+  virtual bool IsValid() const = 0;
 };
 
 CDM_DECL bool   CompatibleUnits(const CCompoundUnit& u1, const CCompoundUnit& u2);

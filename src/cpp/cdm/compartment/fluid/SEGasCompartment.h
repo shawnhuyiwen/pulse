@@ -19,11 +19,11 @@ protected:
 public:
   virtual ~SEGasCompartment();
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
-  virtual void StateChange();
+  void StateChange() override;
 
   virtual void Balance(BalanceGasBy e);
 

@@ -12,20 +12,20 @@ public:
   virtual ~SEAnesthesiaMachineExpiratoryValveLeak();
 
   static constexpr char const* Name = "Expiratory Valve Leak";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override{ return Name; }
 
-  virtual void Clear();
+  void Clear() override;
   virtual void Copy(const SEAnesthesiaMachineExpiratoryValveLeak& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
 

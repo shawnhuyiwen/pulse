@@ -30,7 +30,7 @@
 void HowToPulseEnginePool()
 {
   std::stringstream ss;
-  size_t numEngine = 1;
+  int numEngine = 1;
   TimingProfile profiler;
   double sim_time_s = 60;
 
@@ -40,7 +40,7 @@ void HowToPulseEnginePool()
 
   pool.Info("Creating a pool with " + std::to_string(pool.GetWorkerCount()) + " workers");
   pool.Info("Creating a pool with " + std::to_string(numEngine) + " engines");
-  for (int i=0; i<numEngine; i++)
+  for (int i = 0; i < numEngine; i++)
   {
     SEPhysiologyEnginePoolEngine* e = pool.CreateEngine(i, eModelType::HumanAdultWholeBody);
     e->EngineInitialization.SetStateFilename("./states/StandardMale@0s.json");

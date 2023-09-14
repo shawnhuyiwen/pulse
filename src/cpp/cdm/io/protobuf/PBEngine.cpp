@@ -602,6 +602,9 @@ void PBEngine::Serialize(const CDM_BIND::SegmentValidationTargetData& src, SESeg
   case CDM_BIND::SegmentValidationTargetData::kRange:
     dst.SetRange(src.range().minimum(), src.range().maximum());
     break;
+  case CDM_BIND::SegmentValidationTargetData::EXPECTED_NOT_SET:
+    dst.Warning("ValidationTarget expected not set");
+    break;
   }
 }
 CDM_BIND::SegmentValidationTargetData* PBEngine::Unload(const SESegmentValidationTarget& src)
@@ -617,25 +620,25 @@ void PBEngine::Serialize(const SESegmentValidationTarget& src, CDM_BIND::Segment
   switch (src.m_ComparisonType)
   {
   case SESegmentValidationTarget::eComparisonType::EqualToSegment:
-    dst.set_equaltosegment(src.m_Target);
+    dst.set_equaltosegment((int)src.m_Target);
     break;
   case SESegmentValidationTarget::eComparisonType::EqualToValue:
     dst.set_equaltovalue(src.m_Target);
     break;
   case SESegmentValidationTarget::eComparisonType::GreaterThanSegment:
-    dst.set_greaterthansegment(src.m_Target);
+    dst.set_greaterthansegment((int)src.m_Target);
     break;
   case SESegmentValidationTarget::eComparisonType::GreaterThanValue:
     dst.set_greaterthanvalue(src.m_Target);
     break;
   case SESegmentValidationTarget::eComparisonType::LessThanSegment:
-    dst.set_lessthansegment(src.m_Target);
+    dst.set_lessthansegment((int)src.m_Target);
     break;
   case SESegmentValidationTarget::eComparisonType::LessThanValue:
     dst.set_lessthanvalue(src.m_Target);
     break;
   case SESegmentValidationTarget::eComparisonType::TrendsToSegment:
-    dst.set_trendstosegment(src.m_Target);
+    dst.set_trendstosegment((int)src.m_Target);
     break;
   case SESegmentValidationTarget::eComparisonType::TrendsToValue:
     dst.set_trendstovalue(src.m_Target);
@@ -762,6 +765,9 @@ void PBEngine::Serialize(const SETimeSeriesValidationTarget& src, CDM_BIND::Time
   case SETimeSeriesValidationTarget::eComparisonType::Range:
     dst.mutable_range()->set_minimum(src.m_TargetMinimum);
     dst.mutable_range()->set_maximum(src.m_TargetMaximum);
+    break;
+  case SETimeSeriesValidationTarget::eComparisonType::None:
+    src.Warning("TimeSeriesValidationTarget "+src.GetHeader()+" does not have a comparision type");
     break;
   }
 }

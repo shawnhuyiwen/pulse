@@ -24,13 +24,13 @@ protected:
 public:
   virtual ~SEFluidCompartment();
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual std::string GetName() const { return m_Name; }
+  std::string GetName() const override { return m_Name; }
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
-  virtual bool HasChildren() const { return !m_FluidChildren.empty(); }
+  bool HasChildren() const override { return !m_FluidChildren.empty(); }
 
   virtual bool HasNodeMapping() const { return m_Nodes.HasMapping(); }
   virtual  SECompartmentNodes<FLUID_COMPARTMENT_NODE>& GetNodeMapping() { return m_Nodes; }
@@ -79,13 +79,13 @@ public:
 protected:
   virtual void RemoveSubstanceQuantity(const SESubstance& substance);
 
-  virtual bool HasQuantity() const { return HasVolume(); }
-  virtual SEScalarVolume& GetQuantity() { return GetVolume(); }
+  bool HasQuantity() const override { return HasVolume(); }
+  SEScalarVolume& GetQuantity() override { return GetVolume(); }
 
   virtual double CalculateInFlow_mL_Per_s() const;
   virtual double CalculateOutFlow_mL_Per_s() const;
 
-  virtual std::vector<TransportSubstanceType*>& GetTransportSubstances() { return m_TransportSubstances; }
+  std::vector<TransportSubstanceType*>& GetTransportSubstances() override { return m_TransportSubstances; }
 
   mutable SEScalarVolumePerTime* m_InFlow;
   mutable SEScalarVolumePerTime* m_OutFlow;

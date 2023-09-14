@@ -13,9 +13,9 @@ public:
   virtual ~SEInhalerAction();
 
   static constexpr char const* ActionType = "Inhaler";
-  virtual std::string GetActionType() const { return ActionType; }
+  std::string GetActionType() const override { return ActionType; }
 
-  virtual void Clear();// Deletes all members
+  void Clear() override;// Deletes all members
   
-  virtual bool IsValid() const;
+  bool IsValid() const override;
 };

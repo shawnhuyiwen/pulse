@@ -15,7 +15,7 @@ protected:
 public:
   virtual ~SEFluidCircuitNode();
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
   virtual bool HasPressure() const;
   virtual SEScalarPressure& GetPressure();
