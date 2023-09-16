@@ -110,6 +110,7 @@ ExternalProject_Add( ${PROJECT_NAME}
     -DEigen3_DIR:PATH=${Eigen3_DIR}
     -Dprotobuf_DIR:PATH=${protobuf_DIR}
     -Dprotobuf_SRC:PATH=${protobuf_SRC}
+    -Dprotobuf_INSTALL:PATH=${protobuf_INSTALL}
     -Dpybind11_DIR:PATH=${pybind11_DIR}
   #INSTALL_COMMAND ${SKIP_STEP_COMMAND}
   DEPENDS ${${PROJECT_NAME}_DEPENDENCIES}

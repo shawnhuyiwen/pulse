@@ -233,6 +233,10 @@ if(protobuf_DIR AND NOT EXISTS ${protobuf_DIR})
       message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
     endif()
   endif()
+else()
+  message(STATUS "Looking for protobuf dependencies from ${protobuf_DIR}")
+  set(absl_DIR "${protobuf_INSTALL}/lib/cmake/absl")
+  set(utf8_range_DIR "${protobuf_INSTALL}/lib/cmake/utf8_range")
 endif()
 # Try to use the config written by protobuf
 find_package(protobuf QUIET CONFIG NO_DEFAULT_PATH)
@@ -240,6 +244,7 @@ if(protobuf_DIR AND protobuf_FOUND)
   # Success; set flag so we will reexport protobuf for our users
   set(Pulse_USING_PROTOBUF_DIR ON)
 elseif(NOT protobuf_FOUND)
+  message(STATUS "Could not find protobuf.cmake, falling back to CMake's FindProtobuf.cmake")
   # Nope; fall back on FindProtobuf.cmake
   find_package(Protobuf REQUIRED)
 endif()

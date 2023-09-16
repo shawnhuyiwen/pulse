@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "MVGenerator.h"
+#include "cdm/io/protobuf/PBUtils.h"
 
 namespace pulse::study::multiplex_ventilation
 {
@@ -373,14 +374,10 @@ namespace pulse::study::multiplex_ventilation
   bool MVGenerator::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::PatientStateListData& dst, eSerializationFormat f)
   {
     google::protobuf::util::JsonParseOptions parseOpts;
-    google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
+    auto status = google::protobuf::util::JsonStringToMessage(src, &dst, parseOpts);
+    if (!status.ok())
     {
-      std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
-    });
-    google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(src, &dst, parseOpts);
-    if (!stat.ok())
-    {
-      Error("Unable to parse json in string");
+      PBUtils::LogError("MVGenerator::SerializeFromString", status.ToString(), GetLogger());
       return false;
     }
     return true;

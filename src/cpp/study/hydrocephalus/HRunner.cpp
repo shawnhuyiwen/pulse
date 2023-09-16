@@ -8,6 +8,7 @@
 #include "cdm/compartment/SECompartmentManager.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/io/protobuf/PBUtils.h"
 
 namespace pulse::study::hydrocephalus
 {
@@ -332,14 +333,10 @@ namespace pulse::study::hydrocephalus
   bool HRunner::SerializeFromString(const std::string& src, pulse::study::bind::hydrocephalus::SimulationListData& dst, eSerializationFormat f)
   {
     google::protobuf::util::JsonParseOptions parseOpts;
-    google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
+    auto status = google::protobuf::util::JsonStringToMessage(src, &dst, parseOpts);
+    if (!status.ok())
     {
-      std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
-    });
-    google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(src, &dst, parseOpts);
-    if (!stat.ok())
-    {
-      Error("Unable to parse json in string : " + stat.ToString());
+      PBUtils::LogError("HRunner::SerializeFromString", status.ToString(), GetLogger());
       return false;
     }
     return true;

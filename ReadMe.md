@@ -107,6 +107,11 @@ export JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
 
 You can also add it to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), to get the path in all shells.
 
+### C Sharp Dependency
+
+When building with the Pulse_CSHARP_API option, you will need to ensure you have the latest version of the <a href="https://dotnet.microsoft.com/en-us/download">.NET 6 SDK</a> installed.
+
+
 ## Building
 
 The build is directed by CMake to ensure it can be built on various platforms. 

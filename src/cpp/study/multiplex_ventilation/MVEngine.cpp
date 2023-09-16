@@ -705,14 +705,10 @@ namespace pulse::study::multiplex_ventilation
   bool MVEngine::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst)
   {
     google::protobuf::util::JsonParseOptions parseOpts;
-    google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
+    auto status = google::protobuf::util::JsonStringToMessage(src, &dst, parseOpts);
+    if (!status.ok())
     {
-      std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
-    });
-    google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(src, &dst, parseOpts);
-    if (!stat.ok())
-    {
-      std::cerr << "Unable to parse json in string : " << stat.ToString() << std::endl;
+      PBUtils::LogError("MVEngine::SerializeFromString", status.ToString(), nullptr);
       return false;
     }
     return true;

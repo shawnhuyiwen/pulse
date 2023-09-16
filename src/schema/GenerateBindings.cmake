@@ -104,45 +104,45 @@ if(Pulse_JAVA_API)
                           empty.proto
                           field_mask.proto
                           #map_lite_unittest.proto
-                          map_proto2_unittest.proto
-                          map_unittest.proto
+                          #map_proto2_unittest.proto
+                          #map_unittest.proto
                           source_context.proto
                           struct.proto
-                          test_messages_proto2.proto
-                          test_messages_proto3.proto
+                          #test_messages_proto2.proto
+                          #test_messages_proto3.proto
                           timestamp.proto
                           type.proto
-                          unittest.proto
-                          unittest_arena.proto
-                          unittest_custom_options.proto
-                          unittest_drop_unknown_fields.proto
-                          unittest_embed_optimize_for.proto
-                          unittest_empty.proto
-                          unittest_enormous_descriptor.proto
-                          unittest_import.proto
+                          #unittest.proto
+                          #unittest_arena.proto
+                          #unittest_custom_options.proto
+                          #unittest_drop_unknown_fields.proto
+                          #unittest_embed_optimize_for.proto
+                          #unittest_empty.proto
+                          #unittest_enormous_descriptor.proto
+                          #unittest_import.proto
                           #unittest_import_lite.proto
-                          unittest_import_public.proto
+                          #unittest_import_public.proto
                           #unittest_import_public_lite.proto
-                          unittest_lazy_dependencies.proto
-                          unittest_lazy_dependencies_custom_option.proto
-                          unittest_lazy_dependencies_enum.proto
+                          #unittest_lazy_dependencies.proto
+                          #unittest_lazy_dependencies_custom_option.proto
+                          #unittest_lazy_dependencies_enum.proto
                           #unittest_lite.proto
                           #unittest_lite_imports_nonlite.proto
-                          unittest_mset.proto
-                          unittest_mset_wire_format.proto
+                          #unittest_mset.proto
+                          #unittest_mset_wire_format.proto
                           #unittest_no_arena.proto
                           #unittest_no_arena_import.proto
                           #unittest_no_arena_lite.proto
-                          unittest_no_field_presence.proto
-                          unittest_no_generic_services.proto
-                          unittest_optimize_for.proto
-                          unittest_preserve_unknown_enum.proto
-                          unittest_preserve_unknown_enum2.proto
-                          unittest_proto3.proto
-                          unittest_proto3_arena.proto
+                          #unittest_no_field_presence.proto
+                          #unittest_no_generic_services.proto
+                          #unittest_optimize_for.proto
+                          #unittest_preserve_unknown_enum.proto
+                          #unittest_preserve_unknown_enum2.proto
+                          #unittest_proto3.proto
+                          #unittest_proto3_arena.proto
                           #unittest_proto3_arena_lite.proto
                           #unittest_proto3_lite.proto
-                          unittest_well_known_types.proto
+                          #unittest_well_known_types.proto
                           wrappers.proto
                           )
     #Generate the java API files from their proto files
