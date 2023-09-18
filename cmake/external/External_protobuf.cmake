@@ -15,9 +15,20 @@ endif()
 # And their application runtime environment needs to have all consistent dlls, or they fight!
 # Note that the Protobuf C++ API changed and required Pulse updates
 # Versions older than 22.0 are not supported anymore
+# Generally, We only support the latest version at the time of a release
+# And any release that somebody has requested we support for compatibility with their application
 
-set(Protobuf_VERSION "v24.3" CACHE STRING "Select the  version of ProtoBuf to build.")
+set(Protobuf_VERSION "24.3" CACHE STRING "Select the  version of ProtoBuf to build.")
 set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "24.3")
+
+set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v${Protobuf_VERSION}/protobuf-${Protobuf_VERSION}.zip" )
+
+if (Protobuf_VERSION VERSION_EQUAL 24.3)# Latest, Can change
+  set(Protobuf_md5 "d425496d9fbfaeaecde6fb07fdf41312" )
+else()
+  message(STATUS "Using Protobuf Version ${Protobuf_VERSION}, with no git hash, will redownload if you rebuild.")
+  set(Protobuf_md5 "" )
+endif()
 
 set(BUILD_PROTOC_BINARIES ON)
 if(${PROJECT_NAME}_LIBS_ONLY)
@@ -27,10 +38,11 @@ endif()
 include(AddExternalProject)
 define_external_dirs_ex(protobuf)
 add_external_project_ex( protobuf
-  GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
-  GIT_TAG ${Protobuf_VERSION}
+  URL ${Protobuf_url}
+  URL_MD5 ${Protobuf_md5}
   CMAKE_CACHE_ARGS
     -DBUILD_SHARED_LIBS:BOOL=OFF
+    -DBUILD_TESTING:BOOL=OFF
     -DCMAKE_INSTALL_PREFIX:PATH=${protobuf_PREFIX}/install
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
     -Dprotobuf_BUILD_EXAMPLES:BOOL=OFF
@@ -38,19 +50,25 @@ add_external_project_ex( protobuf
     -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF#Don't change MSVC runtime settings (/MD or /MT)
     -Dprotobuf_WITH_ZLIB:BOOL=OFF
     -Dprotobuf_BUILD_PROTOC_BINARIES:BOOL=${BUILD_PROTOC_BINARIES}
+    -Dprotobuf_ABSL_PROVIDER:STRING=package
+    -Dabsl_DIR:PATH=${absl_DIR}
   ${PROTOBUF_MULTI_BUILD}
   ${PROTOBUF_MULTI_INSTALL}
   RELATIVE_INCLUDE_PATH "include"
-  #DEPENDENCIES ""
+  DEPENDENCIES absl
   #VERBOSE
 )
+
 if (NOT USE_SYSTEM_protobuf)
-  set(protobuf_SRC ${protobuf_PREFIX}/src)
   set(protobuf_INSTALL ${protobuf_PREFIX}/install)
   if(WIN32)
-    set(protobuf_DIR ${protobuf_PREFIX}/install/cmake)
+    set(protobuf_DIR ${protobuf_INSTALL}/cmake)
   else()
-    set(protobuf_DIR ${protobuf_PREFIX}/install/${CMAKE_INSTALL_LIBDIR}/cmake/protobuf)
+    set(protobuf_DIR ${protobuf_INSTALL}/${CMAKE_INSTALL_LIBDIR}/cmake/protobuf)
   endif()
+  set(protobuf_SRC ${protobuf_PREFIX}/src)
+  set(utf8_range_DIR "${protobuf_INSTALL}/lib/cmake/utf8_range")
+  
   message(STATUS "protobuf_DIR : ${protobuf_DIR}")
+  message(STATUS "utf8_range_DIR : ${utf8_range_DIR}")
 endif()

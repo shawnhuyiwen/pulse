@@ -112,6 +112,8 @@ ExternalProject_Add( ${PROJECT_NAME}
     -Dprotobuf_SRC:PATH=${protobuf_SRC}
     -Dprotobuf_INSTALL:PATH=${protobuf_INSTALL}
     -Dpybind11_DIR:PATH=${pybind11_DIR}
+    -Dabsl_DIR:PATH=${absl_DIR}
+    -Dutf8_range_DIR:PATH=${utf8_range_DIR}
   #INSTALL_COMMAND ${SKIP_STEP_COMMAND}
   DEPENDS ${${PROJECT_NAME}_DEPENDENCIES}
 )
