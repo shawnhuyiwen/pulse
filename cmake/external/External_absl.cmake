@@ -28,6 +28,6 @@ add_external_project_ex(absl
 )
 
 if (NOT USE_SYSTEM_abls)
-  set(absl_DIR "${absl_PREFIX}/install/lib/cmake/absl")
+  set(absl_DIR "${absl_PREFIX}/install/${CMAKE_INSTALL_LIBDIR}/cmake/absl")
   message(STATUS "absl_DIR : ${absl_DIR}")
 endif()

@@ -67,7 +67,7 @@ if (NOT USE_SYSTEM_protobuf)
     set(protobuf_DIR ${protobuf_INSTALL}/${CMAKE_INSTALL_LIBDIR}/cmake/protobuf)
   endif()
   set(protobuf_SRC ${protobuf_PREFIX}/src)
-  set(utf8_range_DIR "${protobuf_INSTALL}/lib/cmake/utf8_range")
+  set(utf8_range_DIR "${protobuf_INSTALL}/${CMAKE_INSTALL_LIBDIR}/cmake/utf8_range")
   
   message(STATUS "protobuf_DIR : ${protobuf_DIR}")
   message(STATUS "utf8_range_DIR : ${utf8_range_DIR}")
