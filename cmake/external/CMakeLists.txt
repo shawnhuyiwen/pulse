@@ -1,3 +1,6 @@
+if(POLICY CMP0135)# New External Project Time Stamping
+  cmake_policy(SET CMP0135 NEW)
+endif()
 include(ExternalProject)
 include(SolveDependencies)
 

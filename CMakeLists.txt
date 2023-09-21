@@ -60,7 +60,7 @@ set(CMAKE_MODULE_PATH
     )
 set(${PROJECT_NAME}_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-option(${PROJECT_NAME}_LIBS_ONLY "Only build libraries" OFF)
+option(${PROJECT_NAME}_C_STATIC "Only build static libraries for the Pulse C interface" OFF)
 option(${PROJECT_NAME}_DOWNLOAD_BASELINES "Download all V&V Scenarios and their baseline result files" OFF)
 option(${PROJECT_NAME}_CSHARP_API "Build C# API" OFF)
 option(${PROJECT_NAME}_JAVA_API "Build Java API and utils for data generation and testing" ON)
@@ -84,20 +84,22 @@ endif()
 if(iOS_TOOLCHAIN)
   message(STATUS "Setting up build for iOS")
 
-  #set(APPLE_IOS ON)
-  #set(TARGET_OS_IPHONE ON)
+  if(POLICY CMP0114)# For new xcode build system
+    cmake_policy(SET CMP0114 NEW)
+  endif()
 
-  set(${PROJECT_NAME}_LIBS_ONLY ON)
+
+  set(${PROJECT_NAME}_C_STATIC ON CACHE BOOL INTERNAL FORCE)
   if(${PROJECT_NAME}_CSHARP_API)
-    set(${PROJECT_NAME}_CSHARP_API OFF)
+    set(${PROJECT_NAME}_CSHARP_API OFF CACHE BOOL INTERNAL FORCE)
     message(STATUS "Disabling C# API for iOS build")
   endif()
   if(${PROJECT_NAME}_JAVA_API)
-    set(${PROJECT_NAME}_JAVA_API OFF)
+    set(${PROJECT_NAME}_JAVA_API OFF CACHE BOOL INTERNAL FORCE)
     message(STATUS "Disabling Java API for iOS build")
   endif()
   if(${PROJECT_NAME}_PYTHON_API)
-    set(${PROJECT_NAME}_PYTHON_API OFF)
+    set(${PROJECT_NAME}_PYTHON_API OFF CACHE BOOL INTERNAL FORCE)
     message(STATUS "Disabling Python API for iOS build")
   endif()
 

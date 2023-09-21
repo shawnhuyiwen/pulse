@@ -146,6 +146,10 @@ add_library_ex(PulseEngine
 )
 target_include_directories(PulseEngine PRIVATE ${EIGEN3_INCLUDE_DIR})
 
+if(${PROJECT_NAME}_C_STATIC)
+  return()
+endif()
+
 add_library_ex(PulseEngineTests
   H_FILES
     # Human Adult

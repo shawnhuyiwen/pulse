@@ -1,4 +1,3 @@
-
 add_library_ex(CommonDataModelTests
   H_FILES
     CommonDataModelTest.h

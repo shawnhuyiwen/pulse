@@ -1,6 +1,11 @@
 add_subdirectory(bind)
 add_subdirectory(cdm)
 add_subdirectory(engine)
+
+if(${PROJECT_NAME}_C_STATIC)
+  return()
+endif()
+
 add_subdirectory(howto)
 add_subdirectory(scenario_driver)
 add_subdirectory(test_driver)

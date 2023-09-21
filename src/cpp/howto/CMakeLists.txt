@@ -1,7 +1,3 @@
-if(${PROJECT_NAME}_LIBS_ONLY)
-  return()
-endif()
-
 add_executable_ex(HowToDriver
   EngineHowTo.cpp
   EngineHowTo.h

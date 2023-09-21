@@ -751,4 +751,8 @@ add_library_ex(CommonDataModel
 )
 target_include_directories(CommonDataModel PRIVATE ${EIGEN3_INCLUDE_DIR})
 
+if(${PROJECT_NAME}_C_STATIC)
+  return()
+endif()
+
 add_subdirectory(test)

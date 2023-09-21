@@ -256,8 +256,9 @@ Inorder to generate the necessary files during the build process, you will need 
 Simply follow the above build instructions. We will refer to its build directory as `macos/install` in subsequent steps.
 2. Open CMake and <b>configure</b> an XCode project with a <B>toolchain file for cross compiling</b>. Use the toolchain file `/cmake/ios.toolchain.cmake`
 3. Set Pulse_NATIVE_BUILD_DIR to your `macos` root build directory 
-4. Set Pulse_LIBS_ONLY to `ON` so we only build the necessary static libraries
-5. Configure and Generate CMake for it to create the XCode project
+4. Ensure Pulse_C_STATIC is set to `ON` so we only build the necessary static libraries
+5. Ensure `Pulse_JAVA_API` and `Pulse_PYTHON_API` are set to `OFF`
+6. Configure and Generate CMake for it to create the XCode project
 
 
 #### Magic Leap
