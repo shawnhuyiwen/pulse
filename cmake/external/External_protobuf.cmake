@@ -43,7 +43,7 @@ add_external_project_ex( protobuf
   CMAKE_CACHE_ARGS
     -DBUILD_SHARED_LIBS:BOOL=OFF
     -DBUILD_TESTING:BOOL=OFF
-    -DCMAKE_INSTALL_PREFIX:PATH=${protobuf_PREFIX}/install
+    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
     -Dprotobuf_BUILD_EXAMPLES:BOOL=OFF
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
@@ -60,7 +60,7 @@ add_external_project_ex( protobuf
 )
 
 if (NOT USE_SYSTEM_protobuf)
-  set(protobuf_INSTALL ${protobuf_PREFIX}/install)
+  set(protobuf_INSTALL ${CMAKE_INSTALL_PREFIX})
   if(WIN32)
     set(protobuf_DIR ${protobuf_INSTALL}/cmake)
   else()

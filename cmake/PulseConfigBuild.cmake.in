@@ -8,6 +8,8 @@ set(Pulse_ROOT ${PACKAGE_PREFIX_DIR})
 set(Pulse_VERSION @PROJECT_VERSION@)
 set(Pulse_GIT_HASH "@export_git_hash@")
 
+set(absl_DIR "@absl_DIR@")
+set(utf8_range_DIR "@utf8_range_DIR@")
 if(@Pulse_USING_PROTOBUF_DIR@)
   set(protobuf_DIR "@protobuf_DIR@")
   find_package(protobuf REQUIRED CONFIG NO_DEFAULT_PATH)

@@ -18,7 +18,7 @@ add_external_project_ex(absl
   CMAKE_CACHE_ARGS
     -DBUILD_SHARED_LIBS:BOOL=OFF
     -DBUILD_TESTING:BOOL=OFF
-    -DCMAKE_INSTALL_PREFIX:PATH=${absl_PREFIX}/install
+    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
     -DABSL_PROPAGATE_CXX_STD:BOOL=ON
   RELATIVE_INCLUDE_PATH "include"
   #DEPENDENCIES ""
@@ -28,6 +28,6 @@ add_external_project_ex(absl
 )
 
 if (NOT USE_SYSTEM_abls)
-  set(absl_DIR "${absl_PREFIX}/install/${CMAKE_INSTALL_LIBDIR}/cmake/absl")
+  set(absl_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/cmake/absl")
   message(STATUS "absl_DIR : ${absl_DIR}")
 endif()

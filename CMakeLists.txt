@@ -202,41 +202,6 @@ if(iOS_TOOLCHAIN)
   set(protobuf_MODULE_COMPATIBLE OFF)
 endif()
 
-if(protobuf_DIR AND NOT EXISTS ${protobuf_DIR})
-  # Linux systems can build libs to a variety of directories...
-  message(STATUS "Provided protobuf_DIR, does not exist, looking for alternatives...")
-  message(STATUS "  Original protobuf_DIR : ${protobuf_DIR}")
-
-  # We could be cross compiling for windows on linux, change to a linux path
-  string(FIND ${protobuf_DIR} "install/cmake" _idx)
-  if(_idx GREATER_EQUAL 0)
-    string(REPLACE "install/cmake" "/install/${CMAKE_INSTALL_LIBDIR}/cmake/protobuf" protobuf_DIR ${protobuf_DIR})
-    message(STATUS "  Checking if this alternative exists : ${protobuf_DIR}")
-    if(EXISTS ${protobuf_DIR})
-      message(STATUS "It does! New protobuf_DIR is ${protobuf_DIR}")
-    else()
-      message(STATUS "Nope, that was not it")
-    endif()
-  endif()
-
-  if(NOT EXISTS ${protobuf_DIR})
-    string(FIND ${protobuf_DIR} "/lib/" _idx)
-    if(_idx GREATER_EQUAL 0)
-      # Depending on linux flavor, this could be in a lib64 dir
-      # So, replace /lib/ with /lib64/ and see if that exists
-      string(REPLACE "/lib/" "/lib64/" _lib64 ${protobuf_DIR})
-      message(STATUS "  Checking if this alternative exists : ${_lib64}")
-      if(EXISTS ${_lib64})
-        set(protobuf_DIR ${_lib64})
-        message(STATUS "It does! New protobuf_DIR is ${protobuf_DIR}")
-      else()
-        message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
-      endif()
-    else()
-      message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
-    endif()
-  endif()
-endif()
 # Try to use the config written by protobuf
 find_package(protobuf QUIET CONFIG NO_DEFAULT_PATH)
 if(protobuf_DIR AND protobuf_FOUND)
@@ -248,10 +213,6 @@ elseif(NOT protobuf_FOUND)
   find_package(Protobuf REQUIRED)
 endif()
 
-# Ensure protobuf exported target exists
-get_target_property(PROTOBUF_LIBRARY_DEBUG protobuf::libprotobuf LOCATION_DEBUG)
-get_target_property(PROTOBUF_LIBRARY_RELEASE protobuf::libprotobuf LOCATION_RELEASE)
-
 if(MSVC OR XCode)
   # By default, CMake will choose debug for relwithdebinfo configurations if a relwithdebinfo export package is not provided.
   # This is the case when Pulse builds protobuf. (It only builds release and debug for MSVC)
@@ -261,13 +222,6 @@ if(MSVC OR XCode)
     MAP_IMPORTED_CONFIG_MINSIZEREL Release
     MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release)
 endif()
-
-# We only want to install the libraries
-install(FILES ${PROTOBUF_LIBRARY_DEBUG} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
-install(FILES ${PROTOBUF_LIBRARY_RELEASE} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
-# Filenames are used in our export config
-get_filename_component(PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG} NAME)
-get_filename_component(PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE} NAME)
 
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
 set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
