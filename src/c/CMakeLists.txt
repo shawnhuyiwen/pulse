@@ -1,6 +1,6 @@
 set(_lib_type SHARED)
-if(${PROJECT_NAME}_LIBS_ONLY)
-set(_lib_type STATIC)
+if(${PROJECT_NAME}_C_STATIC)
+  set(_lib_type STATIC)
 endif()
 
 add_library_ex(PulseC ${_lib_type}

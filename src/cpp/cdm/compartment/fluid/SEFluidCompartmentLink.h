@@ -19,11 +19,11 @@ protected:
 public:
   virtual ~SEFluidCompartmentLink();
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
-  virtual std::string GetName() const { return m_Name; }
+  std::string GetName() const override { return m_Name; }
   
   virtual bool HasCompliance() const;
   virtual double GetCompliance(const VolumePerPressureUnit& unit) const;
@@ -45,12 +45,12 @@ public:
 
 protected:
   // For Transport
-  virtual bool HasFlux() const { return HasFlow(); }
-  virtual SEScalarVolumePerTime& GetFlux() { return GetFlow(); }
+  bool HasFlux() const override { return HasFlow(); }
+  SEScalarVolumePerTime& GetFlux() override { return GetFlow(); }
   virtual double GetFlux(const VolumePerTimeUnit& unit) const { return GetFlow(unit); }
 
-  virtual VertexType& GetSourceVertex()           { return m_SourceVertex; }
-  virtual VertexType& GetTargetVertex()           { return m_TargetVertex; }
+  VertexType& GetSourceVertex() override { return m_SourceVertex; }
+  VertexType& GetTargetVertex() override { return m_TargetVertex; }
 
   SEScalarVolumePerTime*  m_Flow;
   CompartmentType&        m_SourceCmpt;

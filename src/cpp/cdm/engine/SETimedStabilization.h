@@ -11,18 +11,18 @@ public:
   SETimedStabilization(Logger* logger);
   virtual ~SETimedStabilization();
 
-  virtual void Clear();
+  void Clear() override;
 
 public:
 
-  bool SerializeToString(std::string& output, eSerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, eSerializationFormat m);
-  bool SerializeFromFile(const std::string& filename);
+  bool SerializeToString(std::string& output, eSerializationFormat m) const override;
+  bool SerializeToFile(const std::string& filename) const override;
+  bool SerializeFromString(const std::string& src, eSerializationFormat m) override;
+  bool SerializeFromFile(const std::string& filename) override;
 
-  virtual bool StabilizeRestingState(Controller& engine);
-  virtual bool StabilizeFeedbackState(Controller& engine);
-  virtual bool StabilizeConditions(Controller& engine, const SEConditionManager& conditions);
+  bool StabilizeRestingState(Controller& engine) override;
+  bool StabilizeFeedbackState(Controller& engine) override;
+  bool StabilizeConditions(Controller& engine, const SEConditionManager& conditions) override;
 
   virtual bool HasRestingStabilizationTime() const;
   virtual SEScalarTime& GetRestingStabilizationTime();

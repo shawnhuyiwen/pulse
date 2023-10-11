@@ -25,10 +25,10 @@ enum class eHemorrhage_Compartment;
 class SEHemothorax;
 class SEImpairedAlveolarExchangeExacerbation;
 class SEIntubation;
-class SELobarPneumoniaExacerbation;
 class SEMechanicalVentilation;
 class SENeedleDecompression;
 class SEPericardialEffusion;
+class SEPneumoniaExacerbation;
 class SEPulmonaryShuntExacerbation;
 class SERespiratoryFatigue;
 class SERespiratoryMechanicsConfiguration;
@@ -170,11 +170,6 @@ public:
   const SEIntubation* GetIntubation() const;
   void RemoveIntubation();
 
-  bool HasLobarPneumoniaExacerbation() const;
-  SELobarPneumoniaExacerbation& GetLobarPneumoniaExacerbation();
-  const SELobarPneumoniaExacerbation* GetLobarPneumoniaExacerbation() const;
-  void RemoveLobarPneumoniaExacerbation();
-
   bool HasMechanicalVentilation() const;
   SEMechanicalVentilation& GetMechanicalVentilation();
   const SEMechanicalVentilation* GetMechanicalVentilation() const;
@@ -195,6 +190,11 @@ public:
   SEPericardialEffusion& GetPericardialEffusion();
   const SEPericardialEffusion* GetPericardialEffusion() const;
   void RemovePericardialEffusion();
+
+  bool HasPneumoniaExacerbation() const;
+  SEPneumoniaExacerbation& GetPneumoniaExacerbation();
+  const SEPneumoniaExacerbation* GetPneumoniaExacerbation() const;
+  void RemovePneumoniaExacerbation();
 
   bool HasPulmonaryShuntExacerbation() const;
   SEPulmonaryShuntExacerbation& GetPulmonaryShuntExacerbation();
@@ -309,11 +309,11 @@ protected:
   SEHemothorax*                                     m_RightHemothorax;
   SEIntubation*                                     m_Intubation;
   SEImpairedAlveolarExchangeExacerbation*           m_ImpairedAlveolarExchangeExacerbation;
-  SELobarPneumoniaExacerbation*                     m_LobarPneumoniaExacerbation;
   SEMechanicalVentilation*                          m_MechanicalVentilation;
   SENeedleDecompression*                            m_LeftNeedleDecompression;
   SENeedleDecompression*                            m_RightNeedleDecompression;
   SEPericardialEffusion*                            m_PericardialEffusion;
+  SEPneumoniaExacerbation*                          m_PneumoniaExacerbation;
   SEPulmonaryShuntExacerbation*                     m_PulmonaryShuntExacerbation;
   SERespiratoryFatigue*                             m_RespiratoryFatigue;
   SERespiratoryMechanicsConfiguration*              m_RespiratoryMechanicsConfiguration;

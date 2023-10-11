@@ -6,21 +6,9 @@
     "Conditions": { "AnyCondition": [{
       "PatientCondition": {
         "AcuteRespiratoryDistressSyndrome": {
-          "Severity": {
-            "Scalar0To1": {
-              "Value": 0.0
-            }
-          },
-          "LeftLungAffected": {
-            "Scalar0To1": {
-              "Value": 1.0
-            }
-          },
-          "RightLungAffected": {
-            "Scalar0To1": {
-              "Value": 1.0
-            }
-          }
+          "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}}]
         }
       }
     }]}

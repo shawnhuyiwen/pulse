@@ -1,29 +1,38 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEDataRequested, \
-                             SEConditionManager, SEEngineInitialization
+from typing import List
+
+from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEDataRequested, SEDecimalFormat, \
+                             SEConditionManager, SEEngineInitialization, SEValidationTarget, \
+                             SESegmentValidationTarget, SESegmentValidationSegment, \
+                             SETimeSeriesValidationTarget
 from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       ActionListData, ActionMapData, \
                                       AnyConditionData, ConditionListData, \
                                       PatientConfigurationData, \
                                       DataRequestData, DataRequestManagerData, \
-                                      DataRequestedData, DataRequestedListData, \
+                                      DataRequestedData, DataRequestedListData, DecimalFormatData, \
                                       EngineInitializationData, EngineInitializationListData, \
-                                      LogMessagesData
+                                      LogMessagesData, ValidationTargetData, \
+                                      SegmentValidationTargetData, SegmentValidationSegmentData,\
+                                      SegmentValidationSegmentListData, SegmentValidationConfigurationData, \
+                                      TimeSeriesValidationTargetData, TimeSeriesValidationTargetListData
 from pulse.cdm.bind.Events_pb2 import ActiveEventListData, EventChangeListData
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.equipment_actions import SEEquipmentAction
-from pulse.cdm.engine import SEEventChange, eEvent
+from pulse.cdm.engine import SEEventChange, eEvent, SESegmentValidationConfig
 
 from pulse.cdm.io.action import *
 from pulse.cdm.io.patient_actions import *
 from pulse.cdm.io.patient_conditions import *
 from pulse.cdm.io.environment_actions import *
 from pulse.cdm.io.environment_conditions import *
+from pulse.cdm.io.bag_valve_mask_actions import *
 from pulse.cdm.io.ecmo_actions import *
 from pulse.cdm.io.mechanical_ventilator_actions import *
+from pulse.cdm.io.plots import *
 
 def serialize_event_change_list_to_bind(src: [], dst: EventChangeListData):
     raise Exception("serialize_event_change_list_to_bind not implemented")
@@ -125,10 +134,10 @@ def serialize_condition_manager_to_bind(condition_manager: SEConditionManager, d
         serialize_impaired_alveolar_exchange_to_bind(condition_manager.get_impaired_alveolar_exchange(),
                                                      any_condition.PatientCondition.ImpairedAlveolarExchange)
         dst.AnyCondition.append(any_condition)
-    if condition_manager.has_lobar_pneumonia():
+    if condition_manager.has_pneumonia():
         any_condition = AnyConditionData()
-        serialize_lobar_pneumonia_to_bind(condition_manager.get_lobar_pneumonia(),
-                                          any_condition.PatientCondition.LobarPneumonia)
+        serialize_pneumonia_to_bind(condition_manager.get_pneumonia(),
+                                          any_condition.PatientCondition.Pneumonia)
         dst.AnyCondition.append(any_condition)
     if condition_manager.has_pulmonary_fibrosis():
         any_condition = AnyConditionData()
@@ -161,6 +170,18 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
         any_action = AnyActionData()
         if isinstance(action, SEAdvanceTime):
             serialize_advance_time_to_bind(action, any_action.AdvanceTime)
+            dst.AnyAction.append(any_action)
+            continue
+        if isinstance(action, SEAdvanceUntilStable):
+            serialize_advance_until_stable_to_bind(action, any_action.AdvanceUntilStable)
+            dst.AnyAction.append(any_action)
+            continue
+        if isinstance(action, SESerializeRequested):
+            serialize_serialize_requested_to_bind(action, any_action.SerializeRequested)
+            dst.AnyAction.append(any_action)
+            continue
+        if isinstance(action, SESerializeState):
+            serialize_serialize_state_to_bind(action, any_action.SerializeState)
             dst.AnyAction.append(any_action)
             continue
         if isinstance(action, SEPatientAction):
@@ -248,8 +269,8 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_intubation_to_bind(action, any_action.PatientAction.Intubation)
                 dst.AnyAction.append(any_action)
                 continue
-            if isinstance(action, SELobarPneumoniaExacerbation):
-                serialize_lobar_pneumonia_exacerbation_to_bind(action, any_action.PatientAction.LobarPneumoniaExacerbation)
+            if isinstance(action, SEPneumoniaExacerbation):
+                serialize_pneumonia_exacerbation_to_bind(action, any_action.PatientAction.PneumoniaExacerbation)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEMechanicalVentilation):
@@ -305,6 +326,7 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 dst.AnyAction.append(any_action)
                 continue
             print("Uknown Patient Action")
+
         if isinstance(action, SEEnvironmentAction):
             if isinstance(action, SEChangeEnvironmentalConditions):
                 serialize_change_environmental_conditions_to_bind(action, any_action.EnvironmentAction.ChangeEnvironmentalConditions)
@@ -314,25 +336,38 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_thermal_application_to_bind(action, any_action.EnvironmentAction.ThermalApplication)
                 dst.AnyAction.append(any_action)
                 continue
+            print("Uknown Environment Action")
+
         if isinstance(action, SEEquipmentAction):
+            if isinstance(action, SEBagValveMaskConfiguration):
+                serialize_bag_valve_mask_configuration_to_bind(action, any_action.EquipmentAction.BagValveMaskConfiguration)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEBagValveMaskAutomated):
+                serialize_bag_valve_mask_automated_to_bind(action, any_action.EquipmentAction.BagValveMaskAutomated)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEBagValveMaskInstantaneous):
+                serialize_bag_valve_mask_instantaneous_to_bind(action, any_action.EquipmentAction.BagValveMaskInstantaneous)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEBagValveMaskSqueeze):
+                serialize_bag_valve_mask_squeeze_to_bind(action, any_action.EquipmentAction.BagValveMaskSqueeze)
+                dst.AnyAction.append(any_action)
+                continue
+
+            if isinstance(action, SEECMOConfiguration):
+                serialize_ecmo_configuration_to_bind(action, any_action.EquipmentAction.ECMOConfiguration)
+                dst.AnyAction.append(any_action)
+                continue
+
+#            if isinstance(action, SEInhalerConfiguration):
+#                serialize_inhaler_configuration_to_bind(action, any_action.EquipmentAction.InhalerConfiguration)
+#                dst.AnyAction.append(any_action)
+#                continue
+
             if isinstance(action, SEMechanicalVentilatorConfiguration):
                 serialize_mechanical_ventilator_configuration_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorConfiguration)
-                dst.AnyAction.append(any_action)
-                continue
-            # if isinstance(action, SEMechanicalVentilatorMode):
-            #     serialize_mechanical_ventilator_mode_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorMode)
-            #     dst.AnyAction.append(any_action)
-            #     continue
-            if isinstance(action, SEMechanicalVentilatorContinuousPositiveAirwayPressure):
-                serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorContinuousPositiveAirwayPressure)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEMechanicalVentilatorPressureControl):
-                serialize_mechanical_ventilator_pressure_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorPressureControl)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEMechanicalVentilatorVolumeControl):
-                serialize_mechanical_ventilator_volume_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorVolumeControl)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEMechanicalVentilatorHold):
@@ -343,8 +378,16 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_mechanical_ventilator_leak_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorLeak)
                 dst.AnyAction.append(any_action)
                 continue
-            if isinstance(action, SEECMOConfiguration):
-                serialize_ecmo_configuration_to_bind(action, any_action.EquipmentAction.ECMOConfiguration)
+            if isinstance(action, SEMechanicalVentilatorContinuousPositiveAirwayPressure):
+                serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorContinuousPositiveAirwayPressure)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEMechanicalVentilatorPressureControl):
+                serialize_mechanical_ventilator_pressure_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorPressureControl)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEMechanicalVentilatorVolumeControl):
+                serialize_mechanical_ventilator_volume_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorVolumeControl)
                 dst.AnyAction.append(any_action)
                 continue
             print("Unknown Equipment Action")
@@ -397,6 +440,7 @@ def serialize_patient_configuration_from_bind(src: PatientConfigurationData, dst
 
 # Data Requests and Manager
 def serialize_data_request_to_bind(src: SEDataRequest, dst: DataRequestData):
+    serialize_decimal_format_to_bind(src, dst.DecimalFormat)
     if src.has_action_name():
         dst.ActionName = src.get_action_name()
     if src.has_compartment_name():
@@ -411,6 +455,11 @@ def serialize_data_request_to_bind(src: SEDataRequest, dst: DataRequestData):
 def serialize_data_request_from_bind(src: DataRequestData, dst: SEDataRequest):
     raise Exception("serialize_data_request_from_bind not implemented")
 
+def serialize_data_request_manager_to_file(src: SEDataRequestManager, filename: str):
+    string = serialize_data_request_manager_to_string(src, eSerializationFormat.JSON)
+    file = open(filename, "w")
+    n = file.write(string)
+    file.close()
 def serialize_data_request_manager_to_string(src: SEDataRequestManager, fmt: eSerializationFormat):
     dst = DataRequestManagerData()
     serialize_data_request_manager_to_bind(src, dst)
@@ -463,11 +512,22 @@ def serialize_engine_initializations_to_string(src: [SEEngineInitialization], fm
     return json_format.MessageToJson(dst, True, True)
 
 def serialize_data_requested_result_from_bind(src: DataRequestedData, dst: SEDataRequested):
-    dst.is_active = src.IsActive
-    if not dst.is_active:
-        return
-    # TODO FINISH HIM!!
-    # dst.results = src.Results
+    dst.set_id(src.ID)
+    dst.set_active(src.IsActive)
+    dst.set_headers(list(src.Headers))
+    for s in src.Segment:
+        dst.add_segment(s.ID, s.SimTime_s, list(s.Value))
+
+def serialize_data_requested_result_from_string(string: str, fmt: eSerializationFormat):
+    src = DataRequestedData()
+    json_format.Parse(string, src)
+    dst = SEDataRequested()
+    serialize_data_requested_result_from_bind(src, dst)
+    return dst
+def serialize_data_requested_result_from_file(filename: str):
+    with open(filename) as f:
+        string = f.read()
+    return serialize_data_requested_result_from_string(string, eSerializationFormat.JSON)
 
 def serialize_data_requested_list_from_string(src: str, dst: [SEDataRequested], fmt: eSerializationFormat):
     results = DataRequestedListData()
@@ -477,3 +537,199 @@ def serialize_data_requested_list_from_string(src: str, dst: [SEDataRequested], 
         if e is None:
             raise Exception(str(id)+" not found in destination pool")
         serialize_data_requested_result_from_bind(result, e)
+
+def serialize_decimal_format_to_bind(src: SEDecimalFormat, dst: DecimalFormatData):
+    if src.has_notation():
+        dst.Type = src.get_notation().value
+    if src.has_precision():
+        dst.Precision = src.get_precision()
+def serialize_decimal_format_from_bind(src: DecimalFormatData, dst: SEDecimalFormat):
+    dst.clear()
+    dst.set_notation(eDecimalFormat_type(dst.Type))
+    dst.set_precision(dst.Precision)
+
+# Validation Targets
+def serialize_validation_target_to_bind(src: SEValidationTarget, dst: ValidationTargetData):
+    dst.Header = src.get_header()
+    dst.Reference = src.get_reference()
+    dst.Notes = src.get_notes()
+def serialize_validation_target_from_bind(src: ValidationTargetData, dst: SEValidationTarget):
+    dst.clear()
+    dst.set_header(src.Header)
+    dst.set_reference(src.Reference)
+    dst.set_notes(src.Notes)
+
+def serialize_segment_validation_target_to_bind(src: SESegmentValidationTarget, dst: SegmentValidationTargetData):
+    serialize_validation_target_to_bind(src, dst.ValidationTarget)
+    if src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.EqualToSegment:
+        dst.EqualToSegment = src.get_target_segment()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.EqualToValue:
+        dst.EqualToValue = src.get_target()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.GreaterThanSegment:
+        dst.GreaterThanSegment = src.get_target_segment()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.GreaterThanValue:
+        dst.GreaterThanValue = src.get_target()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.LessThanSegment:
+        dst.LessThanSegment = src.get_target_segment()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.LessThanValue:
+        dst.LessThanValue = src.get_target()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.TrendsToSegment:
+        dst.TrendsToSegment = src.get_target_segment()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.TrendsToValue:
+        dst.TrendsToValue = src.get_target()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.Range:
+        dst.Range.Minimum = src.get_target_minimum()
+        dst.Range.Maximum = src.get_target_maximum()
+    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.NotValidating:
+        pass
+    else:
+        raise ValueError(f"Unknown comparison type: {src.get_comparison_type()}")
+def serialize_segment_validation_target_from_bind(src: SegmentValidationTargetData, dst: SESegmentValidationTarget):
+    dst.clear()
+    serialize_validation_target_from_bind(src.ValidationTarget, dst)
+    if src.HasField("EqualToSegment"):
+        dst.set_equal_to_segment(src.EqualToSegment)
+    elif src.HasField("EqualToValue"):
+        dst.set_equal_to_value(src.EqualToValue)
+    elif src.HasField("GreaterThanSegment"):
+        dst.set_greater_than_segment(src.GreaterThanSegment)
+    elif src.HasField("GreaterThanValue"):
+        dst.set_greater_than_value(src.GreaterThanValue)
+    elif src.HasField("LessThanSegment"):
+        dst.set_less_than_segment(src.LessThanSegment)
+    elif src.HasField("LessThanValue"):
+        dst.set_less_than_value(src.LessThanValue)
+    elif src.HasField("TrendsToSegment"):
+        dst.set_trends_to_segment(src.TrendsToSegment)
+    elif src.HasField("TrendsToValue"):
+        dst.set_trends_to_value(src.TrendsTo)
+    elif src.HasField("Range"):
+        dst.set_range(src.Range.Minimum, src.Range.Maximum)
+    elif src.WhichOneof('Expected') is None:  # Not validating
+        pass
+    else:
+        raise ValueError(f"Unknown expected field: {src.WhichOneOf('Expected')}")
+def serialize_segment_validation_segment_to_bind(src: SESegmentValidationSegment, dst: SegmentValidationSegmentData):
+    dst.Segment = src.get_segment_id()
+    dst.Notes = src.get_notes()
+    for tgt in src.get_validation_targets():
+        serialize_segment_validation_target_to_bind(tgt, dst.SegmentValidationTarget.add())
+def serialize_segment_validation_segment_from_bind(src: SegmentValidationSegmentData):
+    dst = SESegmentValidationSegment()
+
+    dst.set_notes(src.Notes)
+    dst.set_segment_id(src.Segment)
+
+    tgts = []
+    for tgtData in src.SegmentValidationTarget:
+        tgt = SESegmentValidationTarget()
+        serialize_segment_validation_target_from_bind(tgtData, tgt)
+        tgts.append(tgt)
+    dst.set_validation_targets(tgts)
+
+    return dst
+
+def serialize_segment_validation_segment_list_to_bind(src: List[SESegmentValidationSegment], dst: SegmentValidationSegmentListData):
+    for segment in src:
+        serialize_segment_validation_segment_to_bind(segment, dst.SegmentValidationSegment.add())
+def serialize_segment_validation_segment_list_from_bind(src: SegmentValidationSegmentListData):
+    dst = []
+    for segmentData in src.SegmentValidationSegment:
+        dst.append(serialize_segment_validation_segment_from_bind(segmentData))
+
+    return dst
+
+def serialize_segment_validation_segment_list_to_string(src: List[SESegmentValidationSegment], fmt: eSerializationFormat):
+    dst = SegmentValidationSegmentListData()
+    serialize_segment_validation_segment_list_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+def serialize_segment_validation_segment_list_to_file(src: List[SESegmentValidationSegment], filename: str):
+    string = serialize_segment_validation_segment_list_to_string(src, eSerializationFormat.JSON)
+    file = open(filename, "w")
+    n = file.write(string)
+    file.close()
+def serialize_segment_validation_segment_list_from_string(string: str, fmt: eSerializationFormat):
+    src = SegmentValidationSegmentListData()
+    json_format.Parse(string, src)
+    return serialize_segment_validation_segment_list_from_bind(src)
+def serialize_segment_validation_segment_list_from_file(filename: str):
+    with open(filename) as f:
+        string = f.read()
+    return serialize_segment_validation_segment_list_from_string(string, eSerializationFormat.JSON)
+
+def serialize_segment_validation_config_from_file(filename: str, dst: SESegmentValidationConfig):
+    with open(filename) as f:
+        string = f.read()
+    serialize_segment_validation_config_from_string(string, dst, eSerializationFormat.JSON)
+def serialize_segment_validation_config_from_string(string: str, dst: SESegmentValidationConfig, fmt: eSerializationFormat):
+    src = SegmentValidationConfigurationData()
+    json_format.Parse(string, src)
+    serialize_segment_validation_config_from_bind(src, dst)
+def serialize_segment_validation_config_from_bind(src: SegmentValidationConfigurationData, dst: SESegmentValidationConfig):
+    dst.clear()
+
+    serialize_plotter_list_from_bind(src.Plots, dst.get_plotters())
+
+def serialize_time_series_validation_target_to_bind(src: SETimeSeriesValidationTarget, dst: TimeSeriesValidationTargetData):
+    serialize_validation_target_to_bind(src, dst.ValidationTarget)
+    if src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.EqualToValue:
+        dst.EqualToValue = src.get_target()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.GreaterThanValue:
+        dst.GreaterThanValue = src.get_target()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.LessThanValue:
+        dst.LessThanValue = src.get_target()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.TrendsToValue:
+        dst.TrendsToValue = src.get_target()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.Range:
+        dst.Range.Minimum = src.get_target_minimum()
+        dst.Range.Maximum = src.get_target_maximum()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.NotValidating:
+        pass
+    else:
+        raise ValueError(f"Unknown comparison type: {src.get_comparison_type()}")
+    dst.Type = src.get_target_type().value
+def serialize_time_series_validation_target_from_bind(src: TimeSeriesValidationTargetData, dst: SETimeSeriesValidationTarget):
+    dst.clear()
+    serialize_validation_target_from_bind(src.ValidationTarget, dst)
+    if src.HasField("EqualToValue"):
+        dst.set_equal_to(src.EqualToValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif src.HasField("GreaterThanValue"):
+        dst.set_greater_than(src.GreaterThanValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif src.HasField("LessThanValue"):
+        dst.set_less_than(src.LessThanValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif src.HasField("TrendsToValue"):
+        dst.set_trends_to(src.TrendsToValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif src.HasField("Range"):
+        dst.set_range(src.Range.Minimum, src.Range.Maximum, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif src.WhichOneof('Expected') is None:  # Not validating
+        pass
+    else:
+        raise ValueError(f"Unknown expected field: {src.WhichOneOf('Expected')}")
+def serialize_time_series_validation_target_list_to_bind(src: List[SETimeSeriesValidationTarget], dst: TimeSeriesValidationTargetListData):
+    for tgt in src:
+        serialize_time_series_validation_target_to_bind(tgt, dst.TimeSeriesValidationTarget.add())
+def serialize_time_series_validation_target_list_from_bind(src: TimeSeriesValidationTargetListData):
+    dst = []
+    for tgtData in src.TimeSeriesValidationTarget:
+        tgt = SETimeSeriesValidationTarget()
+        serialize_time_series_validation_target_from_bind(tgtData, tgt)
+        dst.append(tgt)
+
+    return dst
+def serialize_time_series_validation_target_list_to_string(src: List[SETimeSeriesValidationTarget], fmt: eSerializationFormat):
+    dst = TimeSeriesValidationTargetListData()
+    serialize_time_series_validation_target_list_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+def serialize_time_series_validation_target_list_to_file(src: List[SETimeSeriesValidationTarget], filename: str):
+    string = serialize_time_series_validation_target_list_to_string(src, eSerializationFormat.JSON)
+    file = open(filename, "w")
+    n = file.write(string)
+    file.close()
+def serialize_time_series_validation_target_list_from_string(string: str, fmt: eSerializationFormat):
+    src = TimeSeriesValidationTargetListData()
+    json_format.Parse(string, src)
+    return serialize_time_series_validation_target_list_from_bind(src)
+def serialize_time_series_validation_target_list_from_file(filename: str):
+    with open(filename) as f:
+        string = f.read()
+    return serialize_time_series_validation_target_list_from_string(string, eSerializationFormat.JSON)

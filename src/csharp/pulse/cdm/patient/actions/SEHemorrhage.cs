@@ -78,7 +78,7 @@ namespace Pulse.CDM
     }
     public bool HasCompartment()
     {
-      return compartment == null ? false : compartment != eHemorrhage_Compartment.None;
+      return compartment != eHemorrhage_Compartment.None;
     }
 
     public bool HasFlowRate()

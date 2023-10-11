@@ -15,14 +15,16 @@ public:
   virtual ~SEConsumeNutrients();
 
   static constexpr char const* Name = "Consume Nutrients";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEConsumeNutrients& src, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SEConsumeNutrients& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   bool HasNutrition() const;
   SENutrition& GetNutrition();
@@ -31,8 +33,6 @@ public:
   virtual std::string GetNutritionFile() const;
   virtual void SetNutritionFile(const std::string& fileName);
   virtual bool HasNutritionFile() const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SENutrition* m_Nutrition;

@@ -13,13 +13,13 @@ public:
   virtual ~SEInitialEnvironmentalConditions();
 
   static constexpr char const* Name = "Initial Environmental Conditions";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear();
+  void Clear() override;
   virtual void Copy(const SEInitialEnvironmentalConditions& src, const SESubstanceManager& subMgr);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  bool IsValid() const override;
+  bool IsActive() const override;
 
   virtual bool HasEnvironmentalConditions() const;
   virtual SEEnvironmentalConditions& GetEnvironmentalConditions();

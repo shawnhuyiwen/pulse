@@ -138,7 +138,8 @@ public class SEPatient
   }
   public void writeFile(String fileName) throws InvalidProtocolBufferException
   {
-    FileUtils.writeFile(fileName, JsonFormat.printer().print(SEPatient.unload(this)));
+    PatientData pData = SEPatient.unload(this);
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(pData));
   }
 
   public static void load(PatientData src, SEPatient dst)

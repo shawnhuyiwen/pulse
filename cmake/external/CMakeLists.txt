@@ -1,3 +1,6 @@
+if(POLICY CMP0135)# New External Project Time Stamping
+  cmake_policy(SET CMP0135 NEW)
+endif()
 include(ExternalProject)
 include(SolveDependencies)
 
@@ -110,7 +113,10 @@ ExternalProject_Add( ${PROJECT_NAME}
     -DEigen3_DIR:PATH=${Eigen3_DIR}
     -Dprotobuf_DIR:PATH=${protobuf_DIR}
     -Dprotobuf_SRC:PATH=${protobuf_SRC}
+    -Dprotobuf_INSTALL:PATH=${protobuf_INSTALL}
     -Dpybind11_DIR:PATH=${pybind11_DIR}
+    -Dabsl_DIR:PATH=${absl_DIR}
+    -Dutf8_range_DIR:PATH=${utf8_range_DIR}
   #INSTALL_COMMAND ${SKIP_STEP_COMMAND}
   DEPENDS ${${PROJECT_NAME}_DEPENDENCIES}
 )
@@ -139,6 +145,10 @@ if (${PROJECT_NAME}_JAVA_API)
 else()
   message(STATUS "!!! Without Java Utils, this build will not generate required data files needed for Pulse to execute !!!")
   message(STATUS "!!! You will need to get these required data files from another build/source !!!")
+endif()
+
+if (NOT ${PROJECT_NAME}_PYTHON_API)
+  message(STATUS "!!! Without Python Utils, this build will not generate files and utilities needed for Pulse testing and development !!!")
 endif()
 
 if(${PROJECT_NAME}_DOWNLOAD_BASELINES)

@@ -8,16 +8,18 @@
 
 namespace
 {
-  std::string dateTimeCode(std::string date, std::string time)
+  std::string dateTimeCode(std::string date, std::string timeIn)
   {
     char buffer[80];
-    time_t rawtime;
-    struct tm* timeinfo;
+    time_t rawtime = time(NULL);
+    struct tm timeinfo;
 
-    std::time(&rawtime);
-    timeinfo = localtime(&rawtime);
-
-    strftime(buffer, 80, "%c", timeinfo);
+#if defined(_MSC_VER)
+    localtime_s(&timeinfo, &rawtime);
+#else 
+    localtime_r(&rawtime, &timeinfo);
+#endif
+    strftime(buffer, 80, "%c", &timeinfo);
     return std::string(buffer);
   }
 }

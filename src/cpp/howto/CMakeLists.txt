@@ -1,7 +1,3 @@
-if(${PROJECT_NAME}_LIBS_ONLY)
-  return()
-endif()
-
 add_executable_ex(HowToDriver
   EngineHowTo.cpp
   EngineHowTo.h
@@ -26,7 +22,7 @@ add_executable_ex(HowToDriver
   HowTo-ExpandedVasculature.cpp
   HowTo-Hemorrhage.cpp
   HowTo-Hemothorax.cpp
-  HowTo-LobarPneumonia.cpp
+  HowTo-Pneumonia.cpp
   HowTo-MechanicalVentilation.cpp
   HowTo-MechanicalVentilator.cpp
   HowTo-PulmonaryFibrosis.cpp

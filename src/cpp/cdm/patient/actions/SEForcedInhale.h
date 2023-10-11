@@ -14,13 +14,13 @@ public:
   virtual ~SEForcedInhale();
 
   static constexpr char const* Name = "Forced Inhale";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEForcedInhale& src);
+  void Clear() override;
+  void Copy(const SEForcedInhale& src);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
+  bool IsValid() const override;
+  bool IsActive() const override;
 
   virtual bool HasInspiratoryCapacityFraction() const;
   virtual SEScalar0To1& GetInspiratoryCapacityFraction();

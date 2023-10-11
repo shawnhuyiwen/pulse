@@ -18,14 +18,16 @@ public:
   virtual ~SESupplementalOxygen();
 
   static constexpr char const* Name = "Supplemental Oxygen";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SESupplementalOxygen& src, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SESupplementalOxygen& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual eSupplementalOxygen_Device GetDevice() const;
   virtual void SetDevice(eSupplementalOxygen_Device name);
@@ -37,8 +39,6 @@ public:
   virtual bool HasVolume() const;
   virtual SEScalarVolume& GetVolume();
   virtual double GetVolume(const VolumeUnit& unit) const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   eSupplementalOxygen_Device              m_Device;

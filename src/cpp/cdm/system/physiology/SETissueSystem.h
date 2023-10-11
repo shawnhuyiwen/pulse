@@ -12,9 +12,9 @@ public:
   SETissueSystem(Logger* logger);
   virtual ~SETissueSystem();
 
-  virtual void Clear();// Deletes all members
+  void Clear() override;// Deletes all members
   
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual bool HasCarbonDioxideProductionRate() const;
   virtual SEScalarVolumePerTime& GetCarbonDioxideProductionRate();

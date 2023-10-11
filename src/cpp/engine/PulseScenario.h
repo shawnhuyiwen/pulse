@@ -20,7 +20,7 @@ public:
   PulseScenario(Logger* logger, std::string const& dataDir = "./");
   virtual ~PulseScenario();
 
-  void Clear();
+  void Clear() override;
   using SEScenario::Copy;
   void Copy(const PulseScenario& src);
 

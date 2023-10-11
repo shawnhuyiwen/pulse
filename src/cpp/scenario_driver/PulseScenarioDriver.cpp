@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
     if (generate_clean_results)
     {
       if (!opts.Execute())
-        return false;
+        return 1;
     }
     opts.AutoSerializeAfterActions(eSwitch::On);
     opts.TimeStampSerializedStates(eSwitch::On);

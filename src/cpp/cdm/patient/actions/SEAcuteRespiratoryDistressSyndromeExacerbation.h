@@ -3,6 +3,7 @@
 
 #pragma once
 #include "cdm/patient/actions/SEPatientAction.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
 
 class CDM_DECL SEAcuteRespiratoryDistressSyndromeExacerbation : public SEPatientAction
 {
@@ -13,31 +14,25 @@ public:
   virtual ~SEAcuteRespiratoryDistressSyndromeExacerbation();
 
   static constexpr char const* Name = "ARDS Exacerbation";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, bool preserveState=false);
+  void Clear() override;
+  void Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, bool preserveState=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Activate() override;
+  void Deactivate() override;
 
   virtual bool HasSeverity() const;
-  virtual SEScalar0To1& GetSeverity();
-  virtual double GetSeverity() const;
-
-  virtual bool HasLeftLungAffected() const;
-  virtual SEScalar0To1& GetLeftLungAffected();
-  virtual double GetLeftLungAffected() const;
-
-  virtual bool HasRightLungAffected() const;
-  virtual SEScalar0To1& GetRightLungAffected();
-  virtual double GetRightLungAffected() const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
+  virtual LungImpairmentMap& GetSeverities();
+  virtual const LungImpairmentMap& GetSeverities() const;
+  virtual bool HasSeverity(eLungCompartment cmpt) const;
+  virtual SEScalar0To1& GetSeverity(eLungCompartment cmpt);
+  virtual double GetSeverity(eLungCompartment cmpt) const;
 
 protected:
-  SEScalar0To1* m_Severity;
-  SEScalar0To1* m_LeftLungAffected;
-  SEScalar0To1* m_RightLungAffected;
+  LungImpairmentMap m_Severities;
 };

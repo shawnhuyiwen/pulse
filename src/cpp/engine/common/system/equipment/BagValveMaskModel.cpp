@@ -69,6 +69,7 @@ namespace pulse
     m_FilterToConnection = nullptr;
     m_ConnectionToEnvironment = nullptr;
     m_DefaultClosedFlowResistance_cmH2O_s_Per_L = 0;
+    m_LastAction = nullptr;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -114,10 +115,18 @@ namespace pulse
 
     // Configuration
     m_DefaultClosedFlowResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+    if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskInstantaneous())
+      m_LastAction = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous();
+    else if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
+      m_LastAction = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze();
+    else if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskAutomated())
+      m_LastAction = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated();
   }
 
   void BagValveMaskModel::StateChange()
   {
+    m_LastAction = nullptr;
     UpdateAirwayMode();
     if (m_data.GetAirwayMode() != eAirwayMode::BagValveMask)
       return;
@@ -322,18 +331,22 @@ namespace pulse
       m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskAutomated();
       m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskInstantaneous();
       m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskSqueeze();
+      m_LastAction = nullptr;
       return;
     }
 
     if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskInstantaneous())
     {
+      CheckLastAction(&m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous());
       if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasPressure())
       {
+        m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
         m_SqueezePressure_cmH2O = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetPressure(PressureUnit::cmH2O);
       }
       else if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasFlow())
       {
         m_SqueezeFlow_L_Per_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetFlow(VolumePerTimeUnit::L_Per_s);
+        m_SqueezePressure_cmH2O = SEScalar::dNaN();
       }
       SetSqeezeDriver();
       return;
@@ -348,6 +361,7 @@ namespace pulse
 
     if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
     {
+      CheckLastAction(&m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze());
       if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasSqueezePressure())
         m_SqueezePressure = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetSqueezePressure();
       if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasSqueezeVolume())
@@ -359,6 +373,7 @@ namespace pulse
     }
     else if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskAutomated())
     {
+      CheckLastAction(&m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated());
       if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasBreathFrequency())
         m_BreathFrequency = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetBreathFrequency();
       if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasInspiratoryExpiratoryRatio())
@@ -691,6 +706,31 @@ namespace pulse
     {
       //Volume doesn't reset to baseline like path elements
       m_ValveNode->GetNextVolume().Set(m_ValveNode->GetVolumeBaseline());
+    }
+  }
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Check if the Bag Valve Mask action changed from one type to another
+///
+/// \details
+/// We need to reset timing if we chang to a new type without stopping the previous action
+/// This was put in when going from Automated to Squeeze, skipped the first squeeze due
+/// to the squeeze timing picking up on the tail end of an automated squeeze
+//--------------------------------------------------------------------------------------------------
+  void BagValveMaskModel::CheckLastAction(SEBagValveMaskAction* a)
+  {
+    if (m_LastAction == nullptr)
+    {
+      m_LastAction = a;
+      return;
+    }
+
+    if (m_LastAction != a)
+    {
+      m_LastAction = a;
+      m_CurrentPeriodTime_s = 0;
+      m_BreathState = eBreathState::EquipmentInhale;
     }
   }
 END_NAMESPACE

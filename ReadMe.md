@@ -40,10 +40,28 @@ Ensure that cmake bin is on your PATH and available in your cmd/bash shell.
 
 If you are on a Debian/Ubuntu system, please install the latest cmake on your system by <a href="https://apt.kitware.com/">following thes instructions</a>.
 
+### Python Dependency
+
+By default, the Pulse_PYTHON_API CMake option is enabled.
+Some of our test suite and data generate tools used are written in Python.
+While there is no dependency on Python when integrating with your application, it is strongly recommended enable Pulse_PYTHON_API when building Pulse to develop/contribute to the code base.
+If you are building Pulse strictly to generate native binaries, you can disable this CMake option.
+
+Simply <a href="https://www.python.org/downloads/">download and install python</a> and ensure that it is available on your path.
+
+Next, install the required python packages via our requirements.txt file at the root of the code base
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# Install python packages used by Pulse
+$ pip3 install -r <path/to/pulse/source/>requirements.txt
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ### Java JDK
 
-The test suite and data generate tools used are written in Java.
-While there is no dependency on Java when integrating with your application, it is currently required to build/develop/contribute to the code base.
+By default, the Pulse_JAVA_API CMake option is enabled.
+Some of our test suite and data generate tools used are written in Java.
+While there is no dependency on Java when integrating with your application, it is strongly recommended enable Pulse_JAVA_API when building Pulse to develop/contribute to the code base.
+If you are building Pulse strictly to generate native binaries, you can disable this CMake option.
 
 A JAVA_HOME environment variable needs to exist pointing to the Java installation.<br>
 There are many ways to do this.
@@ -88,6 +106,11 @@ export JAVA_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also add it to your ~/.bash_profile, or related file (.bashrc, .zshrc, .cshrc, setenv.sh), to get the path in all shells.
+
+### C Sharp Dependency
+
+When building with the Pulse_CSHARP_API option, you will need to ensure you have the latest version of the <a href="https://dotnet.microsoft.com/en-us/download">.NET 6 SDK</a> installed.
+
 
 ## Building
 
@@ -202,6 +225,25 @@ $ ./armv8a ninja -C./Builds/pulse-engine-armv8a
 # The PulseC.so for the target platform will be in the pulse-engine-armv8a/install/bin directory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+#### Dockcross compile scripts
+
+To make cross compiling with dockcross easier, we have provided batch script file for both windows and *nix operating systems.
+
+This script will create a `dockcross-builds` directory one level up from your Pulse source directory.
+A build directory for each platform will be created within this directory.
+Platforms are specified in the xcompile.bat and xcompile.sh scripts.
+We currently use these scripts to build a linux distribution independent and android arm7 and arm8 based PulseC.so binaries.
+You can modify these files to build the desired platform.
+These scripts encapsulate the commands descibed above.
+To start these builds simply open a terminal in the Pulse source directory and start the script
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# Build various platform targets
+$ ./xcompile.sh
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+PulseC binaries are located in each platform/install/bin directory
+
 #### iOS
 
 iOS can only link to static iOS arm64 C++ Pulse libraries. 
@@ -214,8 +256,9 @@ Inorder to generate the necessary files during the build process, you will need 
 Simply follow the above build instructions. We will refer to its build directory as `macos/install` in subsequent steps.
 2. Open CMake and <b>configure</b> an XCode project with a <B>toolchain file for cross compiling</b>. Use the toolchain file `/cmake/ios.toolchain.cmake`
 3. Set Pulse_NATIVE_BUILD_DIR to your `macos` root build directory 
-4. Set Pulse_LIBS_ONLY to `ON` so we only build the necessary static libraries
-5. Configure and Generate CMake for it to create the XCode project
+4. Ensure Pulse_C_STATIC is set to `ON` so we only build the necessary static libraries
+5. Ensure `Pulse_JAVA_API` and `Pulse_PYTHON_API` are set to `OFF`
+6. Configure and Generate CMake for it to create the XCode project
 
 
 #### Magic Leap

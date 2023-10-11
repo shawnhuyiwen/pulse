@@ -11,6 +11,7 @@
 
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEConditionManager.h"
+#include "cdm/engine/SEDataRequested.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/engine/SEEngineTracker.h"
@@ -60,17 +61,11 @@ namespace pulse { namespace human_adult_ventilation_mechanics
 
   void Controller::Allocate()
   {
-    // Create common objects we will use
-    m_Substances = new pulse::SubstanceManager(*this);
+    pulse::Controller::Allocate();
 
-    m_InitialPatient = new SEPatient(GetLogger());
-    m_CurrentPatient = new SEPatient(GetLogger());
-
-    m_Config = new PulseConfiguration(GetLogger());
-    m_Config->Initialize("");//Setup defaults that don't need files on disk
-
-    m_Actions = new SEActionManager(*m_Substances);
-    m_Conditions = new SEConditionManager(GetLogger());
+    // Create our derived objects
+    m_Compartments = new CompartmentManager(*this);
+    m_Circuits = new pulse::CircuitManager(*this);
 
     m_EnvironmentModel = new pulse::EnvironmentModel(*this);
 
@@ -82,16 +77,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
     m_Models.push_back(m_MechanicalVentilatorModel);
     m_Models.push_back(m_RespiratoryModel);
 
-    m_EventManager = new SEEventManager(GetLogger());
-
-    // Create our derived objects
-    m_BlackBoxes = new pulse::BlackBoxManager(*this);
-    m_Compartments = new CompartmentManager(*this);
-    m_Circuits = new pulse::CircuitManager(*this);
-
-    m_LogForward = new pulse::FatalListner(*m_EventManager, m_CurrentTime);
-    m_Logger->AddForward(m_LogForward);
-
+    // Call this after models are setup
     SetupTracker();
   }
 

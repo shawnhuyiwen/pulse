@@ -73,7 +73,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_native
     if (uce.GetQuantityConversionParams(theUnit.GetDimension(), theTestUnit.GetDimension(), fromExp, mappingUnit))
       return JNI_TRUE;
   }
-  catch (std::exception ex)
+  catch (std::exception& ex)
   {
     std::cerr << ex.what() << std::endl;
     if(unitBuf!=nullptr)
@@ -105,7 +105,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_utilities_UnitConverter_native
     if (*theUnit.GetDimension() == *theTemplateUnit.GetDimension())
       return JNI_TRUE;
   }
-  catch (std::exception ex)
+  catch (std::exception& ex)
   {
     std::cerr << ex.what() << std::endl;
     if (unitBuf != nullptr)

@@ -12,5 +12,5 @@ public:
   SEEquipment(Logger* logger);
   virtual ~SEEquipment();
 
-  virtual void Clear();// Deletes all members
+  void Clear() override;// Deletes all members
 };

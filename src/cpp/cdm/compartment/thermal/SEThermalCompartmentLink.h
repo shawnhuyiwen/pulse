@@ -16,9 +16,9 @@ protected:
 public:
   virtual ~SEThermalCompartmentLink();
 
-  virtual void Clear();
+  void Clear() override;
   
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual bool HasHeatTransferRate() const;
   virtual SEScalarPower& GetHeatTransferRate();

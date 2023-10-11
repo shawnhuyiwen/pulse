@@ -6,21 +6,9 @@
     "Conditions": { "AnyCondition": [{
       "PatientCondition": {
         "AcuteRespiratoryDistressSyndrome": {
-          "Severity": {
-            "Scalar0To1": {
-              "Value": 0.6
-            }
-          },
-          "LeftLungAffected": {
-            "Scalar0To1": {
-              "Value": 1.0
-            }
-          },
-          "RightLungAffected": {
-            "Scalar0To1": {
-              "Value": 1.0
-            }
-          }
+          "Severity": [ 
+          { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+          { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.6 }}}]
         }
       }
     }]}
@@ -34,7 +22,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 5.0,
+          "Value": 2.0,
           "Unit": "min"
         }
       }

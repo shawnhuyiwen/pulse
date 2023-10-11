@@ -14,7 +14,7 @@ public:
   virtual ~SEMechanicalVentilatorContinuousPositiveAirwayPressure();
 
   static constexpr char const* Name = "CPAP";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
   void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, bool /*preserveState*/ = false);

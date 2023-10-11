@@ -14,14 +14,14 @@ public:
   virtual ~SEThermalApplication();
 
   static constexpr char const* Name = "Thermal Application";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear();
+  void Clear() override;
   virtual void Copy(const SEThermalApplication& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasActiveHeating() const;
   virtual SEActiveConditioning& GetActiveHeating();
@@ -38,7 +38,7 @@ public:
   virtual const SEAppliedTemperature* GetAppliedTemperature() const;
   virtual void RemoveAppliedTemperature();
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
   bool                   m_ClearContents;

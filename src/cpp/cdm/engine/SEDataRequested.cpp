@@ -23,11 +23,6 @@ SEDataRequested::~SEDataRequested()
 
 }
 
-void SEDataRequested::SetEngine(const PhysiologyEngine& engine)
-{
-  m_Engine = &engine;
-}
-
 bool SEDataRequested::SerializeToString(std::string& dst, eSerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, dst, m);
@@ -41,9 +36,10 @@ void SEDataRequested::Clear()
 {
   m_ID = -1;
   m_IsActive = false;
-  m_Values.clear();
   m_EventChanges.clear();
   m_LogMessages.Clear();
+  m_Headers.clear();
+  m_Segments.clear();
 }
 
 int SEDataRequested::GetID() const
@@ -64,28 +60,26 @@ void SEDataRequested::SetIsActive(bool b)
   m_IsActive = b;
 }
 
-void SEDataRequested::PullDataRequested()
+void SEDataRequested::PullDataRequested(int id, double currentTime_s, DataTrack& tracker)
 {
-  if (!m_Engine)
-    return;
-  m_Values.clear();
-  double currentTime_s = m_Engine->GetSimulationTime(TimeUnit::s);
-  m_Values.push_back(currentTime_s);
-  m_Engine->GetEngineTracker()->TrackData(currentTime_s);
-  size_t length = m_Engine->GetEngineTracker()->GetDataTrack().NumTracks() + 1;
-  for (size_t i = 1; i < length; i++)
-    m_Values.push_back(m_Engine->GetEngineTracker()->GetDataTrack().GetProbe(i - 1));
+  size_t length = tracker.NumTracks();
+  if (m_Headers.empty())
+  {
+    for (size_t i = 0; i < length; i++)
+      m_Headers.push_back(tracker.GetProbeName(i));
+  }
+  Segment s;
+  s.id = id;
+  s.time_s = currentTime_s;
+  for (size_t i = 0; i < length; i++)
+    s.values.push_back(tracker.GetProbe(i));
+  m_Segments.push_back(s);
 }
 void SEDataRequested::ClearDataRequested()
 {
-  m_Values.clear();
+  m_Segments.clear();
   m_EventChanges.clear();
   m_LogMessages.Clear();
-}
-
-const std::vector<double>& SEDataRequested::GetValues() const
-{
-  return m_Values;
 }
 
 const std::vector<SEEventChange>& SEDataRequested::GetEventChanges() const
@@ -131,4 +125,13 @@ void SEDataRequested::ForwardFatal(const std::string& msg)
   m_IsActive = false;
   if (m_KeepLogMessages)
     m_LogMessages.fatal_msgs.push_back(msg);
+}
+
+const std::vector<std::string>& SEDataRequested::GetHeaders() const
+{
+  return m_Headers;
+}
+const std::vector<SEDataRequested::Segment>& SEDataRequested::GetSegments() const
+{
+  return m_Segments;
 }

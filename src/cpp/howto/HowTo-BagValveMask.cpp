@@ -91,12 +91,12 @@ void HowToBagValveMask()
   automatic.GetBreathFrequency().SetValue(12, FrequencyUnit::Per_min);
   automatic.GetInspiratoryExpiratoryRatio().SetValue(0.5);
   // When setting the squeeze 'profile' you can set the pressure OR the Volume
-  //automatic.GetSqueezePressure().SetValue(15, PressureUnit::cmH2O);
-  automatic.GetSqueezeVolume().SetValue(500, VolumeUnit::mL);
+  automatic.GetSqueezePressure().SetValue(9.3, PressureUnit::cmH2O);
+  //automatic.GetSqueezeVolume().SetValue(500, VolumeUnit::mL);
   pe->ProcessAction(automatic);
 
   // Advance some time
-  AdvanceAndTrackTime_s(60, *pe);
+  AdvanceAndTrackTime_s(5, *pe);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -115,8 +115,8 @@ void HowToBagValveMask()
   squeeze.GetExpiratoryPeriod().SetValue(2, TimeUnit::s);
   squeeze.GetInspiratoryPeriod().SetValue(3, TimeUnit::s);
   // When setting the squeeze 'profile' you can set the pressure OR the Volume
-  squeeze.GetSqueezePressure().SetValue(15, PressureUnit::cmH2O);
-  //squeeze.GetSqueezeVolume().SetValue(500, VolumeUnit::mL);
+  //squeeze.GetSqueezePressure().SetValue(15, PressureUnit::cmH2O);
+  squeeze.GetSqueezeVolume().SetValue(500, VolumeUnit::mL);
   pe->ProcessAction(squeeze);
 
   // Advance some time (Not too much, its only one squeeze!)
@@ -132,19 +132,19 @@ void HowToBagValveMask()
   pe->GetLogger()->Info(std::stringstream() << "InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
   pe->GetLogger()->Info(std::stringstream() << "Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
 
-  // 2c.)This is the instantaneous value of the current time step of a squeeze, generally this is for connecting to a hardware sensor
+  // 2c.)This is the instantaneous value of the current time step, generally this is for connecting to a hardware sensor
   SEBagValveMaskInstantaneous instantaneous;
-  // When setting the squeeze 'profile' you can set the pressure OR the flow
-  //instantaneous.GetFlow().SetValue(15, VolumePerTimeUnit::mL_Per_s);
-  instantaneous.GetPressure().SetValue(15, PressureUnit::cmH2O);
-  pe->ProcessAction(squeeze);
+  // When setting the instantaneous 'profile' you can set the pressure OR the flow
+  instantaneous.GetFlow().SetValue(15, VolumePerTimeUnit::mL_Per_s);
+  //instantaneous.GetPressure().SetValue(15, PressureUnit::cmH2O);
+  pe->ProcessAction(instantaneous);
 
   // Advance some time (Not too much, its only inhale!)
   AdvanceAndTrackTime_s(2, *pe);
 
   // Set it to release the bag to zero or the PEEP to exhale
   instantaneous.GetPressure().SetValue(5, PressureUnit::cmH2O);
-  pe->ProcessAction(squeeze);
+  pe->ProcessAction(instantaneous);
 
   // Advance some time (Not too much, its only exhale!)
   AdvanceAndTrackTime_s(3, *pe);

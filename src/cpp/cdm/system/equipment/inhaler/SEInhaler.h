@@ -16,7 +16,7 @@ public:
   SEInhaler(Logger* logger);
   virtual ~SEInhaler();
 
-  virtual void Clear();
+  void Clear() override;
 
   bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
@@ -31,7 +31,7 @@ public:
   *              This is best used, and intended for, you to dynamically prepopulate
   *              a mapping data structure that will help access what you need
   */
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
   /** @name StateChange

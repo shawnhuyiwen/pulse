@@ -4,22 +4,11 @@ package com.kitware.pulse.howto;
 
 import java.util.List;
 
-import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
-import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.*;
-import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
-import com.kitware.pulse.cdm.bind.PatientActions.IntubationData.eType;
-import com.kitware.pulse.cdm.datarequests.SEDataRequest;
-import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
-import com.kitware.pulse.cdm.engine.SEPatientConfiguration;
-import com.kitware.pulse.cdm.patient.SEPatient;
-import com.kitware.pulse.cdm.patient.actions.SEIntubation;
+import com.kitware.pulse.cdm.engine.SEDataRequestManager;
 import com.kitware.pulse.cdm.patient.actions.SERespiratoryMechanicsConfiguration;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.LengthUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.MassUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.PressureTimePerVolumeUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.MassPerVolumeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.PressureUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumePerPressureUnit;
@@ -28,7 +17,6 @@ import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
 import com.kitware.pulse.cdm.properties.SECurve;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.cdm.properties.SESegmentConstant;
-import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions.*;
 import com.kitware.pulse.cdm.system.physiology.SERespiratoryMechanics;
 import com.kitware.pulse.engine.PulseEngine;
 import com.kitware.pulse.utilities.JNIBridge;
@@ -54,7 +42,6 @@ public class HowTo_RespiratoryMechanics
   public static void main(String[] args)
   {
     List<Double> dataValues;
-    SEScalarTime time = new SEScalarTime(1,TimeUnit.min);
     
     JNIBridge.initialize();
     PulseEngine pulse = new PulseEngine();

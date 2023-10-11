@@ -53,7 +53,8 @@ namespace pulse::study::circuit_optimization
   bool CircuitOptimizer::ConvergeToHemodynamicsTargets(size_t maxLoops,
                                                        double stepRatio,
                                                        std::string& startModifierSet,
-                                                       std::vector<SEValidationTarget*>& targets,
+                                                       const std::string& dataRequestFile,
+                                                       std::vector<SETimeSeriesValidationTarget*>& targets,
                                                        std::vector<std::string>& modifiers)
   {
     // Start with the default modifiers
@@ -76,7 +77,7 @@ namespace pulse::study::circuit_optimization
     for (unsigned int i = 0; i < maxLoops; ++i)// Maximum loops
     {
       // 1. Generate data with current modifiers
-      if (!GenerateHemodynamicsData(cfg, targets))
+      if (!GenerateHemodynamicsData(cfg, dataRequestFile, targets))
       {
         Fatal("Error generating data");
         return false;
@@ -88,7 +89,7 @@ namespace pulse::study::circuit_optimization
       int nFail = 0;
       int nPass = nTarget;
       double errorNorm  = 0;
-      for (SEValidationTarget* vt : targets)
+      for (SETimeSeriesValidationTarget* vt : targets)
       {
         check = "PASS ";
         if (vt->GetError() > 10.0)// Just a guess here...
@@ -97,9 +98,9 @@ namespace pulse::study::circuit_optimization
           nFail++;
           nPass--;
           converged = false;
-          Info(check + vt->GetCompartmentName() + " " + vt->GetPropertyName() +
-               " [" + pulse::cdm::to_string(vt->GetRangeMin()) + ", " + pulse::cdm::to_string(vt->GetRangeMax()) + "] " +
-               pulse::cdm::to_string(vt->GetValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
+          Info(check + vt->GetHeader() +
+               " [" + pulse::cdm::to_string(vt->GetTargetMinimum()) + ", " + pulse::cdm::to_string(vt->GetTargetMaximum()) + "] " +
+               pulse::cdm::to_string(vt->GetDataValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
         }
         errorNorm += vt->GetError() * vt->GetError();
       }
@@ -130,14 +131,14 @@ namespace pulse::study::circuit_optimization
 
       // 4. We did not converge, so compute a new modifier set to test
       previousErrorNorm = errorNorm;
-      if (!ComputeNewModifiers(stepRatio, cfg, targets, modifiers))
+      if (!ComputeNewModifiers(stepRatio, cfg, dataRequestFile, targets, modifiers))
         return false;
 
       Info("Finished Modifier Loop " + std::to_string(i+1));
     }
 
     // Check final results
-    if (!GenerateHemodynamicsData(cfg, targets))
+    if (!GenerateHemodynamicsData(cfg, dataRequestFile, targets))
     {
       Fatal("Error generating data");
       return false;
@@ -146,7 +147,7 @@ namespace pulse::study::circuit_optimization
     int nFail = 0;
     int nPass = nTarget;
     double errorNorm  = 0;
-    for (SEValidationTarget* vt : targets)
+    for (SETimeSeriesValidationTarget* vt : targets)
     {
       check = "PASS ";
       if (vt->GetError() > 10.0)// Just a guess here...
@@ -155,9 +156,9 @@ namespace pulse::study::circuit_optimization
         nFail++;
         nPass--;
       }
-      Info(check + vt->GetCompartmentName() + " " + vt->GetPropertyName() +
-           " [" + pulse::cdm::to_string(vt->GetRangeMin()) + ", " + pulse::cdm::to_string(vt->GetRangeMax()) + "] " +
-           pulse::cdm::to_string(vt->GetValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
+      Info(check + vt->GetHeader() +
+           " [" + pulse::cdm::to_string(vt->GetTargetMinimum()) + ", " + pulse::cdm::to_string(vt->GetTargetMaximum()) + "] " +
+           pulse::cdm::to_string(vt->GetDataValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
       errorNorm += vt->GetError() * vt->GetError();
     }
     Info("Final total error norm (l2): " + std::to_string(errorNorm) +
@@ -172,7 +173,8 @@ namespace pulse::study::circuit_optimization
     return false;
   }
 
-  bool CircuitOptimizer::GenerateHemodynamicsData(PulseConfiguration& cfg, std::vector<SEValidationTarget*>& targets)
+  bool CircuitOptimizer::GenerateHemodynamicsData(PulseConfiguration& cfg,
+    const std::string& dataRequestFile, std::vector<SETimeSeriesValidationTarget*>& targets)
   {
     pulse::human_adult_hemodynamics::Engine engine(GetLogger());
 
@@ -191,19 +193,28 @@ namespace pulse::study::circuit_optimization
       return false;
     }
 
+    SEDataRequestManager& drMgr = engine.GetEngineTracker()->GetDataRequestManager();
+    drMgr.SerializeDataRequestsFromFile(dataRequestFile);
+
     // Listen for Cardiac Cycles
     engine.GetEventManager().ForwardEvents(this);
 
     // Setup Data Requests
-    std::map<SEValidationTarget*, SEValidationTarget*> t2e;
+    SEDataRequest* dr;
+    std::map<SETimeSeriesValidationTarget*, SEDataRequest*> vTgt2dr;
     engine.GetEngineTracker()->SetTrackMode(TrackMode::Dynamic); // No file needed
-    SEDataRequestManager& drMgr = engine.GetEngineTracker()->GetDataRequestManager();
-    for (SEValidationTarget* vt : targets)
+    for (SETimeSeriesValidationTarget* vt : targets)
     {
       // Reset the computed data in our targets
       vt->GetData().clear();
       // Cache off the mapping of our target to this engine
-      t2e[vt] = &drMgr.CopyValidationTarget(*vt);
+      dr = drMgr.FindDataRequest(vt->GetHeader());
+      if (dr == nullptr)
+      {
+        Error("Unable to find data request for "+vt->GetHeader());
+        return false;
+      }
+      vTgt2dr[vt] = dr;
     }
 
     // Advance for 5 Cardiac Cycles
@@ -217,15 +228,15 @@ namespace pulse::study::circuit_optimization
         return false;
       }
       engine.GetEngineTracker()->TrackData(engine.GetSimulationTime(TimeUnit::s));
-      for (SEValidationTarget* vt : targets)
+      for (SETimeSeriesValidationTarget* vt : targets)
       {
         if (m_StartOfCardiacCycle)
           vt->GetData().clear();
-        vt->GetData().push_back(engine.GetEngineTracker()->GetValue(*t2e[vt]));
+        vt->GetData().push_back(engine.GetEngineTracker()->GetValue(*vTgt2dr[vt]));
       }
       m_StartOfCardiacCycle = false;
     }
-    for (SEValidationTarget* vt : targets)
+    for (SETimeSeriesValidationTarget* vt : targets)
     {
       if (!vt->ComputeError())
       {
@@ -239,7 +250,8 @@ namespace pulse::study::circuit_optimization
   }
   bool CircuitOptimizer::ComputeNewModifiers(double stepRatio,
                                              PulseConfiguration& cfg,
-                                             std::vector<SEValidationTarget*>& targets,
+                                             const std::string& dataRequestFile,
+                                             std::vector<SETimeSeriesValidationTarget*>& targets,
                                              std::vector<std::string>& modifiers)
   {
     // TODO: No bounding constraint has been imposed yet.
@@ -263,7 +275,7 @@ namespace pulse::study::circuit_optimization
       // Step one modifier and compute
       double val = cfg.GetModifiers()[name].value; // cache it
       cfg.GetModifiers()[name].value = val + finiteDiferenceStepSize;
-      if (!GenerateHemodynamicsData(cfg, targets)) // TODO this should be a function pointer
+      if (!GenerateHemodynamicsData(cfg, dataRequestFile, targets)) // TODO this should be a function pointer
       {
         Fatal("Error generating data");
         return false;
@@ -271,7 +283,7 @@ namespace pulse::study::circuit_optimization
 
       // Put all target errors for this one modifier step in our matrix
       int j = 0;
-      for (SEValidationTarget* vt : targets)
+      for (SETimeSeriesValidationTarget* vt : targets)
       {
         Jacobian.coeffRef(j, i)  = (vt->GetError() - diffY.coeffRef(j, 0)) / finiteDiferenceStepSize;
         j++;

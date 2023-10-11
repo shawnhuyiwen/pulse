@@ -31,7 +31,7 @@ class MyCustomExec : public SEAdvanceHandler
 {
 public:
   MyCustomExec() : SEAdvanceHandler(false) { } // Nix callbacks during stabilization
-  void OnAdvance(double time_s)
+  void OnAdvance(double time_s) override
   {
     // you are given the current scenairo time and the engine, so you can do what ever you want
   }

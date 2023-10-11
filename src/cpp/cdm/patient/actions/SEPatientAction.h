@@ -13,9 +13,9 @@ public:
   virtual ~SEPatientAction();
 
   static constexpr char const* ActionType = "Patient";
-  virtual std::string GetActionType() const { return ActionType; }
+  std::string GetActionType() const override { return ActionType; }
 
-  virtual void Clear(); //clear memory
+  void Clear() override;
 
-  virtual bool IsValid() const;
+  bool IsValid() const override;
 };  

@@ -101,7 +101,7 @@ void HowToMechanicalVentilator()
   Dyspnea.GetSeverity().SetValue(1.0);
   pe->ProcessAction(Dyspnea);
   AdvanceAndTrackTime_s(10.0, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
 
   // We have action support for several commonly used ventilator modes
   // Pulse is not limited to these modes, These modes are designe for simple understanding
@@ -131,7 +131,7 @@ void HowToMechanicalVentilator()
   
   pe->ProcessAction(cpap);
   AdvanceAndTrackTime_s(10.0, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
 
 
   SEMechanicalVentilatorPressureControl pc_ac;
@@ -152,7 +152,7 @@ void HowToMechanicalVentilator()
 
   pe->ProcessAction(pc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
 
 
   SEMechanicalVentilatorVolumeControl vc_ac;
@@ -174,7 +174,7 @@ void HowToMechanicalVentilator()
 
   pe->ProcessAction(vc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
 
 
   // Here is an example of programming a custom ventilator mode
@@ -197,7 +197,7 @@ void HowToMechanicalVentilator()
   mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
   pe->ProcessAction(mv_config);
   AdvanceAndTrackTime_s(10.0, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
 
 
   // You can also perform holds
@@ -208,12 +208,12 @@ void HowToMechanicalVentilator()
   hold.SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle::Instantaneous);
   pe->ProcessAction(hold);
   AdvanceAndTrackTime_s(3, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
   hold.SetState(eSwitch::Off);
   pe->ProcessAction(hold);
 
   AdvanceAndTrackTime_s(10, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
 
   //Activate inspiratory hold for 3s during plateau of the next inspiratory phase
   hold.SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle::Inspiratory);
@@ -226,7 +226,7 @@ void HowToMechanicalVentilator()
   }
   //Hold for 3s
   AdvanceAndTrackTime_s(3, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
   hold.SetState(eSwitch::Off);
   pe->ProcessAction(hold);
   //Output the resulting plateau pressure at end-inspiration
@@ -235,7 +235,7 @@ void HowToMechanicalVentilator()
   pe->GetLogger()->Info(ss);
 
   AdvanceAndTrackTime_s(10, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
 
   //Activate expiratory hold for 3s at the end of expiration
   hold.SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle::Expiratory);
@@ -248,7 +248,7 @@ void HowToMechanicalVentilator()
   }
   //Hold for 3s
   AdvanceAndTrackTime_s(3, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
   hold.SetState(eSwitch::Off);
   pe->ProcessAction(hold);
   //Output the resulting auto PEEP value
@@ -257,7 +257,7 @@ void HowToMechanicalVentilator()
   pe->GetLogger()->Info(ss);
 
   AdvanceAndTrackTime_s(10, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
 
 
   // A leak can be specified
@@ -265,11 +265,11 @@ void HowToMechanicalVentilator()
   leak.GetSeverity().SetValue(0.5);
   pe->ProcessAction(leak);
   AdvanceAndTrackTime_s(5, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
   leak.GetSeverity().SetValue(0.0);// Turn off the leak
   pe->ProcessAction(leak);
   AdvanceAndTrackTime_s(5, *pe);
-  pe->GetEngineTracker()->LogRequestedValues(false);
+  pe->GetEngineTracker()->LogRequestedValues();
 
   pe->GetLogger()->Info("Finished");
 }

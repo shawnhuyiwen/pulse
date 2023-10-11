@@ -73,9 +73,8 @@ void HowToCreateAPatient()
   patient.SerializeToFile("./patients/HowToCreateAPatient.json");
 
   SEAcuteRespiratoryDistressSyndrome& ards = pc.GetConditions().GetAcuteRespiratoryDistressSyndrome();
-  ards.GetSeverity().SetValue(0.9);
-  ards.GetLeftLungAffected().SetValue(1.0);
-  ards.GetRightLungAffected().SetValue(1.0);
+  ards.GetSeverity(eLungCompartment::LeftLung).SetValue(0.9);
+  ards.GetSeverity(eLungCompartment::RightLung).SetValue(0.9);
 
 
   if (!pe->InitializeEngine(pc))

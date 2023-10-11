@@ -18,11 +18,11 @@ protected:
 public:
   virtual ~SEElectricalCompartment();
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
-  virtual bool HasChildren() const { return !m_Children.empty(); }
+  virtual bool HasChildren() const override { return !m_Children.empty(); }
   virtual const std::vector<SEElectricalCompartment*>& GetChildren() { return m_Children; }
   virtual const std::vector<SEElectricalCompartment*>& GetLeaves() { return m_Leaves; }
 
@@ -30,7 +30,7 @@ public:
   virtual  SECompartmentNodes<ELECTRICAL_COMPARTMENT_NODE>& GetNodeMapping() { return m_Nodes; }
   virtual void MapNode(SEElectricalCircuitNode& node);
 
-  virtual void StateChange();
+  void StateChange() override;
 
   virtual bool HasCurrentIn() const;
   virtual const SEScalarElectricCurrent& GetCurrentIn() const;

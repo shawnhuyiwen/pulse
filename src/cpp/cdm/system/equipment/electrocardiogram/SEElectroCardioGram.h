@@ -15,11 +15,11 @@ public:
   SEElectroCardioGram(Logger* logger);
   virtual ~SEElectroCardioGram();
 
-  virtual void Clear();
+  void Clear() override;
 
   void Copy(const SEElectroCardioGram& src);
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
   bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;

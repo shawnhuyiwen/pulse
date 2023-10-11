@@ -5,6 +5,8 @@
 CDM_BIND_DECL(AnyActionData)
 CDM_BIND_DECL2(Action)
 CDM_BIND_DECL2(AdvanceTime)
+CDM_BIND_DECL2(AdvanceUntilStable)
+CDM_BIND_DECL2(SerializeRequested)
 CDM_BIND_DECL2(SerializeState)
 CDM_BIND_DECL2(Overrides)
 class SESubstanceManager;
@@ -28,6 +30,16 @@ public:
   static CDM_BIND::AdvanceTimeData* Unload(const SEAdvanceTime& src);
   static void Serialize(const CDM_BIND::AdvanceTimeData& src, SEAdvanceTime& dst);
   static void Serialize(const SEAdvanceTime& src, CDM_BIND::AdvanceTimeData& dst);
+
+  static void Load(const CDM_BIND::AdvanceUntilStableData& src, SEAdvanceUntilStable& dst);
+  static CDM_BIND::AdvanceUntilStableData* Unload(const SEAdvanceUntilStable& src);
+  static void Serialize(const CDM_BIND::AdvanceUntilStableData& src, SEAdvanceUntilStable& dst);
+  static void Serialize(const SEAdvanceUntilStable& src, CDM_BIND::AdvanceUntilStableData& dst);
+
+  static void Load(const CDM_BIND::SerializeRequestedData& src, SESerializeRequested& dst);
+  static CDM_BIND::SerializeRequestedData* Unload(const SESerializeRequested& src);
+  static void Serialize(const CDM_BIND::SerializeRequestedData& src, SESerializeRequested& dst);
+  static void Serialize(const SESerializeRequested& src, CDM_BIND::SerializeRequestedData& dst);
 
   static void Load(const CDM_BIND::SerializeStateData& src, SESerializeState& dst);
   static CDM_BIND::SerializeStateData* Unload(const SESerializeState& src);

@@ -20,7 +20,7 @@
       "AsthmaAttack": {
         "Severity": {
           "Scalar0To1": {
-            "Value": 0.7
+            "Value": 0.75
           }
         }
       }

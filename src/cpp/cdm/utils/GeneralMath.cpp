@@ -276,7 +276,7 @@ void GeneralMath::Combinations(std::vector<size_t> maxValues, std::vector<std::v
   current = &permutations[perm++];
   current->resize(Olength, 0);
 
-  for (int iter = 0; iter < numVals - 1; iter++)
+  for (size_t iter = 0; iter < numVals - 1; iter++)
   {
     next = &permutations[perm++];
     Copy(*current, *next);

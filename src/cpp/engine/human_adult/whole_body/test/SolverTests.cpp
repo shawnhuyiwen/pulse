@@ -790,7 +790,7 @@ namespace pulse { namespace human_adult_whole_body
     }
 
     //Now find the quickest time for each circuit
-    int minAnesthesiaMachineIndex, minAMWithRespIndex, minRespiratoryIndex, minRespWithInhalerIndex, minCVIndex, minRenalIndex, minInternalIndex, minExternalIndex, minTempIndex;
+    size_t minAnesthesiaMachineIndex, minAMWithRespIndex, minRespiratoryIndex, minRespWithInhalerIndex, minCVIndex, minRenalIndex, minInternalIndex, minExternalIndex, minTempIndex;
     minAnesthesiaMachineIndex = minAMWithRespIndex = minRespiratoryIndex = minRespWithInhalerIndex = minCVIndex = minRenalIndex = minInternalIndex = minExternalIndex = minTempIndex = 0;
 
     for (size_t i = 0; i < EigenCircuitSolver::_size; i++)

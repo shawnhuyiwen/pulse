@@ -1,6 +1,8 @@
 ﻿/* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+using pulse.cdm.bind;
+
 namespace Pulse.CDM
 {
   public class PBPatientCondition
@@ -51,10 +53,10 @@ namespace Pulse.CDM
         Serialize(any.ImpairedAlveolarExchange, iae);
         return iae;
       }
-      if (any.LobarPneumonia != null)
+      if (any.Pneumonia != null)
       {
-        SELobarPneumonia lp = new SELobarPneumonia();
-        Serialize(any.LobarPneumonia, lp);
+        SEPneumonia lp = new SEPneumonia();
+        Serialize(any.Pneumonia, lp);
         return lp;
       }
       if (any.PulmonaryFibrosis != null)
@@ -117,9 +119,9 @@ namespace Pulse.CDM
         any.ImpairedAlveolarExchange = Unload((SEImpairedAlveolarExchange)Condition);
         return any;
       }
-      if (Condition.GetType().IsAssignableFrom(typeof(SELobarPneumonia)))
+      if (Condition.GetType().IsAssignableFrom(typeof(SEPneumonia)))
       {
-        any.LobarPneumonia = Unload((SELobarPneumonia)Condition);
+        any.Pneumonia = Unload((SEPneumonia)Condition);
         return any;
       }
       if (Condition.GetType().IsAssignableFrom(typeof(SEPulmonaryFibrosis)))
@@ -164,12 +166,8 @@ namespace Pulse.CDM
     {
       if (src.PatientCondition != null)
         Serialize(src.PatientCondition, dst);
-      if (src.Severity != null)
-        PBProperty.Load(src.Severity, dst.GetSeverity());
-      if (src.LeftLungAffected != null)
-        PBProperty.Load(src.LeftLungAffected, dst.GetLeftLungAffected());
-      if (src.RightLungAffected != null)
-        PBProperty.Load(src.RightLungAffected, dst.GetRightLungAffected());
+      foreach (var s in src.Severity)
+        PBProperty.Load(s.Severity, dst.GetSeverity((eLungCompartment)s.Compartment));
     }
     public static pulse.cdm.bind.AcuteRespiratoryDistressSyndromeData Unload(SEAcuteRespiratoryDistressSyndrome src)
     {
@@ -181,17 +179,18 @@ namespace Pulse.CDM
     {
       dst.PatientCondition = new pulse.cdm.bind.PatientConditionData();
       Serialize(src, dst.PatientCondition);
-      if (src.HasSeverity())
-        dst.Severity = PBProperty.Unload(src.GetSeverity());
-      if (src.HasLeftLungAffected())
-        dst.LeftLungAffected = PBProperty.Unload(src.GetLeftLungAffected());
-      if (src.HasRightLungAffected())
-        dst.RightLungAffected = PBProperty.Unload(src.GetRightLungAffected());
+      foreach (var s in src.GetSeverities())
+      {
+        LungImpairmentData d = new LungImpairmentData();
+        d.Compartment = (pulse.cdm.bind.eLungCompartment)s.Key;
+        d.Severity = PBProperty.Unload(s.Value);
+        dst.Severity.Add(d);
+      }
     }
-    #endregion
+      #endregion
 
     #region SEChronicAnemia
-    public static void Load(pulse.cdm.bind.ChronicAnemiaData src, SEChronicAnemia dst)
+      public static void Load(pulse.cdm.bind.ChronicAnemiaData src, SEChronicAnemia dst)
     {
       Serialize(src, dst);
     }
@@ -228,8 +227,8 @@ namespace Pulse.CDM
         Serialize(src.PatientCondition, dst);
       if (src.BronchitisSeverity != null)
         PBProperty.Load(src.BronchitisSeverity, dst.GetBronchitisSeverity());
-      if (src.EmphysemaSeverity != null)
-        PBProperty.Load(src.EmphysemaSeverity, dst.GetEmphysemaSeverity());
+      foreach (var s in src.EmphysemaSeverity)
+        PBProperty.Load(s.Severity, dst.GetEmphysemaSeverity((eLungCompartment)s.Compartment));
     }
     public static pulse.cdm.bind.ChronicObstructivePulmonaryDiseaseData Unload(SEChronicObstructivePulmonaryDisease src)
     {
@@ -243,8 +242,13 @@ namespace Pulse.CDM
       Serialize(src, dst.PatientCondition);
       if (src.HasBronchitisSeverity())
         dst.BronchitisSeverity = PBProperty.Unload(src.GetBronchitisSeverity());
-      if (src.HasEmphysemaSeverity())
-        dst.EmphysemaSeverity = PBProperty.Unload(src.GetEmphysemaSeverity());
+      foreach (var s in src.GetEmphysemaSeverities())
+      {
+        LungImpairmentData d = new LungImpairmentData();
+        d.Compartment = (pulse.cdm.bind.eLungCompartment)s.Key;
+        d.Severity = PBProperty.Unload(s.Value);
+        dst.EmphysemaSeverity.Add(d);
+      }
     }
     #endregion
 
@@ -364,38 +368,35 @@ namespace Pulse.CDM
     }
     #endregion
 
-    #region SELobarPneumonia
-    public static void Load(pulse.cdm.bind.LobarPneumoniaData src, SELobarPneumonia dst)
+    #region SEPneumonia
+    public static void Load(pulse.cdm.bind.PneumoniaData src, SEPneumonia dst)
     {
       Serialize(src, dst);
     }
-    public static void Serialize(pulse.cdm.bind.LobarPneumoniaData src, SELobarPneumonia dst)
+    public static void Serialize(pulse.cdm.bind.PneumoniaData src, SEPneumonia dst)
     {
       if (src.PatientCondition != null)
         Serialize(src.PatientCondition, dst);
-      if (src.Severity != null)
-        PBProperty.Load(src.Severity, dst.GetSeverity());
-      if (src.LeftLungAffected != null)
-        PBProperty.Load(src.LeftLungAffected, dst.GetLeftLungAffected());
-      if (src.RightLungAffected != null)
-        PBProperty.Load(src.RightLungAffected, dst.GetRightLungAffected());
+      foreach (var s in src.Severity)
+        PBProperty.Load(s.Severity, dst.GetSeverity((eLungCompartment)s.Compartment));
     }
-    public static pulse.cdm.bind.LobarPneumoniaData Unload(SELobarPneumonia src)
+    public static pulse.cdm.bind.PneumoniaData Unload(SEPneumonia src)
     {
-      pulse.cdm.bind.LobarPneumoniaData dst = new pulse.cdm.bind.LobarPneumoniaData();
+      pulse.cdm.bind.PneumoniaData dst = new pulse.cdm.bind.PneumoniaData();
       Serialize(src, dst);
       return dst;
     }
-    public static void Serialize(SELobarPneumonia src, pulse.cdm.bind.LobarPneumoniaData dst)
+    public static void Serialize(SEPneumonia src, pulse.cdm.bind.PneumoniaData dst)
     {
       dst.PatientCondition = new pulse.cdm.bind.PatientConditionData();
       Serialize(src, dst.PatientCondition);
-      if (src.HasSeverity())
-        dst.Severity = PBProperty.Unload(src.GetSeverity());
-      if (src.HasLeftLungAffected())
-        dst.LeftLungAffected = PBProperty.Unload(src.GetLeftLungAffected());
-      if (src.HasRightLungAffected())
-        dst.RightLungAffected = PBProperty.Unload(src.GetRightLungAffected());
+      foreach (var s in src.GetSeverities())
+      {
+        LungImpairmentData d = new LungImpairmentData();
+        d.Compartment = (pulse.cdm.bind.eLungCompartment)s.Key;
+        d.Severity = PBProperty.Unload(s.Value);
+        dst.Severity.Add(d);
+      }
     }
     #endregion
 

@@ -13,31 +13,25 @@ endif()
 
 # Support getting various versions, as end users could be using a different versions
 # And their application runtime environment needs to have all consistent dlls, or they fight!
+# Note that the Protobuf C++ API changed and required Pulse updates
+# Versions older than 22.0 are not supported anymore
+# Generally, We only support the latest version at the time of a release
+# And any release that somebody has requested we support for compatibility with their application
 
-set(Protobuf_VERSION "3.21.4" CACHE STRING "Select the  version of ProtoBuf to build.")
-set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "3.21.4" "3.15.8" "3.10.0")
+set(Protobuf_VERSION "24.3" CACHE STRING "Select the  version of ProtoBuf to build.")
+set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "24.3")
 
-if (Protobuf_VERSION VERSION_EQUAL 3.21.4)# Latest, Can change
-  set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v21.4/protobuf-all-21.4.zip" )
-  set(Protobuf_md5 "f542df673c2a50ef7a0e4b1cc02c5a42" )
-elseif(Protobuf_VERSION VERSION_EQUAL 3.15.8) # Requested by DarkSlope
-  set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v3.15.8/protobuf-all-3.15.8.zip")
-  set(Protobuf_md5 "5249754276f08be7fef1421f418c1e70")
-elseif (Protobuf_VERSION VERSION_EQUAL 3.10.0)# Requested by Swansea for compatibility with YarnSpinner v1.2.6
-  set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v3.10.0/protobuf-all-3.10.0.zip" )
-  set(Protobuf_md5 "46171f4afc4828b55b5a46dd02f5ef15" )
+set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v${Protobuf_VERSION}/protobuf-${Protobuf_VERSION}.zip" )
+
+if (Protobuf_VERSION VERSION_EQUAL 24.3)# Latest, Can change
+  set(Protobuf_md5 "d425496d9fbfaeaecde6fb07fdf41312" )
 else()
   message(STATUS "Using Protobuf Version ${Protobuf_VERSION}, with no git hash, will redownload if you rebuild.")
-  set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v${Protobuf_VERSION}/protobuf-all-${Protobuf_VERSION}.zip" )
   set(Protobuf_md5 "" )
-  # Old versions we have used
-  # Generally, We only support the latest version at the time of a release
-  # And any release that somebody has requested we support for compatibility with their application
-  #set(Protobuf_md5 "5cda6b2a21148df72ca1832005e89b13" ) - 3.17.1
 endif()
 
 set(BUILD_PROTOC_BINARIES ON)
-if(${PROJECT_NAME}_LIBS_ONLY)
+if(${PROJECT_NAME}_C_STATIC)
   set(BUILD_PROTOC_BINARIES OFF)
 endif()
 
@@ -46,28 +40,35 @@ define_external_dirs_ex(protobuf)
 add_external_project_ex( protobuf
   URL ${Protobuf_url}
   URL_MD5 ${Protobuf_md5}
-  SOURCE_SUBDIR ./cmake
   CMAKE_CACHE_ARGS
     -DBUILD_SHARED_LIBS:BOOL=OFF
-    -DCMAKE_INSTALL_PREFIX:PATH=${protobuf_PREFIX}/install
+    -DBUILD_TESTING:BOOL=OFF
+    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
     -Dprotobuf_BUILD_EXAMPLES:BOOL=OFF
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
     -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF#Don't change MSVC runtime settings (/MD or /MT)
     -Dprotobuf_WITH_ZLIB:BOOL=OFF
     -Dprotobuf_BUILD_PROTOC_BINARIES:BOOL=${BUILD_PROTOC_BINARIES}
+    -Dprotobuf_ABSL_PROVIDER:STRING=package
+    -Dabsl_DIR:PATH=${absl_DIR}
   ${PROTOBUF_MULTI_BUILD}
   ${PROTOBUF_MULTI_INSTALL}
   RELATIVE_INCLUDE_PATH "include"
-  #DEPENDENCIES ""
+  DEPENDENCIES absl
   #VERBOSE
 )
+
 if (NOT USE_SYSTEM_protobuf)
+  set(protobuf_INSTALL ${CMAKE_INSTALL_PREFIX})
   if(WIN32)
-    set(protobuf_DIR ${protobuf_PREFIX}/install/cmake)
+    set(protobuf_DIR ${protobuf_INSTALL}/cmake)
   else()
-    set(protobuf_DIR ${protobuf_PREFIX}/install/${CMAKE_INSTALL_LIBDIR}/cmake/protobuf)
+    set(protobuf_DIR ${protobuf_INSTALL}/${CMAKE_INSTALL_LIBDIR}/cmake/protobuf)
   endif()
-  message(STATUS "protobuf_DIR : ${protobuf_DIR}")
   set(protobuf_SRC ${protobuf_PREFIX}/src)
+  set(utf8_range_DIR "${protobuf_INSTALL}/${CMAKE_INSTALL_LIBDIR}/cmake/utf8_range")
+  
+  message(STATUS "protobuf_DIR : ${protobuf_DIR}")
+  message(STATUS "utf8_range_DIR : ${utf8_range_DIR}")
 endif()

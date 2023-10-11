@@ -5,9 +5,8 @@ package com.kitware.pulse.howto;
 import java.util.List;
 
 import com.kitware.pulse.cdm.bind.ECMO.eECMOCannulationLocation;
-import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
+import com.kitware.pulse.cdm.engine.SEDataRequestManager;
 import com.kitware.pulse.cdm.properties.CommonUnits.*;
-import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.cdm.system.equipment.ecmo.SEECMOSettings;
 import com.kitware.pulse.cdm.system.equipment.ecmo.actions.SEECMOConfiguration;
 import com.kitware.pulse.engine.PulseEngine;

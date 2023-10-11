@@ -12,11 +12,11 @@ int main()
 {
   // Uncomment a method to execute fuctionality!
 
-  HowToSandbox();
+  //HowToSandbox();
 
   //HowToEngineUse();
   //HowToCreateAPatient();
-  //HowToSerialize();
+  HowToSerialize();
   //HowToPulseEnginePool();
 
   //HowToACLS();
@@ -37,8 +37,8 @@ int main()
   //HowToExercise();
   //HowToHemorrhage();  HowToExpandedVasculature();
   //HowToHemorrhage();
-  HowToHemothorax();
-  //HowToLobarPneumonia();
+  //HowToHemothorax();
+  //HowToPneumonia();
   //HowToMechanicalVentilation();
   //HowToMechanicalVentilator();
   //HowToPulmonaryFibrosis();

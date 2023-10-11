@@ -150,8 +150,9 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSeria
 
   const char* dmStr = nullptr;
   if (dataRequests != nullptr)
-    dmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);\
+    dmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
   const char* sStr = env->GetStringUTFChars(state, JNI_FALSE);
+  
   bRet = engineJNI->SerializeFromString(sStr, dmStr, (eSerializationFormat)format);
 
   env->ReleaseStringUTFChars(state, sStr);

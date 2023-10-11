@@ -20,5 +20,5 @@ public:
   void AddGraph(SELiquidCompartmentGraph& graph);
 
 protected:
-  void BalanceByIntensive();
+  void BalanceByIntensive() override;
 };

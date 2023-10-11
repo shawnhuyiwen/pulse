@@ -12,9 +12,9 @@ public:
   virtual ~SEAnesthesiaMachineAction();
 
   static constexpr char const* ActionType = "Anesthesia Machine";
-  virtual std::string GetActionType() const { return ActionType; }
+  std::string GetActionType() const override { return ActionType; }
 
-  virtual void Clear();
+  void Clear() override;
 
-  virtual bool IsValid() const;
+  bool IsValid() const override;
 };

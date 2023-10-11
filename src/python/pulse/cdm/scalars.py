@@ -1219,21 +1219,21 @@ class SEScalarVolumePerPressure(SEScalarQuantity):
 class VolumePerTimeUnit(SEScalarUnit):
     @staticmethod
     def from_string(string: str):
-        if string is VolumePerTimeUnit.L_Per_s.get_string():
+        if string == VolumePerTimeUnit.L_Per_s.get_string():
             return VolumePerTimeUnit.L_Per_s
-        if string is VolumePerTimeUnit.L_Per_day.get_string():
+        if string == VolumePerTimeUnit.L_Per_day.get_string():
             return VolumePerTimeUnit.L_Per_day
-        if string is VolumePerTimeUnit.mL_Per_s.get_string():
+        if string == VolumePerTimeUnit.mL_Per_s.get_string():
             return VolumePerTimeUnit.mL_Per_s
-        if string is VolumePerTimeUnit.mL_Per_day.get_string():
+        if string == VolumePerTimeUnit.mL_Per_day.get_string():
             return VolumePerTimeUnit.mL_Per_day
-        if string is VolumePerTimeUnit.L_Per_min.get_string():
+        if string == VolumePerTimeUnit.L_Per_min.get_string():
             return VolumePerTimeUnit.L_Per_min
-        if string is VolumePerTimeUnit.m3_Per_s.get_string():
+        if string == VolumePerTimeUnit.m3_Per_s.get_string():
             return VolumePerTimeUnit.m3_Per_s
-        if string is VolumePerTimeUnit.mL_Per_min.get_string():
+        if string == VolumePerTimeUnit.mL_Per_min.get_string():
             return VolumePerTimeUnit.mL_Per_min
-        if string is VolumePerTimeUnit.mL_Per_hr.get_string():
+        if string == VolumePerTimeUnit.mL_Per_hr.get_string():
             return VolumePerTimeUnit.mL_Per_hr
         raise Exception("No VolumePerTimeUnit defined for "+string)
 VolumePerTimeUnit.L_Per_s = VolumePerTimeUnit("L/s")

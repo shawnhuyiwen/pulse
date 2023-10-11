@@ -224,7 +224,7 @@ There are no conditions associated with the %Tissue system.
 
 Actions
 -------
-At this time, there are no insults or interventions associated with the %Tissue system. Other system actions can affect the diffusion properties or other transports by modifying the diffusion surface area. An example of this is found in the @ref RespiratoryMethodology for lobar pneumonia. As the alveoli fill with fluid, they are unable to participate in gas exchange. This reduces the alveoli surface area, which leads to a reduction of available oxygen in the @ref CardiovascularSystem and the @ref EnergySystem. 
+At this time, there are no insults or interventions associated with the %Tissue system. Other system actions can affect the diffusion properties or other transports by modifying the diffusion surface area. An example of this is found in the @ref RespiratoryMethodology for pneumonia. As the alveoli fill with fluid, they are unable to participate in gas exchange. This reduces the alveoli surface area, which leads to a reduction of available oxygen in the @ref CardiovascularSystem and the @ref EnergySystem. 
 
 Events
 ------
@@ -306,46 +306,3 @@ Appendices
 Data Model Implementation
 -------------------------
 @ref TissueSystemTable "Tissue"
-
-Compartments
-------------
-- Bone
- - BoneExtracellular
- - BoneIntracellular
-- Brain
- - BrainExtracellular
- - BrainIntracellular
-- Fat
- - FatExtracellular
- - FatIntracellular
-- Gut
- - GutExtracellular
- - GutIntracellular
-- LeftKidney
- - LeftKidneyExtracellular
- - LeftKidneyIntracellular
-- LeftLung
- - LeftLungExtracellular
- - LeftLungIntracellular
-- Liver
- - LiverExtracellular
- - LiverIntracellular
-- Muscle
- - MuscleExtracellular
- - MuscleIntracellular
-- Myocardium
- - MyocardiumExtracellular
- - MyocardiumIntracellular
-- RightKidney
- - RightKidneyExtracellular
- - RightKidneyIntracellular
-- RightLung
- - RightLungExtracellular
- - RightLungIntracellular
-- Skin
- - SkinExtracellular
- - SkinIntracellular
-- Spleen
- - SpleenExtracellular
- - SpleenIntracellular		  
-- Lymph

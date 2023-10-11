@@ -17,8 +17,8 @@ public:
 
   bool WriteCSVFile(const std::string& filename) const;
 
-  virtual bool                          IsValid() const;
-  virtual void                          Invalidate();
+  bool                          IsValid() const override;
+  void                          Invalidate() override;
 
   virtual size_t                        Length() const;
   

@@ -18,9 +18,6 @@ add_library_ex(MultiplexVentilationEngine
   )
 set_target_properties(MultiplexVentilationEngine PROPERTIES FOLDER "Studies//MultiplexVentilation")
 
-if(${PROJECT_NAME}_LIBS_ONLY)
-  return()
-endif()
 add_executable_ex(MultiplexVentilationDriver main.cpp)
 set_target_properties(MultiplexVentilationDriver PROPERTIES FOLDER "Studies//MultiplexVentilation")
 target_link_libraries(MultiplexVentilationDriver MultiplexVentilationEngine protobuf::libprotobuf)

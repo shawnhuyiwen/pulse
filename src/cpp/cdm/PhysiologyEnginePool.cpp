@@ -74,7 +74,7 @@ SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::CreateEngine(int id)
   SEPhysiologyEnginePoolEngine* epe = new SEPhysiologyEnginePoolEngine(m_Logger);
   AllocateEngine(*epe);
   epe->EngineInitialization.SetID(id);
-  epe->DataRequested.SetEngine(*epe->Engine);
+  //epe->DataRequested.SetEngine(*epe->Engine);
   epe->Engine->GetLogger()->LogToConsole(false);
   m_Engines.insert({ id, epe });
   return epe;
@@ -194,14 +194,15 @@ void SEPhysiologyEnginePool::ClearDataRequested()
 }
 void SEPhysiologyEnginePool::PullDataRequested(std::vector<SEDataRequested*>& dataRequested)
 {
-  dataRequested.clear();
-  for (auto engine : m_Engines)
-  {
-    if (engine.second->IsActive)
-      engine.second->DataRequested.PullDataRequested();
-     dataRequested.push_back(&engine.second->DataRequested);
-     engine.second->IsActive = engine.second->DataRequested.IsActive();
-  }
+  // TODO the enine now has the data requested tracking in it... how do I get to it?
+  //dataRequested.clear();
+  //for (auto engine : m_Engines)
+  //{
+  //  if (engine.second->IsActive)
+  //    engine.second->DataRequested.PullDataRequested();
+  //   dataRequested.push_back(&engine.second->DataRequested);
+  //   engine.second->IsActive = engine.second->DataRequested.IsActive();
+  //}
 }
 
 ///////////////////////////////

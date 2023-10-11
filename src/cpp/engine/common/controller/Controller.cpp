@@ -28,8 +28,11 @@
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequested.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SEAdvanceUntilStable.h"
+#include "cdm/engine/SESerializeRequested.h"
 #include "cdm/engine/SESerializeState.h"
 #include "cdm/engine/SEOverrides.h"
 #include "cdm/engine/SEEventManager.h"
@@ -52,6 +55,7 @@ namespace pulse
     m_AirwayMode = eAirwayMode::Free;
     m_Intubation = eSwitch::Off;
     m_EngineTrack = nullptr;
+    m_DataRequested = nullptr;
     m_AdvanceHandler = nullptr;
 
     m_CurrentTime.SetValue(0, TimeUnit::s);
@@ -63,6 +67,7 @@ namespace pulse
   Data::~Data()
   {
     SAFE_DELETE(m_EngineTrack);
+    SAFE_DELETE(m_DataRequested);
   }
 
   void Data::AdvanceCallback(double time_s)
@@ -234,6 +239,33 @@ namespace pulse
     Info("Build Time : " + PulseBuildInformation::Time());
   }
 
+  void Controller::Allocate()
+  {
+    // This is what's common among all of our currenly implemented engine
+    // If we need to create an engine without these, we can move these to 
+    // the engine specific controllers
+
+    // Create common objects we will use
+    m_Substances = new pulse::SubstanceManager(*this);
+
+    m_InitialPatient = new SEPatient(GetLogger());
+    m_CurrentPatient = new SEPatient(GetLogger());
+
+    m_Config = new PulseConfiguration(GetLogger());
+    m_Config->Initialize("");//Setup defaults that don't need files on disk
+
+    m_Actions = new SEActionManager(*m_Substances);
+    m_Conditions = new SEConditionManager(GetLogger());
+
+    m_EventManager = new SEEventManager(GetLogger());
+    m_DataRequested = new SEDataRequested();
+    GetLogger()->AddForward(m_DataRequested);
+    m_EventManager->ForwardEvents(m_DataRequested);
+
+    m_LogForward = new pulse::FatalListner(*m_EventManager, m_CurrentTime);
+    m_Logger->AddForward(m_LogForward);
+  }
+
   bool Controller::SetConfigurationOverride(const SEEngineConfiguration* config)
   {
     if (config != nullptr)
@@ -338,6 +370,8 @@ namespace pulse
     SEEventHandler* event_handler = m_EventManager->GetEventHandler();
     m_EventManager->ForwardEvents(nullptr);
 
+    // Setup any data requests
+
     if (!Stabilize(patient_configuration))
     {
       Error("Pulse needs stabilization criteria, none provided in configuration file");
@@ -348,12 +382,16 @@ namespace pulse
     // Use Quantity/Potential/Flux Sources
     m_Circuits->SetReadOnly(true);
 
-    AtSteadyState(EngineState::Active);
     if (!m_Config->GetStabilization()->IsTrackingStabilization())
+    {
       m_SimulationTime.SetValue(0, TimeUnit::s);
+      // Track Time 0
+      GetEngineTracker().TrackData(0);
+    }
     // Hook up the handlers (Note events will still be in the log)
     m_EventManager->ForwardEvents(event_handler);
-
+    // Ready to go!
+    AtSteadyState(EngineState::Active);
     return true;
   }
 
@@ -606,14 +644,45 @@ namespace pulse
     if (adv != nullptr)
       return AdvanceModelTime(adv->GetTime(TimeUnit::s), TimeUnit::s);
 
-    const SESerializeState* serialize = dynamic_cast<const SESerializeState*>(&action);
-    if (serialize != nullptr)
+    const SEAdvanceUntilStable* adv2Stable = dynamic_cast<const SEAdvanceUntilStable*>(&action);
+    if (adv2Stable != nullptr)
     {
-      if (serialize->GetType() == eSerialization_Type::Save)
+      m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
+      if (!m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer))
+        Error("Engine was unable to AdvanceUntilStable");
+      return true;
+    }
+
+    const SESerializeRequested* serializeRequested = dynamic_cast<const SESerializeRequested*>(&action);
+    if (serializeRequested != nullptr)
+    {
+      std::string output;
+      double currentSimTime_s = GetSimulationTime().GetValue(TimeUnit::s);
+      GetEngineTracker().PullData(currentSimTime_s);
+      if(serializeRequested->GetClearCache())
+        m_DataRequested->ClearDataRequested();
+      m_DataRequested->PullDataRequested(serializeRequested->GetID(), currentSimTime_s, GetDataTrack());
+      m_DataRequested->SerializeToString(output, eSerializationFormat::JSON);
+      if (serializeRequested->HasFilename())
       {
-        if (serialize->HasFilename())
+        WriteFile(output, serializeRequested->GetFilename());
+      }
+      else
+      {
+        WriteFile(output, "RequestedData.json");
+      }
+
+      return true;
+    }
+
+    const SESerializeState* serializeState = dynamic_cast<const SESerializeState*>(&action);
+    if (serializeState != nullptr)
+    {
+      if (serializeState->GetType() == eSerialization_Type::Save)
+      {
+        if (serializeState->HasFilename())
         {
-          SerializeToFile(serialize->GetFilename());
+          SerializeToFile(serializeState->GetFilename());
         }
         else
         {
@@ -632,7 +701,7 @@ namespace pulse
         }
       }
       else
-        return SerializeFromFile(serialize->GetFilename());
+        return SerializeFromFile(serializeState->GetFilename());
       return true;
     }
 

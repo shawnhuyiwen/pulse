@@ -133,7 +133,7 @@ namespace pulse::study::patient_variability
     {
       SEPatient patient(GetLogger());
       patient.Copy(basePatient);
-      patient.GetAge().SetValue(age_yr, TimeUnit::yr);
+      patient.GetAge().SetValue((double)age_yr, TimeUnit::yr);
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
     }
 
@@ -173,7 +173,7 @@ namespace pulse::study::patient_variability
     {
       SEPatient patient(GetLogger());
       patient.Copy(basePatient);
-      patient.GetHeartRateBaseline().SetValue(hr_bpm, FrequencyUnit::Per_min);
+      patient.GetHeartRateBaseline().SetValue((double)hr_bpm, FrequencyUnit::Per_min);
       CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
     }
 
@@ -193,8 +193,8 @@ namespace pulse::study::patient_variability
         patient.Copy(basePatient);
         patient.GetSystolicArterialPressureBaseline().Invalidate();
         patient.GetDiastolicArterialPressureBaseline().Invalidate();
-        patient.GetMeanArterialPressureBaseline().SetValue(map, PressureUnit::mmHg);
-        patient.GetPulsePressureBaseline().SetValue(pp_mmHg, PressureUnit::mmHg);
+        patient.GetMeanArterialPressureBaseline().SetValue((double)map, PressureUnit::mmHg);
+        patient.GetPulsePressureBaseline().SetValue((double)pp_mmHg, PressureUnit::mmHg);
         CreatePatient(pList, patient, "/Patient" + std::to_string(m_TotalPatients));
 
         // Check that this combo is valid

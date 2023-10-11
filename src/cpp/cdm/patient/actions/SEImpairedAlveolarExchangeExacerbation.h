@@ -12,14 +12,16 @@ public:
   virtual ~SEImpairedAlveolarExchangeExacerbation();
 
   static constexpr char const* Name = "Impaired Alveolar Exchange Exacerbation";
-  virtual std::string GetName() const { return Name; }
-  
-  virtual void Clear();
-  virtual void Copy(const SEImpairedAlveolarExchangeExacerbation& src, bool /*preserveState*/=false);
+  std::string GetName() const override { return Name; }
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  void Clear() override;
+  void Copy(const SEImpairedAlveolarExchangeExacerbation& src, bool /*preserveState*/=false);
+
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasImpairedSurfaceArea() const;
   virtual SEScalarArea& GetImpairedSurfaceArea();
@@ -32,8 +34,6 @@ public:
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   

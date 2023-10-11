@@ -14,15 +14,17 @@ public:
   virtual ~SESubstanceBolus();
 
   static constexpr char const* Name = "Substance Bolus";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SESubstanceBolus& src, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SESubstanceBolus& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Activate();
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Activate() override;
+  void Deactivate() override;
 
   virtual eSubstanceAdministration_Route GetAdminRoute() const;
   virtual void SetAdminRoute(eSubstanceAdministration_Route name);
@@ -41,8 +43,6 @@ public:
 
   virtual SESubstance& GetSubstance();
   virtual const SESubstance& GetSubstance() const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual bool HasTotalInfusedDose() const;
   virtual SEScalarVolume& GetTotalInfusedDose();

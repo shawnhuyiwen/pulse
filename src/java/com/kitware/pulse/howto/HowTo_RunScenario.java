@@ -3,16 +3,14 @@
 package com.kitware.pulse.howto;
 
 import com.kitware.pulse.cdm.actions.SEAdvanceTime;
-import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
+import com.kitware.pulse.cdm.engine.SEDataRequestManager;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
 import com.kitware.pulse.cdm.scenario.SEScenario;
-import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.engine.PulseScenarioExec;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
-import com.kitware.pulse.utilities.RunConfiguration;
 import com.kitware.pulse.utilities.JNIBridge;
 
 public class HowTo_RunScenario

@@ -17,6 +17,7 @@ public:
   static bool IsValidUnit(const std::string& unit);
   static const AmountPerVolumeUnit& GetCompoundUnit(const std::string& unit);
 
+  static AmountPerVolumeUnit mEq_Per_L;
   static AmountPerVolumeUnit mol_Per_L;
   static AmountPerVolumeUnit mol_Per_mL;
   static AmountPerVolumeUnit mmol_Per_L;

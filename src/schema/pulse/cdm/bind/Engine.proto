@@ -10,6 +10,7 @@ import "pulse/cdm/bind/Actions.proto";
 import "pulse/cdm/bind/Patient.proto";
 import "pulse/cdm/bind/PatientActions.proto";
 import "pulse/cdm/bind/PatientConditions.proto";
+import "pulse/cdm/bind/Plots.proto";
 import "pulse/cdm/bind/EnvironmentActions.proto";
 import "pulse/cdm/bind/EnvironmentConditions.proto";
 import "pulse/cdm/bind/EquipmentActions.proto";
@@ -25,8 +26,8 @@ enum eType
   SignificantDigits = 3;
 }
 
-  eType                                                Type                      = 1;
-  uint32                                               Precision                 = 2;
+  eType                                                Type                             = 1;
+  uint32                                               Precision                        = 2;
 }
 
 message DataRequestData
@@ -49,91 +50,160 @@ message DataRequestData
     Inhaler              = 13;
     MechanicalVentilator = 14;
   }
-  
-  DecimalFormatData                                    DecimalFormat                   = 1;/**<<@brief If writing to a file, specify the decimal formatting */
-  eCategory                                            Category                        = 2;/**<<@brief A category assocated with the Name */
-  string                                               ActionName                      = 3;/**<<@brief The action name the property is on */
-  string                                               CompartmentName                 = 4;/**<<@brief The compartment name the property could be associated with */
-  string                                               SubstanceName                   = 5;/**<<@brief The substance name the property could be associated with */
-  string                                               PropertyName                    = 6;/**<<@brief The name of the property requested */
-  string                                               Unit                            = 7;/**<<@brief If writing to a file, the unit the data will be in. */
+
+  DecimalFormatData                                     DecimalFormat                   = 1;/**<<@brief If writing to a file, specify the decimal formatting */
+  eCategory                                             Category                        = 2;/**<<@brief A category assocated with the Name */
+  string                                                ActionName                      = 3;/**<<@brief The action name the property is on */
+  string                                                CompartmentName                 = 4;/**<<@brief The compartment name the property could be associated with */
+  string                                                SubstanceName                   = 5;/**<<@brief The substance name the property could be associated with */
+  string                                                PropertyName                    = 6;/**<<@brief The name of the property requested */
+  string                                                Unit                            = 7;/**<<@brief If writing to a file, the unit the data will be in. */
 }
 message DataRequestManagerData
 {
-  string                                               ResultsFilename                 = 1;
-  double                                               SamplesPerSecond                = 2;
-  DecimalFormatData                                    DefaultDecimalFormatting        = 3;
-  DecimalFormatData                                    OverrideDecimalFormatting       = 4;
-  repeated DataRequestData                             DataRequest                     = 5;
-  repeated ValidationTargetData                        ValidationTarget                = 6;
+  string                                                ResultsFilename                 = 1;
+  double                                                SamplesPerSecond                = 2;
+  DecimalFormatData                                     DefaultDecimalFormatting        = 3;
+  DecimalFormatData                                     OverrideDecimalFormatting       = 4;
+  repeated DataRequestData                              DataRequest                     = 5;
 }
 
 message DataRequestListData
 {
-  repeated DataRequestData                             DataRequest                     = 1;
+  repeated DataRequestData                              DataRequest                     = 1;
 }
 
+// Premilinary structure for passing data from an external engine to the requesting client
 message DataRequestedData
 {
-  int32                                                ID                              = 1;/**<< @brief A unique id associated with this engine, required when using pools. */
-  bool                                                 IsActive                        = 2;
-  repeated double                                      Value                           = 3;
-  repeated EventChangeData                             EventChange                     = 4;
-  LogMessagesData                                      LogMessages                     = 5;
+  int32                                                 ID                              = 1;/**<< @brief A unique id associated with this engine, required when using pools. */
+  bool                                                  IsActive                        = 2;
+  repeated EventChangeData                              EventChange                     = 3;
+  LogMessagesData                                       LogMessages                     = 4;
+
+  message SegmentData
+  {
+    int32                                               ID                              = 1;
+    double                                              SimTime_s                       = 2;
+    repeated double                                     Value                           = 3;
+  }
+
+
+  repeated string                                       Headers                         = 5;
+  repeated SegmentData                                  Segment                         = 6;
+}
+message DataRequestedListData
+{
+  repeated DataRequestedData                            DataRequested                   = 1;
 }
 
+// This encapsulates a row from our System/Patient validation spreedsheet
+// It also encapsulates a segment property cell from a scenario validation spreedsheet
+
+message RangeData
+{
+  double                                                Minimum                         = 1;
+  double                                                Maximum                         = 2;
+}
 message ValidationTargetData
+{
+
+  string                                                Header                          = 1;
+  string                                                Reference                       = 2;
+  string                                                Notes                           = 3;
+}
+message SegmentValidationTargetData
+{
+
+  ValidationTargetData                                  ValidationTarget                = 1;
+  oneof Expected
+  {
+    double                                              EqualToValue                    = 2;
+    int32                                               EqualToSegment                  = 3;
+    double                                              GreaterThanValue                = 4;
+    int32                                               GreaterThanSegment              = 5;
+    double                                              LessThanValue                   = 6;
+    int32                                               LessThanSegment                 = 7;
+    double                                              TrendsToValue                   = 8;
+    int32                                               TrendsToSegment                 = 9;
+    RangeData                                           Range                           = 10;
+  }
+}
+message SegmentValidationSegmentData
+{
+
+  int32                                                 Segment                         = 1;
+  string                                                Notes                           = 2;
+  repeated SegmentValidationTargetData                  SegmentValidationTarget         = 3;
+}
+message SegmentValidationSegmentListData
+{
+  repeated SegmentValidationSegmentData                 SegmentValidationSegment   = 1;
+}
+message SegmentValidationConfigurationData
+{
+  PlotterListData                                       Plots                           = 1;
+}
+
+message TimeSeriesValidationTargetData
 {
   enum eType
   {
-    Mean          = 0;
-    Min           = 1;
-    Max           = 2;
+    Mean     = 0;
+    Minimum  = 1;
+    Maximum  = 2;
   }
-  eType                                                 Type                            = 1;
-  DataRequestData                                       DataRequest                     = 2;
-  double                                                RangeMin                        = 3;
-  double                                                RangeMax                        = 4;
+  ValidationTargetData                                  ValidationTarget                = 1;
+  eType                                                 Type                            = 2;
+  oneof Expected
+  {
+    double                                              EqualToValue                    = 3;
+    double                                              GreaterThanValue                = 4;
+    double                                              LessThanValue                   = 5;
+    double                                              TrendsToValue                   = 6;
+    RangeData                                           Range                           = 7;
+  }
 }
-
-message DataRequestedListData
+message TimeSeriesValidationTargetListData
 {
-  repeated DataRequestedData                           DataRequested                   = 1;
+  repeated TimeSeriesValidationTargetData               TimeSeriesValidationTarget      = 1;
 }
 
 message AnyConditionData
 {
   oneof Condition
   {
-    AnyPatientConditionData                            PatientCondition                = 1;
-    AnyEnvironmentConditionData                        EnvironmentCondition            = 2;
+    AnyPatientConditionData                             PatientCondition                = 1;
+    AnyEnvironmentConditionData                         EnvironmentCondition            = 2;
   }
 }
 message ConditionListData
 {
-  repeated AnyConditionData                            AnyCondition                    = 1;
+  repeated AnyConditionData                             AnyCondition                    = 1;
 }
 
 message AnyActionData
 {
   oneof Action
   {
-    AdvanceTimeData                                     AdvanceTime                    = 1;
-    SerializeStateData                                  Serialize                      = 2;
-    OverridesData                                       Overrides                      = 3;
-    AnyPatientActionData                                PatientAction                  = 4;
-    AnyEnvironmentActionData                            EnvironmentAction              = 5;
-    AnyEquipmentActionData                              EquipmentAction                = 6;
+    AdvanceTimeData                                     AdvanceTime                     = 1;
+    AdvanceUntilStableData                              AdvanceUntilStable              = 2;
+    SerializeStateData                                  SerializeState                  = 3;
+    SerializeRequestedData                              SerializeRequested              = 4;
+    OverridesData                                       Overrides                       = 5;
+    AnyPatientActionData                                PatientAction                   = 6;
+    AnyEnvironmentActionData                            EnvironmentAction               = 7;
+    AnyEquipmentActionData                              EquipmentAction                 = 8;
   }
 }
 message ActionListData
 {
-  repeated AnyActionData                                AnyAction                      = 1;
+  repeated AnyActionData                                AnyAction                       = 1;
 }
 
 message ActionMapData
 {
-  map<int32, ActionListData>                            ActionMap                      = 1;
+  map<int32, ActionListData>                            ActionMap                       = 1;
 }
 
 // message DataSetsData // This could hold all on disk data sets (Stabilization Criteria, Substances, Stabilization, Nutrition, Environments, ECG, patients, etc.)
@@ -141,42 +211,42 @@ message ActionMapData
 
 message PatientConfigurationData
 {
-  string                                                DataRoot                       = 1;
+  string                                                DataRoot                        = 1;
   oneof PatientType
   {
-    PatientData                                         Patient                        = 2;
-    string                                              PatientFile                    = 3;
+    PatientData                                         Patient                         = 2;
+    string                                              PatientFile                     = 3;
   }
-  ConditionListData                                     Conditions                     = 4;
+  ConditionListData                                     Conditions                      = 4;
 }
 
 message EngineInitializationData
 {
-  int32                                                 ID                             = 1;/**<< @brief A unique id associated with this engine, required when using pools. */
+  int32                                                 ID                              = 1;/**<< @brief A unique id associated with this engine, required when using pools. */
   oneof StartType
   {
-    PatientConfigurationData                            PatientConfiguration           = 2;/**<< @brief Create an engine using a patient configuration. */
-    string                                              StateFilename                  = 3;/**<< @brief Create an engine using a patient state file. */
-    string                                              State                          = 4;/**<< @brief Create an engine using a patient state.*/
+    PatientConfigurationData                            PatientConfiguration            = 2;/**<< @brief Create an engine using a patient configuration. */
+    string                                              StateFilename                   = 3;/**<< @brief Create an engine using a patient state file. */
+    string                                              State                           = 4;/**<< @brief Create an engine using a patient state.*/
   }
-  DataRequestManagerData                                DataRequestManager             = 5;/**<< @brief Data Requests to use for this engine*/
-  string                                                LogFilename                    = 6;/**<< @brief Log file to create for engine. */
-  bool                                                  KeepLogMessages                = 7;/**<< @brief Keep log messages from engine, used when building DataRequested objects. */
-  bool                                                  KeepEventChanges               = 8;/**<< @brief Keep event changes from engine, used when building DataRequested objects. */
+  DataRequestManagerData                                DataRequestManager              = 5;/**<< @brief Data Requests to use for this engine*/
+  string                                                LogFilename                     = 6;/**<< @brief Log file to create for engine. */
+  bool                                                  KeepLogMessages                 = 7;/**<< @brief Keep log messages from engine, used when building DataRequested objects. */
+  bool                                                  KeepEventChanges                = 8;/**<< @brief Keep event changes from engine, used when building DataRequested objects. */
 }
 
 message EngineInitializationListData
 {
-  repeated EngineInitializationData                     EngineInitialization           = 1;/**<< @brief Create an engine for each provided configuration. */
+  repeated EngineInitializationData                     EngineInitialization            = 1;/**<< @brief Create an engine for each provided configuration. */
 }
 
 /** @brief Static timed stabilization lengths */
 message TimedStabilizationData
 {
-  eSwitch                                               TrackingStabilization          = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
-  ScalarTimeData                                        RestingStabilizationTime       = 2;/**<< @brief */
-  ScalarTimeData                                        FeedbackStabilizationTime      = 3;/**<< @brief */
-  map<string,ScalarTimeData>                            ConditionStabilization         = 4;/**<< @brief */
+  eSwitch                                               TrackingStabilization           = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
+  ScalarTimeData                                        RestingStabilizationTime        = 2;/**<< @brief */
+  ScalarTimeData                                        FeedbackStabilizationTime       = 3;/**<< @brief */
+  map<string,ScalarTimeData>                            ConditionStabilization          = 4;/**<< @brief */
 }
 
 /** @brief A properties target percent difference allowed */
@@ -210,4 +280,3 @@ message LogMessagesData
   repeated string                                       ErrorMessages                   = 4;
   repeated string                                       FatalMessages                   = 5;
 }
-

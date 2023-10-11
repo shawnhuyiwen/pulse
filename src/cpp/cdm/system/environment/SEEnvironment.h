@@ -17,7 +17,7 @@ public:
   SEEnvironment(Logger* logger);
   virtual ~SEEnvironment();
 
-  virtual void Clear();
+  void Clear() override;
 
 protected:
   /** @name ProcessChange
@@ -39,7 +39,7 @@ protected:
 
 public:
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual bool HasActiveHeating() const;
   virtual SEActiveConditioning& GetActiveHeating();

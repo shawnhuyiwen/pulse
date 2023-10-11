@@ -167,12 +167,6 @@ public abstract class SEPatientAction extends SEAction
       SEIntubation.load(c.getIntubation(), dst);
       return dst;
     }
-    case LOBARPNEUMONIAEXACERBATION:
-    {
-      SELobarPneumoniaExacerbation dst = new SELobarPneumoniaExacerbation();
-      SELobarPneumoniaExacerbation.load(c.getLobarPneumoniaExacerbation(), dst);
-      return dst;
-    }
     case MECHANICALVENTILATION:
     {
       SEMechanicalVentilation dst = new SEMechanicalVentilation();
@@ -189,6 +183,12 @@ public abstract class SEPatientAction extends SEAction
     {
       SEPericardialEffusion dst = new SEPericardialEffusion();
       SEPericardialEffusion.load(c.getPericardialEffusion(), dst);
+      return dst;
+    }
+    case PNEUMONIAEXACERBATION:
+    {
+      SEPneumoniaExacerbation dst = new SEPneumoniaExacerbation();
+      SEPneumoniaExacerbation.load(c.getPneumoniaExacerbation(), dst);
       return dst;
     }
     case PULMONARYSHUNTEXACERBATION:
@@ -367,9 +367,9 @@ public abstract class SEPatientAction extends SEAction
       dst.setIntubation(SEIntubation.unload((SEIntubation)c));
       return dst.build();
     }
-    if(c instanceof SELobarPneumoniaExacerbation)
+    if(c instanceof SEPneumoniaExacerbation)
     {
-      dst.setLobarPneumoniaExacerbation(SELobarPneumoniaExacerbation.unload((SELobarPneumoniaExacerbation)c));
+      dst.setPneumoniaExacerbation(SEPneumoniaExacerbation.unload((SEPneumoniaExacerbation)c));
       return dst.build();
     }
     if(c instanceof SEMechanicalVentilation)

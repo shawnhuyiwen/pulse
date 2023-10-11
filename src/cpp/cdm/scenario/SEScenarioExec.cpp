@@ -117,7 +117,16 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
   {
     // This is where we put results/logs if specified
     std::string ext;
-    SplitPathFilenameExt(sce.GetDataRequestManager().GetResultFilename(), m_OutputRootDirectory, m_BaseFilename, ext);
+    std::string resultsFilename = sce.GetDataRequestManager().GetResultFilename();
+    // If we are given a directory, make the csv file the scenario name + 'Results' in that directory
+    if (resultsFilename.back() == '/' || resultsFilename.back() == '\\')
+    {
+      csvFilenamePostfix = "Results";
+      m_BaseFilename = sce.GetName();
+      m_OutputRootDirectory = resultsFilename;
+    }
+    else
+      SplitPathFilenameExt(resultsFilename, m_OutputRootDirectory, m_BaseFilename, ext);
   }
   else if (!m_ScenarioFilename.empty())
   {
@@ -286,7 +295,7 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   double sampleTime_s = sce.GetDataRequestManager().GetSamplesPerSecond();
   if (sampleTime_s != 0)
     sampleTime_s = 1 / sampleTime_s;
-  double currentSampleTime_s = sampleTime_s;//Sample the first step
+  double currentSampleTime_s = 0;
 
   TimingProfile profiler;
   profiler.Start("Total");

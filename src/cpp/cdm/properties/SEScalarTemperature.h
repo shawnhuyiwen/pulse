@@ -29,5 +29,5 @@ public:
   SEScalarTemperature() {}
   virtual ~SEScalarTemperature() {}
 
-  double GetValue(const TemperatureUnit& unit) const;// Zero is not Zero for all units, gotta remove that logic for this scalar type
+  double GetValue(const TemperatureUnit& unit) const override;// Zero is not Zero for all units, gotta remove that logic for this scalar type
 };

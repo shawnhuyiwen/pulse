@@ -1,68 +1,59 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+using System.Collections;
+using System.Collections.Generic;
+
 namespace Pulse.CDM
 {
+  using LungImpairmentMap = Dictionary<eLungCompartment, SEScalar0To1>;
   public class SEAcuteRespiratoryDistressSyndromeExacerbation : SEPatientAction
   {
-    protected SEScalar0To1 severity;
-    protected SEScalar0To1 left_lung_affected;
-    protected SEScalar0To1 right_lung_affected;
+    protected LungImpairmentMap severities;
 
     public SEAcuteRespiratoryDistressSyndromeExacerbation()
     {
-      severity = null;
-      left_lung_affected = null;
-      right_lung_affected = null;
+      severities = new LungImpairmentMap();
     }
 
     public override void Clear()
     {
       base.Clear();
-      if (severity != null)
-        severity.Invalidate();
-      if (left_lung_affected != null)
-        left_lung_affected.Invalidate();
-      if (right_lung_affected != null)
-        right_lung_affected.Invalidate();
+      foreach (var itr in severities)
+        itr.Value.Invalidate();
     }
 
     public override bool IsValid()
     {
-      return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
+      return HasSeverity();
     }
 
     public bool HasSeverity()
     {
-      return severity == null ? false : severity.IsValid();
+      foreach (var itr in severities)
+        if (itr.Value.IsValid())
+          return true;
+      return false;
     }
-    public SEScalar0To1 GetSeverity()
+    public bool HasSeverity(eLungCompartment c)
     {
-      if (severity == null)
-        severity = new SEScalar0To1();
-      return severity;
+      if (!severities.ContainsKey(c))
+        return false;
+      return severities[c].IsValid();
     }
-
-    public bool HasLeftLungAffected()
+    public SEScalar0To1 GetSeverity(eLungCompartment c)
     {
-      return left_lung_affected == null ? false : left_lung_affected.IsValid();
+      SEScalar0To1 s = severities[c];
+      if(s == null)
+      {
+        s = new SEScalar0To1();
+        severities[c] = s;
+      }
+      return s;
     }
-    public SEScalar0To1 GetLeftLungAffected()
+    public LungImpairmentMap GetSeverities()
     {
-      if (left_lung_affected == null)
-        left_lung_affected = new SEScalar0To1();
-      return left_lung_affected;
-    }
-
-    public bool HasRightLungAffected()
-    {
-      return right_lung_affected == null ? false : right_lung_affected.IsValid();
-    }
-    public SEScalar0To1 GetRightLungAffected()
-    {
-      if (right_lung_affected == null)
-        right_lung_affected = new SEScalar0To1();
-      return right_lung_affected;
+      return severities;
     }
   }
 }

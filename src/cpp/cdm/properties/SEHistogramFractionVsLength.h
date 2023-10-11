@@ -12,7 +12,7 @@ public:
   SEHistogramFractionVsLength();
   virtual ~SEHistogramFractionVsLength();
 
-  virtual void Clear();
+  void Clear() override;
 
   virtual bool IsVaild() const;
 

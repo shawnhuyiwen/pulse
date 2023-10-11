@@ -40,14 +40,14 @@ namespace pulse
     SubstanceManager(Data& data);
     virtual ~SubstanceManager() = default;
 
-    virtual void Clear();
-    virtual bool LoadSubstanceDirectory(const std::string& data_dir = ".");
+    void Clear() override;
+    bool LoadSubstanceDirectory(const std::string& data_dir = ".") override;
 
     virtual bool Setup();
     virtual void InitializeSubstances();
 
-    virtual void AddActiveSubstance(const SESubstance& substance);
-    virtual bool IsActive(const SESubstance& sub) const;
+    virtual void AddActiveSubstance(const SESubstance& substance) override;
+    virtual bool IsActive(const SESubstance& sub) const override;
 
     inline SESubstance& GetO2() { return *m_O2; }
     inline SESubstance& GetCO() { return *m_CO; }

@@ -18,12 +18,11 @@ def serialize_patient_condition_from_bind(src: PatientConditionData, dst: SEPati
 def serialize_acute_respiratory_distress_syndrome_to_bind(src: SEAcuteRespiratoryDistressSyndrome,
                                                           dst: AcuteRespiratoryDistressSyndromeData):
     serialize_patient_condition_to_bind(src, dst.PatientCondition)
-    if src.has_severity():
-        serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
-    if src.has_left_lung_affected():
-        serialize_scalar_0to1_to_bind(src.get_left_lung_affected(), dst.LeftLungAffected)
-    if src.has_right_lung_affected():
-        serialize_scalar_0to1_to_bind(src.get_right_lung_affected(), dst.RightLungAffected)
+    for c,s in src._severities.items():
+        i = dst.Severity.add()
+        i.Compartment = c.value
+        serialize_scalar_0to1_to_bind(s, i.Severity)
+
 
 def serialize_acute_respiratory_distress_syndrome_from_bind(src: AcuteRespiratoryDistressSyndromeData,
                                                             dst:SEAcuteRespiratoryDistressSyndrome):
@@ -48,8 +47,10 @@ def serialize_chronic_obstructive_pulmonary_disease_to_bind(src: SEChronicObstru
     serialize_patient_condition_to_bind(src, dst.PatientCondition)
     if src.has_bronchitis_severity():
         serialize_scalar_0to1_to_bind(src.get_bronchitis_severity(), dst.BronchitisSeverity)
-    if src.has_emphysema_severity():
-        serialize_scalar_0to1_to_bind(src.get_emphysema_severity(), dst.EmphysemaSeverity)
+    for c,s in src._emphysema_severities.items():
+        i = dst.Severity.add()
+        i.Compartment = c.value
+        serialize_scalar_0to1_to_bind(s, i.Severity)
 
 def serialize_chronic_obstructive_pulmonary_disease_from_bind(src: ChronicObstructivePulmonaryDiseaseData,
                                                               dst: SEChronicObstructivePulmonaryDisease):
@@ -111,18 +112,16 @@ def serialize_impaired_alveolar_exchange_from_bind(src: ImpairedAlveolarExchange
 
 #################################################################
 
-def serialize_lobar_pneumonia_to_bind(src: SELobarPneumonia, dst: LobarPneumoniaData):
+def serialize_pneumonia_to_bind(src: SEPneumonia, dst: PneumoniaData):
     serialize_patient_condition_to_bind(src, dst.PatientCondition)
-    if src.has_severity():
-      serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
-    if src.has_left_lung_affected():
-        serialize_scalar_0to1_to_bind(src.get_left_lung_affected(), dst.LeftLungAffected)
-    if src.has_right_lung_affected():
-        serialize_scalar_0to1_to_bind(src.get_right_lung_affected(), dst.RightLungAffected)
+    for c,s in src._severities.items():
+        i = dst.Severity.add()
+        i.Compartment = c.value
+        serialize_scalar_0to1_to_bind(s, i.Severity)
 
-def serialize_lobar_pneumonia_from_bind(src: LobarPneumoniaData, dst: SELobarPneumonia):
+def serialize_pneumonia_from_bind(src: PneumoniaData, dst: SEPneumonia):
     serialize_patient_condition_from_bind(src.PatientCondition, dst)
-    raise Exception("serialize_lobar_pneumonia_from_bind not implemented")
+    raise Exception("serialize_pneumonia_from_bind not implemented")
 
 #################################################################
 

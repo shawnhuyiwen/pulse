@@ -60,11 +60,11 @@ set(CMAKE_MODULE_PATH
     )
 set(${PROJECT_NAME}_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-option(${PROJECT_NAME}_LIBS_ONLY "Only build libraries" OFF)
+option(${PROJECT_NAME}_C_STATIC "Only build static libraries for the Pulse C interface" OFF)
 option(${PROJECT_NAME}_DOWNLOAD_BASELINES "Download all V&V Scenarios and their baseline result files" OFF)
 option(${PROJECT_NAME}_CSHARP_API "Build C# API" OFF)
-option(${PROJECT_NAME}_JAVA_API "Build Java utils for data generation and testing" ON)
-option(${PROJECT_NAME}_PYTHON_API "Build Python API" OFF)
+option(${PROJECT_NAME}_JAVA_API "Build Java API and utils for data generation and testing" ON)
+option(${PROJECT_NAME}_PYTHON_API "Build Python API and utils for data generation and testing" ON)
 option(${PROJECT_NAME}_DEPENDENT_BUILD "Pulse is being built as part of a different superbuild" OFF)
 # This dir inteded for use during cross compiling, provide the directory to the generated bindings from a native pulse build
 # This will be in a <build>/Innerbuild/src/schema
@@ -84,20 +84,22 @@ endif()
 if(iOS_TOOLCHAIN)
   message(STATUS "Setting up build for iOS")
 
-  #set(APPLE_IOS ON)
-  #set(TARGET_OS_IPHONE ON)
+  if(POLICY CMP0114)# For new xcode build system
+    cmake_policy(SET CMP0114 NEW)
+  endif()
 
-  set(${PROJECT_NAME}_LIBS_ONLY ON)
+
+  set(${PROJECT_NAME}_C_STATIC ON CACHE BOOL INTERNAL FORCE)
   if(${PROJECT_NAME}_CSHARP_API)
-    set(${PROJECT_NAME}_CSHARP_API OFF)
+    set(${PROJECT_NAME}_CSHARP_API OFF CACHE BOOL INTERNAL FORCE)
     message(STATUS "Disabling C# API for iOS build")
   endif()
   if(${PROJECT_NAME}_JAVA_API)
-    set(${PROJECT_NAME}_JAVA_API OFF)
+    set(${PROJECT_NAME}_JAVA_API OFF CACHE BOOL INTERNAL FORCE)
     message(STATUS "Disabling Java API for iOS build")
   endif()
   if(${PROJECT_NAME}_PYTHON_API)
-    set(${PROJECT_NAME}_PYTHON_API OFF)
+    set(${PROJECT_NAME}_PYTHON_API OFF CACHE BOOL INTERNAL FORCE)
     message(STATUS "Disabling Python API for iOS build")
   endif()
 
@@ -124,6 +126,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
   endmacro()
 
   define_dependency(Eigen3)
+  define_dependency(absl)
   define_dependency(protobuf)
   if(${PROJECT_NAME}_PYTHON_API)
     find_package (Python3 COMPONENTS Interpreter Development)
@@ -199,54 +202,16 @@ if(iOS_TOOLCHAIN)
   set(protobuf_MODULE_COMPATIBLE OFF)
 endif()
 
-if(protobuf_DIR AND NOT EXISTS ${protobuf_DIR})
-  # Linux systems can build libs to a variety of directories...
-  message(STATUS "Provided protobuf_DIR, does not exist, looking for alternatives...")
-  message(STATUS "  Original protobuf_DIR : ${protobuf_DIR}")
-
-  # We could be cross compiling for windows on linux, change to a linux path
-  string(FIND ${protobuf_DIR} "install/cmake" _idx)
-  if(_idx GREATER_EQUAL 0)
-    string(REPLACE "install/cmake" "/install/${CMAKE_INSTALL_LIBDIR}/cmake/protobuf" protobuf_DIR ${protobuf_DIR})
-    message(STATUS "  Checking if this alternative exists : ${protobuf_DIR}")
-    if(EXISTS ${protobuf_DIR})
-      message(STATUS "It does! New protobuf_DIR is ${protobuf_DIR}")
-    else()
-      message(STATUS "Nope, that was not it")
-    endif()
-  endif()
-
-  if(NOT EXISTS ${protobuf_DIR})
-    string(FIND ${protobuf_DIR} "/lib/" _idx)
-    if(_idx GREATER_EQUAL 0)
-      # Depending on linux flavor, this could be in a lib64 dir
-      # So, replace /lib/ with /lib64/ and see if that exists
-      string(REPLACE "/lib/" "/lib64/" _lib64 ${protobuf_DIR})
-      message(STATUS "  Checking if this alternative exists : ${_lib64}")
-      if(EXISTS ${_lib64})
-        set(protobuf_DIR ${_lib64})
-        message(STATUS "It does! New protobuf_DIR is ${protobuf_DIR}")
-      else()
-        message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
-      endif()
-    else()
-      message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
-    endif()
-  endif()
-endif()
 # Try to use the config written by protobuf
 find_package(protobuf QUIET CONFIG NO_DEFAULT_PATH)
 if(protobuf_DIR AND protobuf_FOUND)
   # Success; set flag so we will reexport protobuf for our users
   set(Pulse_USING_PROTOBUF_DIR ON)
 elseif(NOT protobuf_FOUND)
+  message(STATUS "Could not find protobuf.cmake, falling back to CMake's FindProtobuf.cmake")
   # Nope; fall back on FindProtobuf.cmake
   find_package(Protobuf REQUIRED)
 endif()
-
-# Ensure protobuf exported target exists
-get_target_property(PROTOBUF_LIBRARY_DEBUG protobuf::libprotobuf LOCATION_DEBUG)
-get_target_property(PROTOBUF_LIBRARY_RELEASE protobuf::libprotobuf LOCATION_RELEASE)
 
 if(MSVC OR XCode)
   # By default, CMake will choose debug for relwithdebinfo configurations if a relwithdebinfo export package is not provided.
@@ -257,13 +222,6 @@ if(MSVC OR XCode)
     MAP_IMPORTED_CONFIG_MINSIZEREL Release
     MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release)
 endif()
-
-# We only want to install the libraries
-install(FILES ${PROTOBUF_LIBRARY_DEBUG} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
-install(FILES ${PROTOBUF_LIBRARY_RELEASE} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
-# Filenames are used in our export config
-get_filename_component(PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG} NAME)
-get_filename_component(PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE} NAME)
 
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
 set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
@@ -288,13 +246,18 @@ else()
 endif()
 
 # Pulse uses Java in its development utility scripts
-find_package(Java REQUIRED)
-include(UseJava)
-if(Java_JAVA_EXECUTABLE)
-  message(STATUS "Using Java executable : ${Java_JAVA_EXECUTABLE}")
-  set(Java_CMD ${Java_JAVA_EXECUTABLE})
+find_package(Java)
+if(Java_FOUND)
+  include(UseJava)
+  if(Java_JAVA_EXECUTABLE)
+    message(STATUS "Using Java executable : ${Java_JAVA_EXECUTABLE}")
+    set(Java_CMD ${Java_JAVA_EXECUTABLE})
+  else()
+    message(STATUS "Could not find Java_JAVA_EXECUTABLE")
+  endif()
 else()
-  message(STATUS "Could not find Java_JAVA_EXECUTABLE")
+  message(WARNING "The Pulse `run` utility uses Java, which could not be found")
+  message(WARNING "To use the `run` utility, setup Java in this environment and reconfigure cmake")
 endif()
 
 if(NOT WIN32)
@@ -317,6 +280,7 @@ configure_file(${CMAKE_SOURCE_DIR}/bin/rebase.py.in "${CMAKE_INSTALL_PREFIX}/bin
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.cmake.in "${CMAKE_INSTALL_PREFIX}/bin/run.cmake" @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in "${CMAKE_INSTALL_PREFIX}/bin/run.config" @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_INSTALL_PREFIX}/bin/docs/full.doxy @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/report.doxy.in ${CMAKE_INSTALL_PREFIX}/bin/docs/report.doxy @ONLY)
 
 
 #-----------------------------------------------------------------------------

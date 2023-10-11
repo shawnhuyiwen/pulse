@@ -20,7 +20,9 @@ The engine modeling approach takes the human body and conceptually divides it in
 
 Links represent connections between compartments with a directional flow component defining a volume change each time-step.  In the engine, links can be assigned a path that provides the instantaneous flow value.  Figure 1 shows the base transport elements definitions in an example graph.
 
-<a href="./Images/SubstanceTransporter/Components.png"><img src="./Images/SubstanceTransporter/Components.png" width="400"></a>
+@htmlonly
+<center><a href="./Images/SubstanceTransporter/Components.png"><img src="./Images/SubstanceTransporter/Components.png" style="width:50%;"></a></center>
+@endhtmlonly
 <center>
 <i>Figure 1. This is a conceptual example graph that describes the lowest level elements used to define properties used by the Transporter.  Links provide flow between compartments that store both fluid and substance quantity information.</i>
 </center><br>

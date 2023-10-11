@@ -101,7 +101,7 @@ public class SESerializeState extends SEAction
   @Override
   public String toString() 
   {
-    return "Save State" 
+    return "Serialize State" 
         + "\n\tType: " + getType()
         + "\n\tFilename: " + getFilename();
   }

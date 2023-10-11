@@ -12,6 +12,7 @@
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/engine/SEEventManager.h"
 #include "cdm/patient/SEPatient.h"
 #include "cdm/io/protobuf/PBPatient.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
@@ -20,6 +21,7 @@
 #include "cdm/properties/SEScalarLength.h"
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/scenario/SEScenario.h"
@@ -607,14 +609,10 @@ namespace pulse::study::patient_variability
   bool PVRunner::SerializeFromString(const std::string& src, pulse::study::bind::patient_variability::PatientStateListData& dst)
   {
     google::protobuf::util::JsonParseOptions parseOpts;
-    google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
+    auto status = google::protobuf::util::JsonStringToMessage(src, &dst, parseOpts);
+    if (!status.ok())
     {
-      std::cout << "[" << level << "] " << filename << "::" << line << " " << message;
-    });
-    google::protobuf::util::Status stat = google::protobuf::util::JsonStringToMessage(src, &dst, parseOpts);
-    if (!stat.ok())
-    {
-      Error("Unable to parse json in string : " + stat.ToString());
+      PBUtils::LogError("PVRunner::SerializeFromString", status.ToString(), GetLogger());
       return false;
     }
     return true;

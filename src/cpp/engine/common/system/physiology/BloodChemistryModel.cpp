@@ -54,6 +54,7 @@ namespace pulse
     m_Aorta = nullptr;
     m_AortaO2 = nullptr;
     m_AortaCO2 = nullptr;
+    m_AortaHCO3 = nullptr;
     m_BrainO2 = nullptr;
     m_MyocardiumO2 = nullptr;
     m_PulmonaryArteriesO2 = nullptr;
@@ -114,6 +115,7 @@ namespace pulse
     m_Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
     m_AortaO2 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     m_AortaCO2 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
+    m_AortaHCO3 = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetHCO3());
     if(m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::Off)
       m_BrainO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     else
@@ -206,9 +208,15 @@ namespace pulse
     GetRedBloodCellCount().SetValue(RedBloodCellCount_ct / m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::L), AmountPerVolumeUnit::ct_Per_L);
     GetPlasmaVolume().SetValue(TotalBloodVolume_mL - RedBloodCellVolume_mL, VolumeUnit::mL);
 
-    // Calculate pH 
     /// \todo Change system data so that we have ArterialBloodPH (from aorta) and VenousBloodPH (from vena cava)
-    GetBloodPH().Set(m_Aorta->GetPH());
+    // Calculate Base Excess
+    double pH = m_Aorta->GetPH().GetValue();
+    GetBloodPH().SetValue(pH);
+    double HCO3_mEq_Per_L = m_AortaHCO3->GetMolarity(AmountPerVolumeUnit::mEq_Per_L);
+    // http://www-users.med.cornell.edu/~spon/picu/calc/basecalc.htm
+    double baseExcess = (0.9287 * HCO3_mEq_Per_L) + (13.77 * pH) - 124.58;
+    GetBaseExcess().SetValue(baseExcess, AmountPerVolumeUnit::mEq_Per_L);
+
 
     // Pressures
     // arterial gas partial pressures

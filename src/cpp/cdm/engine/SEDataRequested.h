@@ -5,18 +5,23 @@
 
 #include "cdm/PhysiologyEngine.h"
 #include "cdm/engine/SEEventManager.h"
+class DataTrack;
 
 class CDM_DECL SEDataRequested : public LoggerForward, public SEEventHandler
 {
   friend class PBEngine;//friend the serialization class
 public:
+  struct Segment
+  {
+    int id;
+    double time_s;
+    std::vector<double> values;
+  };
   explicit SEDataRequested();
   virtual ~SEDataRequested();
 
   SEDataRequested(const SEDataRequested&) = delete;
   SEDataRequested operator=(const SEDataRequested&) = delete;
-
-  virtual void SetEngine(const PhysiologyEngine& engine);
 
   virtual void Clear(); //clear memory
 
@@ -29,10 +34,11 @@ public:
   virtual bool IsActive() const;// Set when an Error or Fatal has been loggged
   virtual void SetIsActive(bool b);
 
-  virtual void PullDataRequested();
   virtual void ClearDataRequested();
+  virtual void PullDataRequested(int id, double currentTime_s, DataTrack& tracker);
 
-  virtual const std::vector<double>& GetValues() const;
+  virtual const std::vector<std::string>& GetHeaders() const;
+  virtual const std::vector<Segment>& GetSegments() const;
 
   virtual bool KeepLogMessages() const { return m_KeepLogMessages; }
   virtual void KeepLogMessages(bool b) { m_KeepLogMessages = b; }
@@ -51,12 +57,13 @@ public:
   void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override;
 
 protected:
-  int                             m_ID;
-  bool                            m_IsActive;
-  std::vector<double>             m_Values;
-  bool                            m_KeepEventChanges;
-  std::vector<SEEventChange>      m_EventChanges;
-  bool                            m_KeepLogMessages;
-  LogMessages                     m_LogMessages;
-  const PhysiologyEngine*         m_Engine;
+  int                                   m_ID;
+  bool                                  m_IsActive;
+  bool                                  m_KeepEventChanges;
+  std::vector<SEEventChange>            m_EventChanges;
+  bool                                  m_KeepLogMessages;
+  LogMessages                           m_LogMessages;
+  std::vector<std::string>              m_Headers;
+  std::vector<Segment>                  m_Segments;
+  const PhysiologyEngine*               m_Engine;
 };

@@ -15,7 +15,7 @@ protected:
 public:
   virtual ~SEThermalCircuitNode();
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
   virtual bool HasTemperature() const;
   virtual SEScalarTemperature& GetTemperature();

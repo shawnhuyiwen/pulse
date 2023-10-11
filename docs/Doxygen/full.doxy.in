@@ -691,7 +691,7 @@ LAYOUT_FILE            =
 # LATEX_BIB_STYLE. To use this feature you need bibtex and perl available in the
 # search path. See also \cite for info how to create references.
 
-CITE_BIB_FILES         = @CMAKE_SOURCE_DIR@/docs/Sources.bib
+CITE_BIB_FILES         = ./docs/Sources.bib
 
 #---------------------------------------------------------------------------
 # Configuration options related to warning and progress messages
@@ -1074,7 +1074,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = @CMAKE_SOURCE_DIR@/docs/Doxygen/panel_header.html
+HTML_HEADER            = ./docs/panel_header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1084,7 +1084,7 @@ HTML_HEADER            = @CMAKE_SOURCE_DIR@/docs/Doxygen/panel_header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = @CMAKE_SOURCE_DIR@/docs/Doxygen/panel_footer.html
+HTML_FOOTER            = ./docs/panel_footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of

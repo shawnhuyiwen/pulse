@@ -30,7 +30,7 @@
 void HowToPulseEnginePool()
 {
   std::stringstream ss;
-  size_t numEngine = 1;
+  int numEngine = 1;
   TimingProfile profiler;
   double sim_time_s = 60;
 
@@ -40,7 +40,7 @@ void HowToPulseEnginePool()
 
   pool.Info("Creating a pool with " + std::to_string(pool.GetWorkerCount()) + " workers");
   pool.Info("Creating a pool with " + std::to_string(numEngine) + " engines");
-  for (int i=0; i<numEngine; i++)
+  for (int i = 0; i < numEngine; i++)
   {
     SEPhysiologyEnginePoolEngine* e = pool.CreateEngine(i, eModelType::HumanAdultWholeBody);
     e->EngineInitialization.SetStateFilename("./states/StandardMale@0s.json");
@@ -108,10 +108,11 @@ void HowToPulseEnginePool()
   {
     ss << "Engine " << dr->GetID() << " is " << (dr->IsActive() ? "active" : "not active");
     pool.Info(ss);
+    // TODO!!
     // Index 0 is ALWAYS Current Sim Time in seconds
-    pool.Info("Current time of engine is :"+std::to_string(dr->GetValues()[0])+"s");
+    //pool.Info("Current time of engine is :"+std::to_string(dr->GetValues()[0])+"s");
     // Data is indexed from 1 in the order the data requests were created
-    pool.Info("Current Blood Volume(mL) :" + std::to_string(dr->GetValues()[12])+"mL");
+    //pool.Info("Current Blood Volume(mL) :" + std::to_string(dr->GetValues()[12])+"mL");
     ss << dr->GetLogMessages();
     pool.Info(ss);
     pool.Info("");

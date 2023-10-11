@@ -5,17 +5,31 @@
 #include "cdm/system/SESystem.h"
 #include "cdm/system/physiology/SERespiratoryMechanics.h"
 
+enum class eLungCompartment
+{
+  LeftLung = 0,
+  RightLung,
+
+  LeftSuperiorLobe,
+  LeftInferiorLobe,
+  RightSuperiorLobe,
+  RightMiddleLobe,
+  RightInferiorLobe
+};
+using LungImpairmentMap = std::map<eLungCompartment, SEScalar0To1*>;
+
 class CDM_DECL SERespiratorySystem : public SESystem
 {
   friend class PBPhysiology;//friend the serialization class
 public:
+  static void FillLungImpairmentMap(LungImpairmentMap& map);
 
   SERespiratorySystem(Logger* logger);
   virtual ~SERespiratorySystem();
 
-  virtual void Clear();
-  
-  virtual const SEScalar* GetScalar(const std::string& name);
+  void Clear() override;
+
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual bool HasAirwayPressure() const;
   virtual SEScalarPressure& GetAirwayPressure();

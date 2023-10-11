@@ -15,7 +15,7 @@ class PULSE_DECL PulseScenarioExec : public SEScenarioExec
 public:
   PulseScenarioExec(Logger* logger) : SEScenarioExec(logger) { Clear(); }
 
-  virtual void Clear();
+  void Clear() override;
   void Copy(const PulseScenarioExec& src);
 
   eModelType GetModelType() const { return m_ModelType; }

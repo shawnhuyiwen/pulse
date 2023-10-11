@@ -13,14 +13,15 @@ public:
   virtual ~SEHemothorax();
 
   static constexpr char const* Name = "Hemothorax";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEHemothorax& src, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SEHemothorax& src, bool /*preserveState*/=false);
+  const SEScalar* GetScalar(const std::string& name) override;
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual eSide GetSide() const;
   virtual void SetSide(eSide name);
@@ -38,8 +39,6 @@ public:
   virtual bool HasTotalBloodVolume() const;
   virtual SEScalarVolume& GetTotalBloodVolume();
   virtual double GetTotalBloodVolume(const VolumeUnit& unit) const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   eSide                   m_Side;

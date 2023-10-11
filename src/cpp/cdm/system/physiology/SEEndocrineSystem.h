@@ -12,9 +12,9 @@ public:
   SEEndocrineSystem(Logger* logger);
   virtual ~SEEndocrineSystem();
 
-  virtual void Clear();// Deletes all members
+  void Clear() override;// Deletes all members
   
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
   
 public:
 

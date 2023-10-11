@@ -13,20 +13,20 @@ public:
   virtual ~SEPericardialEffusion();
 
   static constexpr char const* Name = "Pericardial Effusion";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEPericardialEffusion& src, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SEPericardialEffusion& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasEffusionRate() const;
   virtual SEScalarVolumePerTime& GetEffusionRate();
   virtual double GetEffusionRate(const VolumePerTimeUnit& unit) const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalarVolumePerTime* m_EffusionRate;

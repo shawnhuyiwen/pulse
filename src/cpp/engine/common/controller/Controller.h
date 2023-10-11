@@ -14,6 +14,7 @@
 class DataTrack;
 class SEActionManager;
 class SEConditionManager;
+class SEDataRequested;
 class SEEngineTracker;
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/engine/SEEngineStabilization.h"
@@ -171,6 +172,7 @@ namespace pulse
 
     EngineState                           m_State;
     SEEngineTracker*                      m_EngineTrack;
+    SEDataRequested*                      m_DataRequested;
 
     SEScalarTime                          m_CurrentTime;
     SEScalarTime                          m_SimulationTime;
@@ -315,7 +317,7 @@ namespace pulse
     virtual bool Stabilize(const SEPatientConfiguration& patient_configuration);
 
     // Allocate all the models this engine supports
-    virtual void Allocate() = 0;
+    virtual void Allocate();
     virtual bool SetupPatient(const SEPatient& patient) = 0;
     // Based on what modles are used, setup order for the following
     virtual void InitializeModels();
@@ -335,14 +337,18 @@ namespace pulse
     StabilizationController(pulse::Controller& pc) : _pc(pc) {}
     virtual ~StabilizationController() = default;
 
-    virtual bool AdvanceTime() override { return _pc.AdvanceModelTime(); }
-    virtual SEEngineTracker* GetEngineTracker() override
+    bool AdvanceTime() override { return _pc.AdvanceModelTime(); }
+    SEEngineTracker* GetEngineTracker() override
     {
       return &_pc.GetData().GetEngineTracker();
     }
-    virtual double GetTimeStep(const TimeUnit& unit) override
+    double GetTimeStep(const TimeUnit& unit) override
     {
       return _pc.GetData().GetTimeStep().GetValue(unit);
+    }
+    double GetSimulationTime(const TimeUnit& unit) override
+    {
+      return _pc.GetData().GetSimulationTime().GetValue(unit);
     }
 
   protected:

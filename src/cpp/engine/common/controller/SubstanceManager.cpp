@@ -518,7 +518,7 @@ namespace pulse
     SELiquidCompartment* cmpt = &inputCmpt;
 
     bool hasChildren = inputCmpt.HasChildren();
-    unsigned int numCmpt = 1;
+    size_t numCmpt = 1;
     if (hasChildren)
     {
       numCmpt = inputCmpt.GetLeaves().size();

@@ -11,7 +11,7 @@ CDM_BIND_DECL2(ChronicRenalStenosis)
 CDM_BIND_DECL2(ChronicVentricularSystolicDysfunction)
 CDM_BIND_DECL2(ConsumeMeal)
 CDM_BIND_DECL2(ImpairedAlveolarExchange)
-CDM_BIND_DECL2(LobarPneumonia)
+CDM_BIND_DECL2(Pneumonia)
 CDM_BIND_DECL2(PulmonaryFibrosis)
 CDM_BIND_DECL2(PulmonaryShunt)
 CDM_BIND_DECL2(Sepsis)
@@ -78,11 +78,11 @@ public:
   static void Serialize(const SEImpairedAlveolarExchange& src, CDM_BIND::ImpairedAlveolarExchangeData& dst);
   static void Copy(const SEImpairedAlveolarExchange& src, SEImpairedAlveolarExchange& dst);
 
-  static void Load(const CDM_BIND::LobarPneumoniaData& src, SELobarPneumonia& dst);
-  static CDM_BIND::LobarPneumoniaData* Unload(const SELobarPneumonia& src);
-  static void Serialize(const CDM_BIND::LobarPneumoniaData& src, SELobarPneumonia& dst);
-  static void Serialize(const SELobarPneumonia& src, CDM_BIND::LobarPneumoniaData& dst);
-  static void Copy(const SELobarPneumonia& src, SELobarPneumonia& dst);
+  static void Load(const CDM_BIND::PneumoniaData& src, SEPneumonia& dst);
+  static CDM_BIND::PneumoniaData* Unload(const SEPneumonia& src);
+  static void Serialize(const CDM_BIND::PneumoniaData& src, SEPneumonia& dst);
+  static void Serialize(const SEPneumonia& src, CDM_BIND::PneumoniaData& dst);
+  static void Copy(const SEPneumonia& src, SEPneumonia& dst);
 
   static void Load(const CDM_BIND::PulmonaryFibrosisData& src, SEPulmonaryFibrosis& dst);
   static CDM_BIND::PulmonaryFibrosisData* Unload(const SEPulmonaryFibrosis& src);

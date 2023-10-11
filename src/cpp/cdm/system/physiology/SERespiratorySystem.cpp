@@ -1383,3 +1383,43 @@ const SERespiratoryMechanics* SERespiratorySystem::GetRespiratoryMechanics() con
 {
   return m_RespiratoryMechanics;
 }
+
+SEScalar0To1* GetSeverity(LungImpairmentMap& map, eLungCompartment c)
+{
+  SEScalar0To1* s = map[c];
+  if (s == nullptr)
+  {
+    s = new SEScalar0To1();
+    map[c] = s;
+  }
+  return s;
+}
+void SERespiratorySystem::FillLungImpairmentMap(LungImpairmentMap& map)
+{
+  SEScalar0To1* lung;
+  SEScalar0To1* lobe;
+  lung = GetSeverity(map, eLungCompartment::LeftLung);
+  if (!lung->IsValid())
+    lung->SetValue(0);
+  // Child Lobes
+  lobe = GetSeverity(map, eLungCompartment::LeftInferiorLobe);
+  if (!lobe->IsValid())
+    lobe->Set(*lung);
+  lobe = GetSeverity(map, eLungCompartment::LeftSuperiorLobe);
+  if (!lobe->IsValid())
+    lobe->Set(*lung);
+
+  lung = GetSeverity(map, eLungCompartment::RightLung);
+  if (!lung->IsValid())
+    lung->SetValue(0);
+  // Child Lobes
+  lobe = GetSeverity(map, eLungCompartment::RightInferiorLobe);
+  if (!lobe->IsValid())
+    lobe->Set(*lung);
+  lobe = GetSeverity(map, eLungCompartment::RightMiddleLobe);
+  if (!lobe->IsValid())
+    lobe->Set(*lung);
+  lobe = GetSeverity(map, eLungCompartment::RightSuperiorLobe);
+  if (!lobe->IsValid())
+    lobe->Set(*lung);
+}

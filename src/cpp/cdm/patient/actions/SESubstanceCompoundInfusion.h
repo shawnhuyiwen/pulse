@@ -14,14 +14,16 @@ public:
   virtual ~SESubstanceCompoundInfusion();
 
   static constexpr char const* Name = "Substance Compound Infusion";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SESubstanceCompoundInfusion& src, bool preserveState=false);
+  void Clear() override;
+  void Copy(const SESubstanceCompoundInfusion& src, bool preserveState=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasBagVolume() const;
   virtual SEScalarVolume& GetBagVolume();
@@ -33,8 +35,6 @@ public:
 
   virtual SESubstanceCompound& GetSubstanceCompound();
   virtual const SESubstanceCompound& GetSubstanceCompound() const;
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalarVolume*                  m_BagVolume;

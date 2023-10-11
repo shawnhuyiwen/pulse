@@ -3,34 +3,31 @@
 
 package com.kitware.pulse.cdm.patient.conditions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.kitware.pulse.cdm.bind.PatientConditions.AcuteRespiratoryDistressSyndromeData;
+import com.kitware.pulse.cdm.bind.Physiology.LungImpairmentData;
+import com.kitware.pulse.cdm.bind.Physiology.eLungCompartment;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 
 public class SEAcuteRespiratoryDistressSyndrome extends SEPatientCondition
 {
   private static final long serialVersionUID = -5802058892372324645L;
-  
-  protected SEScalar0To1 severity;
-  protected SEScalar0To1 leftLungAffected;
-  protected SEScalar0To1 rightLungAffected;
+
+  protected Map<eLungCompartment,SEScalar0To1> severities;
   
   public SEAcuteRespiratoryDistressSyndrome()
   {
-    severity = null;
-    leftLungAffected = null;
-    rightLungAffected = null;
+    severities = new HashMap<eLungCompartment,SEScalar0To1>();
   }
   
   @Override
   public void clear()
   {
     super.clear();
-    if (severity != null)
-      severity.invalidate();
-    if (leftLungAffected != null)
-      leftLungAffected.invalidate();
-    if (rightLungAffected != null)
-      rightLungAffected.invalidate();
+    for(SEScalar0To1 s : severities.values())
+      s.invalidate();
   }
   
   public void copy(SEAcuteRespiratoryDistressSyndrome other)
@@ -38,23 +35,16 @@ public class SEAcuteRespiratoryDistressSyndrome extends SEPatientCondition
     if(this==other)
       return;
     super.copy(other);
-    if (other.severity != null)
-      getSeverity().set(other.getSeverity());
-    if (other.leftLungAffected != null)
-      getLeftLungAffected().set(other.getLeftLungAffected());
-    if (other.rightLungAffected != null)
-      getRightLungAffected().set(other.getRightLungAffected());
+
+    for (Map.Entry<eLungCompartment, SEScalar0To1> entry : other.severities.entrySet())
+      getSeverity(entry.getKey()).set(entry.getValue());
   }
   
   public static void load(AcuteRespiratoryDistressSyndromeData src, SEAcuteRespiratoryDistressSyndrome dst) 
   {
     SEPatientCondition.load(src.getPatientCondition(), dst);
-    if(src.hasSeverity())
-      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
-    if(src.hasLeftLungAffected())
-      SEScalar0To1.load(src.getLeftLungAffected(),dst.getLeftLungAffected());
-    if(src.hasRightLungAffected())
-      SEScalar0To1.load(src.getRightLungAffected(),dst.getRightLungAffected());
+    for (LungImpairmentData d : src.getSeverityList())
+      SEScalar0To1.load(d.getSeverity(), dst.getSeverity(d.getCompartment()));
   }
   
   public static AcuteRespiratoryDistressSyndromeData unload(SEAcuteRespiratoryDistressSyndrome src) 
@@ -67,54 +57,48 @@ public class SEAcuteRespiratoryDistressSyndrome extends SEPatientCondition
   protected static void unload(SEAcuteRespiratoryDistressSyndrome src, AcuteRespiratoryDistressSyndromeData.Builder dst)
   {
     SEPatientCondition.unload(src, dst.getPatientConditionBuilder());
-    if (src.hasSeverity())
-      dst.setSeverity(SEScalar0To1.unload(src.severity));
-    if (src.hasLeftLungAffected())
-      dst.setLeftLungAffected(SEScalar0To1.unload(src.leftLungAffected));
-    if (src.hasRightLungAffected())
-      dst.setRightLungAffected(SEScalar0To1.unload(src.rightLungAffected));
+    for (Map.Entry<eLungCompartment, SEScalar0To1> entry : src.severities.entrySet())
+    {
+      LungImpairmentData.Builder builder = LungImpairmentData.newBuilder();
+      builder.setCompartment(entry.getKey());
+      builder.setSeverity(SEScalar0To1.unload(entry.getValue()));
+      dst.addSeverity(builder);
+    }
   }
   
+
   public boolean hasSeverity()
   {
-    return severity == null ? false : severity.isValid();
+    for(SEScalar0To1 s : severities.values())
+      if(s.isValid())
+        return true;
+    return false;
   }
-  public SEScalar0To1 getSeverity()
+  public boolean hasSeverity(eLungCompartment c)
   {
-    if (severity == null)
-      severity = new SEScalar0To1();
-    return severity;
+    SEScalar0To1 s = severities.get(c);
+    if(s!=null)
+      return s.isValid();
+    return false;
   }
-  
-  public boolean hasLeftLungAffected()
+  public SEScalar0To1 getSeverity(eLungCompartment c)
   {
-    return leftLungAffected == null ? false : leftLungAffected.isValid();
-  }
-  public SEScalar0To1 getLeftLungAffected()
-  {
-    if (leftLungAffected == null)
-      leftLungAffected = new SEScalar0To1();
-    return leftLungAffected;
-  }
-  
-  public boolean hasRightLungAffected()
-  {
-    return rightLungAffected == null ? false : rightLungAffected.isValid();
-  }
-  public SEScalar0To1 getRightLungAffected()
-  {
-    if (rightLungAffected == null)
-      rightLungAffected = new SEScalar0To1();
-    return rightLungAffected;
+    SEScalar0To1 s = severities.get(c);
+    if(s==null)
+    {
+      s = new SEScalar0To1();
+      severities.put(c, s);
+    }
+    return s;
   }
   
   @Override
   public String toString()
   {
-    return "ARDS" 
-        + "\n\tSeverity: " + getSeverity()
-        + "\n\tLeftLungAffected: " + getLeftLungAffected()
-        + "\n\tRightLungAffected: " + getRightLungAffected();
+    String out = "ARDS";
+    for (Map.Entry<eLungCompartment, SEScalar0To1> entry : severities.entrySet())
+      out += "\n\t"+ entry.getKey().toString()+" Severity: " + getSeverity(entry.getKey());
+    return out;
   }
 
   

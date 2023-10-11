@@ -19,7 +19,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.h"
 #include "cdm/patient/conditions/SEConsumeMeal.h"
 #include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
-#include "cdm/patient/conditions/SELobarPneumonia.h"
+#include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/patient/conditions/SEPulmonaryFibrosis.h"
 #include "cdm/patient/conditions/SEPulmonaryShunt.h"
 #include "cdm/patient/conditions/SESepsis.h"
@@ -41,12 +41,11 @@ void PBPatientCondition::Load(const CDM_BIND::AcuteRespiratoryDistressSyndromeDa
 void PBPatientCondition::Serialize(const CDM_BIND::AcuteRespiratoryDistressSyndromeData& src, SEAcuteRespiratoryDistressSyndrome& dst)
 {
   PBPatientCondition::Serialize(src.patientcondition(), dst);
-  if (src.has_severity())
-    PBProperty::Load(src.severity(), dst.GetSeverity());
-  if (src.has_leftlungaffected())
-    PBProperty::Load(src.leftlungaffected(), dst.GetLeftLungAffected());
-  if (src.has_rightlungaffected())
-    PBProperty::Load(src.rightlungaffected(), dst.GetRightLungAffected());
+  for (int i = 0; i<src.severity_size(); i++)
+  {
+    auto& impairment = src.severity()[i];
+    PBProperty::Load(impairment.severity(), dst.GetSeverity((eLungCompartment)impairment.compartment()));
+  }
 }
 CDM_BIND::AcuteRespiratoryDistressSyndromeData* PBPatientCondition::Unload(const SEAcuteRespiratoryDistressSyndrome& src)
 {
@@ -57,12 +56,12 @@ CDM_BIND::AcuteRespiratoryDistressSyndromeData* PBPatientCondition::Unload(const
 void PBPatientCondition::Serialize(const SEAcuteRespiratoryDistressSyndrome& src, CDM_BIND::AcuteRespiratoryDistressSyndromeData& dst)
 {
   PBPatientCondition::Serialize(src, *dst.mutable_patientcondition());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
-  if (src.HasRightLungAffected())
-    dst.set_allocated_rightlungaffected(PBProperty::Unload(*src.m_RightLungAffected));
-  if (src.HasLeftLungAffected())
-    dst.set_allocated_leftlungaffected(PBProperty::Unload(*src.m_LeftLungAffected));
+  for (auto itr : src.m_Severities)
+  {
+    auto impairment = dst.mutable_severity()->Add();
+    impairment->set_compartment((CDM_BIND::eLungCompartment)itr.first);
+    impairment->set_allocated_severity(PBProperty::Unload(*itr.second));
+  }
 }
 void PBPatientCondition::Copy(const SEAcuteRespiratoryDistressSyndrome& src, SEAcuteRespiratoryDistressSyndrome& dst)
 {
@@ -113,8 +112,11 @@ void PBPatientCondition::Serialize(const CDM_BIND::ChronicObstructivePulmonaryDi
   PBPatientCondition::Serialize(src.patientcondition(), dst);
   if (src.has_bronchitisseverity())
     PBProperty::Load(src.bronchitisseverity(), dst.GetBronchitisSeverity());
-  if (src.has_emphysemaseverity())
-    PBProperty::Load(src.emphysemaseverity(), dst.GetEmphysemaSeverity());
+  for (int i = 0; i<src.emphysemaseverity_size(); i++)
+  {
+    auto& impairment = src.emphysemaseverity()[i];
+    PBProperty::Load(impairment.severity(), dst.GetEmphysemaSeverity((eLungCompartment)impairment.compartment()));
+  }
 }
 CDM_BIND::ChronicObstructivePulmonaryDiseaseData* PBPatientCondition::Unload(const SEChronicObstructivePulmonaryDisease& src)
 {
@@ -127,8 +129,12 @@ void PBPatientCondition::Serialize(const SEChronicObstructivePulmonaryDisease& s
   PBPatientCondition::Serialize(src, *dst.mutable_patientcondition());
   if (src.HasBronchitisSeverity())
     dst.set_allocated_bronchitisseverity(PBProperty::Unload(*src.m_BronchitisSeverity));
-  if (src.HasEmphysemaSeverity())
-    dst.set_allocated_emphysemaseverity(PBProperty::Unload(*src.m_EmphysemaSeverity));
+  for (auto itr : src.m_EmphysemaSeverities)
+  {
+    auto impairment = dst.mutable_emphysemaseverity()->Add();
+    impairment->set_compartment((CDM_BIND::eLungCompartment)itr.first);
+    impairment->set_allocated_severity(PBProperty::Unload(*itr.second));
+  }
 }
 void PBPatientCondition::Copy(const SEChronicObstructivePulmonaryDisease& src, SEChronicObstructivePulmonaryDisease& dst)
 {
@@ -305,41 +311,40 @@ void PBPatientCondition::Copy(const SEImpairedAlveolarExchange& src, SEImpairedA
   PBPatientCondition::Serialize(data, dst);
 }
 
-void PBPatientCondition::Load(const CDM_BIND::LobarPneumoniaData& src, SELobarPneumonia& dst)
+void PBPatientCondition::Load(const CDM_BIND::PneumoniaData& src, SEPneumonia& dst)
 {
   dst.Clear();
   PBPatientCondition::Serialize(src, dst);
 }
-void PBPatientCondition::Serialize(const CDM_BIND::LobarPneumoniaData& src, SELobarPneumonia& dst)
+void PBPatientCondition::Serialize(const CDM_BIND::PneumoniaData& src, SEPneumonia& dst)
 {
   PBPatientCondition::Serialize(src.patientcondition(), dst);
-  if (src.has_severity())
-    PBProperty::Load(src.severity(), dst.GetSeverity());
-  if (src.has_leftlungaffected())
-    PBProperty::Load(src.leftlungaffected(), dst.GetLeftLungAffected());
-  if (src.has_rightlungaffected())
-    PBProperty::Load(src.rightlungaffected(), dst.GetRightLungAffected());
+  for (int i = 0; i<src.severity_size(); i++)
+  {
+    auto& impairment = src.severity()[i];
+    PBProperty::Load(impairment.severity(), dst.GetSeverity((eLungCompartment)impairment.compartment()));
+  }
 }
-CDM_BIND::LobarPneumoniaData* PBPatientCondition::Unload(const SELobarPneumonia& src)
+CDM_BIND::PneumoniaData* PBPatientCondition::Unload(const SEPneumonia& src)
 {
-  CDM_BIND::LobarPneumoniaData* dst = new CDM_BIND::LobarPneumoniaData();
+  CDM_BIND::PneumoniaData* dst = new CDM_BIND::PneumoniaData();
   PBPatientCondition::Serialize(src, *dst);
   return dst;
 }
-void PBPatientCondition::Serialize(const SELobarPneumonia& src, CDM_BIND::LobarPneumoniaData& dst)
+void PBPatientCondition::Serialize(const SEPneumonia& src, CDM_BIND::PneumoniaData& dst)
 {
   PBPatientCondition::Serialize(src, *dst.mutable_patientcondition());
-  if (src.HasSeverity())
-    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
-  if (src.HasRightLungAffected())
-    dst.set_allocated_rightlungaffected(PBProperty::Unload(*src.m_RightLungAffected));
-  if (src.HasLeftLungAffected())
-    dst.set_allocated_leftlungaffected(PBProperty::Unload(*src.m_LeftLungAffected));
+  for (auto itr : src.m_Severities)
+  {
+    auto impairment = dst.mutable_severity()->Add();
+    impairment->set_compartment((CDM_BIND::eLungCompartment)itr.first);
+    impairment->set_allocated_severity(PBProperty::Unload(*itr.second));
+  }
 }
-void PBPatientCondition::Copy(const SELobarPneumonia& src, SELobarPneumonia& dst)
+void PBPatientCondition::Copy(const SEPneumonia& src, SEPneumonia& dst)
 {
   dst.Clear();
-  CDM_BIND::LobarPneumoniaData data;
+  CDM_BIND::PneumoniaData data;
   PBPatientCondition::Serialize(src, data);
   PBPatientCondition::Serialize(data, dst);
 }
@@ -489,10 +494,10 @@ SEPatientCondition* PBPatientCondition::Load(const CDM_BIND::AnyPatientCondition
     PBPatientCondition::Load(any.impairedalveolarexchange(), *a);
     return a;
   }
-  case CDM_BIND::AnyPatientConditionData::ConditionCase::kLobarPneumonia:
+  case CDM_BIND::AnyPatientConditionData::ConditionCase::kPneumonia:
   {
-    SELobarPneumonia* a = new SELobarPneumonia();
-    PBPatientCondition::Load(any.lobarpneumonia(), *a);
+    SEPneumonia* a = new SEPneumonia();
+    PBPatientCondition::Load(any.pneumonia(), *a);
     return a;
   }
   case CDM_BIND::AnyPatientConditionData::ConditionCase::kPulmonaryFibrosis:
@@ -573,10 +578,10 @@ CDM_BIND::AnyPatientConditionData* PBPatientCondition::Unload(const SEPatientCon
     any->set_allocated_impairedalveolarexchange(PBPatientCondition::Unload(*iae));
     return any;
   }
-  const SELobarPneumonia* lp = dynamic_cast<const SELobarPneumonia*>(&condition);
+  const SEPneumonia* lp = dynamic_cast<const SEPneumonia*>(&condition);
   if (lp != nullptr)
   {
-    any->set_allocated_lobarpneumonia(PBPatientCondition::Unload(*lp));
+    any->set_allocated_pneumonia(PBPatientCondition::Unload(*lp));
     return any;
   }
   const SEPulmonaryFibrosis* pf = dynamic_cast<const SEPulmonaryFibrosis*>(&condition);

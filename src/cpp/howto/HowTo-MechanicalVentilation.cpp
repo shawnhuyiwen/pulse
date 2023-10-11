@@ -15,8 +15,8 @@
 #include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "cdm/patient/conditions/SELobarPneumonia.h"
 #include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
+#include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
@@ -54,7 +54,7 @@ class MechVentHandler : public Loggable, public SEEventHandler
 {
 public:
   MechVentHandler(Logger *logger) : Loggable(logger), SEEventHandler() { }
-  virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) 
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override
   {
     switch (type)
     {     
@@ -111,14 +111,14 @@ void HowToMechanicalVentilation()
     {
       SEChronicObstructivePulmonaryDisease& COPD = pc.GetConditions().GetChronicObstructivePulmonaryDisease();
       COPD.GetBronchitisSeverity().SetValue(0.5);
-      COPD.GetEmphysemaSeverity().SetValue(0.7);
+      COPD.GetEmphysemaSeverity(eLungCompartment::LeftLung).SetValue(0.7);
+      COPD.GetEmphysemaSeverity(eLungCompartment::RightLung).SetValue(0.7);
     }
-    if (false) //LobarPneumonia
+    if (false) //Pneumonia
     {      
-      SELobarPneumonia& LobarPneumonia = pc.GetConditions().GetLobarPneumonia();
-      LobarPneumonia.GetSeverity().SetValue(0.2);
-      LobarPneumonia.GetLeftLungAffected().SetValue(1.0);
-      LobarPneumonia.GetRightLungAffected().SetValue(1.0);
+      SEPneumonia& Pneumonia = pc.GetConditions().GetPneumonia();
+      Pneumonia.GetSeverity(eLungCompartment::LeftLung).SetValue(1.0);
+      Pneumonia.GetSeverity(eLungCompartment::RightLung).SetValue(1.0);
     }
     if (false) //Generic ImpairedAlveolarExchange (no specified reason)
     {      

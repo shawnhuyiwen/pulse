@@ -214,6 +214,8 @@ public class SETestConfiguration
               }
               continue;
             }
+            if(directive.equalsIgnoreCase("Validation")) 
+            { job.isValidation = true; job.scenarioDirectory = "./validation/scenarios/"; continue; }
             if(directive.equalsIgnoreCase("Assessment")) 
             { job.isAssessment = true; job.state = SETestJob.State.Complete; continue; }
             if(directive.equalsIgnoreCase("NoCompare")) 
@@ -243,7 +245,12 @@ public class SETestConfiguration
             if(key.equalsIgnoreCase("Baseline"))
             {
               if(value.equalsIgnoreCase("scenarios/"))
-                job.scenarioDirectory = scenarioDir+"/";
+              {
+                if (job.isValidation)
+                  job.scenarioDirectory = "./validation/scenarios/";
+                else
+                  job.scenarioDirectory = scenarioDir+"/";
+              }
               job.baselineDirectory = baselineDir+"/"+value;
               continue;
             }

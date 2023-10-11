@@ -93,7 +93,7 @@ echo "Starting CMake"
 # Run CMake
 # -B is the relative path to my build directory
 # -H is the relative path to my Pulse source directory
-./$container cmake -DPulse_JAVA_API:BOOL=OFF -B$bldDir -H$pulseDir -GNinja
+./$container cmake -DPulse_JAVA_API:BOOL=OFF -DPulse_PYTHON_API:BOOL=OFF -B$bldDir -H$pulseDir -GNinja
 # Use ninja to build (provided in the docker)
 echo "Starting ninja"
 ./$container ninja -C$bldDir

@@ -29,6 +29,7 @@ set(PULSE_BIND_JAVA_FILES
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/PatientAssessments.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/PatientConditions.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/PatientNutrition.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Plots.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Physiology.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Properties.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Scenario.java
@@ -50,6 +51,8 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/SerializationType.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SEAction.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SEAdvanceTime.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SEAdvanceUntilStable.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SESerializeRequested.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SESerializeState.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SECompartment.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SECompartmentManager.java
@@ -59,13 +62,12 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SEThermalCompartment.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SETissueCompartment.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/conditions/SECondition.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/datarequests/SEDataRequest.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/datarequests/SEDataRequestManager.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/datarequests/SEValidationTarget.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/doxygen/CDM2MD.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/doxygen/DoxygenPreprocessor.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/doxygen/Proto2Doxygen.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEActiveEvent.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDataRequest.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDataRequestManager.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDynamicStabilization.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDynamicStabilizationEngineConvergence.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEEngineConfiguration.java
@@ -73,6 +75,9 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEEventManager.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEPatientConfiguration.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SETimedStabilization.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEValidationTarget.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SESegmentValidationTarget.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SETimeSeriesValidationTarget.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/exceptions/InvalidUnitException.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/SEPatient.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.java
@@ -99,12 +104,12 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEHemothorax.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEIntubation.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SELobarPneumoniaExacerbation.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEMechanicalVentilation.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SENeedleDecompression.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEPatientAction.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEPatientAssessmentRequest.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEPericardialEffusion.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEPneumoniaExacerbation.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEPulmonaryShuntExacerbation.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SERespiratoryFatigue.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SERespiratoryMechanicsConfiguration.java
@@ -129,8 +134,8 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEConsumeMeal.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEImpairedAlveolarExchange.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SELobarPneumonia.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEPatientCondition.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEPneumonia.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEPulmonaryFibrosis.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEPulmonaryShunt.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SESepsis.java

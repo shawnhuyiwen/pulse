@@ -33,7 +33,7 @@ public:
   Sets the value to NaN and removes the unit
   Note that this does not affect bounds
   */
-  virtual void Invalidate();
+  void Invalidate() override;
   virtual void ForceInvalidate();
 
   /**
@@ -50,7 +50,7 @@ public:
   */
   void Copy(const SEScalar& s);
 
-  virtual bool IsValid() const;
+  bool IsValid() const override;
   bool IsInfinity() const { return m_isinf; }
 
   bool IsPositive() const;
@@ -184,9 +184,9 @@ public:
   SEUnitScalar() : SEScalar() {}
   virtual ~SEUnitScalar() {}
 
-  virtual bool IsValid() const = 0;
-  virtual void Invalidate() = 0;
-  virtual void ForceInvalidate() = 0;
+  bool IsValid() const override = 0;
+  void Invalidate() override = 0;
+  void ForceInvalidate() override = 0;
   virtual bool HasUnit() const = 0;
   virtual const CCompoundUnit* GetUnit() const = 0;
 
@@ -212,9 +212,9 @@ public:
   SEScalarQuantity() : SEUnitScalar() {};
   virtual ~SEScalarQuantity();
 
-  virtual void Invalidate() override;
-  virtual void ForceInvalidate() override;
-  virtual bool IsValid() const override;
+  void Invalidate() override;
+  void ForceInvalidate() override;
+  bool IsValid() const override;
 
 protected:
 
@@ -224,14 +224,14 @@ protected:
   void Copy(const SEScalar& s) override;
   bool Force(const SEScalar& s) override;
 
-  virtual double GetValue(const CCompoundUnit& unit) const override;
-  virtual void   SetValue(double d, const CCompoundUnit& unit) override;
-  virtual void   ForceValue(double d, const CCompoundUnit& unit) override;
-  virtual double IncrementValue(double d, const CCompoundUnit& unit) override;
-  virtual double ForceIncrementValue(double d, const CCompoundUnit& unit) override;
-  virtual double MultiplyValue(double d, const CCompoundUnit& unit) override;
+  double GetValue(const CCompoundUnit& unit) const override;
+  void   SetValue(double d, const CCompoundUnit& unit) override;
+  void   ForceValue(double d, const CCompoundUnit& unit) override;
+  double IncrementValue(double d, const CCompoundUnit& unit) override;
+  double ForceIncrementValue(double d, const CCompoundUnit& unit) override;
+  double MultiplyValue(double d, const CCompoundUnit& unit) override;
 
-  virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const override;
+  const CCompoundUnit* GetCompoundUnit(const std::string& unit) const override;
 
 public:
 

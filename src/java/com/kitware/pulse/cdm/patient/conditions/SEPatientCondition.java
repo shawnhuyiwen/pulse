@@ -93,10 +93,10 @@ public abstract class SEPatientCondition extends SECondition
       SEImpairedAlveolarExchange.load(c.getImpairedAlveolarExchange(), newC);
       return newC;      
     }
-    case LOBARPNEUMONIA:
+    case PNEUMONIA:
     {
-      SELobarPneumonia newC = new SELobarPneumonia();
-      SELobarPneumonia.load(c.getLobarPneumonia(), newC);
+      SEPneumonia newC = new SEPneumonia();
+      SEPneumonia.load(c.getPneumonia(), newC);
       return newC;
     }
     case PULMONARYFIBROSIS:
@@ -167,9 +167,9 @@ public abstract class SEPatientCondition extends SECondition
       dst.setImpairedAlveolarExchange(SEImpairedAlveolarExchange.unload((SEImpairedAlveolarExchange)c));
       return dst.build();
     }
-    if(c instanceof SELobarPneumonia)
+    if(c instanceof SEPneumonia)
     {
-      dst.setLobarPneumonia(SELobarPneumonia.unload((SELobarPneumonia)c));
+      dst.setPneumonia(SEPneumonia.unload((SEPneumonia)c));
       return dst.build();
     }
     if(c instanceof SEPulmonaryFibrosis)

@@ -1,14 +1,15 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+from pathlib import Path
 import pandas as pd
 import numpy as np
 
-def read_csv_into_df(csv_filename: str, replace_slashes: bool=False, **kwargs):
+def read_csv_into_df(csv_filename: Path, replace_slashes: bool=False, **kwargs):
     df = pd.read_csv(csv_filename, **kwargs)
     for column in df.columns[1:]:
         # Convert any strings to NaN
-        df[column] = pd.to_numeric(df[column], errors='coerce')
+        df[column] = pd.to_numeric(df[column], downcast='float', errors='coerce')
         # Replace slashes in units string
         if replace_slashes:
             df.rename(columns={column: column.replace("/", "_Per_")}, inplace=True)
@@ -16,7 +17,7 @@ def read_csv_into_df(csv_filename: str, replace_slashes: bool=False, **kwargs):
     return df
 
 
-def compute_means(csv_filename: str, headers: [str], start_row=0, end_row=-1):
+def compute_means(csv_filename: Path, headers: [str], start_row=0, end_row=-1):
     means = []
 
     # Load up the csv file, pull the headers, and compute the mean of values from start to end

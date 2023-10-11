@@ -20,9 +20,9 @@ namespace pulse
     CompartmentManager(Data& data);
     virtual ~CompartmentManager();
 
-    virtual void Clear();
+    void Clear() override;
 
-    virtual void StateChange();
+    void StateChange() override;
     virtual void UpdateAirwayGraph() { m_UpdateActiveAirwayGraph = true; m_UpdateActiveAerosolGraph = true; }
 
     virtual SELiquidCompartmentGraph& GetActiveCardiovascularGraph();
@@ -67,8 +67,8 @@ namespace pulse
     std::vector<SEThermalCompartment*>const& GetTemperatureCompartments() { return m_TemperatureCompartments; }
     std::vector<SEThermalCompartment*>const& GetTemperatureLeafCompartments() { return m_TemperatureLeafCompartments; }
 
-    std::vector<SETissueCompartment*>const& GetTissueCompartments() { return m_TissueCompartments; }
-    std::vector<SETissueCompartment*>const& GetTissueLeafCompartments() { return m_TissueLeafCompartments; }
+    std::vector<SETissueCompartment*>const& GetTissueCompartments() override { return m_TissueCompartments; }
+    std::vector<SETissueCompartment*>const& GetTissueLeafCompartments() override { return m_TissueLeafCompartments; }
 
     std::vector<SELiquidCompartment*>const& GetUrineCompartments() { return m_UrineCompartments; }
     std::vector<SELiquidCompartment*>const& GetUrineLeafCompartments() { return m_UrineLeafCompartments; }
@@ -114,11 +114,11 @@ namespace pulse
 
   protected:
     // I don't want these exposed in Pulse, you should be calling the Substance manager
-    virtual void AddGasCompartmentSubstance(SESubstance& sub);
-    virtual void AddLiquidCompartmentSubstance(SESubstance& sub);
+    void AddGasCompartmentSubstance(SESubstance& sub) override;
+    void AddLiquidCompartmentSubstance(SESubstance& sub) override;
 
-    virtual bool AllowGasSubstance(SESubstance& s, SEGasCompartment& cmpt) const;
-    virtual bool AllowLiquidSubstance(SESubstance& s, SELiquidCompartment& cmpt) const;
+    bool AllowGasSubstance(SESubstance& s, SEGasCompartment& cmpt) const override;
+    bool AllowLiquidSubstance(SESubstance& s, SELiquidCompartment& cmpt) const override;
 
     Data& m_data;
 

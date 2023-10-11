@@ -104,11 +104,16 @@ namespace Pulse
     }
 
     protected abstract bool BaseInitializeEngine(string patient_configuration, string data_mgr, int thunk_format);
-    public bool InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr)
+    public bool InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr=null)
     {
-      data_values = new double[data_mgr.GetDataRequests().Count + 1];
+      string data_mgr_str = "";
       string patient_configuration_str = PBPatientConfiguration.SerializeToString(patient_configuration);
-      string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, thunk_as);
+
+      if (data_mgr != null)
+      {
+        data_values = new double[data_mgr.GetDataRequests().Count + 1];
+        data_mgr_str = PBDataRequest.SerializeToString(data_mgr, thunk_as);
+      }
       alive = BaseInitializeEngine(patient_configuration_str, data_mgr_str, (int)thunk_as);
       if (!alive) PullLogMessages();
       return alive;

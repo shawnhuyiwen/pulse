@@ -18,14 +18,16 @@ public:
   virtual ~SEConsciousRespiration();
 
   static constexpr char const* Name = "Conscious Respiration";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SEConsciousRespiration& src, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SEConsciousRespiration& src, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool StartImmediately() const;
   virtual void SetStartImmediately(bool b);
@@ -40,8 +42,6 @@ public:
   virtual SEForcedInhale& AddForcedInhale();
   virtual SEForcedPause&  AddForcedPause();
   virtual SEUseInhaler&   AddUseInhaler();
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
 

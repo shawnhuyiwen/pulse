@@ -20,14 +20,16 @@ public:
   virtual ~SEMechanicalVentilation();
 
   static constexpr char const* Name = "Mechanical Ventilation";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear();
-  virtual void Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr, bool /*preserveState*/=false);
+  void Clear() override;
+  void Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr, bool /*preserveState*/=false);
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  const SEScalar* GetScalar(const std::string& name) override;
+
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual eSwitch GetState() const;
   virtual void SetState(eSwitch name);
@@ -57,8 +59,6 @@ public:
   const SESubstanceConcentration* GetAerosol(const SESubstance& substance) const;
   void RemoveAerosol(const SESubstance& substance);
   void RemoveAerosols();
-
-  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
 

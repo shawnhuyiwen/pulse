@@ -12,7 +12,7 @@ namespace Pulse.CDM
     protected SEChronicVentricularSystolicDysfunction cvsd;
     protected SEImpairedAlveolarExchange impaired_alveolar_exchange;
     protected SEChronicPericardialEffusion pericardial_effusion;
-    protected SELobarPneumonia lobar_pneumonia;
+    protected SEPneumonia pneumonia;
     protected SEPulmonaryFibrosis pulmonary_fibrosis;
     protected SEPulmonaryShunt pulmonary_shunt;
     protected SEChronicRenalStenosis renal_stenosis;
@@ -34,7 +34,7 @@ namespace Pulse.CDM
       cvsd = null;
       impaired_alveolar_exchange = null;
       pericardial_effusion = null;
-      lobar_pneumonia = null;
+      pneumonia = null;
       pulmonary_fibrosis = null;
       pulmonary_shunt = null;
       renal_stenosis = null;
@@ -60,7 +60,7 @@ namespace Pulse.CDM
       //  return false;
       if (HasImpairedAlveolarExchange())
         return false;
-      if (HasLobarPneumonia())
+      if (HasPneumonia())
         return false;
       if (HasPulmonaryFibrosis())
         return false;
@@ -116,9 +116,9 @@ namespace Pulse.CDM
         impaired_alveolar_exchange = (SEImpairedAlveolarExchange)c;
         return true;
       }
-      if (c.GetType().IsAssignableFrom(typeof(SELobarPneumonia)))
+      if (c.GetType().IsAssignableFrom(typeof(SEPneumonia)))
       {
-        lobar_pneumonia = (SELobarPneumonia)c;
+        pneumonia = (SEPneumonia)c;
         return true;
       }
       if (c.GetType().IsAssignableFrom(typeof(SEPulmonaryFibrosis)))
@@ -258,19 +258,19 @@ namespace Pulse.CDM
       impaired_alveolar_exchange = null;
     }
 
-    public bool HasLobarPneumonia()
+    public bool HasPneumonia()
     {
-      return lobar_pneumonia == null ? false : lobar_pneumonia.IsValid();
+      return pneumonia == null ? false : pneumonia.IsValid();
     }
-    public SELobarPneumonia GetLobarPneumonia()
+    public SEPneumonia GetPneumonia()
     {
-      if (lobar_pneumonia == null)
-        lobar_pneumonia = new SELobarPneumonia();
-      return lobar_pneumonia;
+      if (pneumonia == null)
+        pneumonia = new SEPneumonia();
+      return pneumonia;
     }
-    public void RemoveLobarPneumonia()
+    public void RemovePneumonia()
     {
-      lobar_pneumonia = null;
+      pneumonia = null;
     }
 
     public bool HasPulmonaryFibrosis()

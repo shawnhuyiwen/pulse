@@ -54,11 +54,17 @@ namespace Pulse.CDM
 
     public new string ToString()
     {
+      // This needs to match C++ SEDataRequest::ToString
+     // We use this string for csv headers and we need to be consistent across all languages
       String str = "";
       switch(Category)
       {
         case eDataRequest_Category.Action:
           str = GetActionName()+"-";
+          if (HasCompartmentName())
+            str += GetCompartmentName()+"-";
+          else if (HasSubstanceName())
+            str += GetSubstanceName()+"-";
           break;
         case eDataRequest_Category.Patient:
           str = "Patient-";
@@ -85,17 +91,20 @@ namespace Pulse.CDM
         case eDataRequest_Category.LiquidCompartment:
         case eDataRequest_Category.ThermalCompartment:
         case eDataRequest_Category.TissueCompartment:
-          str += GetCompartmentName() + "-";
+          str = GetCompartmentName()+"-";
           if (HasSubstanceName())
-            str += " - " + GetSubstanceName();
+            str += GetSubstanceName()+"-";
           break;
         case eDataRequest_Category.Substance:
-          str += GetSubstanceName()+"-";
+          str = GetSubstanceName()+"-";
+          if (HasCompartmentName())
+            str += GetCompartmentName() + "-";
           break;
       }
       str += PropertyName;
       if (Unit != null)
-        str += " (" + Unit.ToString() + ")"; ;
+        str += "(" + Unit.ToString() + ")";
+      str=str.Replace(" ", "_");
       return str;
     }
 

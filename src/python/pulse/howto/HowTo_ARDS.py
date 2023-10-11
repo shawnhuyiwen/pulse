@@ -3,6 +3,7 @@
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.patient_actions import SEAcuteRespiratoryDistressSyndromeExacerbation
+from pulse.cdm.physiology import eLungCompartment
 from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_ARDS():
@@ -13,9 +14,8 @@ def HowTo_ARDS():
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")
     ards = pc.get_conditions().get_acute_respiratory_distress_syndrome()
-    ards.get_left_lung_affected().set_value(0.4)
-    ards.get_right_lung_affected().set_value(0.1)
-    ards.get_severity().set_value(0.3)
+    ards.get_severity(eLungCompartment.LeftLung).set_value(0.2)
+    ards.get_severity(eLungCompartment.RightLung).set_value(0.1)
 
     # Initialize the engine with our configuration
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
@@ -30,9 +30,8 @@ def HowTo_ARDS():
     # Perform an action to exacerbate the initial condition state
     exacerbation = SEAcuteRespiratoryDistressSyndromeExacerbation()
     exacerbation.set_comment("Patient's Acute Respiratory Distress Syndrome is exacerbated")
-    exacerbation.get_severity().set_value(0.4)
-    exacerbation.get_left_lung_affected().set_value(0.4)
-    exacerbation.get_right_lung_affected().set_value(0.1)
+    exacerbation.get_severity(eLungCompartment.LeftLung).set_value(0.4)
+    exacerbation.get_severity(eLungCompartment.RightLung).set_value(0.2)
     pulse.process_action(exacerbation)
 
     # Advance some time and print out the vitals

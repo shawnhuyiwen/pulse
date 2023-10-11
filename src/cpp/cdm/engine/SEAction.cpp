@@ -4,7 +4,6 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/engine/SEAction.h"
 #include "cdm/engine/SEAdvanceTime.h"
-#include "cdm/engine/SESerializeState.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/io/protobuf/PBActions.h"
 

@@ -4,82 +4,217 @@
 #include <numeric>
 
 #include "SEValidationTarget.h"
-
+#include "cdm/io/protobuf/PBEngine.h"
 #include "cdm/utils/GeneralMath.h"
-
-SEValidationTarget::SEValidationTarget(const SEValidationTarget& vt) : SEDataRequest(vt)
-{
-  m_Type = vt.m_Type;
-  m_RangeMin = vt.m_RangeMin;
-  m_RangeMax = vt.m_RangeMax;
-  m_TypeValue = vt.m_TypeValue;
-  m_Error = vt.m_Error;
-}
-
-SEValidationTarget::SEValidationTarget(eValidationTargetType t, eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDataRequest(category,dfault)
-{
-  m_Type = t;
-}
 
 void SEValidationTarget::Clear()
 {
-  m_RangeMin = SEScalar::dNaN();
-  m_RangeMax = SEScalar::dNaN();
-  m_TypeValue = SEScalar::dNaN();
+  m_Header = "";
+  m_Reference = "";
+  m_Notes = "";
+
+  m_Target = SEScalar::dNaN();
+  m_TargetMaximum = SEScalar::dNaN();
+  m_TargetMinimum = SEScalar::dNaN();
+}
+bool SEValidationTarget::IsValid()
+{
+  if (std::isnan(m_Target) && std::isnan(m_TargetMaximum))
+    return false;
+  return true;
+}
+
+SESegmentValidationTarget::SESegmentValidationTarget() : SEValidationTarget()
+{
+  Clear();
+}
+void SESegmentValidationTarget::Clear()
+{
+  SEValidationTarget::Clear();
+  m_ComparisonType = eComparisonType::None;
+  m_TargetSegment = 0;
+}
+bool SESegmentValidationTarget::SerializeToString(const std::vector<const SESegmentValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
+{
+  return PBEngine::SerializeToString(src, output, m, logger);
+}
+bool SESegmentValidationTarget::SerializeToFile(const std::vector<const SESegmentValidationTarget*>& src, const std::string& filename, Logger* logger)
+{
+  return PBEngine::SerializeToFile(src, filename, logger);
+}
+bool SESegmentValidationTarget::SerializeFromString(const std::string& src, std::vector<SESegmentValidationTarget*>& dst, eSerializationFormat m, Logger* logger)
+{
+  return PBEngine::SerializeFromString(src, dst, m, logger);
+}
+bool SESegmentValidationTarget::SerializeFromFile(const std::string& filename, std::vector<SESegmentValidationTarget*>& dst, Logger* logger)
+{
+  return PBEngine::SerializeFromFile(filename, dst, logger);
+}
+void SESegmentValidationTarget::SetEqualToSegment(int s)
+{
+  m_ComparisonType = eComparisonType::EqualToSegment;
+  m_Target = SEScalar::dNaN();
+  m_TargetMaximum = SEScalar::dNaN();
+  m_TargetMinimum = SEScalar::dNaN();
+  m_TargetSegment = s;
+}
+void SESegmentValidationTarget::SetEqualToValue(double d)
+{
+  m_ComparisonType = eComparisonType::EqualToValue;
+  m_Target = d;
+  m_TargetMaximum = d;
+  m_TargetMinimum = d;
+  m_TargetSegment = 0;
+}
+void SESegmentValidationTarget::SetGreaterThanSegment(int s)
+{
+  m_ComparisonType = eComparisonType::GreaterThanSegment;
+  m_Target = SEScalar::dNaN();
+  m_TargetMaximum = SEScalar::dNaN();
+  m_TargetMinimum = SEScalar::dNaN();
+  m_TargetSegment = s;
+}
+void SESegmentValidationTarget::SetGreaterThanValue(double d)
+{
+  m_ComparisonType = eComparisonType::GreaterThanValue;
+  m_Target = d;
+  m_TargetMaximum = d;
+  m_TargetMinimum = d;
+  m_TargetSegment = 0;
+}
+void SESegmentValidationTarget::SetLessThanSegment(int s)
+{
+  m_ComparisonType = eComparisonType::LessThanSegment;
+  m_Target = SEScalar::dNaN();
+  m_TargetMaximum = SEScalar::dNaN();
+  m_TargetMinimum = SEScalar::dNaN();
+  m_TargetSegment = s;
+}
+void SESegmentValidationTarget::SetLessThanValue(double d)
+{
+  m_ComparisonType = eComparisonType::LessThanValue;
+  m_Target = d;
+  m_TargetMaximum = d;
+  m_TargetMinimum = d;
+  m_TargetSegment = 0;
+}
+void SESegmentValidationTarget::SetTrendsToSegment(int s)
+{
+  m_ComparisonType = eComparisonType::TrendsToSegment;
+  m_Target = SEScalar::dNaN();
+  m_TargetMaximum = SEScalar::dNaN();
+  m_TargetMinimum = SEScalar::dNaN();
+  m_TargetSegment = s;
+}
+void SESegmentValidationTarget::SetTrendsToValue(double d)
+{
+  m_ComparisonType = eComparisonType::TrendsToValue;
+  m_Target = d;
+  m_TargetMaximum = d;
+  m_TargetMinimum = d;
+  m_TargetSegment = 0;
+}
+void SESegmentValidationTarget::SetRange(double min, double max)
+{
+  m_ComparisonType = eComparisonType::Range;
+  m_Target = SEScalar::dNaN();
+  m_TargetMaximum = max;
+  m_TargetMinimum = min;
+  m_TargetSegment = 0;
+}
+
+SETimeSeriesValidationTarget::SETimeSeriesValidationTarget() : SEValidationTarget()
+{
+  m_TargetType = eTargetType::Mean;
+  m_Error = 100;
+  m_ComparisonValue = 0;
+}
+void SETimeSeriesValidationTarget::Clear()
+{
+  SEValidationTarget::Clear();
+  m_ComparisonType = eComparisonType::None;
+  m_TargetType = eTargetType::Mean;
+  m_Target = SEScalar::dNaN();
+  m_TargetMaximum = SEScalar::dNaN();
+  m_TargetMinimum = SEScalar::dNaN();
+
   m_Error = SEScalar::dNaN();
   m_Data.clear();
+  m_ComparisonValue = SEScalar::dNaN();
 }
-
-eValidationTargetType SEValidationTarget::GetType() const
+bool SETimeSeriesValidationTarget::SerializeToString(const std::vector<const SETimeSeriesValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
-  return m_Type;
+  return PBEngine::SerializeToString(src, output, m, logger);
 }
-
-double SEValidationTarget::GetRangeMin() const
+bool SETimeSeriesValidationTarget::SerializeToFile(const std::vector<const SETimeSeriesValidationTarget*>& src, const std::string& filename, Logger* logger)
 {
-  return m_RangeMin;
+  return PBEngine::SerializeToFile(src, filename, logger);
 }
-void SEValidationTarget::SetRangeMin(double d)
+bool SETimeSeriesValidationTarget::SerializeFromString(const std::string& src, std::vector<SETimeSeriesValidationTarget*>& dst, eSerializationFormat m, Logger* logger)
 {
-  m_RangeMin = d;
+  return PBEngine::SerializeFromString(src, dst, m, logger);
 }
-
-double SEValidationTarget::GetRangeMax() const
+bool SETimeSeriesValidationTarget::SerializeFromFile(const std::string& filename, std::vector<SETimeSeriesValidationTarget*>& dst, Logger* logger)
 {
-  return m_RangeMax;
+  return PBEngine::SerializeFromFile(filename, dst, logger);
 }
-void SEValidationTarget::SetRangeMax(double d)
+void SETimeSeriesValidationTarget::SetEqualTo(double d, eTargetType t)
 {
-  m_RangeMax = d;
+  m_ComparisonType = eComparisonType::EqualToValue;
+  m_TargetType = t;
+  m_Target = d;
+  m_TargetMaximum = d;
+  m_TargetMinimum = d;
 }
-
-std::vector<double>& SEValidationTarget::GetData()
+void SETimeSeriesValidationTarget::SetGreaterThan(double d, eTargetType t)
 {
-  return m_Data;
+  m_ComparisonType = eComparisonType::GreaterThanValue;
+  m_TargetType = t;
+  m_Target = d;
+  m_TargetMaximum = d;
+  m_TargetMinimum = d;
 }
-
-double SEValidationTarget::GetError() const
+void SETimeSeriesValidationTarget::SetLessThan(double d, eTargetType t)
 {
-  return m_Error;
+  m_ComparisonType = eComparisonType::LessThanValue;
+  m_TargetType = t;
+  m_Target = d;
+  m_TargetMaximum = d;
+  m_TargetMinimum = d;
 }
-bool SEValidationTarget::ComputeError()
+void SETimeSeriesValidationTarget::SetTrendsTo(double d, eTargetType t)
 {
-  m_TypeValue = SEScalar::dNaN();
-  switch (m_Type)
+  m_ComparisonType = eComparisonType::TrendsToValue;
+  m_TargetType = t;
+  m_Target = d;
+  m_TargetMaximum = d;
+  m_TargetMinimum = d;
+}
+void SETimeSeriesValidationTarget::SetRange(double min, double max, eTargetType t)
+{
+  m_ComparisonType = eComparisonType::Range;
+  m_TargetType = t;
+  m_Target = SEScalar::dNaN();
+  m_TargetMaximum = max;
+  m_TargetMinimum = min;
+}
+bool SETimeSeriesValidationTarget::ComputeError()
+{
+  switch (m_TargetType)
   {
-  case eValidationTargetType::Min:
+  case eTargetType::Minimum:
   {
-    m_TypeValue = *std::min_element(m_Data.begin(), m_Data.end());
+    m_ComparisonValue = *std::min_element(m_Data.begin(), m_Data.end());
     break;
   }
-  case eValidationTargetType::Max:
+  case eTargetType::Maximum:
   {
-    m_TypeValue = *std::max_element(m_Data.begin(), m_Data.end());
+    m_ComparisonValue = *std::max_element(m_Data.begin(), m_Data.end());
     break;
   }
-  case eValidationTargetType::Mean:
+  case eTargetType::Mean:
   {
-    m_TypeValue = (double)(std::accumulate(m_Data.begin(), m_Data.end(),0) / m_Data.size());
+    m_ComparisonValue = (double)(std::accumulate(m_Data.begin(), m_Data.end(),0) / m_Data.size());
     break;
   }
   default:
@@ -88,19 +223,20 @@ bool SEValidationTarget::ComputeError()
   }
   }
   // NOTE: We could use PercentTolerance too
-  double minError = GeneralMath::PercentTolerance(m_RangeMin, m_TypeValue, 1e-9);
-  double maxError = GeneralMath::PercentTolerance(m_RangeMax, m_TypeValue, 1e-9);
+  double minError = GeneralMath::PercentTolerance(m_TargetMinimum, m_ComparisonValue, 1e-9);
+  double maxError = GeneralMath::PercentTolerance(m_TargetMaximum, m_ComparisonValue, 1e-9);
   // No error if we are in range
-  if (m_TypeValue >= m_RangeMin && m_TypeValue <= m_RangeMax)
+  if (m_ComparisonValue >= m_TargetMinimum && m_ComparisonValue <= m_TargetMaximum)
   {
     m_Error = 0;
     return true;
   }
-  else if (m_TypeValue > m_RangeMax)
+  else if (m_ComparisonValue > m_TargetMaximum)
     m_Error = maxError;
-  else if (m_TypeValue < m_RangeMin)
+  else if (m_ComparisonValue < m_TargetMinimum)
     m_Error = minError;
-  else if (std::abs(m_Error) < 1e-15)
+
+  if (std::abs(m_Error) < 1e-15)
     m_Error = 0; // Close enough
   return true;
 }

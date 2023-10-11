@@ -13,17 +13,17 @@ public:
   virtual ~SEAdvanceTime();
 
   static constexpr char const* Name = "Advance Time";
-  virtual std::string GetName() const { return Name; }
+  std::string GetName() const override { return Name; }
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
-  virtual bool IsValid() const;
+  bool IsValid() const override;
 
   virtual bool HasTime() const;
   virtual SEScalarTime& GetTime();
   virtual double GetTime(const TimeUnit& unit) const;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
 
