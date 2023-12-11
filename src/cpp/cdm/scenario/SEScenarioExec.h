@@ -11,6 +11,9 @@ class SEScenarioLog;
 class PhysiologyEngine;
 class SEEngineConfiguration;
 
+enum class eRelativeSerialization { ToWorkingDir = 0, ToOutputDir, ToScenarioDir };
+extern CDM_DECL const std::string& eRelativeSerialization_Name(eRelativeSerialization rt);
+
 class CDM_DECL SEScenarioExec : public Loggable
 {
 public:
