@@ -60,7 +60,11 @@ set(CMAKE_MODULE_PATH
     )
 set(${PROJECT_NAME}_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-option(${PROJECT_NAME}_C_STATIC "Only build static libraries for the Pulse C interface" OFF)
+# C_AS_STATIC builds a Pulse library for use in iOS builds
+# AS_SHARED builds a Pulse library for use by Unreal
+
+option(${PROJECT_NAME}_AS_SHARED "Build Pulse as a shared library (for use in Unreal builds)" OFF)
+option(${PROJECT_NAME}_C_AS_STATIC "Build PulseC as a static library (for use in iOS/WASM builds)" OFF)
 option(${PROJECT_NAME}_DOWNLOAD_BASELINES "Download all V&V Scenarios and their baseline result files" OFF)
 option(${PROJECT_NAME}_CSHARP_API "Build C# API" OFF)
 option(${PROJECT_NAME}_JAVA_API "Build Java API and utils for data generation and testing" ON)
@@ -77,6 +81,18 @@ if(EXISTS ${${PROJECT_NAME}_NATIVE_BUILD_DIR})
     message(FATAL_ERROR "Could not find expected binding directory in provided NATIVE_BUILD_DIR, expecting:  ${NATIVE_BIND_DIR}")
   endif()
 endif()
+# Variable configurations between a static and a shared build
+set(_private_protobuf)
+set(${PROJECT_NAME}_LIB_TYPE STATIC)
+if (NOT ${PROJECT_NAME}_AS_SHARED)
+  set(_private_protobuf protobuf::libprotobuf)
+else()
+  if(${PROJECT_NAME}_C_AS_STATIC)
+    set(${PROJECT_NAME}_C_AS_STATIC OFF CACHE BOOL INTERNAL FORCE)
+    message(WARNING "Disabling Pulse_C_AS_STATIC, as Pulse_AS_SHARED is enabled")
+  endif()
+  set(${PROJECT_NAME}_LIB_TYPE SHARED)
+endif()
 
 #-----------------------------------------------------------------------------
 # iOS Support
@@ -88,19 +104,18 @@ if(iOS_TOOLCHAIN)
     cmake_policy(SET CMP0114 NEW)
   endif()
 
-
-  set(${PROJECT_NAME}_C_STATIC ON CACHE BOOL INTERNAL FORCE)
+  set(${PROJECT_NAME}_C_AS_STATIC ON CACHE BOOL INTERNAL FORCE)
   if(${PROJECT_NAME}_CSHARP_API)
     set(${PROJECT_NAME}_CSHARP_API OFF CACHE BOOL INTERNAL FORCE)
-    message(STATUS "Disabling C# API for iOS build")
+    message(WARNING "Disabling C# API for iOS build")
   endif()
   if(${PROJECT_NAME}_JAVA_API)
     set(${PROJECT_NAME}_JAVA_API OFF CACHE BOOL INTERNAL FORCE)
-    message(STATUS "Disabling Java API for iOS build")
+    message(WARNING "Disabling Java API for iOS build")
   endif()
   if(${PROJECT_NAME}_PYTHON_API)
     set(${PROJECT_NAME}_PYTHON_API OFF CACHE BOOL INTERNAL FORCE)
-    message(STATUS "Disabling Python API for iOS build")
+    message(WARNING "Disabling Python API for iOS build")
   endif()
 
   if(NOT EXISTS ${NATIVE_BIND_DIR})
@@ -126,8 +141,12 @@ if(${PROJECT_NAME}_SUPERBUILD)
   endmacro()
 
   define_dependency(Eigen3)
-  define_dependency(absl)
   define_dependency(protobuf)
+  message(STATUS "We are using protobuf ${Protobuf_VERSION}")
+  if (Protobuf_VERSION VERSION_GREATER_EQUAL "22.0")
+    message(STATUS "Added ABSL dependency")
+    define_dependency(absl)
+  endif()
   if(${PROJECT_NAME}_PYTHON_API)
     find_package (Python3 COMPONENTS Interpreter Development)
     if(Python3_FOUND)
@@ -305,7 +324,7 @@ else()
   set(export_git_hash "unknown")
 endif()
 
-configure_file(cmake/PulseBuildInformation.cpp.in ${CMAKE_BINARY_DIR}/src/cpp/engine/PulseBuildInformation.cpp)
+configure_file(cmake/PulseBuildInformation.cpp.in ${CMAKE_BINARY_DIR}/src/cpp/PulseBuildInformation.cpp)
 
 #------------------------------------------------------------------------------
 # Configure ${PROJECT_NAME}ConfigVersion.cmake common to build and install tree

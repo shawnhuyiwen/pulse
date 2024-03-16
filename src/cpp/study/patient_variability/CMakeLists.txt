@@ -1,14 +1,16 @@
-add_library_ex(PatientVariabilityEngine
+add_library_ex(PatientVariabilityEngine STATIC
   H_FILES
     PVGenerator.h
     PVRunner.h
   CPP_FILES
-    PVGenerator.cpp
-    PVRunner.cpp
+    ActionIteration.cpp
+    ParameterIteration.cpp
+    PatientIteration.cpp
+    ScenarioIteration.cpp
+    TCCCIteration.cpp
+    ValidationIteration.cpp
   PUBLIC_DEPENDS
-    PulseEngine
-  PRIVATE_DEPENDS
-    protobuf::libprotobuf
+    Pulse
   INSTALL_HEADER_DIR
     study/patient_variability
   NO_INSTALL

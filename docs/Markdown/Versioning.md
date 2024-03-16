@@ -10,6 +10,14 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - Release Stage - We have extended this versioning with a <a href="http://en.wikipedia.org/wiki/Software_release_life_cycle">release stage</a>
 
 
+## Pulse Integration (Current new feature set)
+
+- Software Architecture Improvements
+  - Combined DataModelBindings, CommonDataModel and PulseEngine into a single Pulse library
+    - Plan is to provide an option to build a shared Pulse library rather than a static one
+
+- Physiology Model Improvements
+
 ---
 
 ## Pulse v4.2.0 (September 2023)

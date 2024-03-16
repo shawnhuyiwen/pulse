@@ -1,5 +1,4 @@
-
-add_library_ex(MultiplexVentilationEngine
+add_library_ex(MultiplexVentilationEngine STATIC
   H_FILES
     MVEngine.h
     MVGenerator.h
@@ -9,9 +8,7 @@ add_library_ex(MultiplexVentilationEngine
     MVGenerator.cpp
     MVRunner.cpp
   PUBLIC_DEPENDS
-    PulseEngine
-  PRIVATE_DEPENDS
-    protobuf::libprotobuf
+    Pulse
   INSTALL_HEADER_DIR
     study/multiplex_ventilation
   NO_INSTALL

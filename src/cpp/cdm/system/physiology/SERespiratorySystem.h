@@ -16,6 +16,7 @@ enum class eLungCompartment
   RightMiddleLobe,
   RightInferiorLobe
 };
+extern CDM_DECL const std::string& eLungCompartment_Name(eLungCompartment cmpt);
 using LungImpairmentMap = std::map<eLungCompartment, SEScalar0To1*>;
 
 class CDM_DECL SERespiratorySystem : public SESystem

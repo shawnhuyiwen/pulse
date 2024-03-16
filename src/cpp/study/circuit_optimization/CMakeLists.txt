@@ -1,12 +1,10 @@
-add_library_ex(CircuitOptimizationEngine
+add_library_ex(CircuitOptimizationEngine STATIC
   H_FILES
     CircuitOptimizer.h
   CPP_FILES
     CircuitOptimizer.cpp
   PUBLIC_DEPENDS
-    PulseEngine
-  PRIVATE_DEPENDS
-    protobuf::libprotobuf
+    Pulse
   INSTALL_HEADER_DIR
     study/circuit_optimization
   NO_INSTALL

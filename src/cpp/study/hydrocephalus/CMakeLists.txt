@@ -1,13 +1,10 @@
-
-add_library_ex(HydrocephalusEngine
+add_library_ex(HydrocephalusEngine STATIC
   H_FILES
     HRunner.h
   CPP_FILES
     HRunner.cpp
   PUBLIC_DEPENDS
-    PulseEngine
-  PRIVATE_DEPENDS
-    protobuf::libprotobuf
+    Pulse
   INSTALL_HEADER_DIR
     study/hydrocephalus
   NO_INSTALL

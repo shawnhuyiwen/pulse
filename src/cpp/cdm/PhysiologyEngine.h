@@ -41,7 +41,17 @@ class SEEventManager;
 class SEEngineTracker;
 class SEEngineConfiguration;
 
-/** 
+enum class eEngineInitializationState
+{
+  Uninitialized = 0,
+  FailedState = 1,
+  FailedPatientSetup = 2,
+  FailedStabilization = 3,
+  Initialized = 4
+};
+extern CDM_DECL const std::string& eEngineInitializationState_Name(eEngineInitializationState s);
+
+/**
  * @brief
  * Base exception class that all CDM classes throw when an error occurs
  */
@@ -58,7 +68,7 @@ class CDM_DECL PhysiologyEngine : public Loggable
 {
 public:
   PhysiologyEngine(Logger* logger = nullptr) : Loggable(logger) {}
-  virtual ~PhysiologyEngine() {}
+  virtual ~PhysiologyEngine() = default;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

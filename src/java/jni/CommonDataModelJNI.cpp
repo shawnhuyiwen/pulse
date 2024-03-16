@@ -3,10 +3,10 @@
 
 #include <jni.h>
 #include <iostream>
-#include "CommonDefs.h" 
+#include "CommonDefs.h"
 #include "utils/unitconversion/UCCommon.h"
 #include "utils/Logger.h"
-#include "CommonDataModelTest.h"
+#include "cdm/test/CommonDataModelTest.h"
 
 extern "C"
 JNIEXPORT void JNICALL Java_com_kitware_pulse_utilities_jniBridge_nativeInitialize(JNIEnv* /*env*/, jobject /*obj*/)
