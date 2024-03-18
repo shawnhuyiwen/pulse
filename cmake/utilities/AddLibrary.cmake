@@ -22,7 +22,7 @@ function(add_library_ex target)
   cmake_parse_arguments(target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
   message(STATUS "Configuring ${target}")
-
+  
   #-----------------------------------------------------------------------------
   # Verbose (display arguments)
   #-----------------------------------------------------------------------------
@@ -64,7 +64,8 @@ function(add_library_ex target)
   if(target_SHARED)
     set(target_LIB_TYPE SHARED)
   endif()
-  set(target_export_header ${CMAKE_CURRENT_BINARY_DIR}/${target}_export.h)
+  string(TOLOWER ${target} _little_target)
+  set(target_export_header ${CMAKE_CURRENT_BINARY_DIR}/${_little_target}_export.h)
   
   string(REPLACE ${CMAKE_SOURCE_DIR}/src/cpp "" REL_PATH ${CMAKE_CURRENT_SOURCE_DIR})
   foreach(h ${target_CONFIG_H_FILES})
