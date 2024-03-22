@@ -3,12 +3,8 @@ add_library_ex(PatientVariabilityEngine STATIC
     PVGenerator.h
     PVRunner.h
   CPP_FILES
-    ActionIteration.cpp
-    ParameterIteration.cpp
-    PatientIteration.cpp
-    ScenarioIteration.cpp
-    TCCCIteration.cpp
-    ValidationIteration.cpp
+    PVGenerator.cpp
+    PVRunner.cpp
   PUBLIC_DEPENDS
     Pulse
   INSTALL_HEADER_DIR
