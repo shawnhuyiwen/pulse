@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-IN_DIR = "standard_male_sim.csv"
-OUT_DIR = "standard_male_clean.csv"
+IN_DIR = "underweight_male_sim.csv"
+OUT_DIR = "underweight_male_clean.csv"
 
 sim_patient_response_df = pd.read_csv(IN_DIR)
 

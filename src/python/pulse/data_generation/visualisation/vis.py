@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Read the CSV file
-sim_patient_response_df = pd.read_csv("clean_data.csv")
+sim_patient_response_df = pd.read_csv("standard_male_clean.csv")
 
 # Extract data from the DataFrame
 time_steps = sim_patient_response_df['Time(s)'] / 60  # Convert time to minutes

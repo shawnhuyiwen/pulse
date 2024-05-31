@@ -569,6 +569,7 @@ class SEDataRequest(SEDecimalFormat):
     def create_thermal_compartment_request(cls, compartment:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.ThermalCompartment, compartment=compartment, property=property,  unit=unit)
 
+    @classmethod
     def create_tissue_request(cls, compartment:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.TissueCompartment, compartment=compartment, property=property,  unit=unit)
 
